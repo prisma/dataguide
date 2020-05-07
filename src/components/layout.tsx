@@ -1,26 +1,23 @@
 import { RouterProps } from '@reach/router'
 import * as React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
+import withProps from 'styled-components-ts'
 import { useLayoutQuery } from '../hooks/useLayoutQuery'
 import Header from './header'
 import Footer from './footer'
 import { MDXProvider } from '@mdx-js/react'
 import customMdx from '../components/customMdx'
+import HomePageHeader from '../components/homePageHeader'
 import './layout.css'
 import Sidebar from './sidebar'
-// import { StickyContainer } from 'react-sticky';
 
-// interface ThemeProps {
-//   colorPrimary: string
-// }
+interface PathProps {
+  isHomePage: boolean
+}
 
-// const theme: ThemeProps = {
-//   colorPrimary: '#663399',
-// }
+type LayoutProps = React.ReactNode & RouterProps & PathProps
 
-type LayoutProps = React.ReactNode & RouterProps
-
-const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
 
@@ -31,10 +28,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
     padding: 0 10px;
   `
 
-  const Content = styled.article`
+  const Content = withProps<any>(styled.article)`
     max-width: 880px;
     width: 880px;
-    margin: 0.5rem 0 1rem 0;
+    margin: ${p => (p.moveUp ? '-5rem 0 1rem 0' : '0.5rem 0 1rem 0')};
     position: relative;
     z-index: 100;
     @media (min-width: 0px) and (max-width: 1024px) {
@@ -76,12 +73,15 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   return (
     // <ThemeProvider theme={theme}>
     <MDXProvider components={customMdx}>
-      <Header headerProps={header} />
+      {!isHomePage && <Header headerProps={header} />}
+      {isHomePage && <HomePageHeader />}
       <Wrapper>
-        <NotMobile>
-          <Sidebar isMobile={false} />
-        </NotMobile>
-        <Content>
+        {!isHomePage && (
+          <NotMobile>
+            <Sidebar isMobile={false} />
+          </NotMobile>
+        )}
+        <Content moveUp={isHomePage}>
           <MaxWidth>{children}</MaxWidth>
         </Content>
       </Wrapper>

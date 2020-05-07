@@ -221,10 +221,6 @@ const Header = ({ headerProps }: HeaderViewProps) => {
               </LogoContainer>
             </Link>
           </div>
-          {/* <NonMobileMenu>{Menu}</NonMobileMenu> */}
-          {/* <MenuMobileBtn onClick={toggleMobileMenu}>
-            {showMobileMenu ? <Clear /> : 'Menu'}
-          </MenuMobileBtn> */}
         </HeaderNav>
         <SearchContainer>
           <SearchComponent hitsStatus={changeHitsStatus} />
@@ -242,7 +238,6 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         </MobileOnlyNav>
       )}
 
-      {/* {showMobileMenu && <MobileOnlyNav>{Menu}</MobileOnlyNav>} */}
     </HeaderWrapper>
   )
 }

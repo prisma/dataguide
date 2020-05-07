@@ -21,15 +21,7 @@ export default (props: any) => (
       strokeLinecap="round"
     />
     <path d="M33 8V19.5M1 24V9" stroke="#25C26A" strokeWidth="2" strokeLinecap="round" />
-    <mask
-      id="mask0"
-      maskType="alpha"
-      maskUnits="userSpaceOnUse"
-      x="2"
-      y="15"
-      width="30"
-      height="9"
-    >
+    <mask id="mask0" maskType="alpha" maskUnits="userSpaceOnUse" x="2" y="15" width="30" height="9">
       <rect x="2" y="15" width="30" height="9" fill="#C4C4C4" />
     </mask>
     <g mask="url(#mask0)">

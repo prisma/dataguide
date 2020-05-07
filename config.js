@@ -1,10 +1,10 @@
 const config = {
   gatsby: {
     pathPrefix: '',
-    siteUrl: '', // replace with correct site
+    siteUrl: 'https://howtodata.netlify.app/', // replace with correct site
   },
   header: {
-    logoLink: '', // replace with correct site
+    logoLink: '/', // replace with correct site
     title: 'How To Data',
     // check all links
     links: [
@@ -48,7 +48,7 @@ const config = {
     },
   },
   feedback: {
-    function_name: '*/.netlify/functions/index', // Replace with correct one
+    function_name: 'https://howtodata.netlify.app/.netlify/functions/index', // Replace with correct one
   },
   footer: {
     logoLink: '/',

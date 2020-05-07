@@ -27,12 +27,16 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
     },
   } = data
 
+  const isHomePage = slug === '/'
+
   return (
-    <Layout {...props}>
+    <Layout isHomePage={isHomePage} {...props}>
       <SEO title={metaTitle || title} description={metaDescription || title} />
-      <section className="top-section">
-        <TopSection title={title} slug={slug} toc={tableOfContents} />
-      </section>
+      {!isHomePage && (
+        <section className="top-section">
+          <TopSection title={title} slug={slug} toc={tableOfContents} />
+        </section>
+      )}
       <MDXRenderer>{body}</MDXRenderer>
       {/* <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} /> */}
     </Layout>

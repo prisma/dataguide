@@ -191,13 +191,13 @@ const TreeNode = ({
     <ListItem className={calculatedClassName}>
       {title && label !== 'index' && (
         <Link
-          to={url.split('/').includes('index') ? null : `${urlGenerator(url)}`}
+          to={urlGenerator(url)}
           activeClassName="active-item"
           partiallyActive={true}
         >
           {hasExpandButton ? (
-            <span onClick={collapse} className="collapse-title">
-              <button aria-label="collapse" className="item-collapser">
+            <span className="collapse-title">
+              <button aria-label="collapse" className="item-collapser" onClick={collapse}>
                 {/* Fix for issue https://github.com/prisma/prisma2-docs/issues/161 */}
                 <ArrowRight className={`right ${isOpen}`} />
                 <ArrowDown className={`down ${isOpen}`} />
