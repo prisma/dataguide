@@ -68,12 +68,12 @@ module.exports = {
     'gatsby-plugin-styled-components',
     'gatsby-plugin-smoothscroll',
     'gatsby-plugin-catch-links',
-    {
-      resolve: `gatsby-plugin-layout`,
-      options: {
-        component: require.resolve(`./src/layouts/articleLayout.tsx`),
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-layout`,
+    //   options: {
+    //     component: require.resolve(`./src/layouts/articleLayout.tsx`),
+    //   },
+    // },
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
@@ -95,10 +95,10 @@ module.exports = {
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
-        // decks: [],
-        // defaultLayouts: {
-        //   default: require.resolve('./src/layouts/articleLayout.tsx'),
-        // },
+        decks: [],
+        defaultLayouts: {
+          default: require.resolve('./src/layouts/articleLayout.tsx'),
+        },
         extensions: ['.mdx', '.md'],
         gatsbyRemarkPlugins,
       },

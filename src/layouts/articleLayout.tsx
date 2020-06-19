@@ -1,7 +1,6 @@
 import { RouterProps } from '@reach/router'
 import * as React from 'react'
 import { ArticleQueryData } from '../interfaces/Article.interface'
-import Layout from '../components/layout'
 import TopSection from '../components/topSection'
 // import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
@@ -10,7 +9,7 @@ import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps
 
-const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
+const ArticleLayout = ({ data }: ArticleLayoutProps) => {
   if (!data) {
     return null
   }
@@ -30,7 +29,8 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   const isHomePage = slug === '/'
 
   return (
-    <Layout isHomePage={isHomePage} {...props}>
+    <>
+    {/* <Layout isHomePage={isHomePage} {...props}> */}
       <SEO title={metaTitle || title} description={metaDescription || title} />
       {!isHomePage && (
         <section className="top-section">
@@ -39,7 +39,8 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
       )}
       <MDXRenderer>{body}</MDXRenderer>
       {/* <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} /> */}
-    </Layout>
+    {/* </Layout> */}
+    </>
   )
 }
 

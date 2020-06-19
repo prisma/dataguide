@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import styledTS from 'styled-components-ts'
 import HeaderLogo from '../icons/Logo'
 import Clear from '../icons/Clear'
-// import Search from '../components/search'
+import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 
@@ -45,6 +45,12 @@ const HeaderNav = styled.div`
   @media (min-width: 0px) and (max-width: 1024px) {
     padding: 0 16px;
   }
+`
+
+const SearchComponent = styled(Search)`
+  position: absolute;
+  top: 12px;
+  left: 12px;
 `
 
 const LogoContainer = styled.div`
@@ -116,7 +122,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
 
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
-  // const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
+  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
 
   return (
     <HeaderWrapper>

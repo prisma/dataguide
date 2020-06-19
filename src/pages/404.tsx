@@ -3,7 +3,7 @@ import Layout from '../components/layout'
 import styled from 'styled-components'
 
 const NotFoundWrapper = styled.div`
-  font-family: 'Open Sans';
+  font-family: 'Rubik';
   margin-top: 200px;
   padding: 40px;
   display: flex;
@@ -11,6 +11,7 @@ const NotFoundWrapper = styled.div`
   align-items: center;
   h1 {
     font-weight: bold;
+    font-family: 'Rubik';
   }
 `
 

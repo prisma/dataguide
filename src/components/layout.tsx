@@ -1,4 +1,4 @@
-import { RouterProps } from '@reach/router'
+import { RouterProps, useLocation } from '@reach/router'
 import * as React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import withProps from 'styled-components-ts'
@@ -12,14 +12,24 @@ import './layout.css'
 import Sidebar from './sidebar'
 
 interface PathProps {
-  isHomePage: boolean
+  isHomePage?: boolean
 }
 
-type LayoutProps = React.ReactNode & RouterProps & PathProps
+// interface ThemeProps {
+//   colorPrimary: string
+// }
 
-const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) => {
+// const theme: ThemeProps = {
+//   colorPrimary: '#663399',
+// }
+
+type LayoutProps = React.ReactNode & RouterProps
+
+const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
+
+  const isHomePage = useLocation().pathname === '/'
 
   const Wrapper = styled.div`
     display: flex;
