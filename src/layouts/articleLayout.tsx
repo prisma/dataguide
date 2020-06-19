@@ -6,10 +6,11 @@ import TopSection from '../components/topSection'
 import SEO from '../components/seo'
 import { graphql } from 'gatsby'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+import Layout from '../components/layout'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps
 
-const ArticleLayout = ({ data }: ArticleLayoutProps) => {
+const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   if (!data) {
     return null
   }
@@ -29,8 +30,7 @@ const ArticleLayout = ({ data }: ArticleLayoutProps) => {
   const isHomePage = slug === '/'
 
   return (
-    <>
-    {/* <Layout isHomePage={isHomePage} {...props}> */}
+    <Layout isHomePage={isHomePage} {...props}>
       <SEO title={metaTitle || title} description={metaDescription || title} />
       {!isHomePage && (
         <section className="top-section">
@@ -39,8 +39,7 @@ const ArticleLayout = ({ data }: ArticleLayoutProps) => {
       )}
       <MDXRenderer>{body}</MDXRenderer>
       {/* <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} /> */}
-    {/* </Layout> */}
-    </>
+    </Layout>
   )
 }
 

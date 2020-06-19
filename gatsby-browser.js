@@ -12,10 +12,10 @@ exports.onRouteUpdate = ({ location }) => {
   goToNav(location.pathname)
 }
 
-exports.wrapPageElement = ({ element, props }) => {
-  if (element.props.pageResources.page.path !== '/404.html') {
-    return <Layout {...props}>{element}</Layout>
-  } else {
-    return element
-  }
-}
+// exports.wrapPageElement = ({ element, props }) => {
+//   if (element.props.pageResources.page.path !== '/404.html') {
+//     return <Layout {...props}>{element}</Layout>
+//   } else {
+//     return element
+//   }
+// }

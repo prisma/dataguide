@@ -23,13 +23,13 @@ interface PathProps {
 //   colorPrimary: '#663399',
 // }
 
-type LayoutProps = React.ReactNode & RouterProps
+type LayoutProps = React.ReactNode & RouterProps & PathProps
 
-const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
 
-  const isHomePage = useLocation().pathname === '/'
+  // const isHomePage = useLocation().pathname === '/'
 
   const Wrapper = styled.div`
     display: flex;
