@@ -19,6 +19,11 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
       name: 'id',
       value: node.id,
     })
+    createNodeField({
+      node,
+      name: 'modSlug',
+      value: `/${value.replace('/index', '')}`,
+    })
   }
 }
 
@@ -34,6 +39,7 @@ exports.createPages = ({ graphql, actions }) => {
               fields {
                 slug
                 id
+                modSlug
               }
               frontmatter {
                 title
@@ -53,7 +59,7 @@ exports.createPages = ({ graphql, actions }) => {
     `).then(result => {
       result.data.allMdx.edges.forEach(({ node }) => {
         createPage({
-          path: node.fields.slug ? node.fields.slug.replace(/\d+-/g, '') : '/',
+          path: node.fields.modSlug ? node.fields.modSlug.replace(/\d+-/g, '') : '/',
           component: path.resolve(`./src/layouts/articleLayout.tsx`),
           context: {
             id: node.fields.id,

@@ -1000,6 +1000,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.10.2":
+  version "7.10.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.2.tgz#d103f21f2602497d38348a32e008637d506db839"
+  integrity sha512-6sF3uQw2ivImfVIl62RZ7MXhO2tap69WeWK57vAaimT6AZbE4FbqjdEJIN1UqoD6wI6B+1n9UiagafH1sxjOtg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/standalone@^7.9.6":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@babel/standalone/-/standalone-7.9.6.tgz#7a5f82c6fa29959b12f708213be6de8ec0b79338"
@@ -6875,6 +6882,13 @@ gatsby-plugin-google-analytics@^2.2.4:
   dependencies:
     "@babel/runtime" "^7.9.6"
     minimatch "3.0.4"
+
+gatsby-plugin-layout@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-layout/-/gatsby-plugin-layout-1.3.4.tgz#aac99f2d9cbb7a33590afe49158a91bbcd40311d"
+  integrity sha512-OhogE+MV2NqL1LbOjfVx6hj7IG39140pXTpALsOO2o4PyE0YACQiXqzj3EdcqnGc7uz7E6HNDftibQ0I7Agnrg==
+  dependencies:
+    "@babel/runtime" "^7.10.2"
 
 gatsby-plugin-manifest@^2.0.24:
   version "2.4.2"
@@ -13180,6 +13194,11 @@ react-fast-compare@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.0.2.tgz#8b0bfa93a049ec1eef9d54ab5e5c6036c317144d"
   integrity sha512-1fBw8Efm6fb1blbRorZcO3OqzWgxYWxXzlaNeqEVXcrDdyFzeqygrPVU6qrPuqnqYMpUJVkQBdDgDJQTmCXp+Q==
+
+react-ga@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-3.0.0.tgz#4d665389cf0c489c36c5fdf97722a7e53efdfc5b"
+  integrity sha512-IKqqCtSMe0IfSRNvbHAiwXwIXbuza4VvHvB/2N3hEiMFGSjv8fNI6obPH6bkDdIjDpwzbUqKs8895OxBckWJ2g==
 
 react-helmet@^6.0.0:
   version "6.0.0"

@@ -16,8 +16,8 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   }
   const {
     mdx: {
-      fields: { slug },
-      frontmatter: { title, metaTitle, metaDescription },
+      fields: { slug, modSlug },
+      frontmatter: { title, metaTitle, metaDescription, toc },
       body,
       parent,
       tableOfContents,
@@ -34,7 +34,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
       <SEO title={metaTitle || title} description={metaDescription || title} />
       {!isHomePage && (
         <section className="top-section">
-          <TopSection title={title} slug={slug} toc={tableOfContents} />
+          <TopSection title={title} slug={modSlug} toc={toc || toc == null ? tableOfContents : []} />
         </section>
       )}
       <MDXRenderer>{body}</MDXRenderer>
@@ -55,6 +55,7 @@ export const query = graphql`
     mdx(fields: { id: { eq: $id } }) {
       fields {
         slug
+        modSlug
       }
       body
       parent {
@@ -67,6 +68,7 @@ export const query = graphql`
         title
         metaTitle
         metaDescription
+        toc
       }
     }
   }

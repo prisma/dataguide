@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600|Montserrat:400,700|Rubik:400,500|Roboto+Mono:400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Montserrat:400,700|Rubik:400,500|Roboto+Mono:400,500,700&display=swap');
 
 html {
   font-family: 'Open Sans', sans-serif;
@@ -10,7 +10,9 @@ html {
 
 body {
   /* Generic */
+  --main-theme-color: #667EEA;
   --main-font-color: #1a202c;
+  --secondary-font-color: #2F3747;
   --main-bgd-color: #f7fafc;
   --selection-bgd-color: #0c344b;
   --white-color: #ffffff;
@@ -43,6 +45,8 @@ body {
   --code-deleted-bg-color: #f5e4e7;
   --code-highlight-color: #a0aec0;
   --code-highlight-bg-color: #e2e8f0;
+  --code-result-bg-color: #e7edf3;
+
   /* Buttons */
   --red-color: #ff4f56;
   --green-color: #15bd76;
@@ -83,6 +87,13 @@ h6 {
 
 h2 {
   margin: 0;
+}
+
+section h3 {
+  border-top: 1px solid var(--border-color);
+  padding: 24px 40px 0;
+  margin-left: -40px;
+  margin-right: -40px;
 }
 
 section h2,
@@ -148,6 +159,16 @@ li {
   line-height: 24px;
 }
 
+kbd {
+  background: var(--white-color);
+  box-shadow: 0px 1px 1px rgba(47, 55, 71, 0.6), 0px 1px 4px rgba(47, 55, 71, 0.2);
+  border-bottom: 1px solid rgba(47, 55, 71, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  vertical-align: baseline;
+  font-size: 14px;
+  font-family: 'Roboto Mono';
+}
 table {
   width: 100%;
   word-break: normal;
@@ -155,7 +176,7 @@ table {
   border-radius: 8px;
   border-spacing: 0px;
   margin: 0 0px 20px;
-  white-space: nowrap;
+  white-space: inherit;
 }
 
 table * {
@@ -172,6 +193,11 @@ table th {
 table td {
   padding: 12px;
   border-top: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+table code {
+  white-space: nowrap;
 }
 
 blockquote {
@@ -234,6 +260,9 @@ hr {
   vertical-align: middle;
 }
 
+.o-list li {
+  margin-top: 10px;
+}
 .clearfix {
   clear: both;
 }

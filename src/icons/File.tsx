@@ -1,27 +1,20 @@
 import React from 'react'
 
 export default (props: any) => (
-  <svg
-    width="12"
-    height="15"
-    viewBox="0 0 12 15"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <svg width="22" height="26" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
-      d="M6.625 1.99609H2.25C1.91848 1.99609 1.60054 2.12252 1.36612 2.34757C1.1317 2.57261 1 2.87783 1 3.19609V12.7961C1 13.1144 1.1317 13.4196 1.36612 13.6446C1.60054 13.8697 1.91848 13.9961 2.25 13.9961H9.75C10.0815 13.9961 10.3995 13.8697 10.6339 13.6446C10.8683 13.4196 11 13.1144 11 12.7961V6.19609L6.625 1.99609Z"
-      stroke="#718096"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      d="M12.25 1H3.5C2.83696 1 2.20107 1.25286 1.73223 1.70294C1.26339 2.15303 1 2.76348 1 3.4V22.6C1 23.2365 1.26339 23.847 1.73223 24.2971C2.20107 24.7471 2.83696 25 3.5 25H18.5C19.163 25 19.7989 24.7471 20.2678 24.2971C20.7366 23.847 21 23.2365 21 22.6V9.4L12.25 1Z"
+      stroke="#A0AEC0"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
     <path
-      d="M5 1.99609V7.99609H11"
-      stroke="#718096"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      d="M9 1V13H21"
+      stroke="#A0AEC0"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
   </svg>
 )

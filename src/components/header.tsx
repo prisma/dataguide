@@ -3,9 +3,8 @@ import * as React from 'react'
 import styled, { css } from 'styled-components'
 import styledTS from 'styled-components-ts'
 import HeaderLogo from '../icons/Logo'
-import Github from '../icons/Git'
 import Clear from '../icons/Clear'
-import Search from '../components/search'
+// import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 
@@ -23,6 +22,7 @@ const HeaderWrapper = styled.div`
   padding: 30px 10px 24px;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   .container {
     width: 1110px;
@@ -31,10 +31,6 @@ const HeaderWrapper = styled.div`
   }
 
   @media (min-width: 0px) and (max-width: 1024px) {
-    height: auto;
-    padding: 24px 8px 8px;
-    flex-direction: column;
-    // background: var(--header-bg-color);
     .container {
       width: 100%;
     }
@@ -55,45 +51,11 @@ const LogoContainer = styled.div`
   padding-right: 0.75rem;
 `
 
-const SearchComponent = styled(Search)`
-  position: absolute;
-  top: 12px;
-  left: 12px;
-`
-
-const NavLinks = styled.div`
-  display: flex;
-  justify-content: space-around;
-  flex-grow: 1;
-  a {
-    color: var(--code-linenum-color) !important;
-    font-weight: 600;
-    &:hover,
-    &:active,
-    &:focus {
-      color: var(--white-color) !important;
-    }
-  }
-
-  margin: 0 9rem 0;
-  @media (min-width: 0px) and (max-width: 1024px) {
-    margin: 0 3rem 0;
-  }
-
-  @media (min-width: 0px) and (max-width: 767px) {
-    flex-direction: column;
-    margin: 0;
-    a {
-      margin-bottom: 20px;
-    }
-  }
-`
-
 const DocsMobileButton = styled.div`
-  background: var(--header-btn-color);
+  background: var(--main-theme-color);
   box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
   border-radius: 5px;
-  color: var(--code-linenum-color);
+  color: white;
   display: none;
   padding: 0 14px;
   height: 42px;
@@ -101,6 +63,9 @@ const DocsMobileButton = styled.div`
   font-weight: 600;
   position: relative;
   z-index: 300;
+  svg path{
+    stroke: white;
+  }
   @media (min-width: 0px) and (max-width: 1024px) {
     display: flex;
     align-items: center;
@@ -113,13 +78,14 @@ const MobileOnlyNav = styled.div`
   z-index: 210;
   top: 0px;
   transition: top 0.35s;
-  background: linear-gradient(180deg, rgba(13, 15, 20, 0.18) 0%, rgba(27, 32, 43, 0) 100%),
-    var(--header-gradient-color);
+  background: var(--main-theme-color);
+  box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
+  color: black;
   width: 100%;
   left: 0;
   padding: 0 2rem;
   @media (min-width: 0px) and (max-width: 1024px) {
-    top: 120px;
+    top: 65px;
     display: block;
   }
   @media (min-width: 0px) and (max-width: 767px) {
@@ -128,7 +94,6 @@ const MobileOnlyNav = styled.div`
 `
 
 const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
-  // margin-top: 27px;
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -145,62 +110,13 @@ const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
     `};
 `
 
-const MenuMobileBtn = styled.a`
-  display: none;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  color: var(--white-color) !important;
-  text-transform: uppercase;
-  @media (min-width: 0px) and (max-width: 767px) {
-    display: block;
-  }
-`
-
-const NonMobileMenu = styled.div`
-  display: flex;
-  width: 100%;
-  @media (min-width: 0px) and (max-width: 767px) {
-    display: none;
-  }
-`
-
 const Header = ({ headerProps }: HeaderViewProps) => {
   const [showDocsBtn, setShowDocsBtn] = React.useState(true)
   const [showMobileNav, setShowMobileNav] = React.useState(false)
-  const [showMobileMenu, setShowMobileMenu] = React.useState(false)
 
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
-  const toggleMobileMenu = () => setShowMobileMenu(!showMobileMenu)
 
-  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
-
-  // const Menu = (
-  //   <>
-  //     <NavLinks>
-  //       {headerProps.links.map((headerlink: any, index: number) => (
-  //         <Link
-  //           key={index}
-  //           to={headerlink.link}
-  //           style={{
-  //             color: 'white',
-  //             textDecoration: 'none',
-  //           }}
-  //         >
-  //           {headerlink.name}
-  //         </Link>
-  //       ))}
-  //     </NavLinks>
-  //     <Link
-  //       to={'https://github.com/prisma'}
-  //       style={{
-  //         color: 'white',
-  //         textDecoration: 'none',
-  //       }}
-  //     >
-  //       <Github style={{ height: '24px' }} />
-  //     </Link>
-  //   </>
-  // )
+  // const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
 
   return (
     <HeaderWrapper>
@@ -223,7 +139,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
           </div>
         </HeaderNav>
         <SearchContainer>
-          <SearchComponent hitsStatus={changeHitsStatus} />
+          {/* <SearchComponent hitsStatus={changeHitsStatus} /> */}
           {showDocsBtn && (
             <DocsMobileButton onClick={toggleMobileNav}>
               {showMobileNav ? <Clear /> : 'Docs'}

@@ -31,11 +31,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) 
   const Content = withProps<any>(styled.article)`
     max-width: 880px;
     width: 880px;
-    margin: ${p => (p.moveUp ? '-5rem 0 1rem 0' : '0.5rem 0 1rem 0')};
+    margin: ${p => (p.moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
     position: relative;
     z-index: 100;
     @media (min-width: 0px) and (max-width: 1024px) {
-      margin: 0;
       width: 100%;
       max-width: 100%;
     }
@@ -85,7 +84,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) 
           <MaxWidth>{children}</MaxWidth>
         </Content>
       </Wrapper>
-      <Footer footerProps={footer} />
+      <Footer footerProps={footer} isHomePage={isHomePage}/>
     </MDXProvider>
     // </ThemeProvider>
   )

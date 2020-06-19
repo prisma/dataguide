@@ -17,7 +17,25 @@ const gatsbyRemarkPlugins = [
   },
   {
     resolve: `gatsby-remark-images`,
+    options: {
+      disableBgImageOnAlpha: true,
+    },
   },
+  {
+    resolve: require.resolve('./plugins/gatsby-remark-to-absoluteurl'),
+    options: {
+      redirects: config.redirects,
+    },
+  },
+  {
+    resolve: require.resolve('./plugins/gatsby-remark-check-links-numberless'),
+  },
+  // {
+  //   resolve: 'gatsby-remark-copy-linked-files',
+  //   options: {
+  //     destinationDir: 'static',
+  //   },
+  // },
 ]
 
 module.exports = {
@@ -35,13 +53,13 @@ module.exports = {
     docsLocation: config.siteMetadata.docsLocation,
   },
   plugins: [
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: 'UA-74131346-14',
-        anonymize: true,
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-google-analytics`,
+    //   options: {
+    //     trackingId: 'UA-74131346-14',
+    //     anonymize: true,
+    //   },
+    // },
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
@@ -50,33 +68,37 @@ module.exports = {
     'gatsby-plugin-styled-components',
     'gatsby-plugin-smoothscroll',
     'gatsby-plugin-catch-links',
-    // {
-    //   resolve: `gatsby-plugin-algolia`,
-    //   options: require(`./src/utils/algolia`),
-    // },
-    // {
-    //   resolve: `gatsby-plugin-sitemap`,
-    //   options: {
-    //     sitemapSize: 5000,
-    //   },
-    // },
-    // {
-    //   resolve: 'gatsby-plugin-robots-txt',
-    //   options: {
-    //         policy: [{
-    //           userAgent: '*',
-    //           disallow: '/'
-    //     }]
-    //   },
-    // },
+    {
+      resolve: `gatsby-plugin-layout`,
+      options: {
+        component: require.resolve(`./src/layouts/articleLayout.tsx`),
+      },
+    },
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: {
+        sitemapSize: 5000,
+      },
+    },
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        policy: [
+          {
+            userAgent: '*',
+            disallow: '/',
+          },
+        ],
+      },
+    },
     // 'gatsby-plugin-offline', // it causes infinite loop issue with workbox
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
-        decks: [],
-        defaultLayouts: {
-          default: require.resolve('./src/layouts/articleLayout.tsx'),
-        },
+        // decks: [],
+        // defaultLayouts: {
+        //   default: require.resolve('./src/layouts/articleLayout.tsx'),
+        // },
         extensions: ['.mdx', '.md'],
         gatsbyRemarkPlugins,
       },

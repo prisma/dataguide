@@ -5,15 +5,16 @@ import styledTS from 'styled-components-ts'
 import { StickyContainer, Sticky } from 'react-sticky'
 import { useAllArticlesQuery } from '../../hooks/useAllArticlesQuery'
 import { AllArticles } from '../../interfaces/AllArticles.interface'
-
+import config from '../../../config'
 const SidebarContainer = styled.aside`
-  width: 215px;
-  margin: 0px 30px 0 -16px;
+width: 231px;
+margin: 0px 16px 0 -16px;
 `
 
 const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
   margin: 0;
   overflow: auto;
+  height: 100vh;
   ${({ isSticky }: any) =>
     isSticky &&
     css`
@@ -31,7 +32,7 @@ const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
       margin-right: 50px;
 
       &:last-of-type {
-        border-left: 1px solid var(--code-inner-color);
+        border-left: 1px solid white;
         padding-left: 40px;
       }
     }
@@ -54,14 +55,15 @@ const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
 
 const List = styled.ul`
   list-style: none;
-  padding: 0 0 0 20px;
-  margin: 4rem 0 0;
+  padding: 0 7px 0 15px;
+  margin: 0;
 `
 
-const getNonGuides = (allEdges: any) =>
-  allEdges.filter((edge: any) => !edge.node.fields.slug.includes(`04-guides`))
-const getGuides = (allEdges: any) =>
-  allEdges.filter((edge: any) => edge.node.fields.slug.includes(`04-guides`))
+const paneRegex = new RegExp('\\b(' + config.sidebar.tablet_menu_split.join('|') + ')\\b', 'ig')
+const getLeftPane = (allEdges: any) =>
+  allEdges.filter((edge: any) => !edge.node.fields.slug.match(paneRegex))
+const getRightPane = (allEdges: any) =>
+  allEdges.filter((edge: any) => edge.node.fields.slug.match(paneRegex))
 
 const SidebarLayout = ({ isMobile }: any) => {
   const { allMdx }: AllArticles = useAllArticlesQuery()
@@ -70,7 +72,7 @@ const SidebarLayout = ({ isMobile }: any) => {
       <SidebarContainer>
         <Sticky topOffset={0}>
           {({ style, isSticky }: any) => (
-            <Sidebar style={style} isSticky={isSticky}>
+            <Sidebar style={style} isSticky={isSticky} id="sidebar-container">
               <List>
                 <Tree edges={allMdx.edges} />
               </List>
@@ -82,11 +84,11 @@ const SidebarLayout = ({ isMobile }: any) => {
   ) : (
     <Sidebar>
       <div className="tablet-only">
-        <List>
-          <Tree edges={getNonGuides(allMdx.edges)} />
+      <List>
+          <Tree edges={getLeftPane(allMdx.edges)} />
         </List>
         <List>
-          <Tree edges={getGuides(allMdx.edges)} />
+          <Tree edges={getRightPane(allMdx.edges)} />
         </List>
       </div>
       <div className="mobile-only">

@@ -4,29 +4,56 @@ require('dotenv').config({
 
 const handleRawBody = node => {
   const { rawBody, ...rest } = node
-  rawBodyWithoutFrontmatter = rawBody
+  const rawBodyWithoutFrontmatter = rawBody
     .split('---')
     .slice(2)
     .join('---')
-  const sections = rawBodyWithoutFrontmatter.split('\n\n')
-  const filteredSections = sections.filter(
-    section =>
-      section !== ' ' &&
-      section !== '' &&
-      !section.includes('##') &&
-      !section.includes('<summary>') &&
-      !section.includes('</details') &&
-      !section.includes('```') &&
-      !section.includes('ButtonLink') &&
-      !section.includes('SwitchTech') &&
-      !section.includes('|')
-  )
-  const records = filteredSections.map(fSection => ({
-    ...rest,
-    content: fSection
-      .replace(/[^a-zA-Z0-9]/g, ' ')
-      .replace(/\s\s+/g, ' ')
-      .trim(),
+  const blocks = rawBodyWithoutFrontmatter
+    .split(/#{3,}/i)
+    .join(' ')
+    .split('##')
+  const headingWithcontent = blocks
+    .filter(block => block !== '\n\n')
+    .map(block => {
+      const parts = block.split('\n\n')
+      return { heading: parts[0].trim(), content: parts.splice(1).join('\n\n') }
+    })
+  let finalSections = []
+  headingWithcontent.map(fSec => {
+    const sections = fSec.content.split('\n\n')
+    const filteredSections = sections.filter(
+      section =>
+        section !== ' ' &&
+        section !== '' &&
+        !section.includes('</details') &&
+        !section.includes('ButtonLink') &&
+        !section.includes('SwitchTech') &&
+        !section.includes('TabbedContent') &&
+        !section.includes('ParallelBlocks') &&
+        !section.includes('CodeWithResult') &&
+        !section.includes('CodeBlock') &&
+        !section.includes('tab>')
+    )
+    filteredSections.map(
+      para => (para !== '\n' || para !== '') && finalSections.push({ para, heading: fSec.heading })
+    )
+  })
+
+  const getTitlePath = fSection => {
+    const tocItem =
+      rest.tableOfContents &&
+      rest.tableOfContents.items &&
+      rest.tableOfContents.items.find(t => t.title === fSection.heading.replace(/`/g, ''))
+    return tocItem ? tocItem.url : ''
+  }
+
+  const records = finalSections.map(fSection => ({
+    objectID: rest.objectID,
+    title: rest.title,
+    slug: rest.modSlug,
+    heading: fSection.heading,
+    content: fSection.para.replace(/[\*\/\n/{\}\|\-\`\<\>\[\]]+/g, ' ').trim(),
+    path: `${rest.modSlug.replace(/\d+-/g, '')}${getTitlePath(fSection)}`,
   }))
 
   return records
@@ -43,8 +70,13 @@ const unnestFrontmatter = node => {
 }
 
 const settings = {
-  searchableAttributes: ['content'],
-  attributesToSnippet: ['content:25'],
+  searchableAttributes: ['title', 'heading', 'content'],
+  attributesToHighlight: ['title', 'heading', 'content'],
+  attributesToSnippet: ['title:20', 'heading:20', 'content:25'],
+  hitsPerPage: 20,
+  attributeForDistinct: 'slug',
+  distinct: 2,
+  separatorsToIndex: '!#()[]{}*+-_一,:;<>?@/^|%&~£¥$§€†‡',
 }
 
 const queries = [
@@ -57,10 +89,12 @@ const queries = [
                 rawBody
                 fields {
                   slug
+                  modSlug
                 }
                 frontmatter {
                   title
                 }
+                tableOfContents
               }
             }
           }

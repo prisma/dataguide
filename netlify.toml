@@ -4,3 +4,6 @@ functions = "functions/"
 
 [[plugins]]
 package = "netlify-plugin-gatsby-cache"
+
+[context.production.environment]
+INDEX_ALGOLIA = "true"

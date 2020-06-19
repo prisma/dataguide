@@ -1,68 +1,63 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import Email from '../../icons/Email'
 import ArrowEmail from '../../icons/ArrowEmail'
 import * as valid from './valid'
 import sendToMailchimp from './mailChimp'
 
 const NewsLetterWrapper = styled.div`
-  h4 {
-    margin: 0;
-    line-height: 3rem;
-    font-weight: bold;
-    letter-spacing: 0.1em;
+  h2 {
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  p {
+    margin: 16px 0;
+    color: var(--code-inner-color);
   }
   .email {
-    position: relative;
     margin-top: 24px;
     display: flex;
     align-items: center;
     input {
-      background: var(--white-color);
-      box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
-      border-radius: 5px;
+      background: var(--code-bgd-color);
+      border-radius: 4px;
       width: 100%;
       border: 0;
-      padding: 24px 60px;
-      font-size: 100%;
-      font-family: Open Sans;
+      height: 40px;
+      font-size: 16px;
       font-weight: normal;
+      padding: 0 15px;
+      margin-right: 16px;
+      font-family: Open Sans;
 
       &::placeholder {
-        color: var(--code-highlight-color);
+        color: var(--code-inner-color);
       }
     }
-    .email-icon {
-      position: absolute;
-      left: 24px;
-    }
+
     button {
-      outline: 0;
-      position: absolute;
-      right: 24px;
       border: 0;
-      background: transparent;
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      circle {
-        transition: 0.2s fill ease;
-        fill: var(--code-added-color);
-      }
-      path {
-        transition: 0.2s stroke ease;
-        stroke: var(--white-color);
+      height: 40px;
+      color: #ffffff;
+      font-family: Rubik;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      svg {
+        margin-left: 10px;
       }
       &[disabled] {
         cursor: default;
-
-        circle {
-          fill: var(--border-color);
-        }
-        path {
-          stroke: var(--code-inner-color);
-        }
+        opacity: 0.6;
       }
+
+      background: #5a67d8;
+      border-radius: 4px;
     }
   }
 `
@@ -97,11 +92,10 @@ const Newsletter = ({ newsletter }: any) => {
 
   return (
     <NewsLetterWrapper>
-      <h4>NEWSLETTER</h4>
+      <h2>Get notified of new articles</h2>
       <p>{newsletter.text}</p>
 
       <form className="email" onSubmit={submitEmail}>
-        <Email className="email-icon" />
         <input
           type="text"
           placeholder={submitted ? 'Thank you!' : 'your@email.com'}
@@ -110,7 +104,7 @@ const Newsletter = ({ newsletter }: any) => {
           disabled={submitted}
         />
         <button disabled={submitted || !validEmail} type="submit">
-          <ArrowEmail />
+          Subscribe <ArrowEmail />
         </button>
       </form>
     </NewsLetterWrapper>
