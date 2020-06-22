@@ -1,0 +1,259 @@
+---
+title: 'What are databases?'
+metaTitle: 'What are databases?'
+metaDescription: 'The Prisma Framework provides abstractions for working with many different types of databases. In this article, we explain some of the fundamentals of databases to give readers better insight into _what_ Prisma abstracts and how to think of the database layer generally.'
+metaImage: /content/intro/what-are-databases/header.png
+---
+
+## Introduction
+
+Databases are essential components for many modern applications and tools. As a user, you might interact with dozens or hundreds of databases each day as you visit websites, use applications on your phone, or purchase items at the grocery store. As a developer, databases are the core component used to persist data beyond the lifetime of your application. But what exactly are databases and why are they so common?
+
+In this article, we'll go over:
+
+* what databases are
+* how they are used by people and applications to keep track of various kinds of data
+* what features databases offer
+* what types of guarantees they make
+* how they compare to other methods of data storage
+
+Finally, we'll discuss how applications rely on databases for storing and retrieving data to enable complex functionality.
+
+## What are databases?
+
+_Databases_ are logical structures used to organize and store data for future processing, retrieval, or evaluation. In the context of computers, these structures are nearly always managed by an application called a _database management system_ or _DBMS_. The DBMS manages dedicated files on the computer's disk and presents a logical interface for users and applications.
+
+Database management systems are typically designed to organize data according to a specific pattern. These patterns, called [_database types_ or database models](/intro/comparing-database-types), are the logical and structural foundations that determine how individual pieces of data are stored and managed. There are many different database types, each with their own advantages and limitations. The [_relational model_](/intro/comparing-database-types#relational-databases-working-with-tables-as-a-standard-solution-to-organize-well-structured-data), which organizes data into cross-referenced tables, rows, and columns, is often considered to be the default paradigm.
+
+DBMSs can make databases they govern accessible via a variety of means including command line clients, APIs, programming libraries, and administrative interfaces. Through these channels, data can be ingested into the system, organized as required, and returned as requested.
+
+## Data persistence vs ephemeral storage
+
+Databases store data either on disk or in-memory.
+
+On disk storage is generally said to be _persistent_, meaning that the data is reliably saved for later, even if the database application or the computer itself restarts.
+
+In contrast, in-memory storage is said to be _ephemeral_ or _volatile_. Ephemeral storage does not survive application or system shutdown. The advantage of in-memory databases is that they are typically very fast.
+
+In practice, many environments will use a mixture of both of these types of systems to gain the advantages of each type. For systems that accept new writes to the ephemeral layer, this can be accomplished by periodically saving ephemeral data to disk. Other systems use read-only in-memory copies of persistent data to speed up read access. These systems can reload the data from the backing storage at any time to refresh their data.
+
+| Backing storage type | Data survive restarts? | Advantages        | Examples  |
+| -------------------- | ---------------------- | ----------------- | --------- |
+| On disk              | Yes                    | Data longevity    | MySQL     |
+| In-memory            | No                     | Operational speed | memcached |
+
+## Interacting with databases to manage your data
+
+While the database system takes care of how to store the data on disk or in-memory, it also provides an interface for users or applications. The interfaces for the database must be able to represent the operations that external parties can perform and must be able to represent all of the data types that the system supports.
+
+According to [Wikipedia](https://en.wikipedia.org/wiki/Database#Major_database_usage_requirements), databases typically allow the following four types of interactions:
+
+- [**Data definition**](#data-definitions-control-the-shape-and-structure-of-data-within-the-system): Create, modify, and remove definitions of the data's structure. These operations change the properties that affect how the database will accept and store data. This is more important in some types of databases than others.
+- [**Update**](#data-updates-to-ingest-modify-and-remove-data-from-the-system): Insert, modify, and delete data within the database. These operations change the actual data that is being managed.
+- [**Retrieval**](#retrieving-data-to-extract-information-or-answer-specific-questions): Provide access to the stored data. Data can be retrieved as-is or can often be filtered or transformed to massage it into a more useful format. Many database systems understand rich querying languages to achieve this.
+- [**Administration**](#administering-the-database-system-to-keep-everything-running-smoothly): Other tasks like user management, security, performance monitoring, etc. that are necessary but not directly related to the data itself.
+
+Let's go over these in a bit more detail below.
+
+### Data definitions control the shape and structure of data within the system
+
+Creating and controlling the structure that your data will take within the database is an important part of database management. This can help you control the shape, or structure, of your data before you ingest it into the system. It also allows you to set up constraints to make sure your data adheres to certain parameters.
+
+In databases that operate on highly regular data, like relational databases, these definitions are often known as the database's _schema_. A database schema is a strict outline of how data must be formatted to be accepted by a particular database. This covers the specific fields that must be present in individual records as well as requirements for values such as data type, field length, minimum or maximum values, etc. A database schema is one of the most important tools a database owner has to influence and control the data that will be stored in the system.
+
+Database management systems that value flexibility over regularity are often referred to as _schema-less databases_. While this seems to imply that the data stored within these databases has no structure, this is usually not the case. Instead, the database's structure is determined by the data itself and the application's knowledge of and relation to the data. The database usually still adheres to a structure, but the database management system is less involved in enforcing constraints. This is a design choice that has benefits and disadvantages depending on the situation.
+
+### Data updates to ingest, modify, and remove data from the system
+
+Data updates include any operation that:
+
+- Enters new data into the system
+- Modifies existing entries
+- Deletes entries from the database
+
+These capabilities are essential for any database, and in many cases, constitute the majority of actions that the database system processes. These types of activities — operations that cause changes to the data in the system — are collectively known as _write_ operations.
+
+Write actions are important for any data source that will change over time. Even removing data, a destructive action, is considered a write operation since it modifies the data within the system.
+
+Since write operations can change data, these actions are potentially dangerous. Most database administrators configure their systems to restrict write operations to certain application processes to minimize the chance of accidental or malicious data mangling. For example, data analytics, which use existing data to answer questions about a website's performance or visitors' behavior, require only read permission. On the other hand, the part of the application that records a user's orders needs to be able to write new data to the database.
+
+### Retrieving data to extract information or answer specific questions
+
+Storing data is not very useful unless you have a way of retrieving it when you need it. Since returning data does not affect any of the information currently stored in the database, these actions are called _read_ operations. Read operations are the primary way of gathering data already stored within a database.
+
+Database management systems almost always have a straightforward way of accessing data by a unique identifier, often called a _primary key_. This allows access to any one entry by providing the key.
+
+Many systems also have sophisticated methods of querying the database to return data sets that match specific criteria or return partial information about entries. This type of querying flexibility helps the database management system operate as a data processor in addition to its basic data storage capabilities. By developing specific queries, users can prompt the database system to return only the information they require. This feature is often used in conjunction with write operations to locate and modify a specific record by its properties.
+
+### Administering the database system to keep everything running smoothly
+
+The final category of actions that databases often support is administrative functions. This is a broad, general class of actions that helps support the database environment without directly influencing the data itself. Some items that might fit into this group include:
+
+- Managing users, permissions, authentication, and authorization
+- Setting up and maintaining backups
+- Configuring the backing medium for storage
+- Managing replication and other scaling considerations
+- Providing online and offline recovery options
+
+This set of actions aligns with the basic administrative concerns common to any modern application.
+
+Administrative operations might not be central to core data management functionality, but these capabilities often set similar database management systems apart. Being able to easily back up and restore data, implement user management that hooks into existing systems, or scale your database to meet demand are all essential features for operating in production. Databases that fail to pay attention to these areas often struggle to gain adoption in real world environments.
+
+## What responsibilities do databases have?
+
+Given the above description, how can we generalize the primary responsibilities that databases have? The answer depends a lot on the type of database being used and your applications' requirements. Even so, there are a common set of responsibilities that all databases seek to provide.
+
+### Safeguarding data integrity through faithful recording and reconstituting
+
+Data integrity is a fundamental requirement of a database system, regardless of its purpose or design. Data loaded into the database should be able to be retrieved dependably without unexpected modification, manipulation, or erasure. This requires reliable methods of loading and retrieving data, as well as serializing and deserializing the data as necessary to store it on physical media.
+
+Databases often rely on features to verify data as it is written or retrieved, like [checksumming](https://en.wikipedia.org/wiki/Checksum), or to protect against issues caused by unexpected shutdowns, using techniques like [write-ahead logs](https://en.wikipedia.org/wiki/Write-ahead_logging), for example. Data integrity becomes more challenging the more distributed the data store is, as each part of the system must reflect the current desired state of each data item. This is often achieved with more robust requirements and responses from multiple members whenever data is changed in the system.
+
+### Offering performance that meets the requirements of the deployment environment
+
+Databases must perform adequately to be useful. The performance characteristics you need depend heavily on the particular demands of your applications. Every environment has unique balance of read and write requests and you will have to decide on what acceptable performance means for both of those categories.
+
+Databases are generally better at performing certain types of operations than others. Operational performance characteristics are often a reflection of the type of database used, the data schema or structure, and the operation itself. In some cases, features like _indexing_, which creates an alternative performance-optimized store of commonly accessed data, can provide faster retrieval for these items. Other times, the database may just not be a good fit for the access patterns being requested. This is something to consider when deciding on what type of database you need.
+
+### Setting up processes to allow for safe concurrent access
+
+While this isn't a strict requirement, practically speaking, databases must allow for concurrent access. This means that multiple parties must be able to work with the database at the same time. Records should be readable by any number of users at the same time and writable when not currently locked by another user.
+
+Concurrent access usually means that the database must implement some other fundamental features like user accounts, a permissions system, and authentication and authorization mechanisms. It must also develop strategies for preventing multiple users from attempting to manipulate the same data concurrently. Record locking and transactions are often implemented to address these concerns.
+
+### Retrieving data individually or in aggregate
+
+One of the fundamental responsibilities of a database is the ability to retrieve data upon request. The requests might be for individual pieces of data associated with a single record, or they may involve retrieving the data found in many different records. Both of these cases must be possible in most systems.
+
+In most databases, some level of data processing is provided by the database itself during retrieval. These can include the following types of operations:
+
+- Searching by criteria
+- Filtering and adhering to constraints
+- Extracting specific fields
+- Averaging, sorting, etc.
+
+These options help you articulate the data you'd like and the format that would be most useful.
+
+## Alternatives to databases
+
+Before we move on, we should briefly take a look at what your options are if you don't use a database.
+
+Most methods that store data can be classified as a database of some kind. A few exception include the following.
+
+### Local memory or temporary filesystems
+
+Sometimes applications produce data that is not useful or that is only relevant for the lifetime of the application. In these cases, you may wish to keep that data in memory or offload it to a temporary filesystem since you won't need it once the application exits. For cases where the data is never useful, you may wish to disable output entirely or log it to `/dev/null`.
+
+### Serializing application data directly to the local filesystem
+
+Another instance where a database might not be required is where a small amount of data can be serialized and deserialized directly instead. This is only practical for small amounts of data with a predictable usage pattern that does not involve much, if any, concurrency. This does not scale well but can be useful for certain cases, like outputting local log information.
+
+### Storing file-like objects directly to disk or object-storage
+
+Sometimes, data from applications can be written directly to disk or an alternative store instead of storing into a database. For instance, if the data is already organized into a file-oriented format, like an image or audio file, and doesn't require additional metadata, it might be easiest to store it directly to disk or to a dedicated object store.
+
+## What are databases used for?
+
+Almost all applications and websites that are not entirely static rely on a database somewhere in their environment. The primary purpose of the database often dictates the type of database used, the data stored, and the access patterns employed. Often multiple database systems are deployed to handle different types of data with different requirements. Some databases are flexible enough to fulfill multiple roles depending on the nature of different data sets.
+
+Let's take a look at an example to discuss the touchpoints a typical web application may have with databases. We'll pretend that the application contains a basic storefront and sells items it tracks in an inventory.
+
+### Storing and processing site data
+
+One of the primary uses for databases is storing and processing data related to the site. These items affect how information on the site is organized and, for many cases, constitute most of the "content" of the site.
+
+In the example application mentioned above, the database would populate most of the content for the site including product information, inventory details, and user profile information. This means that the database or some intermediary cache would be consulted each time a product list, a product detail page, or a user profile needs to be displayed.
+
+A database would also be involved when displaying current and past orders, calculating shipping cost, and applying discounts by checking discount codes or calculating frequent customer rewards. Our example site would use the database system to correctly build orders by combining product information, inventory, and user information. The composite information that is recorded in an order would be stored in a database again to track order processing, allow returns, cancel or modify orders, or enable better customer support.
+
+### Analyzing information to help make better decisions
+
+The actions in the last category were related to the basic functionality of the website. While these are very important for handling the data requirements of the application layer, they don't represent the entire picture.
+
+Once your web application begins registering users and processing orders, you probably want to be able to answer detailed questions about how different products are selling, who your most profitable users are, and what factors influence your sales. These are analytical questions that can be run at any time to gather up-to-date intelligence about your organization's trends and performance.
+
+These types of operations often called _business intelligence_ or _analytics_. Together, they help organizations understand what happened in the past and to make informed changes. Database systems store most of the data used during these processes and must provide the appropriate tooling or querying capabilities to answer questions about it.
+
+In our example application, the databases could be queried to answer questions about product trends, user registration numbers, which states we ship to the most, or who our most loyal users are. These relatively basic queries can be used to compose more complex questions to better understand and control factors that influence product performance.
+
+### Managing software configuration
+
+Some types of databases are used as repositories for configuration values for other software on the network. These serve as a central source of truth for configuration values on the network. As new services are started up, they are configured to check the values for specific keys at the configuration database's network address. This enables you to store all of the information needed to bootstrap services in one location.
+
+After bootstrapping, applications can be configured to watch the keys related to their configuration for changes. If a change is detected, the application can reconfigure itself to use the new configuration. This process is sometimes orchestrated by a management process that rolls out the new values over time by spinning old services down as the new services come up, changing over the active configuration over time to maintain availability.
+
+Our application could use this type of database to store persistent configuration data for our entire application environment. Our application servers, web servers, load balancers, messaging queues, and more could be configured to reference a configuration database to get their production settings. The application's developers could then modify the behavior of the environment by tweaking configuration values in a central location.
+
+### Collecting logs, events, and other output
+
+Running applications that are actively serving requests can generate a lot of output. This includes log files, events, and other output. These can be written to disk or some other unmanaged location, but this limits their usefulness. Collecting this type of data in a database makes it easier to work with, spot patterns, and analyze events when something unexpected happens or when you need to find out more about historical performance.
+
+Our example application might collect logs from each of our systems in one database for easier analysis. This can help us find correlations between events if we're try to analyze the source of problems or understand the health of our environment as a whole.
+
+Separately, we might collect metrics produced by our infrastructure and code in a _time series database_, a database specifically designed to track values over time. This database could be used to power real time monitoring and visualization tools to provide the application's development and operations teams with information about performance, error rates, etc.
+
+## How do different roles work with databases?
+
+Databases are fundamental to the work of many different roles within organizations. In smaller teams, one or a few individuals may be responsible for carrying out the duties of various roles. In larger companies, these responsibilities are often segmented into discrete roles performed by dedicated individuals or teams.
+
+### Data architects
+
+Data architects are responsible for the overall macro structure of the database systems, the interfaces they expose to applications and development teams, and the underlying technologies and infrastructure required to meet the organization's data needs.
+
+People in this role generally decide on appropriate database model and implementation that will be used for different applications. They are responsible for implementing database decisions by investigating options, deciding on technology, integrating it with existing systems, and developing a comprehensive data strategy for the organization. They deal with the data systems holistically and have a hand in deciding on and implementing data models for various projects.
+
+### DBAs (database administrators)
+
+Database administrators, or DBAs, are individuals who are responsible for keeping data systems running smoothly. They are responsible for planning new data systems, installing and configuring software, setting up database systems for other parties, and managing performance. They are also often responsible for securing the database, monitoring it for problems, and making adjustments to the system to optimize for usage patterns.
+
+Database administrators are experts on both individual database systems as well as how to integrate them well with the underlying operating system and hardware to maximize performance. They work extensively with teams that use the databases to help manage capacity and performance and to help teams troubleshoot issues with the database system.
+
+### Application developers
+
+Application developers interact with databases in many different ways. They develop many of the applications that interact with the database. This is very important because these are almost always the only applications that control how individual users or customers interact with the data managed by the database system. Performance, correctness, and reliability are incredibly important to application developers.
+
+Developers manage the data structures associated with their applications to persist their data to disk. They must create or use mechanisms that can map their programming data to the database system so that the components can work together in harmony. As applications change, they must keep the data and data structures within the database system in sync. We'll talk more about [how developers work with databases](#how-do-i-work-with-databases-as-a-developer) later in the article.
+
+### SREs (site reliability engineers) and operations professionals
+
+SREs (site reliability engineers) and operations professionals interact with database systems from an infrastructure and application configuration perspective. They may be responsible for provisioning additional capacity, standing up database systems, ensuring database configuration matches organizational guidelines, monitoring uptime, and managing back ups.
+
+In many ways, these individuals have overlapping responsibilities with DBAs, but are not focused solely on databases. Operations staff ensure that the systems that applications that the rest of the organization rely on, including database systems, are functioning reliably and have minimal downtime.
+
+### Business intelligence and data analysts
+
+Business intelligence departments and data analysts are primarily interested in the data that is already collected and available within the database system. They work to develop insights based on trends and patterns within the data so that they can predict future performance, advise the organization on potential changes, and answer questions about the data for other departments like marketing and sales.
+
+Data analysts can generally work exclusively with read-only access to data systems. The queries they run often have dramatically different performance characteristics than those used by the primary applications. Because of this, they often work with database replicas, or copies, so that they can perform long-running and performance intensive aggregate queries that might otherwise impact the resource usage of the primary database system.
+
+## How do I work with databases as a developer?
+
+So how do you actually go about working with databases as an application developer? On a basic level, if your application has to manage and persist state, working with a database will be an important part of your code.
+
+### Translating data between your application and the database
+
+You will need to create or use an existing interface for communicating with the database. You can connect directly to the database using regular networking functions, leverage simple libraries, or higher-level programming libraries (e.g. query builders or ORMs).
+
+_ORMs_, or object-relational mappers, are mapping layers that translate the tables found in relational database to the classes used within object-oriented program languages and vice versa. While this translation is often useful, it is never perfect. _Object-relational impedance mismatch_ is a term used to describe the friction caused by the difference in how relational databases and object-oriented programs structure data.
+
+Although relational databases and object-oriented programming describe two specific design choices, the problem of translating between the application and database layer is a generalized one that exists regardless of database type or programming paradigm. **Database abstraction layer** is a more general term for software with the responsibility of translating between these two contexts.
+
+### Keeping structural changes in sync with the database
+
+One important fact you'll discover as you develop your applications is that since the database exists outside of your codebase, it needs special attention to cope with changes to your data structure. This issue is more prevalent in some database designs than others.
+
+The most common approach to synchronizing your application's data structures with your database is a process called _database migration_ or _schema migration_ (both known colloquially simply as migration). Migration involves updating your database's structure to reflect changes as your application's data model evolves. These usually take the form of a series of files, one for each evolution, that contain the statements needed to transform the database into the new format.
+
+### Protecting access to your data and sanitizing input
+
+One important responsibility when working with databases as a developer is ensuring that your applications don't allow unauthorized access to data. Data security is a broad, multi-layered problem with many stakeholders. Ultimately, some of the security considerations will be your duty to look after.
+
+Your application will require privileged access to your database to perform routine tasks. For safety, the database's authorization framework can help restrict the type of operations your application can perform. However, you need to ensure that your application restricts those operations appropriately. For example, if your application manages user profile data, you have to prevent a user from manipulating that access to view or edit other users' information.
+
+One specific challenge is sanitizing user input. _Sanitizing input_ means taking special precautions when operating on any data provided by a user. There is a long history of malicious actors using normal user input mechanisms to trick applications into revealing sensitive data. Crafting your applications to protect against these scenarios is an important skill.
+
+## Conclusion
+
+Databases are an indispensable component in modern application development. Storing and controlling the stateful information related to your application and its environment is an important responsibility that requires reliability, performance, and flexibility.
+
+Fortunately, there are many different database options designed to fulfil the requirements of different types of applications. In [our next article](/intro/comparing-database-types), we'll take an in-depth look at the different types of databases available and how they can be used to match different types of application requirements.

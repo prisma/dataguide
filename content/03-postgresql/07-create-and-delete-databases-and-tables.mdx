@@ -1,0 +1,487 @@
+---
+title: 'How to Create and Delete Databases and Tables in PostgreSQL'
+metaTitle: 'How to Create and Delete Databases and Tables in PostgreSQL'
+metaDescription: "Databases and tables are foundational elements within the PostgreSQL relational database management system.  In this guide, we'll learn how to create and delete these structures using SQL and command line utilities."
+---
+
+## Introduction
+
+PostgreSQL and other relational database management systems use *databases* and *tables* to structure and organize their data.  We can review the definition of those two terms quickly:
+
+* **[databases](https://www.postgresql.org/docs/current/manage-ag-overview.html):** separate different sets of structures and data from one another
+* **[tables](https://www.postgresql.org/docs/current/ddl-basics.html):** define the data structure and store the actual data values within databases
+
+In PostgreSQL, there is also an intermediary object between databases and tables called *schema*:
+
+* **[schema](https://www.postgresql.org/docs/current/ddl-schemas.html):** a namespace within a database that contains tables, [indexes](https://www.postgresql.org/docs/current/indexes-intro.html), [views](https://www.postgresql.org/docs/current/tutorial-views.html), and other items.
+
+![Relationship between Postgres databases, schemas, and tables](/content/postgresql/creating-and-deleting-databases-and-tables/object-hierarchy.png)
+
+[comment]: # ( ``` )
+[comment]: # ( @startuml )
+[comment]: # ( database "Database" { )
+[comment]: # (   node "Schema" { )
+[comment]: # ( 	node "Table" { )
+
+[comment]: # (     } )
+[comment]: # (   } )
+[comment]: # ( } )
+[comment]: # ( @enduml )
+[comment]: # ( ``` )
+
+This guide won't deal directly with Postgres' concept of a schema, but it's good to know it's there.
+
+Instead, we'll be focusing on how to create and destroy databases and tables.  The examples will primarily use SQL, but [towards the end](#using-administrative-command-line-tools-to-create-and-delete-databases), we'll show you how to do a few of these tasks using the command line.  These alternatives use tools included in the standard PostgreSQL installation that are available if you have administrative access to the Postgres host.
+
+Some of the statements covered in this guide, particularly the `CREATE TABLE` statement, have many additional options that were outside of the scope of this article.  If you'd like additional information, find out more by checking out the [official Postgres documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
+
+## Prerequisites
+
+To follow along with this guide, you will need to log in to a Postgres instance with a user with administrative privileges using the [`psql` command line client](https://www.postgresql.org/docs/current/app-psql.html).  Your Postgres instance can be [installed locally, remotely, or provisioned by a provider](/postgresql/ways-to-host-postgresql).
+
+Specifically, your Postgres user will need the `CREATE DB` privilege or be a `Superuser`, which you can check with the `\du` meta-command in `psql`:
+
+```
+\du
+```
+```
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+```
+
+The `postgres` superuser, which is created automatically upon installation, has the required privileges, but you can use any user with the `Create DB` privilege.
+
+## Create a new database
+
+Once you are connected to your Postgres instance using `psql` or any other SQL client, you can create a database using SQL.
+
+The basic syntax for creating a database is:
+
+```sql
+CREATE DATABASE db_name;
+```
+
+This will create a database called `db_name` on the current server with the current user set as the new database's owner using the [default database settings](https://www.postgresql.org/docs/current/manage-ag-templatedbs.html).  You can view the properties of the default `template1` template using the following `psql` meta-command:
+
+```sql
+\l template1
+```
+```sql
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+-----------+----------+----------+-------------+-------------+-----------------------
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+(1 row)
+```
+
+You can add additional parameters to alter the way your database is created.  These are some common options:
+
+* **ENCODING:** sets the character encoding for the database.
+* **LC_COLLATE:** sets the *collation*, or sort, order for the database. This is a localization option that determines how items are organized when they are ordered.
+* **LC_CTYPE:** sets the character classification for the new database.  This is a localization option that affects what characters are considered uppercase, lowercase, and digits.
+
+These can help ensure that the database can store data in the formats you plan to support and with your project's localization preferences.
+
+For example, to ensure that your database is created with Unicode support and to override the server's own locale to use American English localization (these all happen to match the values in the `template1` shown above, so no change will actually occur), you could type:
+
+```sql
+CREATE DATABASE db_name
+  ENCODING 'UTF8'
+  LC_COLLATE 'en_US.UTF-8'
+  LC_CTYPE 'en_US.UTF-8';
+```
+
+To follow along with the examples in this guide, create a database called `school` using your instance's default locale settings and the UTF8 character encoding:
+
+```sql
+CREATE DATABASE school ENCODING 'UTF8';
+```
+
+This will create your new database using the specifications you provided.
+
+## List existing databases
+
+To determine what databases are currently available on your server or cluster, you can use the following SQL statement:
+
+```sql
+SELECT datname FROM pg_database;
+```
+
+This will list each of the databases currently defined within the environment:
+
+```
+  datname
+-----------
+ _dodb
+ template1
+ template0
+ defaultdb
+ school
+(5 rows)
+```
+
+As mentioned before, if you are connected using the `psql` client, you can also get this information `\l` meta-command:
+
+```sql
+\l
+```
+
+This will show the available database names along with their owners, encoding, locale settings, and privileges:
+
+```
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+-----------+----------+----------+-------------+-------------+-----------------------
+ _dodb     | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ defaultdb | doadmin  | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ school    | doadmin  | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+(5 rows)
+```
+
+The `school` database that we created is displayed among the other databases on the system.  This is a good way to get an overview of the databases within your server or cluster.
+
+## Create tables within databases
+
+After creating one or more databases, you can begin to define tables to store your data.  Tables consist of a name and a defined schema which determines the fields and [data types](/postgresql/introduction-to-data-types) that each record must contain.
+
+You can create tables using the `CREATE TABLE` statement.  A simplified basic syntax for the command looks like the following:
+
+```sql
+CREATE [IF NOT EXISTS] TABLE table_name (
+    column_name TYPE [column_constraint],
+    [table_constraint,]
+);
+```
+
+The components of the above syntax include the following:
+
+* **`CREATE TABLE table_name`**: The basic creation statement that signals that you wish to define a table.  The `table_name` placeholder should be replaced with the name you wish to use for your table.
+* **`IF NOT EXISTS`**: An optional qualifier that tells Postgres to ignore the statement if the database already exists.  Without this option, Postgres throws an error if a table already exists with the same name.
+* **`column_name TYPE`**: Defines a basic column within the table.  The `column_name` placeholder should be replaced with the name you wish to use for your column.  The `TYPE` specifies the [PostgreSQL data type](/postgresql/introduction-to-data-types) for the column.  Data stored within the table must conform to the column structure and column data types to be accepted.
+* **`column_constraint`**: [Column constraints](/postgresql/column-and-table-constraints#column-constraints) are optional restraints to add further restrictions on the data that can be stored in the column.  For example, you can require that entries be not null, unique, or positive integers.
+* **`table_constraints`**: [Table constraints](/postgresql/column-and-table-constraints#table-constraints) are similar to column constraints but involve the interaction of multiple columns.  For instance, you could have a table constraint that checks that a `DATE_OF_BIRTH` is before `DATE_OF_DEATH` in a table.
+
+The above syntax is enough to create basic tables.  As an example, we'll create two tables within our `school` database.  One table will be called `supplies` and the other will be called `teachers`:
+
+![Entity relationship diagrams for supplies and teachers tables](/content/postgresql/creating-and-deleting-databases-and-tables/entity-relationship-diagram.png)
+
+[comment]: # ( ``` )
+[comment]: # ( @startuml )
+[comment]: # ( entity "supplies" as sup { )
+[comment]: # ( * id : int <<not null, unique>> )
+[comment]: # ( -- )
+[comment]: # ( * name : varchar )
+[comment]: # ( * description : varchar )
+[comment]: # ( * manufacturer : varchar )
+[comment]: # ( * color : varchar )
+[comment]: # ( * inventory : int <<greater than 0>> )
+[comment]: # ( } )
+
+[comment]: # ( entity "teachers" as teach { )
+[comment]: # ( * id : int <<not null, unique>> )
+[comment]: # ( -- )
+[comment]: # ( * first_name : varchar )
+[comment]: # ( * last_name : varchar )
+[comment]: # ( * subject : varchar )
+[comment]: # ( * grade_level : int )
+[comment]: # ( } )
+[comment]: # ( @enduml )
+[comment]: # ( ``` )
+
+In the `supplies` table, we want to have the following fields:
+
+* **ID:** A unique ID for each type of school supply.
+* **Name:** The name of a specific school item.
+* **Description:** A short description of the item.
+* **Manufacturer:** The name of the item manufacturer.
+* **Color:** The color of the item.
+* **Inventory:** The number of items we have for a certain type of school supply.  This should never be less than 0.
+
+We can create the `supplies` table with the above qualities using the following SQL.
+
+First, change to the `school` database you created with `psql` by typing:
+
+```sql
+\c school
+```
+
+This will change the database that our future commands will target.  Your prompt should change to reflect the database.
+
+Next, create the `supplies` table with the following statement:
+
+```sql
+CREATE TABLE supplies (
+  id INT PRIMARY KEY,
+  name VARCHAR,
+  description VARCHAR,
+  manufacturer VARCHAR,
+  color VARCHAR,
+  inventory int CHECK (inventory > 0)
+);
+```
+
+This will create the `supplies` table within the `school` database.  The `PRIMARY KEY` column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  Postgres creates indexes for primary key columns to increase querying speed.
+
+Verify that the new table is present by typing:
+
+```sql
+\dt
+```
+```
+          List of relations
+ Schema |   Name   | Type  |  Owner  
+--------+----------+-------+---------
+ public | supplies | table | doadmin
+(1 row)
+```
+
+Verify that the schema reflects the intended design by typing:
+
+```sql
+\d supplies
+```
+```
+                      Table "public.supplies"
+    Column    |       Type        | Collation | Nullable | Default
+--------------+-------------------+-----------+----------+---------
+ id           | integer           |           | not null |
+ name         | character varying |           |          |
+ description  | character varying |           |          |
+ manufacturer | character varying |           |          |
+ color        | character varying |           |          |
+ inventory    | integer           |           |          |
+Indexes:
+    "supplies_pkey" PRIMARY KEY, btree (id)
+Check constraints:
+    "supplies_inventory_check" CHECK (inventory > 0)
+```
+
+We can see each of the columns and data types that we specified.  The column constraint that we defined for the `inventory` column is listed towards the end.
+
+Next, we will create a `teachers` table.  In this table, the following columns should be present:
+
+* **Employee ID**: A unique employee identification number.
+* **First name**: The teacher's first name.
+* **Last name**: The teacher's last name.
+* **Subject**: The subject that the teacher is hired to teach.
+* **Grade level**: The grade level of students that the teach is hired to teach.
+
+Create the `teachers` table with the above schema with the following SQL:
+
+```sql
+CREATE TABLE teachers (
+  id INT PRIMARY KEY,
+  first_name VARCHAR,
+  last_name VARCHAR,
+  subject VARCHAR,
+  grade_level int
+);
+```
+
+Verify that the `teachers` table has been added to the database:
+
+```sql
+\dt
+```
+```
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+---------
+ public | supplies | table | doadmin
+ public | teachers | table | doadmin
+(2 rows)
+```
+
+Check that the schema for the table matches our specifications:
+
+```sql
+\d teachers
+```
+```
+                     Table "public.teachers"
+   Column    |       Type        | Collation | Nullable | Default
+-------------+-------------------+-----------+----------+---------
+ id          | integer           |           | not null |
+ first_name  | character varying |           |          |
+ last_name   | character varying |           |          |
+ subject     | character varying |           |          |
+ grade_level | integer           |           |          |
+Indexes:
+    "teachers_pkey" PRIMARY KEY, btree (id)
+```
+
+The `teachers` table seems to match our definition.
+
+## Drop tables
+
+If you wish to delete a table, you can use the `DROP TABLE` SQL statement.  This will delete the table as well as any data stored within it.
+
+The basic syntax looks like this:
+
+```sql
+DROP TABLE table_name;
+```
+
+This will delete the table if it exists and throw an error if the table name does not exist.
+
+If you wish to delete the table if it exists and do nothing if it does not exist, you can include the `IF EXISTS` qualifier within the statement:
+
+```sql
+DROP TABLE IF EXISTS table_name;
+```
+
+Tables that have dependencies on other tables or objects cannot be deleted by default while those dependencies exist.  To avoid the error, you can optionally include the `CASCADE` parameter, which automatically drops any dependencies along with the table:
+
+```sql
+DROP TABLE table_name CASCADE;
+```
+
+If any tables have a *foreign key* constraint, which references the table that you are deleting, that constraint will automatically be deleted.
+
+Delete the `supplies` table we created earlier by typing:
+
+```sql
+DROP TABLE supplies;
+```
+
+We will keep the `teachers` database to demonstrate that the statement to delete databases also removes all child objects like tables.
+
+## Drop databases
+
+The `DROP DATABASE` statement tells Postgres to delete the specified database.  The basic syntax looks like this:
+
+```sql
+DROP DATABASE database_name;
+```
+
+Replace the `database_name` placeholder with the name of the database you wish to remove.  This will delete the database if it is found.  If the database cannot be found, an error will occur:
+
+```sql
+DROP DATABASE some_database;
+```
+```sql
+ERROR:  database "some_database" does not exist
+```
+
+If you wish to delete the database if it exists and otherwise do nothing, include the optional `IF EXISTS` option:
+
+```sql
+DROP DATABASE IF EXISTS some_database;
+```
+```sql
+NOTICE:  database "some_database" does not exist, skipping
+DROP DATABASE
+```
+
+This will remove the database or do nothing if it cannot be found.
+
+To remove the `school` database that we used in this guide, list the existing databases on your system:
+
+```sql
+\l
+```
+```
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+-----------+----------+----------+-------------+-------------+-----------------------
+ _dodb     | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ defaultdb | doadmin  | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ school    | doadmin  | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+(5 rows)
+```
+
+Open a new connection to one of the databases you do not wish to delete:
+
+```sql
+\c defaultdb
+```
+
+Once the new connection is open, delete the `school` database:
+
+```sql
+DROP DATABASE school;
+```
+
+This will remove the `school` database along with the `teachers` table defined within.
+
+> If you have been following along using SQL, you can end here or skip to [the conclusion](#conclusion).  If you'd like to learn about how to create and delete databases from the command line, continue on to the next section.
+
+## Using administrative command line tools to create and delete databases
+
+If you have shell access to the server or cluster where Postgres is installed, you may have access to some additional command line tools that can help create and delete databases.  The [`createdb`](https://www.postgresql.org/docs/current/app-createdb.html) and [`dropdb`](https://www.postgresql.org/docs/current/app-dropdb.html) commands are bundled with Postgres when it is installed.
+
+### Create a new database from the command line
+
+The basic syntax for the `createdb` command (which should be run by a system user with admin access to Postgres) is:
+
+```bash
+createdb db_name
+```
+
+This will create a database called `db_name` within Postgres using the [default settings](https://www.postgresql.org/docs/current/manage-ag-templatedbs.html).
+
+The command also accepts options to alter its behavior, much like the SQL variant you saw earlier.  You can find out more about these options with `man createdb`.  Some of the most important options are:
+
+* **`--encoding=`** : sets the [character encoding](https://www.postgresql.org/docs/current/multibyte.html#MULTIBYTE-CHARSET-SUPPORTED) for the database.
+* **`--locale=`** : sets the [locale](https://www.postgresql.org/docs/current/locale.html) for the database.
+
+These can help ensure that the database can store data in the formats you plan to support and with your project's localization preferences.
+
+For example, to ensure that your database is created with Unicode support and to override the server's own locale to use American English localization, you could type:
+
+```bash
+createdb --encoding=UTF8 --locale=en_US db_name
+```
+
+Assuming you have the correct permissions, the database will be created according to your specifications.
+
+To follow along with the examples in this guide, you could create a database called `school` using the default locale and the UTF8 character encoding by typing:
+
+```bash
+createdb --encoding=UTF8 school
+```
+
+You could then connect to the database using `psql` to set up your tables as usual.
+
+### Drop databases from the command line
+
+The `dropdb` command mirrors the `DROP DATABASE` SQL statement.  It has the following basic syntax:
+
+```bash
+dropdb database_name
+```
+
+Change the `database_name` placeholder to reference the database you wish to delete.
+
+By default, this command will result in an error if the database specified cannot be found.  To avoid this, you can include the optional `--if-exists` flag:
+
+```bash
+dropdb --if-exists database_name
+```
+
+This will delete the specified database if it exists.  Otherwise, it will do nothing.
+
+To delete the `school` database we created earlier, type:
+
+```bash
+dropdb school
+```
+
+This will remove the database and any child elements, like tables, within.
+
+## Conclusion
+
+This article covered the basics of how to create and delete databases and tables within Postgres.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.  Future guides will cover how to build on this knowledge to implement more complex structures like table relations.
+
+As mentioned earlier, the SQL statements covered in this guide, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change Postgres' behavior.  You can find out more about these by checking out the [official Postgres documentation](https://www.postgresql.org/docs/current/sql-createtable.html).

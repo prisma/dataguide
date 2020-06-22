@@ -1,0 +1,116 @@
+---
+title: 'Why Choose PostgreSQL?'
+metaTitle: 'Why Choose PostgreSQL?'
+metaDescription: 'With so many relational databases to choose from, why is PostgreSQL a good option?  This article will explore why PostgreSQL is one of the most popular RDBMSs among developers.'
+---
+
+## Overview
+
+There are many relational database management systems (RDBMSs) to choose from if the relational model best represents your data.  PostgreSQL is one of the most popular and well-regarded open-source relational databases in the world.
+
+This article will cover some of the primary reasons so many developers choose PostgreSQL for their data management needs.  These range from feature availability and standards compliance to community support and project governance.
+
+## Robust feature set
+
+One of the primary reasons for choosing to use PostgreSQL is its large list of features.  PostgreSQL possesses an incredible number of features related to performance, security, programming extensions, and configuration among others.
+
+Some of the features that PostgreSQL offers include:
+
+* Support for writing database functions using:
+    * [SQL](https://www.postgresql.org/docs/current/plpgsql.html)
+    * [Tcl](https://www.postgresql.org/docs/current/pltcl.html)
+    * [Perl](https://www.postgresql.org/docs/current/plperl.html)
+    * [Python](https://www.postgresql.org/docs/current/plpython.html)
+    * [Java](https://tada.github.io/pljava/)
+    * [Lua](https://github.com/pllua/pllua-ng)
+    * [R](https://github.com/postgres-plr/plr)
+    * [shell](https://github.com/petere/plsh)
+    * [Javascript](https://github.com/plv8/plv8)
+* Support for a huge number of data types including:
+    * common database primitives like numeric, string, boolean, and datetime types: These are found in most databases and have great support in PostgreSQL.
+    * [network addresses](https://www.postgresql.org/docs/current/datatype-net-types.html): PostgreSQL supports various network-related types like [CIDR](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) addresses, addresses with subnet masks, and [MAC addresses](https://en.wikipedia.org/wiki/MAC_address), both for IPv4 and IPv6.
+    * [geometric types](https://www.postgresql.org/docs/current/datatype-geometric.html): A variety of types are available to help you define two dimensional objects.  These include points, lines, and, segments, as well as complete shapes like boxes, polygons, and circles.
+    * [monetary types](https://www.postgresql.org/docs/current/datatype-money.html): PostgreSQL's `money` type stores currency at fixed fractional precision.  The type locale-aware and includes automatic output formatting.
+    * [ranges](https://www.postgresql.org/docs/current/rangetypes.html): Ranges allow you to work natively with ranges of values like, for example, date and time ranges for scheduling.
+    * [JSONB](https://www.postgresql.org/docs/current/datatype-json.html): PostgreSQL's native support for storing and operating on JSON objects can help you work with both relational and non-relational data in the same system.
+    * [hstore](https://www.postgresql.org/docs/current/hstore.html): The `hstore` type allows you to work with key-value pairs natively.
+    * [multidimensional arrays](https://www.postgresql.org/docs/current/arrays.html): Arrays are very useful for storing multi-part values that don't have much meaning outside of their specific context.
+* Ability to define [your own complex types](https://www.postgresql.org/docs/current/sql-createtype.html): Defining your own types helps you align your database more closely with the way your data is represented in your applications.
+* [Full-text search](https://www.postgresql.org/docs/current/textsearch.html): Full-text search gives you powerful techniques for finding and operating on data in semi- and unstructured text.  Search can be fine-tuned to match your expectations for relevancy and matching.
+* Robust [authentication](https://www.postgresql.org/docs/current/auth-methods.html), [access control](https://www.postgresql.org/docs/current/user-manag.html), and [privilege management](https://www.postgresql.org/docs/current/ddl-priv.html) systems suitable for organizations of any size: PostgreSQL has mature user authentication and authorization functionality to define who can use the system and what each user is allowed to see or do.
+* [Foreign data wrappers](https://www.postgresql.org/docs/current/postgres-fdw.html): Foreign data wrappers make it possible to represent and access tables and data in remote servers.
+* [Views](https://www.postgresql.org/docs/current/sql-createview.html) and [materialized views](https://www.postgresql.org/docs/current/rules-materializedviews.html): Support for views and materialized views allow convenient, simplified access to data by abstracting the original table structures for information that is frequently queried for together.
+* [Comments on database objects](https://www.postgresql.org/docs/current/sql-comment.html): The ability to attach comments on tables, databases, columns, and other individual database objects allows you to document decisions or implementation details.
+* [Write-Ahead Logging](https://www.postgresql.org/docs/current/wal-intro.html) to provide [point-in-time recovery](https://www.postgresql.org/docs/current/continuous-archiving.html), [failover](https://www.postgresql.org/docs/current/warm-standby-failover.html), and [streaming replication](https://www.postgresql.org/docs/current/warm-standby.html): These technologies help ensure that your database remains consistent even if the software crashes, and helps you copy data between systems for scaling and backing up data.
+* Support for NoSQL-like behavior such as storing [documents using JSONB](https://www.postgresql.org/docs/current/datatype-json.html) and [key value pairs with hstore](https://www.postgresql.org/docs/current/hstore.html): Being able to use multiple database paradigms within a single system can help minimize your administration overhead and improve compatibility between different representations.
+
+You can find out more about the features that PostgreSQL supports with the following resources:
+
+* [PostgreSQL feature matrix](https://www.postgresql.org/about/featurematrix/)
+* [SQL Feature comparison with other databases](https://www.sql-workbench.eu/dbms_comparison.html)
+* [Wikipedia's database comparison tables](https://en.wikipedia.org/wiki/Comparison_of_relational_database_management_systems)
+
+## Object-oriented database features
+
+One of the most fundamental ways that PostgreSQL is different from most other relational databases comes from its core design.
+
+Most relational databases are best described as [*Relational Database Management Systems* (RDBMSs)](https://en.wikipedia.org/wiki/Relational_database#RDBMS).  RDBMSs are software specifically designed to handle relational databases, where data is stored in table-like structures with predefined columns and data types.  Data can be queried, modified, and retrieved using techniques based on [relational algebra](https://en.wikipedia.org/wiki/Relational_algebra), usually through [structured query language (SQL)](https://en.wikipedia.org/wiki/SQL).
+
+PostgreSQL, on the other hand, is technically an [Object-Relational Database Management System (ORDBMS)](https://en.wikipedia.org/wiki/Object-relational_database).  This means that it has the same relational capabilities as an RDBMS, but additionally has some object-oriented features.
+
+Practically speaking, this means that PostgreSQL allows you to:
+
+* Define your own complex data types
+* Overload functions to work with different argument data types
+* Define inheritance relationships between tables
+
+These features are powerful tools that help you work with your databases and data using some of the same techniques you might be familiar with when programming.  The increased flexibility lets you model different types and relationships within the database system instead of externally within your programs.  This can help maintain consistency and enforce intended behavior closer to the actual data.
+
+For more on what PostgreSQL's object-relational approach provides, check out the following resources:
+
+* [The "O" in ORDBMS: PostgreSQL Inheritance](https://severalnines.com/database-blog/o-ordbms-postgresql-inheritance)
+* [Object Relational Database Management System](https://tapoueh.org/blog/2018/03/object-relational-database-management-system/)
+* [What does PostgreSQL to be ORDBMS mean?](https://stackoverflow.com/questions/45865961/what-does-postgresql-to-be-ordbms-mean)
+* [What is the Difference Between RDBMS and ORDBMS](https://pediaa.com/what-is-the-difference-between-rdbms-and-ordbms/)
+
+## SQL standards conformance
+
+Another area where PostgreSQL stands out over other relational database systems is its adherence to SQL standards.
+
+[SQL standards](https://en.wikipedia.org/wiki/SQL#Interoperability_and_standardization) have been developed by [ANSI](https://en.wikipedia.org/wiki/American_National_Standards_Institute) and [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization) groups for the sake of defining minimum functionality and interoperability requirements for SQL implementations.  While the specifications provided by these bodies are meant to define the features that SQL systems should provide, due to the complexity and long evolution of the language, strict adherence is not always possible.  According to the PostgreSQL documentation, [no database currently satisfies all of the requirements outlined by the specification](https://www.postgresql.org/docs/current/features.html).
+
+Given that caveat, PostgreSQL satisfies more of the SQL specifications than other options.  By their own count, they conform to at least 160 out of the 179 core requirements laid out by [SQL:2016](https://en.wikipedia.org/wiki/SQL:2016).
+
+You can find out more about PostgreSQL's SQL conformance with these resources:
+
+* [Comparison of SQL compliance between implementations](https://en.wikipedia.org/wiki/SQL_compliance)
+* [PostgreSQL supported features](https://www.postgresql.org/docs/current/features-sql-standard.html)
+* [Features not yet supported by PostgreSQL](https://www.postgresql.org/docs/current/unsupported-features-sql-standard.html)
+
+## ACID compliance
+
+[ACID](https://en.wikipedia.org/wiki/ACID) is an initialism in computer science that stands for atomicity, consistency, isolation, and durability.  They represent the key guarantees that database transactions must support to avoid validity errors and maintain data integrity.
+
+ACID compliance is a primary concern for relational databases as it represents the typical expectations for storing and modifying highly structured data.  Non-relational databases often attempt to conform to their own standards, often represented by the competing [BASE](https://en.wikipedia.org/wiki/Eventual_consistency) initialism which stands for basically available, soft state, and eventual consistency.
+
+While nearly all relational databases aspire to provide ACID compliance, PostgreSQL has boasted [ACID-compliance in its engine since 2001](https://www.postgresql.org/about/).  Since PostgreSQL relies a single database engine, this means that all transactions are fully ACID compliant by default.  These guarantees are made without database locks using [multiversion concurrency control (MVCC)](https://en.wikipedia.org/wiki/Multiversion_concurrency_control).  As a comparison, MySQL only supports full ACID compliance when using their InnoDB or NDB database engines, which can lead to unexpected corruption if other engines are used.
+
+To further information about ACID and PostgreSQL's conformance, check out these resources:
+
+* [How Postgres Makes Transactions Atomic](https://brandur.org/postgres-atomicity)
+* [PostgreSQL Concurrency: Isolation and Locking](https://tapoueh.org/blog/2018/07/postgresql-concurrency-isolation-and-locking/)
+* [A Primer on ACID Transactions: The Basics Every Cloud App Developer Must Know](https://blog.yugabyte.com/a-primer-on-acid-transactions/)
+
+## Open-source development and community
+
+PostgreSQL is an open-source project managed by [The PostgreSQL Global Development Group](https://www.postgresql.org/community/contributors/).  It is licensed using [The PostgreSQL License](https://www.postgresql.org/about/licence/), a license [recognized by the Open Source Initiative](https://opensource.org/licenses/postgresql).
+
+While there are many other open-source relational databases, PostgreSQL is developed and managed without a corporate owner or a commercial counterpart.  This helps the contributors chart its own path and work on features that the community cares about the most.  Professional services for PostgreSQL are [provided by companies](https://www.postgresql.org/support/professional_support/) that often contribute to the project but do not control the development process.
+
+This focus on community-driven development has resulted in great participation from PostgreSQL's users.  A large number of [high quality extensions and applications](https://www.postgresql.org/download/product-categories/) are available to enhance the functionality of the core PostgreSQL software.  Community developed software can help you administer your PostgreSQL servers, compile business intelligence reports, manage new types of data, and work with PostgreSQL from various programming languages and platforms.
+
+## Conclusion
+
+PostgreSQL has gained a great reputation as a powerful, feature-rich choice for relational data.  Valuing stability, functionality, and standards conformance, PostgreSQL checks all of the right boxes for many projects.  Similarly, if you require flexibility in how you can represent data and want to be able to use a variety of tools and languages, PostgreSQL is also a good choice.
+
+PostgreSQL is notable for offering excellent implementation of core relational features while not limiting itself to the boundaries of traditional RDBMSs.  While no database can serve every need, PostgreSQL is an excellent option that is versatile enough to suit many use cases.
