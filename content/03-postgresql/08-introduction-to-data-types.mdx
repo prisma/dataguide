@@ -1,6 +1,6 @@
 ---
-title: 'An Introduction to PostgreSQL Data Types'
-metaTitle: 'An Introduction to PostgreSQL Data Types'
+title: 'An introduction to PostgreSQL data types'
+metaTitle: 'An introduction to PostgreSQL data types'
 metaDescription: "PostgreSQL's data type system allows you to define your data structures to accept and store data in various formats.  In this guide, we'll introduce some of the most common PostgreSQL data types and show you how to work with them."
 ---
 
@@ -12,7 +12,7 @@ Data types specify a general pattern for the data they accept and store.  Values
 
 PostgreSQL includes [a wide range of data types](https://www.postgresql.org/docs/current/datatype.html) that are used to label and validate that values conform to appropriate types.  In this guide, we will discuss the most common data types available in PostgreSQL, the different input and output formats they use, and how to configure various fields to meet your applications' needs.
 
-## Numbers and Numeric Values
+## Numbers and numeric values
 
 PostgreSQL includes a good range of numeric data types suitable for different scenarios.  These include *integers*, *floating points*, *arbitrary precision*, and a special integer type with additional features called *serial*.
 
@@ -38,7 +38,7 @@ There is a serial type for each of the integer sizes mentioned earlier, which di
 * **`smallserial`:** a serial type that automatically increments a column with the next `smallint` value.
 * **`bigserial`:** a serial type that automatically increments a column with the next `bigint` value.
 
-### Arbitrary Precision
+### Arbitrary precision
 
 Arbitrary precision types are used to control the amount of *precision* or specificity possible for a number with decimals.  In PostgreSQL, this can be controlled by manipulating two factors: precision and scale.
 
@@ -76,7 +76,7 @@ Input value | Rounded value | Accepted (fits precision)?
 11799       | 11799         | Yes
 2802.27     | 2802.27       | No
 
-### Floating Point
+### Floating point
 
 Floating point numbers are another way to express decimal numbers, but without exact, consistent precision.  Instead, floating point types only have a concept of a maximum precision which is often related to the architecture and platform of the hardware.
 
@@ -88,7 +88,7 @@ FLOAT(8)
 
 Because of these design choices, floating point numbers can work with numbers with large number of decimals efficiently, but not always exactly.  The internal representation of numbers may cause slight differences between the input and output.  This can cause unexpected behavior when comparing values, doing floating point math, or performing operations that require exact values.
 
-### Monetary Values
+### Monetary values
 
 PostgreSQL includes a special `money` type that is used to store numeric values representing monetary units.
 
@@ -107,7 +107,7 @@ Because of the dependency on locale settings of the PostgreSQL installation or e
 Care must also be taken when casting values in and out of the `money` type since it can lose precision data when converting between certain types.  It is safe for `money` values to cast to and from the `numeric` type (used for arbitrary precision, as shown above), so it is recommended to always use `numeric` as an intermediary before performing converting to other types.
 
 
-## Text and Characters
+## Text and characters
 
 PostgreSQL's character and string types can be placed into two categories: *fixed length* and *variable length*.  The choice between these two affects how PostgreSQL allocates space for each value and how it validates input.
 
@@ -183,7 +183,7 @@ Care must be taken when working with the boolean `NULL`.  While PostgreSQL can c
 NULL::boolean
 ```
 
-## Dates and Time
+## Dates and time
 
 PostgreSQL has robust support for representing dates, times, and temporal intervals.
 
