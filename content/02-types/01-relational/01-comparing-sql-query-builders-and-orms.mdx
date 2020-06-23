@@ -1,0 +1,168 @@
+---
+title: 'Comparing SQL, Query Builders, and ORMs'
+metaTitle: 'Comparing SQL, Query Builders, and ORMs'
+metaDescription: 'In this article, we examine the differences between working with raw SQL, using query builders, or using an ORM.'
+metaImage: /content/types/relational/comparing-sql-query-builders-and-orms/header.png
+---
+
+## Introduction
+
+Using a database to manage your application data is one of the most common choices for data persistence. Databases allow fast information storage and retrieval, provide data integrity guarantees, and offer persistence beyond the lifetime of an individual application instance. There are [countless types of databases available](/intro/comparing-database-types) to meet your project's requirements and your preferences.
+
+However, working directly with databases from your application isn't always easy. Differences in the way data structures are represented often leads to challenges. The difficulty in expressing subtleties about relationships between different entities can also cause issues. To address this, many different tools have been created to help act as an interface between the core application and the data layer.
+
+In this guide, we'll look at some of the differences that arise between three common approaches: raw SQL, query builders, and ORMs (object-relational mappers). We'll compare some of the benefits and drawbacks of each approach and then finish with a glossary of commonly used terms to help familiarize yourself with some key concepts.
+
+As a simplified summary, here is a general view of each approach's strengths and weaknesses:
+
+| Approach       | Database / Programming focused | Hands-on management | Level of abstraction | Level of complexity |
+| -------------- | ------------------------------ | ------------------- | -------------------- | ------------------- |
+| Raw SQL        | database-oriented              | high                | none                 | low                 |
+| Query builders | mixed                          | low                 | low                  | low                 |
+| ORMs           | programming-oriented           | low                 | high                 | high                |
+
+## Managing data with raw SQL or another database-native querying language
+
+Some applications interface directly with the database by writing and executing queries using the native language supported by the database engine. Often, a database driver is all that is needed to connect, authenticate, and communicate with the database instance.
+
+Developers can send queries written in the database's native language through the connection. In return, the database will provide the query results, also in one of its native formats. For many relational database, the querying language of choice is SQL.
+
+Most [relational databases](https://en.wikipedia.org/wiki/Relational_database), as well as some non-relational databases, support [structured query language](https://en.wikipedia.org/wiki/SQL), also known as SQL, to build and execute powerful queries. SQL has been used to manage data since the 1970s, so it is well-supported and standardized to a degree.
+
+### Benefits of native querying
+
+Using SQL or another database-native language has some clear benefits.
+
+One advantage is that developers write and manage the database queries and handle the results explicitly. While this can be a lot of additional work, it means that there are few surprises in terms of what the database is storing, how it is representing your data, and how it will supply that data when it is retrieved later. The lack of abstraction means that there are fewer "moving parts" that can lead to uncertainty.
+
+One example of this is performance. While sophisticated abstraction layers generate SQL queries by translating programming statements, the generated SQL can be very inefficient. Unnecessary clauses, overly broad queries, and other mishaps can lead to slow database operations that can be fragile and difficult to debug. By writing natively in SQL, you can employ all of your domain knowledge and common sense to avoid many classes of querying problems
+
+Another reason to use database-native querying is flexibility. No abstraction is likely to be able to be as flexible as the native database querying language. Higher levels of abstraction attempt to bridge the gap between two different paradigms, which can restrict the types of operations they can express. When writing in raw SQL, however, you can take advantage of all of the features of your database engine and express more complex queries.
+
+### Drawbacks of native querying
+
+While native querying has some definite strong points, it is not without its problems.
+
+When interacting with a database from an application using plain SQL, you must understand the underlying data structure in order to compose valid queries. You are completely responsible for translating between the data types and structures that your application employs and the constructions available within the database system.
+
+Another thing to keep in mind when working with raw SQL is that it is entirely up to you to manage the safety of your input. This is especially true if you are storing data provided by external users, where specially crafted input could induce your database to exposing information you hadn't intended to allow.
+
+This type of exploit is called [SQL injection](https://en.wikipedia.org/wiki/SQL_injection), and is a potential issue whenever user input can affect the database state. Higher abstraction tools often sanitize user input automatically, helping you avoid this class of problems.
+
+Working with native querying languages almost always means composing queries with regular strings. This can be a painful process in cases where you must escape input and concatenate strings together to create a valid query. Your database operations can become wrapped up in many layers of string manipulation that has a high potential to accidentally mangle data.
+
+### Native querying summary
+
+While we've primarily talked about SQL in this section, most of the information here applies equally well to any native database querying language. To summarize, raw SQL or direct use of any equivalent querying language gets you closest to the abstractions used by the database to store and manage the data, but forces you to do all of the heavy lifting of managing your data manually.
+
+## Managing data with query builders
+
+An alternative approach to using database-native querying languages like SQL is to use a tool or library called a query builder to talk to your database.
+
+### What are SQL query builders?
+
+An SQL query builder adds a layer of abstraction above raw database-native querying languages. They do this by formalizing querying patterns and providing methods or functions that add input sanitation and automatically escape items for easier integration into applications.
+
+The structures and actions supported by the database layer are still fairly recognizable when using SQL query builders. This allows you to work with data programmatically while still remaining relatively close to the data.
+
+Usually, query builders provide an interface that uses methods or functions to add a condition to a query. By chaining methods together, developers can compose complete database queries from these individual "clauses".
+
+### Benefits of SQL query builders
+
+Because query builders use the same constructions (methods or functions) as the rest of your application, developers often find them easier to manage long term than raw database queries written as strings. It is simple to tell the difference between operators and data and it is easy to decompose queries into logical chunks that handle specific parts of a query.
+
+For some developers, another advantage of using a SQL query builder is that it doesn't always hide the underlying querying language. Although the operations might use methods instead of strings, it can be fairly transparent, which makes it easier for those familiar with the database to understand what an operation will do. This isn't always the case when using greater levels of abstraction.
+
+SQL query builders often also support multiple data backends, abstracting some of the subtle differences in various relational databases, for instance. This allows you to use the same tools for projects that use different databases. It may even make migrating to a new database slightly easier.
+
+### Drawbacks of SQL query builders
+
+SQL query builders suffer from a few of the same disadvantages as native querying languages.
+
+One popular criticism is that SQL query builders still require you to understand and account for the database's structures and capabilities. This is not a useful enough abstraction for some developers. This means that you must have a fairly good grasp of SQL in addition to the specific syntax and capabilities of the query builder itself.
+
+Additionally, SQL query builders still require you to define how the data you retrieve relates to your application data. There is no automatic synchronization between your in-memory objects and those in the database.
+
+While query builders often emulate the querying language they are designed to work with, the additional layer of abstraction can mean that sometimes certain operations are not possible using the provided methods. Usually, there is a "raw" mode to send queries directly to the backend, bypassing the query builder's typical interface, but this sidesteps the problem rather than solving it.
+
+### Summary of SQL query builders
+
+Overall, SQL query builders offer a thin layer of abstraction that specifically targets some of the major pain points of working directly with database-native languages. SQL query builders almost function as a templating system for querying, allowing developers to walk the line between working directly with the database and adding additional layers of abstraction.
+
+## Managing data with ORMs
+
+A step further up the abstraction hierarchy are ORMs.  ORMs generally aim for a more complete abstraction with the hope of integrating with the application data more fluidly.
+
+### What are ORMs?
+
+[Object-relational mappers](https://en.wikipedia.org/wiki/Object-relational_mapping), or ORMs, are pieces of software dedicated to translating between the data representations in relational databases and the representation in memory used with object-oriented programming (OOP). The ORM provides an object-oriented interface to data within the database, attempting to use familiar programming concepts and reduce the amount of boilerplate code necessary in order to speed up development.
+
+In general, ORMs serve as an abstraction layer meant help developers work with databases without drastically changing the object-oriented paradigm. This can be helpful by reducing the mental load of adapting to the specifics of a database's storage format.
+
+In particular, objects in object-oriented programming tend to encode a lot of state within them and can have complex relationships with other objects through inheritance and other OOP concepts. Mapping this information reliably into a table-oriented relational paradigm is often not straightforward and can require a good understanding of both systems. ORMs attempt to lighten this burden by automating some of this mapping and by providing expressive interfaces to the data within the system.
+
+### Are the challenges of ORMs specific to object-oriented programming and relational databases?
+
+By definition, ORMs are specifically designed to interface between object-oriented application languages and relational databases. However, trying to map and translate between the data structure abstractions used within programming languages and those used by database stores is a more general problem that can exist whenever abstractions don't align cleanly.
+
+Depending on the programming paradigm (object oriented, functional, procedural, etc.) and the database type (relational, document, key-value, etc.), different amounts of abstraction might be helpful. Often times, the complexity of the data structures within the application dictate how easy it is to interface with the data store.
+
+Object-oriented programming tends to produce a lot of structures with significant state and relationships that must be accounted for. Some other programming paradigms are more explicit about where state is stored and how it is managed. For instance, purely functional languages don't allow mutable state, so state is often an input for functions or objects that that output a new state. This clean separation of data from actions, as well as the explicitness of state life cycles can help simplify the interaction with the database.
+
+Either way, the option to interface with a database through software that maps between two different representations is often available. So while ORMs describe a specific subset of these with unique challenges, mapping between application memory and persistent storage often requires consideration regardless of details.
+
+### Active record vs data mapper ORMs
+
+Different ORMs employ different strategies to map between application and database structures. The two major categories are the _active record pattern_ and the _data mapper pattern_.
+
+The [active record pattern](https://en.wikipedia.org/wiki/Active_record_pattern) attempts to encapsulate the database's data within the structure of objects within your code. Objects contain methods to save, update, or delete from the database and changes to your objects are meant to be easily reflected in the database. In general, an active record object in your application represents a record within a database.
+
+Active record implementations allow you to manage your database by creating and connecting classes and instances within your code. Since these generally map class instances directly to database records, it is easy to conceptualize what is in your database if you understand what objects are used in your code.
+
+Unfortunately, this can also come with [some major downsides](http://calpaterson.com/activerecord.html). Applications tend to be very tightly coupled with the database, which can cause problems when trying to migrate to a new database or even when testing your code. Your code tends to rely on the database to fill in gaps that were offloaded from your objects. The "magic" translation between these two domains can also lead to performance problems as the system tries to seamlessly map complex objects to the underlying data structure.
+
+The [data mapper pattern](https://en.wikipedia.org/wiki/Data_mapper_pattern) is the other common ORM pattern. Like the active record pattern, the data mapper attempts to act as an independent layer between your code and your database that mediates between the two. However, instead of trying to seamlessly integrate objects and database records, it focuses on trying to decouple and translate between them while letting each exist independently. This can help separate your business logic from database-related details that deal with mappings, representation, serialization, etc.
+
+So rather than letting the ORM system figure out how to map between the objects and the database tables, the developer is responsible for explicitly mapping between the two. This can help avoid tight coupling and behind-the-scenes operations at the expense of significantly more work in figuring out appropriate mappings.
+
+### Benefits of ORMs
+
+ORMs are popular for many reasons.
+
+They help abstract the underlying data domain to something that is easy to reason about within the context of your application. Rather than thinking of data storage as an independent system, ORMs help you access and manage data systems as an extension of your current work. This can help developers work faster on core business logic instead of getting bogged down in the nuances of their storage backends.
+
+Another side effect of this is that ORMs remove a lot of the boilerplate necessary to interface with databases. ORMs often come with migration tools that help you manage database schema changes based on changes made in your code. You don't need to necessarily figure out the perfect database schema up front if your ORM can help manage changes to the database structure. Your application and database changes are often the same thing or closely related, which helps track changes to your database as you make changes to your code.
+
+### Drawbacks of ORMs
+
+ORMs are not without their flaws. In many cases these arise from the same decisions that make ORMs useful.
+
+One of the fundamental problems with ORMs is the attempt at hiding the details of the database backend. This obfuscation makes working with ORMs easier in simple cases or on small time scales, but often leads to problems down the line as complexity grows.
+
+The abstraction is never 100% complete and attempting to use an ORM without understanding the underlying querying language or database structure often leads to problematic assumptions. This can make debugging and performance tuning difficult or impossible.
+
+Perhaps the most well-known problem of working with ORMs is [object-relational impedance mismatch](https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch), a term used to describe the difficulty of translating between object-oriented programming and the relational paradigm used by relational databases. The incompatibilities between the data models used by these two categories of technology means that additional, imperfect abstraction is necessary with every increase in complexity. Object-relational impedance mismatch has been called [the Vietnam of computer science](http://blogs.tedneward.com/post/the-vietnam-of-computer-science/) (in reference to the Vietnam War) because of its tendency to increase complexity over time and lead to situations where the paths to either success or changing course are difficult or impossible.
+
+In general, ORMs tend to be slower than alternatives, especially with complex queries. ORMs often generate complicated queries for relatively simple database operations, because they employ general patterns that must be flexible enough to handle other cases. The reliance on the ORM to do the right thing in all circumstances can lead to costly mistakes that can be hard to catch up front.
+
+### Summary of ORMs
+
+ORMs can be useful abstractions that make working with databases a lot easier. They can help you design and iterate quickly and bridge the conceptual differences between the application logic and database structures. However, many of these advantages act as a double-edged sword. They can prevent you from understanding your databases and can make it challenging to debug, change paradigms, or increase performance.
+
+## Glossary
+
+When working with technologies that interface between databases and applications, you might encounter some terminology that you're not familiar with. In this section, we'll briefly go over some of the most common terms you might come across, some of which were covered earlier in this article and some of which were not.
+
+- **Data mapper:** A [data mapper](https://www.martinfowler.com/eaaCatalog/dataMapper.html) is a design pattern or piece of software that maps programming data structures to those stored in a database. Data mappers attempt to synchronize changes between the two sources while keeping them independent of each other. The mapper itself is responsible for maintaining a working translation, freeing developers to iterate the application data structures without concern for the database representation.
+- **Injection attack:** An [injection attack](https://en.wikipedia.org/wiki/SQL_injection) is an attack in which a malicious user attempts to execute unwanted database operations using specially crafted input in user-facing application fields. Often, this is used to retrieve data that should not be accessible or to delete or mangle information in the database.
+- **ORM:** [ORMs](https://en.wikipedia.org/wiki/Object-relational_mapping), or object-relational mappers, are abstraction layers that translate between the data representations used in relational databases and the representation in memory used with object-oriented programming. The ORM provides an object-oriented interface to data within the database, attempting to reduce the amount of code and use familiar archetypes to speed up development.
+- **Object-relational impedance mismatch:** Object-relational impedance mismatch refers to the difficulty of translating between an object-oriented application and a relational database. Since the data structures vary significantly, it can be difficult to faithfully and performantly mutate and transcribe the programmatic data structures to the format used by the storage backend.
+- **Persistence framework:** A [persistence framework](https://en.wikipedia.org/wiki/Persistence_framework) is a middeware abstraction layer developed to bridge the gap between program data and databases. Persistence frameworks may also be ORMs if the abstraction they employ maps objects to relational entities.
+- **Query builder:** A [query builder](https://softwareengineering.stackexchange.com/q/138115) is an abstraction layer that helps developers access and control databases by providing a controlled interface which adds usability, safety, or flexibility features. Typically, query builders are relatively light-weight, focus on easing data access and data representation, and do not attempt to translate the data into a specific programming paradigm.
+- **SQL:** [SQL](https://en.wikipedia.org/wiki/SQL), or structured query language, is a domain-specific language developed for managing relational database management systems. It can be used to query, define, and manipulate data within a database as well as their organizational structures. SQL is ubiquitous among relational databases.
+
+## Conclusion
+
+In this article, we took a look at a few different options for interfacing with your database from your application. We examined the different levels of abstraction and the flexibility offered by using database-native querying languages like SQL, using a query builder to help safely craft queries, and ORMs to provide a more complete level of abstraction.
+
+Each of these approaches have their uses and some may be well-suited for certain types of applications than others. It is important to understand your application requirements, your organization's database knowledge, and the costs of the abstractions (or lack thereof) that you choose to implement. Overall, understanding each approach will give you the best chance of selecting the option that will be a good fit for your projects.
