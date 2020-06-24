@@ -45,7 +45,7 @@ const config = {
   footer: {
     newsletter: {
       text:
-        'Pellentesque facilisi nisi, sem neque mauris, hendrerit. Ultrices et donec in tincidunt lectus interdum. Eu dui et, nec pulvinar.',
+        "Sign up to get notified by email when new content is added to Prisma's Data Guide.",
     },
   },
 }
