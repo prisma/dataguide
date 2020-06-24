@@ -27,7 +27,7 @@ const HeaderWrapper = styled.div`
       font-size: 48px;
       line-height: 48px;
       font-family: Rubik;
-      letter-spacing: -0.03em;
+      // letter-spacing: -0.03em;
       margin: 0 0px 24px;
     }
 
@@ -71,7 +71,7 @@ const HomePageHeader = () => {
     <HeaderWrapper>
       <div className="container">
         <div className="content">
-          <h1>How to Data</h1>
+          <h1>Prisma's Data Guide</h1>
           <h3>
             Learn how databases work, how to choose the right one, and{' '}
             <Highlight>how to use databases</Highlight> with your applications. Made with ❤️ by Prisma.

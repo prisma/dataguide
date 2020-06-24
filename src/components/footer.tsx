@@ -95,7 +95,7 @@ const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
         </div>
         <div className="container info">
           <div className="content">
-            <h4>HOW TO DATA</h4>
+            <h4>Prisma's Data Guide</h4>
             <p>Quis facilisis quis mauris, massa. Diam tellus pellentesque ut aliquam mi. Vitae.</p>
           </div>
           <div className="love">Made with ❤️ by Prisma</div>
