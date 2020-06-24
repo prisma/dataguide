@@ -1,6 +1,6 @@
-# How To Data
+# Prisma's Data Guide
 
-This repository contains the [source code](./src) and the [content](./content) for the [How To Data](/).
+This repository contains the [source code](./src) and the [content](./content) for [Prisma's Data Guide](/).
 
 ## Run locally
 

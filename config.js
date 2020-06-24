@@ -6,7 +6,7 @@ const config = {
   redirects: [],
   header: {
     logoLink: '/', // replace with correct site
-    title: 'How To Data',
+    title: "Prisma's Data Guide",
     search: {
       indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
       algoliaAppId: process.env.GATSBY_ALGOLIA_APP_ID,
@@ -15,20 +15,20 @@ const config = {
     },
   },
   siteMetadata: {
-    title: 'How To Data - title',
-    description: 'How To Data - desc',
-    keywords: 'Docs, How To Data, 1.0',
-    docsLocation: 'https://github.com/prisma/how-to-data-docs/tree/master/content',
+    title: "Prisma's Data Guide",
+    description: "Prisma's Data Guide",
+    keywords: "Prisma's Data Guide, dataguide, howtodata",
+    docsLocation: 'https://github.com/prisma/dataguide/tree/master/content',
     twitter: {
-      site: '@howtodata',
-      creator: '@howtodata',
+      site: '@dataguide',
+      creator: '@dataguide',
       image: '/social/docs-social.png',
     },
     og: {
-      site_name: 'How To Data',
+      site_name: "Prisma's Data Guide",
       type: 'website',
       image: {
-        alt: 'How To Data',
+        alt: "Prisma's Data Guide",
         height: '630',
         type: 'image/png',
         url: '/social/docs-social.png', //replace social image
@@ -37,7 +37,7 @@ const config = {
     },
   },
   feedback: {
-    function_name: 'https://howtodata.netlify.app/.netlify/functions/index', // Replace with correct one
+    function_name: 'https://dataguide.netlify.app/.netlify/functions/index', // Replace with correct one
   },
   sidebar: {
     tablet_menu_split: [], // Slugs for top level folders which should appear in right pane on tablet
