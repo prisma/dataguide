@@ -7,8 +7,8 @@ This repository contains the [source code](./src) and the [content](./content) f
 Download the code and get started by running the following commands:
 
 ```
-git clone git@github.com:prisma/how-to-data-docs.git
-cd how-to-data-docs
+git clone git@github.com:prisma/dataguide.git
+cd dataguide
 yarn
 yarn dev
 ```
@@ -23,7 +23,7 @@ Visit `http://localhost:8000/` to view the app.
 
 ## MDX blocks
 
-View the example MDX blocks on `http://localhost:8000/getting-started/example` and the usage in [example.mdx](./content/01-getting-started/04-example.mdx)
+View the example MDX blocks on `http://localhost:8000/intro/example` and the usage in [example.mdx](./content/01-intro/99-example.mdx)
 
 ## Configure
 
