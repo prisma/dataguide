@@ -81,6 +81,7 @@ const HeaderWrapper = styled.div`
 `
 
 const Highlight = styled.span`
+  padding: 0 4px;
   background: #4c51bf;
 `
 
@@ -93,8 +94,8 @@ const HomePageHeader = () => {
           <div className="content">
             <h1>Prisma's Data Guide</h1>
             <h3>
-              Learn how databases work, how to choose the right one, and
-              <Highlight> how to use databases</Highlight> with your applications to their full
+              Learn how databases work, how to choose the right one, and{' '}
+              <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
             {/* <p>
