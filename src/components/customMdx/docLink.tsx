@@ -47,7 +47,7 @@ const DocLinkWrapper = styled.a`
 
 const DocLink = ({ icon, text, ...props }: DocLinkProps) => (
   <DocLinkWrapper {...props}>
-    <span>{icons[icon]}</span>
+    {/* <span>{icons[icon]}</span> */}
     <span>{text}</span>
   </DocLinkWrapper>
 )
