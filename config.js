@@ -1,7 +1,7 @@
 const config = {
   gatsby: {
     pathPrefix: '',
-    siteUrl: 'https://dataguide.netlify.app/', // replace with correct site
+    siteUrl: 'https://dataguide.prisma.com', // replace with correct site
   },
   redirects: [],
   header: {

@@ -11,11 +11,15 @@ export default (props: any) => (
     {...props}
   >
     <path fill="url(#pattern0)" d="M6 371H630V395H6z" opacity="0.32"></path>
-    <g filter="url(#filter0_i)">
-      <rect width="360" height="268" x="108" y="37" fill="#7F9CF5" rx="20"></rect>
-    </g>
+    <rect width="360" height="268" x="108" y="37" fill="#7F9CF5" rx="20"></rect>
+    <path
+      fill="#C3DAFE"
+      fillRule="evenodd"
+      d="M128 37c-11.046 0-20 8.954-20 20v1c0-11.046 8.954-20 20-20h320c11.046 0 20 8.954 20 20v-1c0-11.046-8.954-20-20-20H128z"
+      clipRule="evenodd"
+    ></path>
     <rect width="350" height="258" x="113" y="42" fill="#EBF4FF" opacity="0.7" rx="15"></rect>
-    <g filter="url(#filter1_iiii)">
+    <g filter="url(#filter0_iiii)">
       <rect width="350" height="256" x="113" y="42" fill="#7F9CF5" rx="15"></rect>
     </g>
     <rect
@@ -40,41 +44,53 @@ export default (props: any) => (
       transform="matrix(-1 0 0 1 452 81)"
     ></rect>
     <rect width="350" height="2" x="113" y="70" fill="#3C366B" opacity="0.1" rx="1"></rect>
-    <g filter="url(#filter2_dddddd)">
+    <g filter="url(#filter1_dddddd)">
       <rect width="81" height="115" x="86" y="89" fill="#C3DAFE" rx="15"></rect>
     </g>
-    <g filter="url(#filter3_ddddddi)">
+    <g filter="url(#filter2_dddddd)">
       <path
         fill="#EBF4FF"
         d="M86 104c0-8.284 6.716-15 15-15h51c8.284 0 15 6.716 15 15v15H86v-15z"
       ></path>
     </g>
-    <g filter="url(#filter4_dddddd)">
+    <path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M101 89c-8.284 0-15 6.716-15 15v1c0-8.284 6.716-15 15-15h51c8.284 0 15 6.716 15 15v-1c0-8.284-6.716-15-15-15h-51z"
+      clipRule="evenodd"
+    ></path>
+    <g filter="url(#filter3_dddddd)">
       <rect width="80" height="115" x="201" y="169" fill="#C3DAFE" rx="15"></rect>
     </g>
-    <g filter="url(#filter5_dddddd)">
+    <g filter="url(#filter4_dddddd)">
       <rect width="80" height="115" x="208" y="15" fill="#C3DAFE" rx="15"></rect>
     </g>
-    <g filter="url(#filter6_ddddddi)">
+    <g filter="url(#filter5_dddddd)">
       <path
         fill="#EBF4FF"
         d="M201 184c0-8.284 6.716-15 15-15h50c8.284 0 15 6.716 15 15v15h-80v-15z"
       ></path>
     </g>
-    <g filter="url(#filter7_ddddddi)">
+    <g filter="url(#filter6_dddddd)">
       <path
         fill="#EBF4FF"
         d="M208 30c0-8.284 6.716-15 15-15h50c8.284 0 15 6.716 15 15v15h-80V30z"
       ></path>
     </g>
-    <g filter="url(#filter8_dddddd)">
+    <path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M223 15c-8.284 0-15 6.716-15 15v.708c0-8.285 6.716-15 15-15h50c8.284 0 15 6.715 15 15V30c0-8.284-6.716-15-15-15h-50zM216 169c-8.284 0-15 6.716-15 15v.708c0-8.285 6.716-15 15-15h50c8.284 0 15 6.715 15 15V184c0-8.284-6.716-15-15-15h-50z"
+      clipRule="evenodd"
+    ></path>
+    <g filter="url(#filter7_dddddd)">
       <rect width="214" height="160" x="308" y="103" fill="#C3DAFE" rx="15"></rect>
     </g>
     <g opacity="0.6">
       <rect width="194" height="40" x="318" y="204" fill="#fff" rx="5"></rect>
       <rect width="194" height="40" x="318" y="204" fill="url(#paint0_linear)" rx="5"></rect>
     </g>
-    <g filter="url(#filter9_iiii)">
+    <g filter="url(#filter8_iiii)">
       <rect width="194" height="94" x="318" y="149" fill="#A3BFFA" rx="5"></rect>
     </g>
     <g fill="#3C366B" opacity="0.1">
@@ -82,13 +98,13 @@ export default (props: any) => (
       <rect width="178" height="2" x="326" y="199" rx="1"></rect>
       <rect width="178" height="2" x="326" y="221" rx="1"></rect>
     </g>
-    <g filter="url(#filter10_ddddddi)">
+    <g filter="url(#filter9_dddddd)">
       <path
         fill="#EBF4FF"
         d="M308 118c0-8.284 6.716-15 15-15h184c8.284 0 15 6.716 15 15v22H308v-22z"
       ></path>
     </g>
-    <g filter="url(#filter11_ddddddi)">
+    <g filter="url(#filter10_ddddddi)">
       <rect width="239" height="31" x="294" y="158" fill="#81E6D9" rx="15.5"></rect>
     </g>
     <g fill="#3C366B" opacity="0.1">
@@ -106,34 +122,52 @@ export default (props: any) => (
       <rect width="61" height="2" x="217" y="86" rx="1"></rect>
       <rect width="61" height="2" x="217" y="108" rx="1"></rect>
     </g>
-    <g filter="url(#filter12_ddddddi)">
+    <g filter="url(#filter11_dddddd)">
       <rect width="58" height="20" x="102" y="132" fill="#F6E05E" rx="10"></rect>
     </g>
-    <g filter="url(#filter13_ddddddi)">
+    <path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M323 103c-8.284 0-15 6.716-15 15v.708c0-8.285 6.716-15 15-15h184c8.284 0 15 6.715 15 15V118c0-8.284-6.716-15-15-15H323z"
+      clipRule="evenodd"
+    ></path>
+    <g filter="url(#filter12_dddddd)">
       <rect width="58" height="20" x="215" y="91" fill="#F6E05E" rx="10"></rect>
     </g>
-    <g filter="url(#filter14_ddddddi)">
+    <path
+      fill="#FEFCBF"
+      fillRule="evenodd"
+      d="M112 132c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38zM225 91c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38z"
+      clipRule="evenodd"
+    ></path>
+    <g filter="url(#filter13_dddddd)">
       <rect width="58" height="20" x="208" y="223" fill="#F6E05E" rx="10"></rect>
     </g>
-    <g filter="url(#filter15_i)">
+    <path
+      fill="#FEFCBF"
+      fillRule="evenodd"
+      d="M218 223c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38z"
+      clipRule="evenodd"
+    ></path>
+    <g filter="url(#filter14_i)">
       <circle cx="126.5" cy="55.5" r="4.5" fill="#5A67D8"></circle>
     </g>
-    <g filter="url(#filter16_i)">
+    <g filter="url(#filter15_i)">
       <circle cx="152.5" cy="104.5" r="4.5" fill="#C3DAFE"></circle>
     </g>
-    <g filter="url(#filter17_i)">
+    <g filter="url(#filter16_i)">
       <circle cx="273.5" cy="30.5" r="4.5" fill="#C3DAFE"></circle>
     </g>
-    <g filter="url(#filter18_i)">
+    <g filter="url(#filter17_i)">
       <circle cx="268.5" cy="184.5" r="4.5" fill="#C3DAFE"></circle>
     </g>
-    <g filter="url(#filter19_i)">
+    <g filter="url(#filter18_i)">
       <circle cx="506.5" cy="122.5" r="4.5" fill="#C3DAFE"></circle>
     </g>
-    <g filter="url(#filter20_i)">
+    <g filter="url(#filter19_i)">
       <ellipse cx="137" cy="55.5" fill="#5A67D8" rx="4" ry="4.5"></ellipse>
     </g>
-    <g filter="url(#filter21_i)">
+    <g filter="url(#filter20_i)">
       <circle cx="147.5" cy="55.5" r="4.5" fill="#5A67D8"></circle>
     </g>
     <path
@@ -156,7 +190,7 @@ export default (props: any) => (
       d="M386.746 305l-5.303-42h2.525l.842 6.668h20.203l-.842-6.668h2.526L412 305h-2.526l-1.589-12.586h-20.203L389.271 305h-2.525zm18.642-32.365l2.123 16.812h-20.204l-2.122-16.812h20.203zM400.687 263l-1.894-15h-2.826l1.249 9.889h-22.603L373.364 248h-2.825l1.894 15h2.825l-.27-2.144h22.602l.271 2.144h2.826z"
       clipRule="evenodd"
     ></path>
-    <g filter="url(#filter22_i)">
+    <g filter="url(#filter21_i)">
       <path
         fill="#A0AEC0"
         d="M370.782 257.437H396.26099999999997V260.26800000000003H370.782z"
@@ -166,52 +200,52 @@ export default (props: any) => (
         d="M370.782 257.437H396.26099999999997V260.26800000000003H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter23_i)">
+    <g filter="url(#filter22_i)">
       <path fill="#A0AEC0" d="M370.782 276.31H396.26099999999997V279.141H370.782z"></path>
       <path
         fill="url(#paint2_linear)"
         d="M370.782 276.31H396.26099999999997V279.141H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter24_i)">
+    <g filter="url(#filter23_i)">
       <path fill="#A0AEC0" d="M370.782 295.183H396.26099999999997V298.014H370.782z"></path>
       <path
         fill="url(#paint3_linear)"
         d="M370.782 295.183H396.26099999999997V298.014H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter25_i)">
+    <g filter="url(#filter24_i)">
       <path fill="#A0AEC0" d="M370.782 314.056H396.26099999999997V316.887H370.782z"></path>
       <path
         fill="url(#paint4_linear)"
         d="M370.782 314.056H396.26099999999997V316.887H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter26_i)">
+    <g filter="url(#filter25_i)">
       <path fill="#A0AEC0" d="M370.782 332.93H396.26099999999997V335.761H370.782z"></path>
       <path
         fill="url(#paint5_linear)"
         d="M370.782 332.93H396.26099999999997V335.761H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter27_i)">
+    <g filter="url(#filter26_i)">
       <path fill="#A0AEC0" d="M370.782 351.803H396.26099999999997V354.634H370.782z"></path>
       <path
         fill="url(#paint6_linear)"
         d="M370.782 351.803H396.26099999999997V354.634H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter28_i)">
+    <g filter="url(#filter27_i)">
       <path fill="#A0AEC0" d="M370.782 370.676H396.26099999999997V373.507H370.782z"></path>
       <path
         fill="url(#paint7_linear)"
         d="M370.782 370.676H396.26099999999997V373.507H370.782z"
       ></path>
     </g>
-    <g filter="url(#filter29_i)">
+    <g filter="url(#filter28_i)">
       <path fill="#A0AEC0" d="M369.838 248H372.66900000000004V382H369.838z"></path>
     </g>
-    <g filter="url(#filter30_i)">
+    <g filter="url(#filter29_i)">
       <path fill="#A0AEC0" d="M395.317 248H398.148V382H395.317z"></path>
     </g>
     <path
@@ -329,28 +363,7 @@ export default (props: any) => (
         <use transform="scale(.0016 .04167)" xlinkHref="#image0"></use>
       </pattern>
       <filter
-        id="filter0_i"
-        width="360"
-        height="268"
-        x="108"
-        y="37"
-        colorInterpolationFilters="sRGB"
-        filterUnits="userSpaceOnUse"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-        <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
-      </filter>
-      <filter
-        id="filter1_iiii"
+        id="filter0_iiii"
         width="350"
         height="270.519"
         x="113"
@@ -402,7 +415,7 @@ export default (props: any) => (
         <feBlend in2="effect3_innerShadow" result="effect4_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter2_dddddd"
+        id="filter1_dddddd"
         width="241"
         height="275"
         x="6"
@@ -462,7 +475,7 @@ export default (props: any) => (
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
       </filter>
       <filter
-        id="filter3_ddddddi"
+        id="filter2_dddddd"
         width="241"
         height="190"
         x="6"
@@ -520,22 +533,73 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.235294 0 0 0 0 0.211765 0 0 0 0 0.419608 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
+      </filter>
+      <filter
+        id="filter3_dddddd"
+        width="240"
+        height="275"
+        x="121"
+        y="154"
+        colorInterpolationFilters="sRGB"
+        filterUnits="userSpaceOnUse"
+      >
+        <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
         <feColorMatrix
           in="SourceAlpha"
-          result="hardAlpha"
           values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
         ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
+        <feOffset dy="1.799"></feOffset>
+        <feGaussianBlur stdDeviation="1.107"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.0562291 0"></feColorMatrix>
+        <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend>
+        <feColorMatrix
+          in="SourceAlpha"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        ></feColorMatrix>
+        <feOffset dy="4.323"></feOffset>
+        <feGaussianBlur stdDeviation="2.66"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.0807786 0"></feColorMatrix>
+        <feBlend in2="effect1_dropShadow" result="effect2_dropShadow"></feBlend>
+        <feColorMatrix
+          in="SourceAlpha"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        ></feColorMatrix>
+        <feOffset dy="8.139"></feOffset>
+        <feGaussianBlur stdDeviation="5.009"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.1 0"></feColorMatrix>
+        <feBlend in2="effect2_dropShadow" result="effect3_dropShadow"></feBlend>
+        <feColorMatrix
+          in="SourceAlpha"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        ></feColorMatrix>
+        <feOffset dy="14.519"></feOffset>
+        <feGaussianBlur stdDeviation="8.935"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.119221 0"></feColorMatrix>
+        <feBlend in2="effect3_dropShadow" result="effect4_dropShadow"></feBlend>
+        <feColorMatrix
+          in="SourceAlpha"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        ></feColorMatrix>
+        <feOffset dy="27.155"></feOffset>
+        <feGaussianBlur stdDeviation="16.711"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.143771 0"></feColorMatrix>
+        <feBlend in2="effect4_dropShadow" result="effect5_dropShadow"></feBlend>
+        <feColorMatrix
+          in="SourceAlpha"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        ></feColorMatrix>
+        <feOffset dy="65"></feOffset>
+        <feGaussianBlur stdDeviation="40"></feGaussianBlur>
+        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.2 0"></feColorMatrix>
+        <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
+        <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
       </filter>
       <filter
         id="filter4_dddddd"
         width="240"
         height="275"
-        x="121"
-        y="154"
+        x="128"
+        y="0"
         colorInterpolationFilters="sRGB"
         filterUnits="userSpaceOnUse"
       >
@@ -593,66 +657,6 @@ export default (props: any) => (
       <filter
         id="filter5_dddddd"
         width="240"
-        height="275"
-        x="128"
-        y="0"
-        colorInterpolationFilters="sRGB"
-        filterUnits="userSpaceOnUse"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1.799"></feOffset>
-        <feGaussianBlur stdDeviation="1.107"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.0562291 0"></feColorMatrix>
-        <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="4.323"></feOffset>
-        <feGaussianBlur stdDeviation="2.66"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.0807786 0"></feColorMatrix>
-        <feBlend in2="effect1_dropShadow" result="effect2_dropShadow"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="8.139"></feOffset>
-        <feGaussianBlur stdDeviation="5.009"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.1 0"></feColorMatrix>
-        <feBlend in2="effect2_dropShadow" result="effect3_dropShadow"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="14.519"></feOffset>
-        <feGaussianBlur stdDeviation="8.935"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.119221 0"></feColorMatrix>
-        <feBlend in2="effect3_dropShadow" result="effect4_dropShadow"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="27.155"></feOffset>
-        <feGaussianBlur stdDeviation="16.711"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.143771 0"></feColorMatrix>
-        <feBlend in2="effect4_dropShadow" result="effect5_dropShadow"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="65"></feOffset>
-        <feGaussianBlur stdDeviation="40"></feGaussianBlur>
-        <feColorMatrix values="0 0 0 0 0.262745 0 0 0 0 0.254902 0 0 0 0 0.564706 0 0 0 0.2 0"></feColorMatrix>
-        <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
-        <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-      </filter>
-      <filter
-        id="filter6_ddddddi"
-        width="240"
         height="190"
         x="121"
         y="154"
@@ -709,18 +713,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.235294 0 0 0 0 0.211765 0 0 0 0 0.419608 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter7_ddddddi"
+        id="filter6_dddddd"
         width="240"
         height="190"
         x="128"
@@ -778,18 +773,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.235294 0 0 0 0 0.211765 0 0 0 0 0.419608 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter8_dddddd"
+        id="filter7_dddddd"
         width="374"
         height="320"
         x="228"
@@ -849,7 +835,7 @@ export default (props: any) => (
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
       </filter>
       <filter
-        id="filter9_iiii"
+        id="filter8_iiii"
         width="194"
         height="108.519"
         x="318"
@@ -901,7 +887,7 @@ export default (props: any) => (
         <feBlend in2="effect3_innerShadow" result="effect4_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter10_ddddddi"
+        id="filter9_dddddd"
         width="374"
         height="197"
         x="228"
@@ -959,18 +945,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.235294 0 0 0 0 0.211765 0 0 0 0 0.419608 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter11_ddddddi"
+        id="filter10_ddddddi"
         width="399"
         height="191"
         x="214"
@@ -1039,7 +1016,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter12_ddddddi"
+        id="filter11_dddddd"
         width="218"
         height="180"
         x="22"
@@ -1097,18 +1074,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.592157 0 0 0 0 0.352941 0 0 0 0 0.0862745 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 0.996078 0 0 0 0 0.988235 0 0 0 0 0.74902 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter13_ddddddi"
+        id="filter12_dddddd"
         width="218"
         height="180"
         x="135"
@@ -1166,18 +1134,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.592157 0 0 0 0 0.352941 0 0 0 0 0.0862745 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 0.996078 0 0 0 0 0.988235 0 0 0 0 0.74902 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter14_ddddddi"
+        id="filter13_dddddd"
         width="218"
         height="180"
         x="128"
@@ -1235,18 +1194,9 @@ export default (props: any) => (
         <feColorMatrix values="0 0 0 0 0.592157 0 0 0 0 0.352941 0 0 0 0 0.0862745 0 0 0 0.2 0"></feColorMatrix>
         <feBlend in2="effect5_dropShadow" result="effect6_dropShadow"></feBlend>
         <feBlend in="SourceGraphic" in2="effect6_dropShadow" result="shape"></feBlend>
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        ></feColorMatrix>
-        <feOffset dy="1"></feOffset>
-        <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic"></feComposite>
-        <feColorMatrix values="0 0 0 0 0.996078 0 0 0 0 0.988235 0 0 0 0 0.74902 0 0 0 1 0"></feColorMatrix>
-        <feBlend in2="shape" result="effect7_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter15_i"
+        id="filter14_i"
         width="9"
         height="11"
         x="122"
@@ -1268,7 +1218,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter16_i"
+        id="filter15_i"
         width="9"
         height="11"
         x="148"
@@ -1290,7 +1240,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter17_i"
+        id="filter16_i"
         width="9"
         height="11"
         x="269"
@@ -1312,7 +1262,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter18_i"
+        id="filter17_i"
         width="9"
         height="11"
         x="264"
@@ -1334,7 +1284,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter19_i"
+        id="filter18_i"
         width="9"
         height="11"
         x="502"
@@ -1356,7 +1306,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter20_i"
+        id="filter19_i"
         width="8"
         height="11"
         x="133"
@@ -1378,7 +1328,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter21_i"
+        id="filter20_i"
         width="9"
         height="11"
         x="143"
@@ -1400,7 +1350,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter22_i"
+        id="filter21_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1421,7 +1371,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter23_i"
+        id="filter22_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1442,7 +1392,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter24_i"
+        id="filter23_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1463,7 +1413,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter25_i"
+        id="filter24_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1484,7 +1434,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter26_i"
+        id="filter25_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1505,7 +1455,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter27_i"
+        id="filter26_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1526,7 +1476,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter28_i"
+        id="filter27_i"
         width="25.479"
         height="2.831"
         x="370.782"
@@ -1547,7 +1497,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter29_i"
+        id="filter28_i"
         width="2.831"
         height="134"
         x="369.838"
@@ -1568,7 +1518,7 @@ export default (props: any) => (
         <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
       </filter>
       <filter
-        id="filter30_i"
+        id="filter29_i"
         width="2.831"
         height="134"
         x="395.317"
