@@ -23,7 +23,7 @@ Visit `http://localhost:8000/` to view the app.
 
 ## MDX blocks
 
-View the example MDX blocks on `http://localhost:8000/getting-started/example` and the usage in [example.mdx](./content/01-getting-started/04-example.mdx)
+View the example MDX blocks on `http://localhost:8000/intro/example` and the usage in [example.mdx](./content/01-intro/99-example.mdx)
 
 ## Configure
 
