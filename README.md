@@ -7,8 +7,8 @@ This repository contains the [source code](./src) and the [content](./content) f
 Download the code and get started by running the following commands:
 
 ```
-git clone git@github.com:prisma/how-to-data-docs.git
-cd how-to-data-docs
+git clone git@github.com:prisma/dataguide.git
+cd dataguide
 yarn
 yarn dev
 ```
