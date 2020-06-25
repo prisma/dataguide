@@ -48,6 +48,7 @@ const NewsLetterWrapper = styled.div`
       display: flex;
       align-items: center;
       cursor: pointer;
+      padding: 0 18px;
       svg {
         margin-left: 10px;
       }
