@@ -2,7 +2,7 @@
 
 This repository contains the [source code](./src) and the [content](./content) for [Prisma's Data Guide](/).
 
-## License
+## Licenses
 
 The code in this repository is [licensed](./LICENSE) under an [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
