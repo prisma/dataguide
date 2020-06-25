@@ -55,6 +55,16 @@ const SearchComponent = styled(Search)`
 
 const LogoContainer = styled.div`
   padding-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  span {
+    font-family: 'Rubik';
+    font-size: 18px;
+    font-weight: 500;
+    ine-height: 18px;
+    color: #2F3747;
+    margin-left: 10px;
+  }
 `
 
 const DocsMobileButton = styled.div`
@@ -140,6 +150,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
             >
               <LogoContainer>
                 <HeaderLogo />
+                <span>Prisma's Data Guide</span>
               </LogoContainer>
             </Link>
           </div>

@@ -18,9 +18,9 @@ const List = styled.ul`
 `
 
 const ListItem = styled.li`
-font-size: 1rem;
-line-height: 1.25;
-margin-bottom: 12px;
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-bottom: 12px;
   position: relative;
   a {
     transition: color 150ms ease 0s;
@@ -106,8 +106,8 @@ margin-bottom: 12px;
       font-family: 'Rubik';
       font-size: 18px;
       color: var(--section-main-color) !important;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      font-weight: 500;
+      line-height: 20px;
       @media (min-width: 0px) and (max-width: 1024px) {
         color: var(--main-bgd-color) !important;
       }
@@ -158,7 +158,7 @@ const TreeNode = ({
   duration,
   experimental,
   lastLevel,
-  hidePage
+  hidePage,
 }: any) => {
   const isCollapsed = collapsed[label]
   const collapse = () => {

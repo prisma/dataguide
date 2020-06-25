@@ -1,33 +1,37 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import HeaderDiagram from '../icons/HeaderDiagram'
+import PrismaLogo from '../icons/PrismaLogo'
 
 const HeaderWrapper = styled.div`
-  background: linear-gradient(140.44deg, #3c366b 23.76%, #434190 79.42%),
+  background: linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
     linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
   min-height: 510px;
   display: flex;
   justify-content: center;
 
+  .sub-wrapper {
+    max-width: 880px;
+    width: 880px;
+    margin-top: 32px;
+  }
+
   .container {
-    // width: 800px;
     display: flex;
     justify-content: space-between;
     color: white;
-    padding: 100px 0;
+    padding: 60px 0 20px;
     > * {
       flex: 1;
     }
-    .content {
-      margin-right: 50px;
-    }
+
     h1 {
       font-style: normal;
       font-weight: bold;
-      font-size: 48px;
-      line-height: 48px;
+      font-size: 68px;
+      line-height: 68px;
       font-family: Rubik;
-      // letter-spacing: -0.03em;
+      letter-spacing: -0.03em;
       margin: 0 0px 24px;
     }
 
@@ -36,6 +40,7 @@ const HeaderWrapper = styled.div`
       font-weight: 600;
       line-height: 28px;
       width: 410px;
+      color: #c3dafe;
     }
 
     p {
@@ -69,20 +74,26 @@ const Highlight = styled.span`
 const HomePageHeader = () => {
   return (
     <HeaderWrapper>
-      <div className="container">
-        <div className="content">
-          <h1>Prisma's Data Guide</h1>
-          <h3>
-            Learn how databases work, how to choose the right one, and{' '}
-            <Highlight>how to use databases</Highlight> with your applications. Made with ❤️ by Prisma.
-          </h3>
-          <p>
+      <div className="sub-wrapper">
+        <PrismaLogo />
+        <div className="container">
+          <div className="content">
+            <h1>Prisma's Data Guide</h1>
+            <h3>
+              Learn how databases work, how to choose the right one, and
+              <Highlight>how to use databases</Highlight> with your applications to their full
+              potential. Made and <Highlight>regularly expanded</Highlight> with ❤️ by Prisma
+            </h3>
+            {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
             technologies, and teach you how to unlock the potential of your databases. New material
             is added regularly, so be sure to check back often!
-          </p>
+          </p> */}
+          </div>
+          <div>
+            <HeaderDiagram />
+          </div>
         </div>
-        <HeaderDiagram />
       </div>
     </HeaderWrapper>
   )

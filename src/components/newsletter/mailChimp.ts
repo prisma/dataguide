@@ -6,16 +6,15 @@
  */
 
 export default async function subscribe(email: string): Promise<void> {
-  console.log(email)
-  // await fetch(
-  //   `https://coo.us14.list-manage.com/subscribe/post-json?u=dbacf466dc6e90901d8936391&amp;id=83e066a034&EMAIL=${encodeURIComponent(
-  //     email
-  //   )}&c=?`,
-  //   {
-  //     method: 'GET',
-  //     mode: 'no-cors',
-  //   }
-  // )
+  await fetch(
+    `https://prisma.us14.list-manage.com/subscribe/post?u=dbacf466dc6e90901d8936391&amp;id=6266c28ed3&EMAIL=${encodeURIComponent(
+      email
+    )}&c=?`,
+    {
+      method: 'GET',
+      mode: 'no-cors',
+    }
+  )
   // no-cors doesn't give us any information, so this is just a fire & pray
   return
 }

@@ -10,9 +10,9 @@ html {
 
 body {
   /* Generic */
-  --main-theme-color: #667EEA;
+  --main-theme-color: #667eea;
   --main-font-color: #1a202c;
-  --secondary-font-color: #2F3747;
+  --secondary-font-color: #2f3747;
   --main-bgd-color: #f7fafc;
   --selection-bgd-color: #0c344b;
   --white-color: #ffffff;
@@ -126,6 +126,28 @@ h4 code,
 h5 code,
 h6 code {
   font-size: inherit !important;
+}
+
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
+  color: var(--main-font-color) !important;
+  text-decoration: none;
+}
+
+h2 a:hover,
+h2 a:focus,
+h3 a:hover,
+h3 a:focus,
+h4 a:hover,
+h4 a:focus,
+h5 a:hover,
+h5 a:focus,
+h6 a:hover,
+h6 a:focus {
+  text-decoration: underline;
 }
 
 * {
