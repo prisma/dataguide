@@ -14,6 +14,14 @@ const HeaderWrapper = styled.div`
     max-width: 880px;
     width: 880px;
     margin-top: 32px;
+
+    @media (min-width: 0px) and (max-width: 880px) {
+      padding: 0 16px;
+
+      svg {
+
+      }
+    }
   }
 
   .container {
@@ -48,8 +56,8 @@ const HeaderWrapper = styled.div`
       width: 370px;
     }
   }
-
-  @media (min-width: 0px) and (max-width: 1024px) {
+  
+  @media (min-width: 0) and (max-width: 1024px) {
     .container {
       flex-direction: column;
       align-items: center;
@@ -63,6 +71,11 @@ const HeaderWrapper = styled.div`
           width: auto;
         }
       }
+    }
+  }
+  @media (min-width: 0px) and (max-width: 500px) {
+    .container svg {
+      width: 400px;
     }
   }
 `
