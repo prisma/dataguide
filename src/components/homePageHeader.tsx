@@ -94,8 +94,8 @@ const HomePageHeader = () => {
             <h1>Prisma's Data Guide</h1>
             <h3>
               Learn how databases work, how to choose the right one, and
-              <Highlight>how to use databases</Highlight> with your applications to their full
-              potential. Made and <Highlight>regularly expanded</Highlight> with ❤️ by Prisma
+              <Highlight> how to use databases</Highlight> with your applications to their full
+              potential.
             </h3>
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
