@@ -27,7 +27,7 @@ module.exports = function plugin(
         .resolve(
           markdownNode.fields.slug
             .replace(`${pathSep}index`, '')
-            .replace(/\d+-/g, '')
+            .replace(/\d{2,}-/g, '')
             .replace(/\/$/, '')
             .split(pathSep)
             .slice(0, parent.name === 'index' ? undefined : -1)
