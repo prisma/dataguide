@@ -4,11 +4,11 @@ const { goToNav } = require('./src/utils/goToNavItem')
 const Layout = require('./src/components/layout').default
 
 exports.onClientEntry = () => {
-  // init()
+  init()
 }
 
 exports.onRouteUpdate = ({ location }) => {
-  // trackPage(location.pathname)
+  trackPage(location.pathname)
   goToNav(location.pathname)
 }
 
