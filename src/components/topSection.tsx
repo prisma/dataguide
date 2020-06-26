@@ -21,8 +21,7 @@ const MainTitle = styled.h1`
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--section-main-color);
-  margin: 0;
-  margin-top: 4px;
+  margin: 4px 0 20px;
   @media only screen and (max-width: 767px) {
     font-size: 24px;
   }

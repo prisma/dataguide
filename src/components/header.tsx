@@ -19,7 +19,7 @@ const HeaderWrapper = styled.div`
   img {
     margin-bottom: 0;
   }
-  padding: 30px 10px 24px;
+  padding: 20px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
