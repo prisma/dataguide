@@ -17,10 +17,6 @@ const HeaderWrapper = styled.div`
 
     @media (min-width: 0px) and (max-width: 880px) {
       padding: 0 16px;
-
-      svg {
-
-      }
     }
   }
 
@@ -37,7 +33,7 @@ const HeaderWrapper = styled.div`
       font-style: normal;
       font-weight: bold;
       font-size: 68px;
-      line-height: 68px;
+      line-height: 1;
       font-family: Rubik;
       letter-spacing: -0.03em;
       margin: 0 0px 24px;
@@ -55,9 +51,16 @@ const HeaderWrapper = styled.div`
       margin: 16px 0;
       width: 370px;
     }
+
+    svg {
+      margin-top:-30px;
+    }
   }
   
   @media (min-width: 0) and (max-width: 1024px) {
+    .sub-wrapper {
+      width: 100%;
+    }
     .container {
       flex-direction: column;
       align-items: center;
@@ -65,17 +68,27 @@ const HeaderWrapper = styled.div`
       .content {
         margin: 0;
         text-align: center;
-        padding: 0 25%;
+        padding: 0 15%;
 
         > * {
           width: auto;
         }
       }
+      svg{
+        margin-top:0;
+      }
     }
   }
   @media (min-width: 0px) and (max-width: 500px) {
+    .container h1 {
+      font-size:48px;
+    }
+    .container .content {
+      padding: 0 10%;
+    }
     .container svg {
       width: 400px;
+      height:300px
     }
   }
 `

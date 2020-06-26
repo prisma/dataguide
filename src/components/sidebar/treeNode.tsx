@@ -18,7 +18,7 @@ const List = styled.ul`
 `
 
 const ListItem = styled.li`
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: 1.25;
   margin-bottom: 12px;
   position: relative;
