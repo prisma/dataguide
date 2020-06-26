@@ -2,6 +2,12 @@
 
 This repository contains the [source code](./src) and the [content](./content) for [Prisma's Data Guide](/).
 
+## Licenses
+
+The code in this repository is licensed under an [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+The [written content](./content/) is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
 ## Run locally
 
 Download the code and get started by running the following commands:
