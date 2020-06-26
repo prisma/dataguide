@@ -20,8 +20,8 @@ const config = {
     keywords: "Prisma's Data Guide, dataguide, howtodata",
     docsLocation: 'https://github.com/prisma/dataguide/tree/master/content',
     twitter: {
-      site: '@dataguide',
-      creator: '@dataguide',
+      site: '@prisma',
+      creator: '@prisma',
       image: '/social/docs-social.png',
     },
     og: {
