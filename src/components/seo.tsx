@@ -36,7 +36,7 @@ const SEO = ({ title, description }: SEOProps) => {
   const seoDescription =
     currentPage && currentPage.node.context ? currentPage.node.context.seoDescription : description
 
-  let canonicalUrl = `${siteUrl}${location.pathname}`
+  let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`
 
   return (
     <Helmet htmlAttributes={{ lang: 'en' }}>

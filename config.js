@@ -1,11 +1,11 @@
 const config = {
   gatsby: {
-    pathPrefix: '',
-    siteUrl: 'https://dataguide.prisma.io', // replace with correct site
+    pathPrefix: '/',
+    siteUrl: 'https://dataguide.prisma.io', 
   },
   redirects: [],
   header: {
-    logoLink: '/', // replace with correct site
+    logoLink: '/', 
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
     search: {
       indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
@@ -22,7 +22,7 @@ const config = {
     twitter: {
       site: '@prisma',
       creator: '@prisma',
-      image: '/social/docs-social.png',
+      image: 'social/docs-social.png',
     },
     og: {
       site_name: "Prisma's Data Guide",
@@ -31,7 +31,7 @@ const config = {
         alt: "Prisma's Data Guide",
         height: '630',
         type: 'image/png',
-        url: '/social/docs-social.png', //replace social image
+        url: 'social/docs-social.png', //replace social image
         width: '1200',
       },
     },

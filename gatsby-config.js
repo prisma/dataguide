@@ -30,12 +30,6 @@ const gatsbyRemarkPlugins = [
   {
     resolve: require.resolve('./plugins/gatsby-remark-check-links-numberless'),
   },
-  // {
-  //   resolve: 'gatsby-remark-copy-linked-files',
-  //   options: {
-  //     destinationDir: 'static',
-  //   },
-  // },
 ]
 
 module.exports = {
@@ -53,13 +47,6 @@ module.exports = {
     docsLocation: config.siteMetadata.docsLocation,
   },
   plugins: [
-    // {
-    //   resolve: `gatsby-plugin-google-analytics`,
-    //   options: {
-    //     trackingId: 'UA-74131346-14',
-    //     anonymize: true,
-    //   },
-    // },
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
@@ -68,12 +55,6 @@ module.exports = {
     'gatsby-plugin-styled-components',
     'gatsby-plugin-smoothscroll',
     'gatsby-plugin-catch-links',
-    // {
-    //   resolve: `gatsby-plugin-layout`,
-    //   options: {
-    //     component: require.resolve(`./src/layouts/articleLayout.tsx`),
-    //   },
-    // },
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
@@ -118,6 +99,6 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
-    // 'gatsby-plugin-remove-trailing-slashes',
+    'gatsby-plugin-remove-trailing-slashes',
   ],
 }
