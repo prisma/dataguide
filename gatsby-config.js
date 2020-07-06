@@ -118,6 +118,6 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
-    'gatsby-plugin-remove-trailing-slashes',
+    // 'gatsby-plugin-remove-trailing-slashes',
   ],
 }
