@@ -36,7 +36,7 @@ const FooterWrapper = styled.div`
     }
 
     &.info {
-      color: var(--list-bullet-color);
+      color: var(--secondary-font-color);
       align-items: center;
 
       h4 {
@@ -51,6 +51,7 @@ const FooterWrapper = styled.div`
 
       p {
         margin: 0;
+        color: var(--code-inner-color);
       }
     }
   }

@@ -9,6 +9,7 @@ const NewsLetterWrapper = styled.div`
     font-style: normal;
     font-weight: 600;
     line-height: 24px;
+    color: var(--secondary-font-color);
   }
 
   p {
@@ -97,13 +98,16 @@ const Newsletter = ({ newsletter }: any) => {
       <p>{newsletter.text}</p>
 
       <form className="email" onSubmit={submitEmail}>
-        <input
-          type="text"
-          placeholder={submitted ? 'Thank you!' : 'your@email.com'}
-          value={email}
-          onChange={validate}
-          disabled={submitted}
-        />
+        <label htmlFor="email" aria-label="Insert your email">
+          <input
+            id="email"
+            type="text"
+            placeholder={submitted ? 'Thank you!' : 'your@email.com'}
+            value={email}
+            onChange={validate}
+            disabled={submitted}
+          />
+        </label>
         <button disabled={submitted || !validEmail} type="submit">
           Subscribe <ArrowEmail />
         </button>
