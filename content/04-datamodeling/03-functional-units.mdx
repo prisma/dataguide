@@ -5,6 +5,9 @@ metaDescription: "There are a variety of ways to get PostgreSQL servers for your
 metaImage: /content/postgresql/ways-to-host-postgresql-databases/header.png
 toc: false
 ---
+
+## Introduction
+
 There are two schools of thought about performing computations in your database: people who think it's great, and people who are wrong. This is not to say that the world of functions, stored procedures, generated or computed columns, and triggers is all sunshine and roses! These tools are far from foolproof, and ill-considered implementations can perform poorly, traumatize their maintainers, and more, which goes some way toward explaining the existence of controversy.
 
 But databases are, by definition, very good at processing and manipulating information, and most of them make that same control and power available to their users (SQLite and MS Access to a lesser degree). External data processing programs start on the back foot having to pull information out of the database, often across a network, before they can do anything. And where database programs can take full advantage of native set operations, indexing, temporary tables, and other fruits of half a century of database evolution, external programs of any complexity tend to involve some level of wheel-reinvention. So why not put the database to work?
@@ -177,3 +180,6 @@ Programmability is an unjustly overlooked feature of relational databases. There
 ^4: Data Definition Language: the structural half of SQL with the `DROP TABLE`s and the `CREATE OR REPLACE FUNCTION`s and so forth.
 ^5: In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of `TRIGGER`; MySQL instead accepts a `BEGIN ... END` block as a trigger body; Oracle and SQL Server can do either.
 ^6: Data Manipulation Language: the other half of SQL, `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.
+
+### About the Author: Dian Fay
+Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
