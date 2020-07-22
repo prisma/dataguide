@@ -35,9 +35,21 @@ Like anything else, referential integrity is a negotiable constraint, and sacrif
 
 The latter half of the 00s saw a Cambrian explosion of these alternatives. Suddenly there were "NoSQL" databases storing documents, graphs, key-value pairs. Columnar stores achieved shocking performance by turning tables sideways and modeling flat, denormalized data. The newcomers embraced scaling out across networked servers, threw out the ACID playbook in favor of BASE ("Basically Available, Soft state, Eventual consistency"), and developed APIs and domain-specific languages for concepts alien to SQL. Not only that, the reshaping of the conversation around data storage has blurred the boundaries of databases as a concept. Are stream processors like Kafka databases? What about search engines like ElasticSearch? Each fundamentally facilitates the storage and retrieval of information; discussing either requires invoking much of the technical language of databases. More fundamentally, each is a solution to a particular sort of data modeling problem.
 
-[Untitled](https://www.notion.so/938d718e0d944e39baf1b16e099bcc1e)
 
-Kristof Kovacs maintains a [more detailed summary](https://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis) of many NoSQL options, from the popular to the obscure.
+
+| If you need to store and process...                                                                            | Look towards...^4.                                                                                    |
+|----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| Hierarchies with few interconnections, raw structured documents or objects with at least some fields in common | Document databases (Couchbase, MongoDB)                                                            |
+| Huge volumes of "flat" data such as instrument readings or structured analytics                                | Column-oriented databases (Cassandra, HBase), time-series databases (TimescaleDB, InfluxDB, Druid) |
+| Records identified by a key and queried only by that key                                                       | Key-value stores (Redis, LevelDB), caches (memcached)                                              |
+| Complex relationships among records with point-to-point navigation                                             | Graph databases (OrientDB, Neo4j, TerminusDB)                                                      |
+| Transient data feeds in the order of receipt                                                                   | Stream processors and queues (Kafka, RabbitMQ, ZeroMQ)                                             |
+| Files. Lots and lots of files                                                                                  | Cloud file storage (Google Cloud Storage, Amazon S3 and Athena)                                    |
+| Unstructured documents, or structured documents with highly variable schemas                                   | Search engines (ElasticSearch, Solr), content repositories (Jackrabbit)                            |
+| Relational data, at planetary scale                                                                            | NewSQL highly-distributed relational databases (VoltDB, Spanner)                                   |
+| At least several of the above                                                                                  | Multi-model databases (FaunaDB, ArangoDB)                                                          |
+
+^4 Kristof Kovacs maintains a [more detailed summary](https://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis) of many NoSQL options, from the popular to the obscure.
 
 ## The Default
 
