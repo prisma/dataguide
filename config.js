@@ -5,7 +5,7 @@ const config = {
   },
   redirects: [],
   header: {
-    logoLink: '/', 
+    logoLink: 'https://prisma.io', 
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
     search: {
       indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
