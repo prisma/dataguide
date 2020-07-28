@@ -10,7 +10,7 @@ PostgreSQL uses various mechanisms to implement authentication, authorization, a
 
 PostgreSQL roles are a combination of the ideas of users and groups into a single, flexible entity.  They are the persona that user's adopt within the database system, are the entity by which the authentication system accepts or denies connections, and the subject of privilege management rules of all scopes.
 
-This guide will cover what roles are and how to manage them within a PostgreSQL database cluster.  More specifically, this guide will cover role management as it relates to role attributes.  For a more broad overview of how roles fit into the larger picture, take a look at the [introduction to authentication and authorization guide](/postgresql/intro-to-authn-and-authz).  To learn how to change role privileges on specific database objects, check out our guide on [role grants]().
+This guide will cover what roles are and how to manage them within a PostgreSQL database cluster.  More specifically, this guide will cover role management as it relates to role attributes.  For a more broad overview of how roles fit into the larger picture, take a look at the [introduction to authentication and authorization guide](/postgresql/authentication-and-authorization/intro-to-authn-and-authz).  To learn how to change role privileges on specific database objects, check out our guide on [role grants](/postgresql/authentication-and-authorization/managing-privileges).
 
 ## What are roles?
 
@@ -258,7 +258,7 @@ For example, to create a role named `admin` with `superuser` privileges while pr
 createuser --superuser admin
 ```
 
-You would then be able to log in using the `admin` account according to the authentication methods outlined in the [`pg_hba.conf` file](/postgresql/configuring-user-authentication#understanding-postgresqls-authentication-file).
+You would then be able to log in using the `admin` account according to the authentication methods outlined in the [`pg_hba.conf` file](/postgresql/authentication-and-authorization/configuring-user-authentication#understanding-postgresqls-authentication-file).
 
 To create roles using `SQL`, the general syntax looks like this:
 
@@ -368,7 +368,7 @@ DROP ROLE "user2";
 
 ## Logging in using `psql`
 
-Once you have a new role configured, and have [configured authentication details using the `pg_hba.conf` file](/postgresql/configuring-user-authentication), you can login to the database cluster using your new role.  The `psql` command line client provides an easy way to do this.
+Once you have a new role configured, and have [configured authentication details using the `pg_hba.conf` file](/postgresql/authentication-and-authorization/configuring-user-authentication), you can login to the database cluster using your new role.  The `psql` command line client provides an easy way to do this.
 
 By default, `psql` assumes you want to connect using a role that matches your operating system username.  So if you are logged into your computer as `john`, `psql` will assume that you want to try to connect to the database using a role that's also called `john`.
 

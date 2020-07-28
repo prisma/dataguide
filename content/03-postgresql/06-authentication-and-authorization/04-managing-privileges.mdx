@@ -8,13 +8,13 @@ metaDescription: "Managing ownership and grants on specific database objects is 
 
 Controlling what each user is allowed to do within your database is an important part of administrating a database cluster.  PostgreSQL provides a suite of tools to control authentication and authorization.
 
-On the authentication front, the [`pg_hba.conf` file controls how people can connect to the database](/postgresql/configuring-user-authentication).  This includes the exact user, database, connection method, and authentication method combinations that are allowed access to the server.  The authorization component starts with PostgreSQL's concept of [roles and role attributes](/postgresql/role-management) which defines the user entities within the system and controls their global privileges.
+On the authentication front, the [`pg_hba.conf` file controls how people can connect to the database](/postgresql/authentication-and-authorization/configuring-user-authentication).  This includes the exact user, database, connection method, and authentication method combinations that are allowed access to the server.  The authorization component starts with PostgreSQL's concept of [roles and role attributes](/postgresql/authentication-and-authorization/role-management) which defines the user entities within the system and controls their global privileges.
 
 A further level of authorization is present beyond those offered by role attributes.  Managing ownership and grants on specific database objects is the primary way to control which roles can manage, modify, and view databases, tables, sequences, and more.  This guide will cover how to use PostgreSQL's grant and revocation mechanisms to lay out exactly what roles have access to each database object.
 
 ## What are PostgreSQL object privileges?
 
-In the article on [roles and role attributes](/postgresql/role-management), the concept of defining system-wide privileges for roles was introduced.  Using role attributes, administrators can define whether roles can create or modify databases, manage roles, or even login to the system itself.  These types of privileges are hold true across the entire database cluster, so they offer no granularity when it comes to controlling access to individual objects within the database.
+In the article on [roles and role attributes](/postgresql/authentication-and-authorization/role-management), the concept of defining system-wide privileges for roles was introduced.  Using role attributes, administrators can define whether roles can create or modify databases, manage roles, or even login to the system itself.  These types of privileges are hold true across the entire database cluster, so they offer no granularity when it comes to controlling access to individual objects within the database.
 
 Instead, PostgreSQL uses a complimentary system of individual grants or rights on specific database entities.  This allows the owners of database objects to determine what types of actions are permitted by which roles.  This additional flexibility and granularity is what makes multi-user and multitenant deployments both possible and practical.
 
@@ -24,7 +24,7 @@ Database *grants* or *privileges* define the specific set of operations or level
 
 Fundamental to this system are the concepts of object ownership and role membership.  In PostgreSQL, every database object has exactly one *owner* who alone, along with `superuser` roles, has the unique ability to alter, delete, and manage the object itself.  The object owner manages the privileges on the object for other roles by granting privileges.  Every privilege granted on a database object can ultimately be controlled by the object owner.
 
-Role membership is a system that gives roles the privileges of the roles they are members of.  Roles with the `INHERIT` attribute that are members of other roles gain access to their privileges automatically, without having to [use `SET ROLE` to change the current role](/postgresql/role-management#changing-to-a-different-role-during-a-session).
+Role membership is a system that gives roles the privileges of the roles they are members of.  Roles with the `INHERIT` attribute that are members of other roles gain access to their privileges automatically, without having to [use `SET ROLE` to change the current role](/postgresql/authentication-and-authorization/role-management#changing-to-a-different-role-during-a-session).
 
 For example, imagine a `salesadmin` role with the ability to modify data within the `sales` database.  If the `sally` role has the `INHERIT` role attribute set, then adding `sally` to the `salesadmin` role will automatically enable `sally` to modify data in the `sales` database.  The ability to inherit characteristics enables a flexible style of access management by grouping attributes and access by "functional" roles and then adding actual "user" roles to those functional roles as required.
 
@@ -75,7 +75,7 @@ The other syntax, used to add a role to another role, looks like this.  In this 
 GRANT <provider_role> TO <role_member> [WITH ADMIN OPTION];
 ```
 
-If the `<role_member>` has the `INHERIT` attribute set, it will immediately have access to the privileges of the `<provider_role>`.  If this attribute is missing, the `<role_member>` can access the privileges of the `<provider_role>` by changing the current role with [`SET ROLE`](/postgresql/role-management#changing-to-a-different-role-during-a-session).
+If the `<role_member>` has the `INHERIT` attribute set, it will immediately have access to the privileges of the `<provider_role>`.  If this attribute is missing, the `<role_member>` can access the privileges of the `<provider_role>` by changing the current role with [`SET ROLE`](/postgresql/authentication-and-authorization/role-management#changing-to-a-different-role-during-a-session).
 
 Similar to the `WITH GRANT OPTION` clause in the other syntax, when granting membership to a role, you can optionally add a `WITH ADMIN OPTION` clause.  This clause additionally gives the role member the ability to add new members.
 

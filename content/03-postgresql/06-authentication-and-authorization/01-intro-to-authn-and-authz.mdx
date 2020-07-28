@@ -68,7 +68,7 @@ Administrators can make roles as *members* of other roles to give the member acc
 
 A single role can operate as both a container and a member to implement more complex policy.  In general, roles intended to be used as user agents have defined authentication policies, with their level of authorization determined by their own privileges, the privileges of roles they are members of, and the objects they own.  In contrast, roles that are meant to work as groups typically do not have associated authorization.
 
-The article dedicated to roles covers [how to define and configure roles within PostgreSQL]().
+The article dedicated to roles covers [how to define and configure roles within PostgreSQL](/postgresql/authentication-and-authorization/role-management).
 
 ## The `pg_hba.conf` file
 
@@ -89,7 +89,7 @@ The first authentication policy that matches the connection is used to authentic
 
 Since only a single policy (the first matching one) is consulted for each connection, controlling the specificity and ordering of policies is very important.  Improper ordering can lead to client connections matching the incorrect policy, which can either prevent users from accessing the system or allow access to connections inadvertently.
 
-Follow our guide on [configuring authentication in PostgreSQL](https://dataguide.prisma.io/postgresql/configuring-user-authentication) to learn how to configure effective `pg_hba.conf` policies.
+Follow our guide on [configuring authentication in PostgreSQL](/postgresql/authentication-and-authorization/configuring-user-authentication) to learn how to configure effective `pg_hba.conf` policies.
 
 ## The PostgreSQL privilege and role attribute system
 
@@ -123,7 +123,7 @@ As mentioned earlier, only the object owner and `superuser` roles can delete or 
 
 The types of privileges available depend on the database object in question.  For instance, the `REFERENCES` privilege, which allows the role to create foreign key constraints related to the object, is limited to use on table or table column objects.  That's because defining foreign constraint privileges on a sequence, for example, doesn't make sense.  For a summary of which privileges and database objects can be used together, [take a look at Table 5.1 and Table 5.2 in PostgreSQL's documentation on privileges](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGE-ABBREVS-TABLE).
 
-Check out our guide on [managing privileges within PostgreSQL]() to learn more about how to use PostgreSQL's grant system.
+Check out our guide on [managing privileges within PostgreSQL](/postgresql/authentication-and-authorization/managing-privileges) to learn more about how to use PostgreSQL's grant system.
 
 ## Conclusion
 
