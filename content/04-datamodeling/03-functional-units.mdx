@@ -27,8 +27,9 @@ Some database engines split the difference between SQL and other programming lan
 
 Using non-SQL languages is an option if SQL is inadequate for some task or if you want to reuse other code, but it won't get you around the other issues that make database programming a many-edged sword. If anything, resorting to these complicates deployment and interoperability further. Caveat scriptor: let the writer beware.
 
-## [ Sidebar ] Functions vs Procedures
+## [ Sidebar ] Functions vs ProceduresFunctions vs Procedures
 
+<details><summary>Functions vs Procedures</summary>
 > Some readers will already know about this to one degree or another. It's worth including for those who won't, especially if their experience so far has been only of "dumb" databases backing O/RM-served applications.
 
 One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. As with other aspects of implementing the SQL standard, the exact details vary a bit from RDBMS to RDBMS. In general:
@@ -39,7 +40,9 @@ One named block of SQL managed and executed in the database seems like it should
 
 More specifically, MySQL also disallows recursion and some additional SQL statements in functions. SQL Server prohibits functions from modifying data, executing dynamic SQL, and handling errors. PostgreSQL didn't separate stored procedures from functions at all until 2017 with version 11, so Postgres functions can do almost everything procedures can, barring transaction control.
 
-So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.
+So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.</details>
+
+
 
 ## Defaults and Generation
 
@@ -85,14 +88,14 @@ CREATE TABLE lots (
 ```
 
 
-<footnote> <note> If you are more familiar with a C-family language than you are with PostgreSQL,</br> the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> <i>"^1"</i> </text> </footnote>
+<footnote> <note> If you are more familiar with a C-family anguage than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> <i>^1</i> </text> </footnote>
 
 
 
 
 ## Referencing Data in Functions
 
-The sequence approach above has one important weakness (and at least one less important ^2): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
+The sequence approach above has one important weakness (and at least one less important <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> <i>^2</i> </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
 
 ```
 CREATE OR REPLACE FUNCTION next_lot_number () RETURNS TEXT AS $$
@@ -113,9 +116,9 @@ ALTER TABLE lots
 
 ## Workflows
 
-Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing one SQL statement to tally the number of lots this year to date followed by a second which inserts the new lot^3. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
+Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing one SQL statement to tally the number of lots this year to date followed by a second which inserts the new lot<footnote> <note> "What about <inlineCode>SELECT ... INSERT</inlineCode>?", I hear you cry. Yes, as long as you <inlineCode>UNION</inlineCode> a dummy value in for the first lot of the year when <inlineCode>count()</inlineCode> has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text> <i>^3</i> </text> </footnote>. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
 
-Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions]([http://assets.en.oreilly.com/1/event/27/High](http://assets.en.oreilly.com/1/event/27/High) Performance SQL with PostgreSQL Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
+Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions]([http://assets.en.oreilly.com/1/event/27/High-Performance-SQL with-PostgreSQL-Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
 
 So much of software architecture in general is about managing and isolating complexity, preventing it from spilling across the boundaries between subsystems. If some more or less complicated workflow involves pulling data into an application backend, script, or cron job, digesting and adding to it, and storing the result -- it's time to ask what really necessitates venturing outside the database.
 
