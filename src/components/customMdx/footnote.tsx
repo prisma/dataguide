@@ -4,14 +4,16 @@ import styled from 'styled-components'
 type FootnoteProps = React.ReactNode
 
 const Footnote = ({ children }: FootnoteProps) => {
+  const [tooltipOpen, setTooltipOpen] = React.useState(false)
   const note =
     children && children.filter((child: any) => child.props && child.props.originalType === 'note')
   const text =
     children && children.filter((child: any) => child.props && child.props.originalType === 'text')
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen)
   return (
     <FootnoteWrapper>
-      {text}
-      {note && <div className="note">
+      <span onClick={toggleTooltip}>{text}</span>
+      {note && tooltipOpen && <div className="note">
         {note}
       </div>}
     </FootnoteWrapper>
@@ -24,12 +26,7 @@ const FootnoteWrapper = styled.span`
   position: relative;
   border-bottom: 1px dashed black;
 
-  &:hover .note {
-    display: block;
-  }
-
   .note {
-    display: none;
     width: max-content;
     background-color: var(--tooltip-bg-color);
     color: white;
