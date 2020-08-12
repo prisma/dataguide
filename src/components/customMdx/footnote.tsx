@@ -3,15 +3,20 @@ import styled from 'styled-components'
 
 type FootnoteProps = React.ReactNode
 
-const Footnote = ({ children, ...props }: FootnoteProps) => (
-  <FootnoteWrapper>
-    {children}
-    <div className="note">
-      {props.noteText && <p>{props.noteText}</p>}
-      {props.noteLink && <a href={props.noteLink}>{props.noteLinkText}</a>}
-    </div>
-  </FootnoteWrapper>
-)
+const Footnote = ({ children }: FootnoteProps) => {
+  const note =
+    children && children.filter((child: any) => child.props && child.props.originalType === 'note')
+  const text =
+    children && children.filter((child: any) => child.props && child.props.originalType === 'text')
+  return (
+    <FootnoteWrapper>
+      {text}
+      {note && <div className="note">
+        {note}
+      </div>}
+    </FootnoteWrapper>
+  )
+}
 
 export default Footnote
 
