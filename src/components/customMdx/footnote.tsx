@@ -5,17 +5,31 @@ type FootnoteProps = React.ReactNode
 
 const Footnote = ({ children }: FootnoteProps) => {
   const [tooltipOpen, setTooltipOpen] = React.useState(false)
+  const ref = React.useRef(null)
+  const openTooltip = () => setTooltipOpen(true)
+
+  React.useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setTooltipOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [ref])
+
   const note =
     children && children.filter((child: any) => child.props && child.props.originalType === 'note')
   const text =
     children && children.filter((child: any) => child.props && child.props.originalType === 'text')
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen)
+
   return (
-    <FootnoteWrapper>
-      <span onClick={toggleTooltip}>{text}</span>
-      {note && tooltipOpen && <div className="note">
-        {note}
-      </div>}
+    <FootnoteWrapper ref={ref}>
+      <span onClick={openTooltip}>{text}</span>
+      {note && tooltipOpen && <div className="note">{note}</div>}
     </FootnoteWrapper>
   )
 }
