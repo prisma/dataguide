@@ -1,0 +1,443 @@
+---
+title: 'Managing roles and role attributes in PostgreSQL'
+metaTitle: 'Managing roles and role attributes in PostgreSQL'
+metaDescription: "PostgreSQL roles are a combination of the ideas of users and groups into a single, flexible entity.  This guide will cover what roles are and how to manage them within a PostgreSQL database cluster."
+---
+
+## Introduction
+
+PostgreSQL uses various mechanisms to implement authentication, authorization, and object ownership within database clusters.  Core among these is the concept of roles.
+
+PostgreSQL roles are a combination of the ideas of users and groups into a single, flexible entity.  They are the persona that user's adopt within the database system, are the entity by which the authentication system accepts or denies connections, and the subject of privilege management rules of all scopes.
+
+This guide will cover what roles are and how to manage them within a PostgreSQL database cluster.  More specifically, this guide will cover role management as it relates to role attributes.  For a more broad overview of how roles fit into the larger picture, take a look at the [introduction to authentication and authorization guide](/postgresql/authentication-and-authorization/intro-to-authn-and-authz).  To learn how to change role privileges on specific database objects, check out our guide on [role grants](/postgresql/authentication-and-authorization/managing-privileges).
+
+## What are roles?
+
+In PostgreSQL, a role is a grouping of a specific set of capabilities, permissions, and "owned" entities. Instead of having distinct concepts of "users" and "groups", PostgreSQL uses roles to represent both of these ideas. A role can correspond to an individual person in the real world, or it can operate as a group with certain access that other roles can become members of.
+
+Roles are the anchor point within PostgreSQL that determine who authentication and authorization policies apply to.  Any policy that does not apply universally requires a notion of identity to define who to restrict and who to allow.  In PostgreSQL, this identity is represented by roles.
+
+PostgreSQL's authentication system has a number of different components, each of which are tied to roles.  In order to be used for the initial connection to the database cluster, roles must first have the `LOGIN` attribute set.  The authentication rules themselves are defined in the host-based configuration file called `pg_hba.conf`.  Each rule defines methods of authentication that may be scoped to the individual role.  For roles that are configured for password authentication must have a password attribute set so the system can validate the supplied user password.
+
+In terms of authorization, roles are defined at the database cluster level, which in PostgreSQL, means that they are shared between databases.  Since roles span databases, the authorization system controls the level of access each role has to each database entity.  Because roles can represent groups of people, there is a great deal of flexibility in how access can be configured.
+
+Roles are also essential to the concept of object ownership within PostgreSQL.  Each database and table, for instance, have exactly one role configured as the owner.  Other than `superusers`, the owner role is the only role that can modify or delete the actual object.
+
+In summary, roles are at the core of most practical database operations.  Their flexibility allows them to act both as user identifiers and user classes.  Every action within the database cluster is checked against the role's privileges and the success of each connection to the database cluster is determined by the role one authenticates to.  It is important to get a good handle on role management because of its importance within so many core operations.
+
+
+## Role attributes
+
+Role attributes are flags on the role itself that determine some of the core privileges it has on the database cluster level.  These can be set when the role is initially created, or changed at any time by any role with the appropriate attributes (`SUPERUSER` or `CREATEROLE` in this case).
+
+Attributes that can be applied to a role include:
+
+* `LOGIN`: Allows users to initially connect to the database cluster using this role.  The `CREATE USER` command automatically adds this attribute, while `CREATE ROLE` command does not.
+* `SUPERUSER`: Allows the role to bypass all permission checks except the right to log in.  Only other `SUPERUSER` roles can create roles with this attribute.
+* `CREATEDB`: Allows the role to create new databases.
+* `CREATEROLE`: Allows the role to create, alter, and delete other roles.  This attribute also allows the role to assign or alter role membership.  An exception is that a role with the `CREATEROLE` attribute cannot alter `SUPERUSER` roles without also having the `SUPERUSER` attribute.
+* `REPLICATION`: Allows the role to initiate streaming replication.  Roles with this attribute must also have the `LOGIN` attribute.
+* `PASSWORD`: Assigns a password to the role that will be used with `password` or `md5` authentication mechanisms.  This attribute takes a password in quotations as an argument directly after the attribute keyword.
+* `INHERIT`: Determines whether the role inherits the privileges of roles it is a member of.  Without the `INHERIT`, members must use `SET ROLE` to change into the other role in order to access those exclusive privileges.  This attribute is set for new roles by default.
+
+You can find out more about role attributes by checking out PostgreSQL's documentation on [role attributes](https://www.postgresql.org/docs/current/role-attributes.html) and the [`CREATE ROLE` command](https://www.postgresql.org/docs/current/sql-createrole.html).
+
+## What is a `superuser` role?
+
+As mentioned briefly above, a special privilege called `superuser` allows unrestricted administrative access to the database cluster.  This is similar to the `root` account in Linux and Unix-like operating systems, but at the database level.
+
+There must always be at least one role with `superuser` privileges in each database cluster.  The initial `superuser` account is created during the installation process.  The name of the initial `superuser` account can vary depending on the installation process, but most often, this account is called `postgres`.
+
+It is not recommended to do your day-to-day work using an account with `superuser` privileges, both because of its potential for destructive actions and also to minimize the chance of compromising an account with broad access.  Instead, most of the time, users should use accounts dedicated to the specific functions or data objects they are working with, only using the `superuser` accounts when more powerful access is required.
+
+## Checking existing role attributes
+
+Now that you have a broad idea of what role attributes are and what types of privileges they allow, you should learn how to find the attributes applied to roles throughout PostgreSQL.  This section will show you some commands to help you find the attributes set on roles in general and on your own current role specifically.
+
+### Listing all database roles and their attributes
+
+There are a few different ways to check the attributes applied to roles throughout the system.
+
+If you are using the `psql` command line client, you can take advantage of some helpful [meta-commands](https://www.postgresql.org/docs/current/app-psql.html#APP-PSQL-META-COMMANDS) which allow you to get role attribute information without a query.
+
+The `\du` meta-command shows all roles and their attributes:
+
+```
+\du
+```
+```
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ ```
+
+In this case, the `postgres` role is the default role with `superuser` privileges configured for this database cluster.
+
+The equivalent SQL to list roles (discoverable by passing the `-E` or `--echo-hidden` flag when starting `psql`) is:
+
+```sql
+SELECT r.rolname, r.rolsuper, r.rolinherit,
+  r.rolcreaterole, r.rolcreatedb, r.rolcanlogin,
+  r.rolconnlimit, r.rolvaliduntil,
+  ARRAY(SELECT b.rolname
+        FROM pg_catalog.pg_auth_members m
+        JOIN pg_catalog.pg_roles b ON (m.roleid = b.oid)
+        WHERE m.member = r.oid) as memberof
+, r.rolreplication
+, r.rolbypassrls
+FROM pg_catalog.pg_roles r
+WHERE r.rolname !~ '^pg_'
+ORDER BY 1;
+```
+
+A similar query that provides role attribute information (without the role membership component) is below.  We use the `psql` meta-command `\x on` to output the results vertically for better readability here:
+
+```sql
+-- turn on vertical display
+\x on
+SELECT * FROM pg_roles WHERE rolname !~ '^pg_';
+-- turn off vertical display
+\x off
+```
+```
+-[ RECORD 1 ]--+---------
+rolname        | postgres
+rolsuper       | t
+rolinherit     | t
+rolcreaterole  | t
+rolcreatedb    | t
+rolcanlogin    | t
+rolreplication | t
+rolconnlimit   | -1
+rolpassword    | ********
+rolvaliduntil  | 
+rolbypassrls   | t
+rolconfig      | 
+oid            | 10
+```
+
+If you are only interested in seeing which roles have the `superuser` attribute, you can ask for a list explicitly:
+
+```sql
+SELECT rolname FROM pg_roles WHERE rolsuper;
+```
+```
+ rolname
+----------
+ postgres
+(1 row)
+```
+
+Alternatively, you can list all users and their `superuser` status for a more complete picture:
+
+```sql
+SELECT usename,usesuper FROM pg_user;
+```
+```
+ usename  | usesuper
+----------+----------
+ postgres | t
+ user1    | f
+(2 rows)
+```
+
+The same information can be retrieved using PostgreSQL's "role" paradigm instead of its (sometimes ambiguous) "user" overlay with this slightly longer query instead:
+
+```sql
+SELECT rolname,rolsuper FROM pg_roles WHERE rolname !~ '^pg_';
+```
+```
+ rolname  | rolsuper
+----------+----------
+ postgres | t
+ user1    | f
+(2 rows)
+```
+
+### Listing your own attributes
+
+If you want to find the attributes of the role you are currently using, you can easily filter the output.
+
+When using `psql` meta-commands, you can use the `USER` variable, which will be substituted with the current connected role.  `psql` uses the colon (`:`) to interpolate variables:
+
+```sql
+\du :USER
+```
+```
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+```
+
+To get a listing showing the values of all possible role attributes, you can use a query comparing the role name to the value returned by [the `CURRENT_ROLE` PostgreSQL function](https://www.postgresql.org/docs/current/functions-info.html#FUNCTIONS-INFO-SESSION-TABLE).  Again, we're using vertical output for readability:
+
+```sql
+-- First, turn on vertical output
+\x on
+SELECT * FROM pg_roles WHERE rolename = CURRENT_ROLE;
+-- Change back to normal output
+\x off
+```
+```
+-[ RECORD 1 ]--+---------
+rolname        | postgres
+rolsuper       | t
+rolinherit     | t
+rolcreaterole  | t
+rolcreatedb    | t
+rolcanlogin    | t
+rolreplication | t
+rolconnlimit   | -1
+rolpassword    | ********
+rolvaliduntil  |
+rolbypassrls   | t
+rolconfig      |
+oid            | 10
+```
+
+To just check whether your current role has `superuser` privileges, you can type:
+
+```sql
+SHOW is_superuser;
+```
+```
+ is_superuser
+--------------
+ on
+(1 row)
+```
+
+### Check whether you have role management privileges
+
+To make, alter, or delete roles, you must either have `superuser` or `CREATEROLE` privileges.
+
+To check which roles within the system have role management privileges, type:
+
+```sql
+SELECT rolname as "Users who can manage roles" FROM pg_roles WHERE rolsuper OR rolcreaterole;
+```
+```
+ Users who can manage roles
+----------------------------
+ postgres
+(1 rows)
+```
+
+If you just want to know whether your current role has role management privileges, you can instead use:
+
+```sql
+SELECT 'Yes' AS "Can I manage roles?" FROM pg_roles WHERE rolname = :'USER' AND (rolsuper OR rolcreaterole);
+```
+```
+ Can I manage roles?
+---------------------
+ Yes
+(1 row)
+```
+
+## Creating roles
+
+Once you've verified that you have role management privileges, you can begin making, modifying, or removing roles within PostgreSQL.
+
+One option to set role attributes is to declare them at the time that you create the role.  This allows you to set the initial conditions for the role, but you can still modify them afterwards if you want to change the role's level of access.  You can find more information about the [`CREATE ROLE` command](https://www.postgresql.org/docs/current/sql-createrole.html) that we'll be using to familiarize yourself with the basic syntax.
+
+One way of creating a role is from the command line.  PostgreSQL includes a [`createuser` command](https://www.postgresql.org/docs/current/app-createuser.html) that will create a role within the database cluster with `LOGIN` privileges.
+
+The general syntax is:
+
+```
+createuser <options> <rolename>
+```
+
+For example, to create a role named `admin` with `superuser` privileges while prompting for a password, you could type:
+
+```
+createuser --superuser admin
+```
+
+You would then be able to log in using the `admin` account according to the authentication methods outlined in the [`pg_hba.conf` file](/postgresql/authentication-and-authorization/configuring-user-authentication#understanding-postgresqls-authentication-file).
+
+To create roles using `SQL`, the general syntax looks like this:
+
+```sql
+CREATE ROLE <role>;
+```
+
+Attributes can be defined by specifying them after the role name using `WITH`:
+
+```sql
+CREATE ROLE <role> WITH <options>;
+```
+
+For example, to create a role named `user1` that can login with the password `secretpassword`, you could type:
+
+```sql
+CREATE ROLE "user1" WITH LOGIN PASSWORD 'secretpassword';
+```
+
+To instead create a role with `superuser` privileges (you must also be a `superuser` to successfully execute this command) that *cannot* login (user must use `SET ROLE` to change to this role), you could type:
+
+```sql
+CREATE ROLE "user2" WITH SUPERUSER;
+```
+
+## Changing existing roles
+
+To modify the attributes of existing roles, you can use the [`ALTER ROLE` command](https://www.postgresql.org/docs/current/sql-alterrole.html) instead.  As with role creation, your current role must also have either `superuser` or `CREATEROLE` privileges.  Users who do not have those privileges can only use the `ALTER ROLE` command to change their own password.
+
+Altering roles allows you to change the attributes assigned to a role after creation.  The same attributes mentioned in the role creation section can be used with the `ALTER ROLE` syntax.  One difference is that each attribute type can be negated by adding the `NO` prefix.  For example, to allow a role to login to the database cluster, you can give it the `LOGIN` attribute.  To remove that ability, you'd alter the role by specifying `NOLOGIN`.
+
+The `ALTER ROLE` command only changes the attributes are those explicitly mentioned.  In other words, the `ALTER ROLE` command specifies *changes* to attributes, not a full set of new attributes.
+
+
+To allow the `user2` role to login to the database cluster, you can type:
+
+```sql
+ALTER ROLE "user2" WITH LOGIN;
+```
+
+Keep in mind that while this enables the ability to login, the allowed authentication methods are still controlled by the `pg_hba.conf` file.
+
+If you want `user2` to be able to login, create roles, and create databases instead, you can specify those three attributes, separated by spaces:
+
+```sql
+ALTER ROLE "user2" WITH LOGIN CREATEROLE CREATEDB;
+```
+
+To revoke `superuser` status from a role (you can only execute this command using another `superuser` role), type:
+
+```sql
+ALTER ROLE "user2" WITH NOSUPERUSER;
+```
+
+To change the password for a role, you can type the following (all roles should be able to execute this command on their own role, regardless of `CREATEROLE` or `superuser` privileges):
+
+```sql
+ALTER ROLE <role> WITH PASSWORD '<password>';
+```
+
+Although the above command works, if possible, it is a better idea to use the `psql` meta-command to change passwords.  The `psql` command automatically prompts for a password and encrypts it before sending it to the server.  This helps avoid leaking sensitive data in logs.
+
+You can change a role's password with `psql` by typing the following
+
+```sql
+-- To change your own password
+\password
+-- To change the password for another role
+\password <role>
+```
+
+You can also use the `ALTER ROLE` command to rename a role:
+
+```sql
+ALTER ROLE <role> RENAME TO <newrole>
+```
+
+Keep in mind that you cannot rename your current session role.
+
+## Deleting roles
+
+Deleting an existing role follows a similar pattern to the previous commands.  Again, you must have `CREATEROLE` or `superuser` privileges to execute these commands.
+
+One complicating factor is that roles *cannot* be removed if they are still referenced by objects within the database.  This means that you must delete or transfer ownership of any objects that the role owns.  Afterwards, you must also revoke any additional privileges the role has on database objects.
+
+A detailed explanation of [how to appropriately reassign and drop privileges](https://dba.stackexchange.com/a/155356) is provided by [Erwin Brandstetter](https://dba.stackexchange.com/users/3684/erwin-brandstetter) on the Database Administrators Stack Exchange site.  This same process is used below.
+
+First, you can reassign all of the role's owned objects using the `REASSIGNED OWNED` command.  For instance, if you're preparing to delete the `user2` role, you can assign its objects to the `postgres` role by typing:
+
+```sql
+REASSIGN OWNED BY "user2" TO "postgres";
+```
+
+Now the objects are owned by `postgres`, we can use the `DROP OWNED` command to revoke all of the other privileges we've been granted on objects.  This command also deletes any objects we own, but since we have just transferred them to the `postgres` role, the `user2` role no longer has any owned objects.  Because of this, the command will only revoke any of the role's additional privileges:
+
+```sql
+DROP OWNED BY "user2";
+```
+
+Without the `DROP OWNED` shortcut above, you would have to execute `REVOKE ALL PRIVILEGES` on every individual object or object type that the role has privileges on.
+
+Once you have revoked all associated privileges, you can remove the role by typing:
+
+```sql
+DROP ROLE "user2";
+```
+
+## Logging in using `psql`
+
+Once you have a new role configured, and have [configured authentication details using the `pg_hba.conf` file](/postgresql/authentication-and-authorization/configuring-user-authentication), you can login to the database cluster using your new role.  The `psql` command line client provides an easy way to do this.
+
+By default, `psql` assumes you want to connect using a role that matches your operating system username.  So if you are logged into your computer as `john`, `psql` will assume that you want to try to connect to the database using a role that's also called `john`.
+
+To override this behavior, you can pass the `-U` or `--username=` option.  For example, if you want to login to a role called `kerry`, you can type:
+
+```
+psql -U kerry
+```
+
+The success of the `psql` command will depend on the existence of the `kerry` role, the accessibility of the server you are trying to connect to, and the authentication rules defined on the server.
+
+## Changing to a different role during a session
+
+Sometimes, you may want to temporarily adopt the privileges and identity of another role you have access to.  For instance, this is necessary if you want to gain the privileges of a role you are a member of if your current role does not have the `INHERIT` attribute.
+
+To understand how this works, you have to know the terminology PostgreSQL uses to categorize active roles:
+
+* **Session role**: A session role is the role you logged in with during your initial connection to the PostgreSQL database cluster.  It sets your initial privileges and determines your access to the system.  This role must have the `LOGIN` attribute.
+* **Current role**: By contrast, the current role is the role that you are currently acting as.  The privileges associated with the current role, whether set directly or inherited from other roles, determine the actions you are allowed to perform and the objects you have access to.
+
+You can view your session and current role values by typing:
+
+```sql
+SELECT SESSION_USER, CURRENT_USER;
+```
+```
+ current_user | session_user
+--------------+--------------
+ postgres     | postgres
+(1 row)
+```
+
+While the only way to change your session role is to start a new connection using a different role, you can change your current role using the [`SET ROLE` command](https://www.postgresql.org/docs/current/sql-set-role.html).  The `SET ROLE` command is used to temporarily act as a different role.  The command also optionally takes the following modifiers:
+
+* **`SESSION`**: The default setting.  This causes the `SET ROLE` command to affect the entire database session.
+* **`LOCAL`**: This modifier will make the command change the role only for current transaction.
+
+To change the current role to the `user2` role (for the rest of the session), type:
+
+```sql
+SET ROLE "user2";
+```
+
+If you check your session and current role values, you will see that the current role value has changed:
+
+```sql
+SELECT SESSION_USER, CURRENT_USER;
+```
+```
+ current_user | session_user
+--------------+--------------
+ user2        | postgres
+(1 row)
+```
+
+All of your actions will now use the `user2` role as their context.
+
+To change back to the session role you had been previously using, you can type:
+
+```sql
+SET ROLE NONE;
+```
+
+An alternative that achieves the same result is:
+
+```sql
+RESET ROLE;
+```
+
+## Conclusion
+
+PostgreSQL's system of roles, role attributes, grants, and authentication create a flexible system that allows administrators to effectively manage permissions and database access.  This guide described what exactly roles are and how they encompass a broad range of use cases.  It also covered how to create, modify, and delete roles and manage the role attributes that determine their global capabilities.  Understanding how to manage these identities is necessary in order to secure your databases and provide usable access to your legitimate users.

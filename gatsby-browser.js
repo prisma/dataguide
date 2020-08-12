@@ -1,7 +1,7 @@
-const React = require('react')
+// const React = require('react')
 const { init, trackPage } = require('./src/utils/stats')
 const { goToNav } = require('./src/utils/goToNavItem')
-const Layout = require('./src/components/layout').default
+// const Layout = require('./src/components/layout').default
 
 exports.onClientEntry = () => {
   init()

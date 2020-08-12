@@ -10,12 +10,15 @@ import ButtonLink from './button'
 import FileWithIcon from './fileWithIcon'
 import DocLink from './docLink'
 import Subsections from './subSections'
+import AuthorInfo from './authorInfo'
+import Footnote from './footnote'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
   p: (props: any) => <p className="paragraph" {...props} />,
   ul: (props: any) => <ul className="list" {...props} />,
   ol: (props: any) => <ol className="o-list" {...props} />,
+  AuthorInfo,
   TabbedContent,
   ParallelBlocks,
   CodeWithResult,
@@ -27,6 +30,7 @@ export default {
   ButtonLink,
   Subsections,
   DocLink,
+  footnote: Footnote,
   img: (props: any) => (
     <a href={props.src} target="_blank">
       <img {...props} />
