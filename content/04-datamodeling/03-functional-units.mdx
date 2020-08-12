@@ -180,13 +180,6 @@ Computations in the database aren't just faster and more concisely expressed: th
 
 Programmability is an unjustly overlooked feature of relational databases. There exist reasons to avoid it and more to limit its use, but functions, procedures, and triggers are all powerful tools for limiting the complexity your data model imposes on the systems in which it's embedded.
 
-^1: If you are more familiar with a C-family language than you are with PostgreSQL, the `||` might throw you. That's concatenation here.
-^2: If an insert fails, for example by supplying a negative `target_quantity`, `lot_counter` will still have incremented. This leaves a confusing but otherwise harmless gap in `lot_number`.
-^3: "What about `SELECT ... INSERT`?", I hear you cry. Yes, as long as you `UNION` a dummy value in for the first lot of the year when `count()` has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.
-^4: Data Definition Language: the structural half of SQL with the `DROP TABLE`s and the `CREATE OR REPLACE FUNCTION`s and so forth.
-^5: In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of `TRIGGER`; MySQL instead accepts a `BEGIN ... END` block as a trigger body; Oracle and SQL Server can do either.
-^6: Data Manipulation Language: the other half of SQL, `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.
-
 <AuthorInfo name="Dian Fay" image="https://i.imgur.com/AtYiUlw.jpg">
 
  Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
