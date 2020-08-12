@@ -41,7 +41,7 @@ const FootnoteWrapper = styled.span`
   border-bottom: 1px dashed black;
 
   .note {
-    width: max-content;
+    width: 250px;
     background-color: var(--tooltip-bg-color);
     color: white;
     text-align: left;
@@ -50,7 +50,7 @@ const FootnoteWrapper = styled.span`
     position: absolute;
     z-index: 1;
     bottom: 150%;
-    margin-left: -60px;
+    margin-left: -125px;
     padding: 10px 15px;
     font-size: 14px;
 
