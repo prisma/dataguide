@@ -4,7 +4,6 @@ import styled from 'styled-components'
 type FootnoteProps = React.ReactNode
 
 const Footnote = ({ children }: FootnoteProps) => {
-  console.log(children)
   const note =
     children && children.filter((child: any) => child.props && child.props.originalType === 'note')
   const text =
@@ -12,11 +11,9 @@ const Footnote = ({ children }: FootnoteProps) => {
   return (
     <FootnoteWrapper>
       {text}
-      <div className="note">
+      {note && <div className="note">
         {note}
-        {/* {props.noteText && <p>{props.noteText}</p>}
-      {props.noteLink && <a href={props.noteLink}>{props.noteLinkText}</a>} */}
-      </div>
+      </div>}
     </FootnoteWrapper>
   )
 }
