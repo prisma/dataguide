@@ -27,7 +27,7 @@ There are two ways of designing a data model where multiple userbases and their 
 
 Conceptually, it's not very difficult to identify to which tenant a row belongs as long as foreign key constraints are enforced. One `JOIN`s from table to table back towards `tenants` following the relationships, and then whichever join products include the `tenant_id` value you're looking for belong to that tenant. Managing the SQL can get pretty wretched as the schema evolves further, though, and with enough data in the system performance can start to be a concern. That doesn't mean managing extra `tenant_id` columns in more distant tables is automatically worth it, but it doesn't take a lot to make that a reasonable decision either.
 
-[ illustration - two or three very simple models drawn as digraphs; the first should be a multitenant system as described above ]
+![](https://dataguide.prisma.io/content/modeling/tenant.png)
 
 Entities and relationships constitute a directed graph of nodes and edges. "Directed" here means that an edge is a one-way connection. A record with a `tenant_id` value implies both the existence of the `tenants` table and of a specific record therein (with proper foreign key constraints set up, it guarantees rather than implies!); however, a record *from* `tenants` itself implies nothing about what other data might belong to it.
 
@@ -61,7 +61,7 @@ The last resort here is denormalization: storing an entity's data or useful aggr
 
 You aren't responsible for information you don't have. There's a whole industry built around securing data, but *no security measure is infallible*. The easiest way to avoid a very sticky class of problem is not to collect data which could cause you that sort of problem. Do note that this extends beyond databases, though; sensitive information can show up in logs, reports, source control, and other systems.
 
-[ illustration -- document with redactions? ]
+![](https://dataguide.prisma.io/content/modeling/redacted.png)
 
 The single most sensitive class of information with the most ramifications, bar none, concerns people. Information about people is necessarily political, and modeling a system in which humans participate both reflects and reinforces the politics of the modeler. Who enters or is entered into the system, in what capacities, with which characteristics assumed important or unimportant, visible to whom: politics, every bit of it. We have only barely begun to see the effects of cavalier or invasive treatment of personal data. More and more people's information is constantly being funneled into data models, and too often these models have not been developed with commensurate care. In more than a few cases, they've been designed expressly to exploit that information.
 
@@ -77,7 +77,6 @@ Data models are not static. Requirements evolve; businesses pivot; external sour
 
 The present is more important than the future. If your model is not useful now, you likely won't get the chance to see it become useful later. Forces of natural or unnatural selection are always at work, though, and databases which cannot adapt to these pressures perish. We'll address planning for future possibilities in more detail later on, but even knowing that corners exist into which you can paint yourself can help you dodge that fate.
 
-<AuthorInfo name="Dian Fay" image="https://i.imgur.com/AtYiUlw.jpg">
-
- Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+<AuthorInfo name="Diana Fey" image="(https://dataguide.prisma.io/content/postgresql/ways-to-host-postgresql-databases/comparison-chart.png)">
+    Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
 </AuthorInfo>
