@@ -31,7 +31,7 @@ const AuthorInfoWrapper = styled.div`
   display: flex;
 
   img {
-    height: 80px;
+    height: 90px;
     width: 80px;
     border-radius: 2px;
     margin-right: 28px;
