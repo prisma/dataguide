@@ -27,10 +27,9 @@ Some database engines split the difference between SQL and other programming lan
 
 Using non-SQL languages is an option if SQL is inadequate for some task or if you want to reuse other code, but it won't get you around the other issues that make database programming a many-edged sword. If anything, resorting to these complicates deployment and interoperability further. Caveat scriptor: let the writer beware.
 
-## Functions vs Procedures
+## [ Sidebar ] Functions vs Procedures
 
-<details><summary>Some readers will already know about this to one degree or another. It's worth including for those who won't, especially if their experience so far has been only of "dumb" databases backing O/RM-served applications.</summary>
-
+> Some readers will already know about this to one degree or another. It's worth including for those who won't, especially if their experience so far has been only of "dumb" databases backing O/RM-served applications.
 
 One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. As with other aspects of implementing the SQL standard, the exact details vary a bit from RDBMS to RDBMS. In general:
 
@@ -41,8 +40,6 @@ One named block of SQL managed and executed in the database seems like it should
 More specifically, MySQL also disallows recursion and some additional SQL statements in functions. SQL Server prohibits functions from modifying data, executing dynamic SQL, and handling errors. PostgreSQL didn't separate stored procedures from functions at all until 2017 with version 11, so Postgres functions can do almost everything procedures can, barring transaction control.
 
 So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.
-</details>
-
 
 ## Defaults and Generation
 
@@ -87,15 +84,11 @@ CREATE TABLE lots (
 
 ```
 
-
-<footnote> <note> If you are more familiar with a C-family anguage than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> <i>^1</i> </text> </footnote>
-
-
-
+^1
 
 ## Referencing Data in Functions
 
-The sequence approach above has one important weakness (and at least one less important <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> <i>^2</i> </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
+The sequence approach above has one important weakness (and at least one less important ^2): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
 
 ```
 CREATE OR REPLACE FUNCTION next_lot_number () RETURNS TEXT AS $$
@@ -116,9 +109,9 @@ ALTER TABLE lots
 
 ## Workflows
 
-Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing one SQL statement to tally the number of lots this year to date followed by a second which inserts the new lot<footnote> <note> "What about <inlineCode>SELECT ... INSERT</inlineCode>?", I hear you cry. Yes, as long as you <inlineCode>UNION</inlineCode> a dummy value in for the first lot of the year when <inlineCode>count()</inlineCode> has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text> <i>^3</i> </text> </footnote>. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
+Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing one SQL statement to tally the number of lots this year to date followed by a second which inserts the new lot^3. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
 
-Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions]([http://assets.en.oreilly.com/1/event/27/High-Performance-SQL with-PostgreSQL-Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
+Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions]([http://assets.en.oreilly.com/1/event/27/High](http://assets.en.oreilly.com/1/event/27/High) Performance SQL with PostgreSQL Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
 
 So much of software architecture in general is about managing and isolating complexity, preventing it from spilling across the boundaries between subsystems. If some more or less complicated workflow involves pulling data into an application backend, script, or cron job, digesting and adding to it, and storing the result -- it's time to ask what really necessitates venturing outside the database.
 
@@ -136,7 +129,7 @@ It has to be said: if you're working with an application backend, its data acces
 
 Functions and procedures are contentious enough among database designers and users, but things *really* take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
 
-The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or DDL <footnote> <note> Data Definition Language: the structural half of SQL with the <inlineCode>DROP TABLE</inlineCode>s and the <inlineCode>CREATE OR REPLACE FUNCTION</inlineCode>s and so forth.</note> <text> <i>^4</i> </text> </footnote> trigger which can react to changes in the database structure.
+The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or DDL^4 trigger which can react to changes in the database structure.
 
 A common low-risk usage for triggers is as an extra-powerful constraint preventing invalid data from being stored. In all major relational databases, only primary and foreign keys and `UNIQUE` constraints can evaluate information outside the candidate record. It's not possible to declare in a table definition that, for example, only two lots may be created in a month -- and the simplest database-and-code solution is vulnerable to a similar race condition as the count-then-set approach to `lot_number` above. To enforce any other constraint which involves the entire table, or other tables, you need a trigger to see outside the scope of the record:
 
@@ -164,9 +157,10 @@ FOR EACH ROW
 EXECUTE PROCEDURE enforce_monthly_lot_limit();
 
 ```
-<footnote> <note> In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of <inlineCode>TRIGGER</inlineCode>; MySQL instead accepts a <inlineCode>BEGIN ... END</inlineCode> block as a trigger body; Oracle and SQL Server can do either.</note> <text> <i>^5</i> </text> </footnote> 
 
-Once you start executing DML<footnote> <note> Data Manipulation Language: the other half of SQL, <inlineCode>SELECT</inlineCode>, <inlineCode>INSERT</inlineCode>, <inlineCode>UPDATE</inlineCode>, and <inlineCode>DELETE</inlineCode>.</note> <text> <i>^6</i> </text> </footnote> and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
+^5
+
+Once you start executing DML^6 and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
@@ -180,7 +174,12 @@ Computations in the database aren't just faster and more concisely expressed: th
 
 Programmability is an unjustly overlooked feature of relational databases. There exist reasons to avoid it and more to limit its use, but functions, procedures, and triggers are all powerful tools for limiting the complexity your data model imposes on the systems in which it's embedded.
 
-<AuthorInfo name="Dian Fay" image="https://i.imgur.com/AtYiUlw.jpg">
+^1: If you are more familiar with a C-family language than you are with PostgreSQL, the `||` might throw you. That's concatenation here.
+^2: If an insert fails, for example by supplying a negative `target_quantity`, `lot_counter` will still have incremented. This leaves a confusing but otherwise harmless gap in `lot_number`.
+^3: "What about `SELECT ... INSERT`?", I hear you cry. Yes, as long as you `UNION` a dummy value in for the first lot of the year when `count()` has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.
+^4: Data Definition Language: the structural half of SQL with the `DROP TABLE`s and the `CREATE OR REPLACE FUNCTION`s and so forth.
+^5: In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of `TRIGGER`; MySQL instead accepts a `BEGIN ... END` block as a trigger body; Oracle and SQL Server can do either.
+^6: Data Manipulation Language: the other half of SQL, `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.
 
- Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
-</AuthorInfo>
+### About the Author: Dian Fay
+Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
