@@ -1,0 +1,20 @@
+---
+title: "Intro (Don't Panic)"
+metaTitle: "Intro (Don't Panic)"
+metaDescription: "Intro (Don't Panic)"
+---
+ ## Introduction
+
+If you're reading this, you are more than likely being pressed into service as a database architect. This can befall you any number of ways: you might be a developer or analyst tasked with your first (or fortieth) improvement or patch job on an existing data model, or you could be staring down the blank canvas of an empty database like a rookie matador. Two things are certain: first, information needs to be stored and retrieved, as efficiently and conveniently as possible; and second, you're the one who needs to make it work. This guide will help you get to grips with modeling information and producing durable and maintainable database schema designs. We'll concentrate on relational databases for the most part, so you should come into this with a basic grasp of storing and retrieving data with SQL. Ideally, you'll have a database of your own to experiment in; examples will be given for PostgreSQL, a free and open-source database management system.
+
+So: data modeling. Like everything else in computing, it's math once you get right down to it. However, its day-to-day practice is almost entirely abstracted to the level of structuring and managing information as it flows through various systems. We'll touch on some of the mathy fundamentals of sets and predicates later on, but the database designer must solve problems of legibility and maintainability as much as of raw mathematical efficiency. As Heinz Klein and Kalle Lyytinen put it thirty years ago, <footnote> <note> _Towards a New Understanding of Data Modeling_ <br/> in <a href="https://www.researchgate.net/publication/242530010_Software_Development_and_Reality_Construction">Software Development and Reality Construction</a> </note> <text> "the appropriate metaphors for data modelling are not fact gathering and modelling, but negotiation and lawmaking" </text> </footnote>.
+
+
+This is intended eventually to be a complete crash course in (relational, although not ignoring others) designing data models. For now, we're publishing parts as they're written, and concentrating first on situating databases and data modeling problems in an organization and systems design context, as well as covering some of the less-prominent areas of database functionality.
+
+<AuthorInfo name="Diana Fey" image="https://imgur.com/5YEs4IC.png">
+    Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+</AuthorInfo>
+
+
+^1 *Towards a New Understanding of Data Modeling*, in *[Software Development and Reality Construction](https://www.researchgate.net/publication/242530010_Software_Development_and_Reality_Construction)*
