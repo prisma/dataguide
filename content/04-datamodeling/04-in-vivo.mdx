@@ -68,7 +68,7 @@ In an alternative "multi-primary" mode of replication, data can be written to an
 Most NoSQL data stores are designed for clusters, some to the point that being able to run on a single computer at all is almost an afterthought. In particular, NoSQL brought the idea of *sharding*, or serving partitions of a table from different nodes in the cluster, to the forefront. Sharding is a major factor in the scale these databases achieve, but without replication losing a node still means losing data. Most NoSQL databases offer basic replication, often with automatic failover. A few, like Cassandra and Couchbase, use multiple primaries.
 
 ##  CAP Theorem
-<details><summary>Distributed databases are often described as favoring data *consistency* or *availability* in the inevitable event of a network partition preventing some set of nodes from communicating writes to other nodes, after Eric Brewer's original [conjecture](https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf) around the turn of the millennium. </summary>
+<details><summary>Distributed databases are often described as favoring data *consistency* or *availability* in the inevitable event of a network partition preventing some set of nodes from communicating writes to other nodes, after Eric Brewer's original <a href="https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf">conjecture</a> around the turn of the millennium. </summary>
 
 His "CAP Theorem" (consistency, availability, partition tolerance: pick two) still resonates today, but, like the animal/vegetable/mineral trichotomy, is an elegant oversimplification -- no more and no less.
 
