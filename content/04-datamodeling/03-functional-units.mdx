@@ -170,7 +170,7 @@ Once you start executing DML<footnote> <note> Data Manipulation Language: the ot
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
-[ illustration - network of cascade effects as a change fires a trigger, which makes more changes, which fire more triggers in turn, quickly becoming an incomprehensible tangle ]
+![](/content/modeling/chaos.png)
 
 The trigger-action-trigger-action call stack can become arbitrarily long, although true recursion in the form of modifying the same tables or records multiple times in any such flow is illegal on some platforms and more generally a bad idea in almost all circumstances. Trigger nesting rapidly outstrips our ability to comprehend its extent and effects. Databases making heavy use of nested triggers begin to drift from the realm of the complicated toward that of the complex, becoming difficult or impossible to analyze, debug, and predict.
 
@@ -180,6 +180,8 @@ Computations in the database aren't just faster and more concisely expressed: th
 
 Programmability is an unjustly overlooked feature of relational databases. There exist reasons to avoid it and more to limit its use, but functions, procedures, and triggers are all powerful tools for limiting the complexity your data model imposes on the systems in which it's embedded.
 
-<AuthorInfo name="Diana Fey" image="(https://dataguide.prisma.io/content/postgresql/ways-to-host-postgresql-databases/comparison-chart.png)">
-    Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+<AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
+
+Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of <a href="https://massivejs.org">MassiveJS</a>, an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+
 </AuthorInfo>

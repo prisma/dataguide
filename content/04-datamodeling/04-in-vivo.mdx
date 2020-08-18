@@ -11,7 +11,7 @@ Databases are never alone. Users, applications, scripts, and even other database
 
 The classic ecological division can be applied too to the role of a database in an information system: animal, vegetable, or mineral? Identifying which mode is appropriate for a given data model requires understanding, as best possible, the context it inhabits.
 
-[ illustration - animal/vegetable/mineral (quick reference/summary of below paragraphs?) ]
+![](/content/modeling/animal-vegetable-mineral.png)
 
 "Animal" seems to describe an active organizing principle, embedded (or less kindly, entangled) in operational processes and workflows, adapted, programmed -- in a word, specialized. An "animal" approach does very well in a tightly-focused system or subsystem explicitly built around a single database as the collector of information flows and single source of truth. Lose this focus, and an "animal" database risks becoming more of a giant panda: sluggish, high-maintenance, and a logistical and bureaucratic nightmare.
 
@@ -79,7 +79,7 @@ Information rarely circulates between a system's database or databases and its u
 
 The process of bulk data ingestion is commonly referred to by the acronym ETL, for Extract-Transform-Load, even informally in cases where no extraction or transformation occurs. The archetypal ETL procedure is a cron job or scheduled task which downloads archived data exports, often a flat delimited format like CSV or TSV, from the external system. Records may be transformed by the ETL task as it writes them to the database, or, contravening the acronym, transformed en masse afterwards. Bulk transformation is especially helpful when joins to existing data are involved, since the database can optimize a join for thousands of rows one time much more effectively than it can a single-row join thousands of times.
 
-[ illustration - ETL flow from external systems through cron to a database ]
+![](/content/modeling/external-internal.png)
 
 First-party tooling for data import varies. Proprietary RDBMSs often include specialized ETL management programs, such as SQL Server Integration Services or Oracle Data Integrator, while the major open source and NoSQL options generally stop at basic file loading with applications like `mysqlimport` and `mongoimport`, or server-side `COPY` commands in PostgreSQL and Cassandra (Postgres also offers a client-side `\copy` instruction in the psql client).
 
@@ -95,6 +95,8 @@ The really interesting things are happening in open source RDBMSs. PostgreSQL in
 
 The idea of "federated" architectures derives from the dual form of government where regional and central (federal) governments coexist, and like other systems design techniques, its purpose is the management of complexity. Users of the individual subsystems work in and with those subsystems; those concerned only with the operation of the whole interact with the gestalt. In terms of ecological roles, this is very much an "animal" mode of database operation. A federating database is central to the system it inhabits. It draws flows of information to and through itself, makes connections, encodes expectations of subsidiary schemas. But in information ecosystems where such beasts can thrive, SQL/MED is a powerful tool for corralling disparate data sources.
 
-<AuthorInfo name="Diana Fey" image="(https://dataguide.prisma.io/content/postgresql/ways-to-host-postgresql-databases/comparison-chart.png)">
-    Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of [MassiveJS](https://massivejs.org), an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+<AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
+
+Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of <a href="https://massivejs.org">MassiveJS</a>, an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
+
 </AuthorInfo>
