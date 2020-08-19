@@ -28,10 +28,9 @@ Using non-SQL languages is an option if SQL is inadequate for some task or if yo
 
 ## Functions vs Procedures
 
-<details><summary>Some readers will already know about this to one degree or another. It's worth including for those who won't, especially if their experience so far has been only of "dumb" databases backing O/RM-served applications.</summary>
+<details><summary>One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. </summary>
 
-
-One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. As with other aspects of implementing the SQL standard, the exact details vary a bit from RDBMS to RDBMS. In general:
+As with other aspects of implementing the SQL standard, the exact details vary a bit from RDBMS to RDBMS. In general:
 
 - Functions cannot control transactions.
 - Functions return values; procedures may modify parameters designated `OUT` or `INOUT` which can then be read in the calling context, but never return a result (SQL Server excepted).
