@@ -1,7 +1,7 @@
 ---
 title: 'Functional Units'
 metaTitle: 'Functional Units'
-metaDescription: "There are two schools of thought about performing computations in your database: people who think it's great, and people who are wrong. This is not to say that the world of functions, stored procedures, generated or computed columns, and triggers is all sunshine and roses!"
+metaDescription: "There are two schools of thought about performing computations in your database: people who think it's great, and people who are wrong. Databases are, by definition, very good at processing and manipulating information, and most of them make that same control and power available to their users. Why not put the database to work?"
 toc: false
 ---
 
@@ -57,11 +57,14 @@ CREATE TABLE pythag (
 
 ```
 
-Most RDBMSs offer a choice between "stored" and "virtual" generated columns. In the former case, the value is calculated and stored when the row is inserted or updated. This is the only option with PostgreSQL, as of version 12 and MS Access. Virtual generated columns are computed when queried as in views, so they don't take up space but will be recalculated more often. Both sorts are tightly constrained: values can't depend on information outside the row they belong to, they can't be updated, and individual RDBMSs can have still more specific limitations. PostgreSQL, for instance, forbids partitioning a table on a generated column.
+Most RDBMSs offer a choice between "stored" and "virtual" generated columns. In the former case, the value is calculated and stored when the row is inserted or updated. This is the only option with PostgreSQL, as of version 12, and MS Access. Virtual generated columns are computed when queried as in views, so they don't take up space but will be recalculated more often. Both sorts are tightly constrained: values can't depend on information outside the row they belong to, they can't be updated, and individual RDBMSs can have still more specific limitations. PostgreSQL, for instance, forbids partitioning a table on a generated column.
 
 Generated columns are a specialized tool. More often, all that's needed is a default in case a value isn't supplied on insert. Functions like `now()` show up frequently as column defaults, but most databases allow custom as well as built-in functions (except MySQL, where only `current_timestamp` may be a default value).
 
-Let's take the rather dry but simple example of a lot number in the format YYYYXXX, where the first four digits represent the current year and the latter three an incrementing counter: the first lot produced this year is 2020001, the second 2020002, and so on. There's no default type or built-in function which generates a value like this, but a user-defined function can number each lot as it's created:
+Let's take the rather dry but simple example of a lot number in the format YYYYXXX, where the first four digits represent the current year and the latter three an incrementing counter: the first lot produced this year is 2020001, the second 2020002, and so on. There's no default type or built-in function which generates a value like this, but a user-defined function can number each lot <footnote> <note> If you are more familiar with a C-family language than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> as it's created </text> </footnote>:
+
+
+
 
 ```
 CREATE SEQUENCE lot_counter;
@@ -86,14 +89,9 @@ CREATE TABLE lots (
 ```
 
 
-<footnote> <note> If you are more familiar with a C-family anguage than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> <i>^1</i> </text> </footnote>
-
-
-
-
 ## Referencing Data in Functions
 
-The sequence approach above has one important weakness (and at least one less important <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> <i>^2</i> </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
+The sequence approach above has one important weakness (and <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> at least one less important </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
 
 ```
 CREATE OR REPLACE FUNCTION next_lot_number () RETURNS TEXT AS $$
@@ -114,7 +112,7 @@ ALTER TABLE lots
 
 ## Workflows
 
-Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing one SQL statement to tally the number of lots this year to date followed by a second which inserts the new lot<footnote> <note> "What about <inlineCode>SELECT ... INSERT</inlineCode>?", I hear you cry. Yes, as long as you <inlineCode>UNION</inlineCode> a dummy value in for the first lot of the year when <inlineCode>count()</inlineCode> has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text> <i>^3</i> </text> </footnote>. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
+Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing <footnote> <note> "What about <inlineCode>SELECT ... INSERT</inlineCode>?", I hear you cry. Yes, as long as you <inlineCode>UNION</inlineCode> a dummy value in for the first lot of the year when <inlineCode>count()</inlineCode> has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text>one SQL statement</text> </footnote> to tally the number of lots this year to date followed by a second which inserts the new lot. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
 
 Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions](https://cdn.oreillystatic.com/en/assets/1/event/27/High%20Performance%20SQL%20with%20PostgreSQL%20Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
 
@@ -134,9 +132,9 @@ It has to be said: if you're working with an application backend, its data acces
 
 Functions and procedures are contentious enough among database designers and users, but things *really* take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
 
-The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or DDL <footnote> <note> Data Definition Language: the structural half of SQL with the <inlineCode>DROP TABLE</inlineCode>s and the <inlineCode>CREATE OR REPLACE FUNCTION</inlineCode>s and so forth.</note> <text> <i>^4</i> </text> </footnote> trigger which can react to changes in the database structure.
+The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or <footnote> <note> Data Definition Language: the structural half of SQL with the <inlineCode>DROP TABLE</inlineCode>s and the <inlineCode>CREATE OR REPLACE FUNCTION</inlineCode>s and so forth.</note> <text>DDL</text> </footnote> trigger which can react to changes in the database structure.
 
-A common low-risk usage for triggers is as an extra-powerful constraint preventing invalid data from being stored. In all major relational databases, only primary and foreign keys and `UNIQUE` constraints can evaluate information outside the candidate record. It's not possible to declare in a table definition that, for example, only two lots may be created in a month -- and the simplest database-and-code solution is vulnerable to a similar race condition as the count-then-set approach to `lot_number` above. To enforce any other constraint which involves the entire table, or other tables, you need a trigger to see outside the scope of the record:
+A common low-risk usage for triggers is as an extra-powerful constraint preventing invalid data from being stored. In all major relational databases, only primary and foreign keys and `UNIQUE` constraints can evaluate information outside the candidate record. It's not possible to declare in a table definition that, for example, only two lots may be created in a month -- and the simplest database-and-code solution is vulnerable to a similar race condition as the count-then-set approach to `lot_number` above. To enforce any other constraint which involves the entire table, or other tables, you need a <footnote> <note> In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of <inlineCode>TRIGGER</inlineCode>; MySQL instead accepts a <inlineCode>BEGIN ... END</inlineCode> block as a trigger body; Oracle and SQL Server can do either.</note> <text>trigger</text> </footnote> to see outside the scope of the record:
 
 ```
 CREATE FUNCTION enforce_monthly_lot_limit () RETURNS TRIGGER
@@ -162,9 +160,8 @@ FOR EACH ROW
 EXECUTE PROCEDURE enforce_monthly_lot_limit();
 
 ```
-<footnote> <note> In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of <inlineCode>TRIGGER</inlineCode>; MySQL instead accepts a <inlineCode>BEGIN ... END</inlineCode> block as a trigger body; Oracle and SQL Server can do either.</note> <text> <i>^5</i> </text> </footnote> 
 
-Once you start executing DML<footnote> <note> Data Manipulation Language: the other half of SQL, <inlineCode>SELECT</inlineCode>, <inlineCode>INSERT</inlineCode>, <inlineCode>UPDATE</inlineCode>, and <inlineCode>DELETE</inlineCode>.</note> <text> <i>^6</i> </text> </footnote> and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
+Once you start executing <footnote> <note> Data Manipulation Language: the other half of SQL, <inlineCode>SELECT</inlineCode>, <inlineCode>INSERT</inlineCode>, <inlineCode>UPDATE</inlineCode>, and <inlineCode>DELETE</inlineCode>.</note> <text>DML</text> </footnote> and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
