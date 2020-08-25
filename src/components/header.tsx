@@ -108,6 +108,28 @@ const MobileOnlyNav = styled.div`
     padding: 2rem 1rem;
   }
 `
+const PrismaLink = styled.div`
+  color: var(--muted-font-color);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  @media (min-width: 0px) and (max-width: 1024px) {
+    display: none
+  }
+`
+const PrismaButton = styled.a`
+  color: var(--secondary-font-color);
+  background: var(--border-color);
+  border-radius: 4px;
+  display: inline-block;
+  padding: 6px 10px;
+  margin-left: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  &:hover {
+    opacity: 0.7;
+  }
+`
 
 const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
   display: flex;
@@ -159,17 +181,24 @@ const Header = ({ headerProps }: HeaderViewProps) => {
           {/* <SearchComponent hitsStatus={changeHitsStatus} /> */}
           {showDocsBtn && (
             <DocsMobileButton onClick={toggleMobileNav}>
-              {showMobileNav ? <Clear /> : 'Docs'}
+              {showMobileNav ? <Clear /> : 'Menu'}
             </DocsMobileButton>
           )}
         </SearchContainer>
-      </div>
-
-      {showMobileNav && (
+        {showMobileNav && (
         <MobileOnlyNav>
           <Sidebar isMobile={true} />
         </MobileOnlyNav>
       )}
+      <PrismaLink>
+        Modern Database Access for TypeScript & Node.js
+        <PrismaButton href="https://prisma.io" target="_blank">Explore Prisma</PrismaButton>
+      </PrismaLink>
+      </div>
+
+      
+
+      
 
     </HeaderWrapper>
   )
