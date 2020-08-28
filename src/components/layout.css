@@ -74,7 +74,7 @@ code[class*='language-'] ::selection {
 }
 
 a {
-  color: var(--link-color) !important;
+  color: var(--link-color);
 }
 
 h1,
