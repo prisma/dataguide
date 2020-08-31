@@ -40,7 +40,7 @@ const config = {
     function_name: 'https://dataguide.netlify.app/.netlify/functions/index', // Replace with correct one
   },
   sidebar: {
-    tablet_menu_split: [], // Slugs for top level folders which should appear in right pane on tablet
+    tablet_menu_split: ['04-datamodeling'], // Slugs for top level folders which should appear in right pane on tablet
   },
   footer: {
     newsletter: {
