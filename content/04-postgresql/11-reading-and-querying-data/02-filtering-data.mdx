@@ -10,6 +10,8 @@ To work with data in a database, you need to be able to retrieve and target spec
 
 In this guide, we will take a look at some of the most common filtering operations available within PostgreSQL and demonstrate how to use them to narrow the focus of your statements.  We will show how to test against characteristics within individual records with `WHERE` clauses, how to group records together to summarize information with `GROUP BY`, how to filter groups of records with the `HAVING` subclause, and how to set the maximum number of returned rows with the `LIMIT` clause.
 
+**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [filtering conditions](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/filtering) to narrow the results of your queries.
+
 ## Using the `WHERE` clause to define match criteria
 
 One of the most common and broadly useful ways to indicate your query requirements is the `WHERE` clause.  The `WHERE` clause lets you define actual search criteria for query statements by specifying conditions that must be true for all matching records.
