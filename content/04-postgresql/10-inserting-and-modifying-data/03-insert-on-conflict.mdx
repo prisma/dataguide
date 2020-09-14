@@ -36,6 +36,9 @@ The companion `<action>` item will define what PostgreSQL should do if a conflic
 
 When `DO UPDATE` is specified, a special virtual table called `EXCLUDED` is available for use within the `UPDATE` clause.  The table contains the values suggested in the original `INSERT` command (that conflicted with the existing table values).
 
+
+**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can perform upsert operations using the dedicated [upsert operation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud#upsert).
+
 ## Using the `DO NOTHING` action
 
 For our examples, suppose that we have a table called `director`.
