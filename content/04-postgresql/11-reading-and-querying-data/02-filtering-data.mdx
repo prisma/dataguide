@@ -351,12 +351,12 @@ If we add the `LIMIT` to the `OFFSET` again, we'll get the next 3 results:
 SELECT * FROM pet ORDER BY age LIMIT 3 OFFSET 6;
 ```
 ```
-  type  |  name   | color  | age | id
---------+---------+--------+-----+----
- cat    | Simon   | orange |   8 |  6
- rabbit | Bunny   | brown  |   8 |  8
- cat    | Sabrina | black  |   8 |  4
-(3 rows)
+   type  |  name   | color  | age | id
+ --------+---------+--------+-----+----
+  cat    | Simon   | orange |   8 |  6
+  rabbit | Bunny   | brown  |   8 |  8
+  cat    | Sabrina | black  |   8 |  4
+ (3 rows)
 ```
 
 This lets us retrieve rows of data from a query in manageable chunks.
