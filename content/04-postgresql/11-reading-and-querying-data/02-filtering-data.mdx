@@ -10,8 +10,6 @@ To work with data in a database, you need to be able to retrieve and target spec
 
 In this guide, we will take a look at some of the most common filtering operations available within PostgreSQL and demonstrate how to use them to narrow the focus of your statements.  We will show how to test against characteristics within individual records with `WHERE` clauses, how to group records together to summarize information with `GROUP BY`, how to filter groups of records with the `HAVING` subclause, and how to set the maximum number of returned rows with the `LIMIT` clause.
 
-**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [filtering conditions](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/filtering) to narrow the results of your queries.
-
 ## Using the `WHERE` clause to define match criteria
 
 One of the most common and broadly useful ways to indicate your query requirements is the `WHERE` clause.  The `WHERE` clause lets you define actual search criteria for query statements by specifying conditions that must be true for all matching records.
@@ -50,6 +48,8 @@ Conditions are often formed using one or more of the following operators:
 * `!~*`: does not match against a pattern using [POSIX regular expressions](https://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended), case insensitive
 
 While the above list represents some of the most common test constructs, there are many other [operators that yield boolean results](https://www.postgresql.org/docs/current/functions.html) that can be used in conjunction with a `WHERE` clause.
+
+**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [filtering conditions](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/filtering) to narrow the results of your queries.
 
 ### Examples using `WHERE`
 
@@ -117,6 +117,8 @@ Since the `GROUP BY` clause is a way of representing multiple rows as a single r
 * abstracted to summarize all of the rows within each group
 
 Practically speaking, this means that any columns in the `SELECT` list not included in the `GROUP BY` clause must use an aggregate function to produce a single result for the column for each group.
+
+**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [aggregations](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/aggregations) to compute over and summarize values.
 
 
 ### Examples using `GROUP BY`
@@ -282,6 +284,8 @@ SELECT * FROM my_table LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
 Here, the `<num_rows` indicates the maximum number of rows to display from the executed query.  This is often used in conjunction with `ORDER BY` clauses to get the rows with the most extreme values in a certain column.  For example, to get the five best scores on an exam, a user could `ORDER BY` a `score` column and then `LIMIT` the results to 5.
 
 While `LIMIT` counts from the top of the results by default, the optional `OFFSET` keyword can be used to offset the starting position it uses.  In effect, this allows you to paginate through results by displaying the number of results defined by `LIMIT` and then adding the `LIMIT` number to the `OFFSET` to retrieve the following page.
+
+**Note:** If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [pagination](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/pagination) to iterate through results.
 
 ### Examples using `LIMIT`
 
