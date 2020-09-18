@@ -1,7 +1,7 @@
 const config = {
   gatsby: {
-    pathPrefix: '/',
-    siteUrl: 'https://dataguide.prisma.io', 
+    pathPrefix: '/dataguide',
+    siteUrl: 'https://www.prisma.io', 
   },
   redirects: [],
   header: {
