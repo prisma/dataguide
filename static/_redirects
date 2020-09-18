@@ -1,5 +1,0 @@
-#################
-### Redirects ### = send the user to a different URL in the address bar
-#################
-
-/postgresql/configuring-user-authentication	/postgresql/authentication-and-authorization/configuring-user-authentication 301!	
