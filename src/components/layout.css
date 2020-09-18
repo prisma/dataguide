@@ -266,22 +266,14 @@ hr {
 .list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-left: 24px;
+  list-style-image: url('../images/list-dot.png');
 }
 
 .list li {
-  padding-left: 20px;
-  text-indent: -1em;
+  padding-left: 8px;
+  /* text-indent: -1em; */
   margin-top: 10px;
-}
-
-.list li::before {
-  content: '\2022';
-  color: var(--list-bullet-color);
-  font-weight: bold;
-  font-size: 28px;
-  margin-right: 8px;
-  vertical-align: middle;
 }
 
 .o-list li {
