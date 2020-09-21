@@ -192,7 +192,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
       )}
       <PrismaLink>
         Modern Database Access for TypeScript & Node.js
-        <PrismaButton href="https://prisma.io" target="_blank">Explore Prisma</PrismaButton>
+        <PrismaButton href="https://www.prisma.io" target="_blank">Explore Prisma</PrismaButton>
       </PrismaLink>
       </div>
 
