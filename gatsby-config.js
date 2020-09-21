@@ -33,7 +33,7 @@ const gatsbyRemarkPlugins = [
 ]
 
 module.exports = {
-  pathPrefix: config.gatsby.pathPrefix,
+  pathPrefix: process.env.ADD_PREFIX === 'true' ? config.gatsby.pathPrefix : '/',
   siteMetadata: {
     pathPrefix: config.gatsby.pathPrefix,
     title: config.siteMetadata.title,
