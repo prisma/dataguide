@@ -4,10 +4,12 @@ import File from '../../icons/File'
 import Display from '../../icons/Display'
 import Code from '../../icons/Code'
 import Database from '../../icons/Database'
+import Link from '../link'
 
 interface DocLinkProps {
   text: string[]
   icon: keyof typeof icons
+  href: string
 }
 
 const icons = {
@@ -16,7 +18,7 @@ const icons = {
   display: <Display />,
   code: <Code />,
 }
-const DocLinkWrapper = styled.a`
+const DocLinkWrapper = styled(Link)`
   color: var(--main-font-color) !important;
   cursor: pointer;
   align-items: center;
@@ -45,9 +47,8 @@ const DocLinkWrapper = styled.a`
   }
 `
 
-const DocLink = ({ icon, text, ...props }: DocLinkProps) => (
-  <DocLinkWrapper {...props}>
-    {/* <span>{icons[icon]}</span> */}
+const DocLink = ({ icon, text, href, ...props }: DocLinkProps) => (
+  <DocLinkWrapper to={href} {...props}>
     <span>{text}</span>
   </DocLinkWrapper>
 )
