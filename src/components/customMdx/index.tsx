@@ -13,6 +13,7 @@ import Subsections from './subSections'
 import AuthorInfo from './authorInfo'
 import Footnote from './footnote'
 import PrismaOutlinks from './prismaOutlinks'
+import { withPrefix } from 'gatsby'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
@@ -33,9 +34,11 @@ export default {
   PrismaOutlinks,
   DocLink,
   footnote: Footnote,
-  img: (props: any) => (
-    <a href={props.src} target="_blank">
-      <img {...props} />
-    </a>
-  ),
+  img: ({ src, ...props }: any) => {
+    return (
+      <a href={withPrefix(src)} target="_blank">
+        <img src={withPrefix(src)} {...props} />
+      </a>
+    )
+  },
 }
