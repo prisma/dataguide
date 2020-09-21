@@ -12,6 +12,7 @@ import DocLink from './docLink'
 import Subsections from './subSections'
 import AuthorInfo from './authorInfo'
 import Footnote from './footnote'
+import PrismaOutlinks from './prismaOutlinks'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
@@ -29,6 +30,7 @@ export default {
   table: Table,
   ButtonLink,
   Subsections,
+  PrismaOutlinks,
   DocLink,
   footnote: Footnote,
   img: (props: any) => (
