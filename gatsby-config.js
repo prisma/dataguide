@@ -34,6 +34,7 @@ const gatsbyRemarkPlugins = [
 
 module.exports = {
   pathPrefix: process.env.ADD_PREFIX === 'true' ? config.gatsby.pathPrefix : '/',
+  assetPrefix: '/dataguide/',
   siteMetadata: {
     pathPrefix: config.gatsby.pathPrefix,
     title: config.siteMetadata.title,
