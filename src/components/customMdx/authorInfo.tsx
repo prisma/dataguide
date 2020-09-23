@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { withPrefix } from 'gatsby'
 
 interface AuthorProps {
   name?: string
@@ -11,7 +12,7 @@ type AuthorInfoProps = React.ReactNode & AuthorProps
 const AuthorInfo = ({ children, ...props }: AuthorInfoProps) => {
   return (
     <AuthorInfoWrapper>
-      {props.image && <img src={props.image} />}
+      {props.image && <img src={withPrefix(props.image)} />}
       <div>
         <span className="about">About the Author</span>
         {props.name && <h3 className="name">{props.name}</h3>}
