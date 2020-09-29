@@ -7,6 +7,7 @@ export interface ArticleFrontmatter {
   title: string
   metaTitle?: string
   metaDescription?: string
+  metaImage?: string
   // langSwitcher?: string[]
   // dbSwitcher?: string[]
   staticLink?: boolean
