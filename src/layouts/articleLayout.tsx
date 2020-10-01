@@ -7,6 +7,7 @@ import SEO from '../components/seo'
 import { graphql } from 'gatsby'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 import Layout from '../components/layout'
+import PageBottom from '../components/pageBottom'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps
 
@@ -19,6 +20,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
       fields: { slug, modSlug },
       frontmatter: { title, metaTitle, metaDescription, metaImage, toc },
       body,
+      parent,
       tableOfContents,
     },
     site: {
@@ -37,7 +39,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
         </section>
       )}
       <MDXRenderer>{body}</MDXRenderer>
-      {/* <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} /> */}
+      <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
     </Layout>
   )
 }
