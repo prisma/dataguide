@@ -5,40 +5,24 @@ import withProps from 'styled-components-ts'
 import ListDot from '../../images/blue-list-dot.png'
 import PrismaLogo from '../../icons/PrismaLogo'
 
-interface AuthorProps {
-  name?: string
-  image?: string
+interface OutlinkProps {
+  inner?: boolean
 }
 
-type AuthorInfoProps = React.ReactNode & AuthorProps
+type PrismaOutlinkProps = React.ReactNode & OutlinkProps
 
-const PrismaOutlinks = ({ children, inner }: AuthorInfoProps) => {
-  let withlogo = children
-  let remainingChildren
-  if (Array.isArray(children)) {
-    withlogo =
-      children &&
-      Array.isArray(children) &&
-      children.filter((child: any) => child.props && child.props.mdxType === 'withlogo')
-    remainingChildren =
-      children &&
-      Array.isArray(children) &&
-      children.filter(
-        (child: any) =>
-          !child.props ||
-          !child.props.mdxType ||
-          (child.props && child.props.mdxType !== 'withlogo')
-      )
-  }
-
+const PrismaOutlinks = ({ children, inner }: PrismaOutlinkProps) => {
   return (
     <PrismaOutlinksWrapper inner={inner}>
-      {remainingChildren}
+      {!inner && 'RELATED ON PRISMA.IO'}
+
+      {children}
       <LogoWrapper>
         <span className="icon">
           <PrismaLogo color="#63B3ED" />
         </span>
-        {withlogo}
+        Prisma is an open-source database toolkit for Typescript and Node.js that aims to make app
+        developers more productive and confident when working with databases.
       </LogoWrapper>
     </PrismaOutlinksWrapper>
   )
