@@ -17,9 +17,8 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   const {
     mdx: {
       fields: { slug, modSlug },
-      frontmatter: { title, metaTitle, metaDescription, toc },
+      frontmatter: { title, metaTitle, metaDescription, metaImage, toc },
       body,
-      parent,
       tableOfContents,
     },
     site: {
@@ -31,7 +30,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
 
   return (
     <Layout isHomePage={isHomePage} {...props}>
-      <SEO title={metaTitle || title} description={metaDescription || title} />
+      <SEO title={metaTitle || title} description={metaDescription || title} image={metaImage || undefined} />
       {!isHomePage && (
         <section className="top-section">
           <TopSection title={title} slug={modSlug} toc={toc || toc == null ? tableOfContents : []} />
@@ -67,6 +66,7 @@ export const query = graphql`
       frontmatter {
         title
         metaTitle
+        metaImage
         metaDescription
         toc
       }
