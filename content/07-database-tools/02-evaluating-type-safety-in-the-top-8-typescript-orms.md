@@ -1,7 +1,7 @@
 ---
 title: 'Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety'
 metaTitle: 'Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety'
-metaDescription: "This article assesses the type safety of popular ORMs, query builders, and database libraries."
+metaDescription: "This article assesses the type safety of popular TypeScript ORMs, query builders, and database libraries."
 ---
 
 ## Introduction
