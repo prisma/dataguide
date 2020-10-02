@@ -175,13 +175,13 @@ These save points allow you to create an intermediate roll back point.  You can 
 To specify a save point, issue the `SAVEPOINT` command followed by a name for the save point:
 
 ```sql
-SAVEPOINT save_1
+SAVEPOINT save_1;
 ```
 
 To roll back to that save point, use the `ROLLBACK TO` command:
 
 ```sql
-ROLLBACK TO save_1
+ROLLBACK TO save_1;
 ```
 
 Let's continue the account-focused example we've been using:
