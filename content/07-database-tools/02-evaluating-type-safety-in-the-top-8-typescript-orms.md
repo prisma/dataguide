@@ -1,7 +1,7 @@
 ---
-title: 'Evaluating Type Safety in the Top 8 TypeScript ORMs'
-metaTitle: 'Evaluating Type Safety in the Top 8 TypeScript ORMs'
-metaDescription: "Evaluating Type Safety in the Top 8 TypeScript ORMs"
+title: 'Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety'
+metaTitle: 'Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety'
+metaDescription: "This article assesses the type safety of popular ORMs, query builders, and database libraries."
 ---
 
 ## Introduction
@@ -231,7 +231,7 @@ Given the above, it is no surprise that fetching records from the database is al
 
 ### Type Safety: Weak
 
-Although Bookshelf.js does have `@types` type definitions, these provide the bare minimum to compile TypeScript code without errors. If you're looking to work with a Knex.js-based ORM-like library with strong TypeScript support, both Objection.js and Mikro-ORM provide thorough type safety and are better supported and maintained.
+Although Bookshelf.js does have `@types` type definitions, these provide the bare minimum to compile TypeScript code without errors. If you're looking to work with a Knex.js-based ORM-like library with strong TypeScript support, both Objection.js and MikroORM provide thorough type safety and are better supported and maintained.
 
 ## Objection.js
 
@@ -307,9 +307,9 @@ const userWithPosts = await User.query().findById(1).withGraphFetched('postssss'
 
 ### Type Safety: Strong
 
-Along with Mikro-ORM and Bookshelf.js, Objection.js is an ORM-like library built around the Knex.js query builder. Its TypeScript support and type safety are much stronger than Bookshelf.js and comparable to Mikro-ORM’s. It is a strong choice for developers seeking a pared-down, minimal ORM-like library with strong TypeScript typings.
+Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built around the Knex.js query builder. Its TypeScript support and type safety are much stronger than Bookshelf.js and comparable to MikroORM’s. It is a strong choice for developers seeking a pared-down, minimal ORM-like library with strong TypeScript typings.
 
-## Mikro-ORM
+## MikroORM
 
 ### Evaluation summary
 
@@ -320,18 +320,18 @@ Along with Mikro-ORM and Bookshelf.js, Objection.js is an ORM-like library built
 ### Overview
 
 * [Website](https://mikro-orm.io/)
-* [Github](https://github.com/mikro-orm/mikro-orm)
+* [GitHub](https://github.com/mikro-orm/mikro-orm)
 * [npm](https://www.npmjs.com/package/mikro-orm)
 
-Mikro-ORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
+MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
 
 ### Type Definitions: Built-in
 
-As a TypeScript-first ORM, Mikro-ORM builds in its own extensive set of type definitions.
+As a TypeScript-first ORM, MikroORM builds in its own extensive set of type definitions.
 
 ### Record Creation: Type safe
 
-Defining models with Mikro-ORM involves extending a `BaseEntity` class where the model's properties are declared, typed, and decorated with `@Property` and relation decorators. With these classes defined, records can be created in a type-safe manner by creating instances of these model classes. Model fields are type-checked and autocompleted. Models linked by a relation can be persisted at the same time in a transaction using `persistAndFlush()`. For example:
+Defining models with MikroORM involves extending a `BaseEntity` class where the model's properties are declared, typed, and decorated with `@Property` and relation decorators. With these classes defined, records can be created in a type-safe manner by creating instances of these model classes. Model fields are type-checked and autocompleted. Models linked by a relation can be persisted at the same time in a transaction using `persistAndFlush()`. For example:
 
 ```javascript
 const user = new User('Dave Johnson', 'dave@johns.on');
@@ -347,7 +347,7 @@ Here the `Post` model requires a `title` and  `User` in its constructor, and rec
 
 ### Record Fetching: Type-safe
 
-Mikro-ORM also provides strong type safety when fetching records from the database. Records can be fetched using EntityRepositories or an EntityManager. 
+MikroORM also provides strong type safety when fetching records from the database. Records can be fetched using EntityRepositories or an EntityManager. 
 
 When fetching records using a repository for a given model, say a `userRepository`, the return object is typed and you cannot query based on properties that haven't been defined in the model. Furthermore, including relations will result in the object's type reflecting which relations were loaded. For example, with a `User` model linked to `Post` and `Item` models, the following command:
 
@@ -383,7 +383,7 @@ const user: (User & {
 
 ### Type Safety: Strong
 
-Mikro-ORM is a powerful ORM that also packs in the flexible Knex.js query builder. Knex.js results can be mapped to Models using `EntityManager.map()`, a unique and powerful feature. It provides strong type safety when working with models and query results.
+MikroORM is a powerful ORM that also packs in the flexible Knex.js query builder. Knex.js results can be mapped to Models using `EntityManager.map()`, a unique and powerful feature. It provides strong type safety when working with models and query results.
 
 ## Waterline
 
