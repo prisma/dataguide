@@ -1,0 +1,154 @@
+---
+title: 'An introduction to authorization and authentication in MySQL'
+metaTitle: 'An introduction to authorization and authentication in MySQL'
+metaDescription: "Controlling access to your systems and data is essential for maintaining the security and integrity of your data.  MySQL provides a number of features to help you manage these concerns and learning how they work is an important part of managing your databases."
+---
+
+## Introduction
+
+Authentication and authorization are essential considerations for managing and securing your MySQL servers.  **Authentication** (sometimes abbreviated as "authn") refers to the class of policies and mechanisms that verify that clients are allowed to connect as a certain user.  **Authorization** (sometimes abbreviated as "authz") is a process that occurs after authentication to determine what actions an account is permitted to perform.
+
+In this guide, we'll take a look at the concepts and components that MySQL provides to manage this [access control system](https://dev.mysql.com/doc/refman/8.0/en/access-control.html).  We'll talk about the interplay between users, roles, authentication methods, and privileges that, together, solve the problem of how to control who can do what on MySQL database servers.
+
+## How does MySQL configure authentication and authorization?
+
+MySQL manages its authentication and authorization requirements through quite a few different related systems.  Broadly speaking, its component parts are:
+
+* **Users:** Users are individual accounts configured on a MySQL server that function as an identity.  These identities can be coupled with authentication methods to allow clients to connect with the user and can be given privileges to allow them to access and control different database objects at various levels of granularity.  Users in MySQL consist of a `User` name and a `Host` that the user is connecting from.  The same `User` name connecting from a different `Host` is considered a different user.
+* **Authentication methods:** Authentication methods are ways of determining whether a connecting client should be allowed to use a specific user account.  The methods often involve accepting and validating a password from the client, but other methods of authentication are also available.
+* **Privileges:** A user's capabilities and level of access are defined by the privileges granted to them directly, through role membership, or through object ownership.  These are defined at a variety of scopes and are checked against each action the user attempts.
+* **Roles:** Practically speaking, roles are sets of privileges that can be applied to users.  Adding related groups of privileges to roles and then assigning those privileges via role membership can simplify privilege management.
+
+The actual access control process is divided into two distinct parts.  First, the client authenticates to the server as a specific user.  Afterwards, every action is checked against the user's authorized privileges to determine whether to allow or deny each request.
+
+## Part 1: authentication
+
+The first stage in MySQL's access control system is to authenticate the connection.  MySQL decides whether to accept a connection request based on the following factors:
+
+* Whether you can correctly authenticate as the user account you are requesting
+* Whether that user account is locked within the system
+
+If the user you are connecting with is unlocked, and if you're able to correctly authenticate, MySQL accepts the connection and allows you to proceed to part 2 of the access control system.  If the user is marked as locked, if your authentication attempt fails, or if the user you provided is not valid, MySQL will reject the connection request.
+
+### Columns related to authentication in the `mysql.user` table
+
+To perform these functions, MySQL consults the following columns within the `user` table within its internal `mysql` database:
+
+#### `User`
+
+The username that the client is connecting as helps MySQL to determine how to authenticate the user.  When combined with the `Host` field below, it forms a complete, unique identity within MySQL.
+
+In the `mysql.user` table, a blank `User` value will match *any* user provided by the client.  However, when this occurs, the client is considered an anonymous user for the duration of the session.  This has implications in the [second stage of access control](#part-2-authorization), where the server will check actions against an anonymous user instead of the user that the client provided.
+
+#### `Host`
+
+The host that the client is connecting from is considered a key part of the user's identity.  In MySQL, unique identities are formed from the combination of a user's name and the host they connect from.
+
+So `user1` from `example.com` is considered distinct from `user1` from `test.org`.  The `User` field and the `Host` field together tell MySQL which account to try to authenticate to.
+
+#### `plugin`
+
+Once MySQL uses the `User` and `Host` to determine the right record to retrieve for the connection request, it uses the `plugin` field to decide *how* to authenticate the client.
+
+The `plugin` field for a user defines the authentication method that should be used to validate the user's credentials.  The default plugin, `caching_sha2_password`, will check the user's password against a hashed version of the password stored within the table.
+
+#### `authentication_string`
+
+For "native" authentication plugins (those that authenticate users using only information within the `mysql.user` table) the `authentication_string` column contains the string to check the user's password against.  Most of the time, this is a hashed version of the password.  If the `authentication_string` for a native plugin is blank in the `mysql.user` table, the client must *not* specify a password in order to successfully authenticate.
+
+For plugins that use external systems for authentication, the `authentication_string` is often used to specify additional information needed by the external system to correctly authenticate the user (like a service name, additional identifying information, etc.).
+
+#### `account_locked`
+
+This column determines if this specific user account is locked within the system.  Accounts can be locked manually by database administrators.  The account must be unlocked to proceed.
+
+### Determining the priority of rows in the `mysql.user` table
+
+MySQL uses the five fields above to determine whether to accept the connection.  However, there are some cases where multiple entries would match a client's connection.  For instance, it's possible for a client to not provide a host or for the `mysql.user` table to contain a row without a user.  MySQL needs a way to establish the priority of these rows to determine how to authenticate the client.
+
+To do this, MySQL reads the rows from the `mysql.user` table into its memory when the server starts up or when it's given the signal to reload its information from disk.  While it reads the rows, it also sorts them by specificity so that the rows in the table are ordered from most specific to least specific.
+
+First, MySQL sorts the rows based on the specificity of the `Host` column.  Rows with a `Host` consisting of a full domain name or IP address are sorted to the top of the pile, followed by those using wildcards in the `Host` field (putting rows that contain *only* `%`, the match-all wildcard, at the end as the least specific entries), and finally followed by rows with a blank `Host`.
+
+MySQL uses the `User` column as a secondary sort field.  This means that if two rows have the same `Host` specificity, the one with a more specific `User` entry will be prioritized.  Wildcards are not permitted in the `User` field.
+
+The `User` field consists of either:
+
+* a string that must exactly match the provided username, *or*
+* a blank field, which will match any username provided by the client, but will proceed with the session as an anonymous user
+
+MySQL will only authenticate a client connection using a maximum of *one* row from the `mysql.user` table.  This means that if authentication fails or if the wrong row matches, it will not check for alternatives that might authenticate correctly.  To determine the row to use to authenticate a client connection request, MySQL starts at the top of the sorted list.  It checks each row sequentially and uses the first row it finds that matches the client connection.
+
+This can have some surprising implications if you don't pay attention to the sort order described above.  For instance, a row that contains a `Host` value but no `User` will always be selected in preference to a row with a `User` value and no `Host`.  Understanding this sorting system will help you avoid an entire class of authentication problems.
+
+If you have trouble authenticating with a certain user, check to see that there's not a more specific entry that matches.  If you *can* connect, but you can't perform the actions you think you should be able to, verify that MySQL is allowing you access as your requested username instead of as an anonymous user, which can happen as described above.
+
+This command will print out the user you are currently authenticated as::
+
+```sql
+SELECT CURRENT_USER()
+```
+
+## Part 2: authorization
+
+Once a client's credentials are authenticated, MySQL establishes a connection and then enters the second part of the access control system to determine authorization.  MySQL authorization is an ongoing process that checks each command against the user account's specific privileges.  If the commands fall within the scope of the user's privileges, the action is allowed.  If not, the server denies the request.
+
+### Different types of privileges
+
+In order to explain why certain privileges are stored where, it's necessary to talk about different types of privileges within MySQL.
+
+#### Privilege scopes
+
+Privileges can be assigned at different scopes which determines the area of effect of the granted privilege.  Some privileges are only valid at specific scopes while others can be assigned at different scopes depending on the granularity you wish to enable.
+
+**Global privileges** are privileges that are not tied to a specific database.  They are valid throughout the entire MySQL server.  Many global privileges are related to the system administration and are associated with system management responsibilities rather than directly with data management.
+
+**Database privileges** are tied to a specific database within a MySQL server.  Privileges granted at the database scope affect what a user can do to the database as well as any database object (like tables) contained within.  Database privileges can be granted to a specific database or can be granted for databases in general.
+
+**Object privileges** give you control over tables, indexes, etc. within a database.  These privileges can be granted for a specific object, all objects of a certain type within a specific database, or can be granted to all objects of a certain type within the entire server.
+
+#### Static vs dynamic privileges
+
+Internally, privileges can be classified as either static or dynamic.
+
+**Static privileges** are built into the server and cannot be unregistered (disabled).  These privileges are always available regardless of what components are enabled on the server.  In general, static privileges are usually fundamental privileges (like the ability to read or write data, for example) that are applicable in all or most systems.
+
+**Dynamic privileges**, on the other hand, are contingent on the availability of the plugin or component that defines them.  These privileges can be registered or unregistered at runtime to affect their availability.  Unregistered privileges cannot be granted but privileges that have already been granted are automatically registered at startup.  Dynamic privileges are always global in scope (apply to the entire MySQL server).
+
+### Where privileges are defined
+
+MySQL's privileges are defined in many different tables in the internal `mysql` system database.  The combination of the privileges defined within will determine user's specific privileges in relationship to an action or a database object.  The following tables in the `mysql` database are involved in defining privileges:
+
+* `user`: In addition to defining user accounts for authentication, the `user` table also defines each user's static global privileges.  These privileges apply to the whole MySQL server and are not affected by the availability of any plugins or components.
+* `global_grants`: The `global_grants` table defines each user's dynamic global privileges.  Any privileges defined by a plugin or component are registered in this table.
+* `db`: The `db` table defines database-level privileges.  The `db` table matches the user's `User` and `Host` values just like the `user` table but also has a column called `Db` that defines the database scope for the row.
+* `tables_priv`: The `tables_priv` table defines table-level privileges in a similar way that the `db` table does for databases.  To enable table-level scope, a column called `Table_name` is available in addition to the `User`, `Host`, and `Db`.
+* `columns_priv`: A step further than the `tables_priv` table, the `columns_priv` table determines access at the column level.  To add this additional granularity, a column called `Column_name` is included in addition to the columns available within the `tables_priv` table.
+* `procs_priv`: The `procs_priv` table defines privileges for executing procedures and functions.  It uses the `User`, `Host`, `Db`, `Routine_name`, and `Routine_type` columns to scope the user's privileges for different types of processes.
+* `proxies_priv`: The `proxies_priv` table defines a user's proxying privileges.  Proxying allows one user to act as another user, inheriting their privileges.  The `proxies_priv` table uses the `User` and `Host` columns to match a user and then uses separate columns called `Proxied_host` and `Proxied_user` to define who the matched user can act as.
+
+The user account matching for these tables functions similarly to how we described the way the `mysql.user` table is read into memory and sorted earlier.
+
+To show the grants currently associated with a user, you can type:
+
+```sql
+SHOW GRANTS FOR '<user>'@'<host>';
+```
+
+You can also see non-privilege account properties with:
+
+```sql
+SHOW CREATE USER '<user>'@'<host>';
+```
+
+### Roles
+
+Roles are a related component that also fit into the authorization process.  Roles are named bundles of privileges that can be created by administrators to make managing privileges easier.  Once a group of privileges is granted to a role, you can grant those privileges to a user by adding them as a member of the role.
+
+So if you want give multiple users the ability to insert and update values within a specific table, you can create a role with those privileges.  Then, you can control who can insert and update on that table by adding or removing users from that role.  This creates specific defined levels of access for different types of users and helps to ensure that access levels are consistently applied across accounts.
+
+The impact of roles on the complexity of the authentication processes they're involved with is minimal.  However, we mention them here because of their usefulness as a way of managing privileges.
+
+## Conclusion
+
+Authentication and authorization are important requirements of MySQL's security approach.  Together, they function as the system's access control controllers by regulating who can connect to the server, what structures they can see and interact with, and what data they have access to.  Understanding how these systems interact can help you configure secure policies that safeguard your data while leaving all legitimate actions unimpeded.
