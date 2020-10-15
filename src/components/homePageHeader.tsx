@@ -68,7 +68,7 @@ const HeaderWrapper = styled.div`
       .content {
         margin: 0;
         text-align: center;
-        padding: 0 15%;
+        padding: 0 10%;
 
         > * {
           width: auto;
@@ -84,7 +84,7 @@ const HeaderWrapper = styled.div`
       font-size:48px;
     }
     .container .content {
-      padding: 0 10%;
+      padding: 0 20px;
     }
     .container svg {
       width: 400px;
