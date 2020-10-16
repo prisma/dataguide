@@ -98,6 +98,12 @@ SELECT * FROM employee;
 (1 row)
 ```
 
+<PrismaOutlinks>
+
+You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud#create).
+
+</PrismaOutlinks>
+
 ## Returning data from `INSERT` statements
 
 If you want additional information about the data that was added to the table, you can include the `RETURNING` clause at the end of your statement.  The `RETURNING` clause specifies the columns to display of the records that were just inserted.
@@ -217,6 +223,12 @@ DELETE 1
 
 The return value here indicates that the `DELETE` command was processed with a single row being removed.
 
+<PrismaOutlinks>
+
+To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud#delete).
+
+</PrismaOutlinks>
+
 ## Returning data from `DELETE` statements
 
 As with the `INSERT` command, you can return the affected rows or specific columns from the deleted rows by adding a `RETURNING` clause:
@@ -284,6 +296,12 @@ DELETE 4
 ```
 
 Be aware, however, that using `DELETE` to empty a table of data is [not as efficient as the `TRUNCATE` command](https://www.postgresql.org/docs/current/sql-truncate.html), which can remove data without scanning the table.
+
+<PrismaOutlinks>
+
+Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud#deletemany) to delete multiple rows of data at one time.
+
+</PrismaOutlinks>
 
 ## Conclusion
 
