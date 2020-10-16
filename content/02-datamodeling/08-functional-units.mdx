@@ -40,6 +40,12 @@ More specifically, MySQL also disallows recursion and some additional SQL statem
 So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.
 </details>
 
+<PrismaOutlinks>
+
+Find out [how to use functions with Prisma](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model#using-functions) in the Prisma documentation.
+
+</PrismaOutlinks>
+
 
 ## Defaults and Generation
 
@@ -87,6 +93,12 @@ CREATE TABLE lots (
 
 ```
 
+<PrismaOutlinks>
+
+If you're using Prisma, our documentation covers the equivalent method of [defining default values for your fields](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model#defining-a-default-value).
+
+</PrismaOutlinks>
+
 
 ## Referencing Data in Functions
 
@@ -108,6 +120,12 @@ ALTER TABLE lots
   ALTER COLUMN lot_number SET DEFAULT next_lot_number();
 
 ```
+
+<PrismaOutlinks>
+
+Prisma Client supports [aggregation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/aggregations), which allows you to perform count, average, etc. on data so that you don't have to store that in a separate column.
+
+</PrismaOutlinks>
 
 ## Workflows
 
@@ -167,6 +185,12 @@ Triggers and functions can run at the access level of their definer (in PostgreS
 ![](/content/modeling/chaos.png)
 
 The trigger-action-trigger-action call stack can become arbitrarily long, although true recursion in the form of modifying the same tables or records multiple times in any such flow is illegal on some platforms and more generally a bad idea in almost all circumstances. Trigger nesting rapidly outstrips our ability to comprehend its extent and effects. Databases making heavy use of nested triggers begin to drift from the realm of the complicated toward that of the complex, becoming difficult or impossible to analyze, debug, and predict.
+
+<PrismaOutlinks>
+
+In Prisma Client, you can achieve similar results using [middleware](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/middleware).  Middleware allows you to perform an action before and after every query (e.g. perform a soft delete).
+
+</PrismaOutlinks>
 
 ## Practical Programmability
 
