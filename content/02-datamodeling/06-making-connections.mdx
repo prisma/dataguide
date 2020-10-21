@@ -9,7 +9,7 @@ Foreign keys describe relationships, and the entity-relationship diagrams (ERDs)
 
 ![The first steps toward a database schema design for tracking books and patrons in a library system.](/content/modeling/libraries-initial.png)
 
-Several ERD notations exist. The full ["crow's foot"](http://www2.cs.uregina.ca/~bernatja/crowsfoot.html) notation, one of the oldest and most influential, defines symbols for 0 (a ring), 1 (a dash), or many (the eponymous crow's foot, as above) records. Each line represents a relationship between two tables has not just one but two of these symbols on each end, with each pair establishing the minimum and maximum for that side.
+Several ERD notations exist. The full ["crow's foot"](http://www2.cs.uregina.ca/~bernatja/crowsfoot.html) notation, one of the oldest and most influential, defines symbols for 0 (a ring), 1 (a dash), or many (the eponymous crow's foot, as above) records. Each line represents a relationship between two tables and has not just one but two of these symbols on each end, with each pair establishing the minimum and maximum for that side.
 
 This attention to detail is at least in part an historical artifact from the days when running a database server on a workstation would be unheard of, and in the modern era few ERDs are that formally specified. As with the diagrams here, a symbol for "one at most" and a symbol for "zero to many" are enough to get the gist across, and there's rarely a need for a level between that and sharing the SQL scripts themselves anymore.
 
