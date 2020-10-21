@@ -32,7 +32,7 @@ All these techniques incur a performance cost, since SQL statements are faster t
 
 Most enterprise relational databases, Postgres excepted, also manage pages in groups called *extents* and group extents in turn under *segments*. This more complicated strategy helps keep rows in order, which can speed up searches. Postgres has its own tricks here, such as using [visibility maps](https://www.postgresql.org/docs/current/storage-vm.html) to support "[index-only queries](https://www.postgresql.org/docs/current/indexes-index-only-scans.html)" which skip looking at the table's pages entirely. Indexes themselves are also stored in pages, although these have their own organization.
 
-The chief innovation of column-oriented databases like Cassandra and HBase is in abandoning the tuple-by-tuple physical page layout to speed up retrieval of huge amounts of data column by column. This is by no means a free lunch, however, as even many basic RDBMS capabilities depend on tuples in themselves.
+The chief innovation of column-oriented databases like Cassandra and HBase is in abandoning the tuple-by-tuple physical page layout to speed up retrieval of huge amounts of data column by column. This is by no means a free lunch, however, as many basic RDBMS capabilities depend on tuples in themselves.
 
 ## Data Types
 
@@ -78,7 +78,7 @@ User-defined types in SQL Server or Oracle, composite types in PostgreSQL: they 
 
 A list of each datum you're interested in, this an integer, that a date, and so forth. Types and tuples, columns and rows, make a table functionally complete. But there's more than completeness to think about: how can a table ensure that the information it records is *correct*?
 
-Coming up in *Correctness and Constraints*, we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
+Coming up in [*Correctness and Constraints*](correctness-constraints), we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
 
 <AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
 
