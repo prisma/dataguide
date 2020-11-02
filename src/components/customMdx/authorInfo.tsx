@@ -12,7 +12,7 @@ type AuthorInfoProps = React.ReactNode & AuthorProps
 const AuthorInfo = ({ children, ...props }: AuthorInfoProps) => {
   return (
     <AuthorInfoWrapper>
-      {props.image && <img src={withPrefix(props.image)} />}
+      {props.image && <img alt={props.name} src={withPrefix(props.image)} />}
       <div>
         <span className="about">About the Author</span>
         {props.name && <h3 className="name">{props.name}</h3>}
