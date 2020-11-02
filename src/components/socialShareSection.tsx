@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import HNIcon from '../icons/HNIcon'
 import Twitter from '../icons/Twitter'
 import TwitterShareIcon from '../icons/TwitterShareIcon'
-import { useLocation } from '@reach/router'
+import { urlGenerator } from '../utils/urlGenerator'
 
 const SocialWrapper = styled.div`
   display: flex;
@@ -36,10 +36,11 @@ const SocialWrapper = styled.div`
 
 const twitterShareUrl = `https://twitter.com/intent/tweet?text=I%27ve%20found%20this%20%40dataguide%20page%20helpful%21%20`
 
-const SocialShareSection = ({ homePage, hnPostId }: any) => {
-  let location = useLocation()
-  const currentDocsPageURL = encodeURIComponent(location ? location.href : '/')
-
+const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
+  const currentDocsPageURL =
+    slug && slug !== '/'
+      ? `https://www.prisma.io/dataguide${urlGenerator(slug)}`
+      : 'https://www.prisma.io/dataguide'
   return (
     <SocialWrapper>
       {homePage && (
