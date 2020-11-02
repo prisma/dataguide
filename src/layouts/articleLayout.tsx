@@ -45,7 +45,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
             slug={modSlug}
             toc={toc || toc == null ? tableOfContents : []}
           />
-          <SocialShareSection hnPostId={hnPostId}/>
+          <SocialShareSection hnPostId={hnPostId} slug={modSlug}/>
         </section>
       )}
 
