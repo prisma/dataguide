@@ -43,11 +43,10 @@ const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
       : 'https://www.prisma.io/dataguide'
   return (
     <SocialWrapper>
-      {homePage && currentDocsPageURL && (
+      {homePage && (
         <a
           className="homepage-link"
           href={`${twitterShareUrl}${currentDocsPageURL}`}
-          // href={twitterPageUrl}
           target="_blank"
         >
           Share on TWITTER <Twitter />

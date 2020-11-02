@@ -1,0 +1,352 @@
+---
+title: 'How to manage users and authentication in MySQL'
+metaTitle: 'How to manage users and login to MySQL'
+metaDescription: "This guide demonstrates how to use MySQL's robust system for defining users and controlling their authentication options."
+---
+
+## Introduction
+
+User management is of the most important responsibilities of anyone hoping to manage a MySQL database system.  Creating, altering, and deleting user accounts to best represent the users and services in your environment helps lay the groundwork for locking down access, limiting scope for changes, and implementing auditing and accountability for modifications.
+
+In this guide, we will talk about how to manage user accounts within MySQL.  First, we will discuss what a valid user is in MySQL and show you how to add additional users to the system.  This leads into a discussion about how to configure authentication for each user and how the system chooses an authentication option from a list of possibilities.  We'll continue on to talk about making changes to existing users, how to log in with the accounts you've created, and how to delete users you no longer need.
+
+## Prerequisites
+
+To follow along with this guide, you'll need an account on a MySQL server with the appropriate privileges.
+
+### Commands we will use
+
+To create, modify, and delete users within MySQL, the core commands you need are:
+
+* `CREATE USER`: create a new user account
+* `ALTER USER`: make changes to an existing user account
+* `DROP USER`: remove an existing user account
+
+### Required privileges
+
+To execute the commands above, you need to login to MySQL with an account with `CREATE USER` privileges.  The `CREATE USER` privilege allows you to create, modify, delete, and rename users, among other actions.  We'll also need the `SELECT` privilege on the `mysql` database to see information about existing users.
+
+In order of preference, you should login using:
+
+* A limited account that has the `CREATE USER` privilege and the `SELECT` privilege on the `mysql` database
+* The `root` or administrative user that has full privileges within MySQL
+
+## Understanding how MySQL defines and interprets user accounts
+
+Before we start creating new accounts, it's helpful to take some time to get familiar with the various that MySQL uses for creating and referring to users.  You also need to be familiar with MySQL's authentication algorithm to understand what user account it will use to authenticate connections.
+
+### What is MySQL's syntax for user accounts?
+
+In MySQL, user accounts are composed of two separate pieces of information, joined by an at sign (@):
+
+* The user name
+* The host that the user is connecting from
+
+In general, user accounts on the system will look like the following:
+
+```sql
+'<user>'@'<host>'
+```
+
+Single quotes can be used, as above, to individually wrap the user and host components of the user account.  They are sometimes necessary if either of the components contain characters that would otherwise be misinterpreted.  In general, adding them is always a good idea to be explicit.
+
+So rather than just having an account called `'john'`, in MySQL, the full account name would require some kind of host, such as `'john'@'localhost'`.  This means that there may be multiple `'john'` accounts on the system and MySQL will view each of them as a unique account as long as they are coming from a different domain.
+
+With all this being said, it's possible to define user accounts that do not have a user or host component, but there are important implications that you must be aware of.
+
+You can define a user account without a user value by using an empty string:
+
+```sql
+''@'<host>'
+```
+
+For instance, you could create a user as `''@'localhost'`.  This user would match *any* username connecting from the local computer.
+
+Likewise, you could have a user account that matches from any host.  Rather than using an empty string, for host values, you would use the `%` wildcard, like this:
+
+```sql
+'<user>'@'%'
+```
+
+For example, if you create `'john'@'%'`, that account would match a `'john'` user connecting from *any* host.
+
+### How does MySQL authenticate users?
+
+Understanding how MySQL actually processes each authentication request is very important to avoid a common class of authentication problems that result from reasonable, but incorrect assumptions.  This was discussed in some depth in our [introduction to authentication and authorization in MySQL article](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/intro-to-authn-and-authz#determining-the-priority-of-rows-in-the-mysqluser-table).
+
+When authenticating a connection request, MySQL uses a number of fields within the `user` table of its internal `mysql` database to decide whether to allow the connection.  MySQL will use *at most* **one** user account record to try to authenticate a connection.  This means that MySQL needs a way to decide on which user account to use if there are more than one accounts that could match a connection.
+
+MySQL's algorithm for authenticating users begins when the server starts up.  On start up, MySQL loads the entire `mysql.user` table into memory.  It also does this whenever user accounts are created using the regular MySQL commands.  As it loads the table, it sorts the entries from highest priority to lowest.
+
+MySQL uses the `Host` column as the primary sort field and prioritizes results with more specific values.  So literal values are sorted to the top as the highest priority and those that use wildcards, like `%`, are sorted to the bottom.  The final entries are those that only contain `%` with no other characters, followed by entries that have a completely blank host.
+
+The `User` column is used as a secondary sort field for any entries that have the same `Host` value.  Once again, the more exact matches are prioritized.  Since the `User` column cannot use wildcards, all entries are at equal footing except for those with a blank `User` value.  Those are sorted to the bottom.  If any entry with a blank `User` value is selected, the user will be authenticated as an "anonymous user", which usually equates to having no privileges.
+
+Now, whenever a connection request is made, MySQL goes through its sorted table in memory from the top to the bottom.  It uses the *first* entry it finds to authenticate the user, regardless if there are other entries that would also match.  If the client fails to authenticate using the method defined by that entry, the connection will fail and no other entries will be checked.
+
+
+### What are the implications of not including a user or host in a MySQL user account definition?
+
+Because of MySQL's authentication algorithm, problems can emerge if you're not careful when creating user accounts without a user or host component.  This is because the way that MySQL decides which record to use to authenticate you can be unintuitive and surprising.
+
+For instance, if a user authenticates to MySQL with the user portion as a blank string, MySQL will consider them an "anonymous user" for the remainder of the session.  As a rule, anonymous users have almost no power and can do very little once connected.  It's possible to even accidentally authenticate as an anonymous user when trying to authenticate using a different user account.
+
+The challenge with using wildcard *hosts* for user accounts is that other user accounts that *include* a host value can easily mask, or make unavailable, the user account that uses the wildcard.
+
+For instance, if you have a user account defined as `'emily'@'%'`, you might expect to be able to authenticate to `'emily'` from any host.  However, if you have a user account with a blank user but a host value that matches the host `'emily'` is connecting from, MySQL will authenticate using that account instead (leading to an anonymous user login as described above).
+
+So as an example, MySQL will sort the following accounts into the following order:
+
+| Priority | MySQL account                                     | Comments                                                                                                                                                                                                                                                                                                                                                   |
+| -------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | `'emily'@'localhost'` and `'emily'@'example.com'` | These are of equal priority, which is okay because it's only possible for one of them to match a connection.                                                                                                                                                                                                                                               |
+| 2        | `''@'localhost'` and `''@'example.com'`           | These two entries are, again of the same priority.  Since they don't have a user component, but they *do* have a literal host component, they are placed at the bottom of the entries that have exact host values.                                                                                                                                       |
+| 3        | `'emily'@'%.example.com'`                         | This entry has a wildcard in the host component, so it's given lower priority than entries with exact host values.                                                                                                                                                                                                                                    |
+| 4        | `''@'%.example.com'`                              | This entry is grouped with the entries that have a wildcard within their host value.  Since it has no user component, it is at the bottom of this group.                                                                                                                                                                                                 |
+| 5        | `'emily'@'%'`                                     | This entry has a host value consisting only of a wildcard.  Since it matches any host, it has a very low priority.                                                                                                                                                                                                                                    |
+| 7        | `''@'%'`                                          | This entry can be used authenticate any user from any host as an anonymous user.  It's of extremely low priority since it matches any connection.                                                                                                                                                                                            |
+| 6        | `'emily'@''`                                      | This entry has an entirely blank host value, which is of even lower priority than a host that only contains a wildcard host.                                                                                                                                                                                                                         |
+| 8        | `''@''`                                           | This is the lowest possible priority user.  It contains no host information so it is place at the end during the host sorting.  Since it also contains a blank user, it is placed below other entries in this group.  Like all entries without a user, connections authenticated with this entry will be signed in as an anonymous user.
+
+## How do you create users?
+
+Now that you have a feel for the way that MySQL handles user accounts, we can begin creating some new users.  Remember to login with a user with the privileges described in [the prerequisites](#prerequisites).
+
+### Basic syntax
+
+The basic syntax for creating a new user is relatively simple.  You use the `CREATE USER` command and then specify the user and host for the new account:
+
+```sql
+CREATE USER '<user>'@'<host>';
+```
+
+This will create a basic account without configuring any details beyond its user and host at creation.
+
+### How do you create a user with a password?
+
+Often, you want to configure authentication while you're creating the user.  You can do this by adding the optional `IDENTIFIED BY` clause onto `CREATE USER` statement:
+
+```sql
+CREATE USER '<user>'@'<host>' IDENTIFED BY '<password>';
+```
+
+This creates a new user account, as before, and assigns a password for the account at the same time.  We will cover how to assign a password after the fact or how to change a user's password later on.
+
+### How do you create a user with Unix socket authentication?
+
+While password authentication is the most common authentication method for most users, it's not the only option.  MySQL provides many different internal and external authentication mechanisms that you can configure to your user accounts to use.  As an example, we'll configure a new account using Unix socket authentication.
+
+Unix socket authentication can be used in Linux or Unix-like environments so that an account on the operating system is given access to the same account name within MySQL without further authentication.  In this configuration, the MySQL administrator knows that user accounts on the operating system are tightly controlled.
+
+So if there is a `mary` user on the operating system, they will be able to login to the `'mary'@'localhost'` account within MySQL if Unix socket authentication is the defined authentication mechanism.  Let's configure this now.
+
+Socket authentication requires the `auth_socket` plugin, so first load the plugin by typing:
+
+```sql
+INSTALL PLUGIN auth_socket SONAME 'auth_socket.so';
+```
+
+Next, create a user account that matches a user account you have on your operating system.  For this example, we'll use the `mary` account we discussed above.  If you don't use a name that matches one of your operating system names, you won't be able to authenticate using this user.
+
+To create the user with socket authentication, we need to use the `IDENTIFIED WITH` clause (different than the `IDENTIFIED BY` clause used earlier) to specify the authentication plugin to use:
+
+```sql
+CREATE USER 'mary'@'localhost' IDENTIFIED WITH auth_socket;
+```
+
+Now, you should be able to authenticate to the `'mary'@'localhost'` MySQL user from the `mary` user on your operating system.  When logged in as `mary`, connect to the database without providing any username or password:
+
+```shell
+mysql
+```
+
+You should be signed in automatically through the Unix socket authentication you configured.
+
+## How do you show existing users?
+
+Next, let's take a look at how to find information about the existing users.
+
+To show all of the existing MySQL users, consisting of their user and host component, as well as the authentication plugin they're currently using, you can `SELECT` those fields from the `mysql.user` database:
+
+```sql
+SELECT user,host,plugin FROM mysql.user
+```
+```
++------------------+-----------+-----------------------+
+| user             | host      | plugin                |
++------------------+-----------+-----------------------+
+| mary             | localhost | auth_socket           |
+| mysql.infoschema | localhost | caching_sha2_password |
+| mysql.session    | localhost | caching_sha2_password |
+| mysql.sys        | localhost | caching_sha2_password |
+| root             | localhost | caching_sha2_password |
+| useradmin        | localhost | caching_sha2_password |
++------------------+-----------+-----------------------+
+6 rows in set (0.00 sec)
+```
+
+Here, we can see that there are six users defined on the system, all of which can only login locally.  Five of the accounts are configured to use password authentication.  The `'mary'@'localhost'` account is configured to use Unix socket authentication.
+
+We can find additional information about user properties by using the `SHOW CREATE USER` command.  In spite of its name, it shows all of the current properties of a user account, not necessarily the ones that were used during the initial account creation.
+
+The `SHOW CREATE USER` command takes an account name as an argument:
+
+```sql
+SHOW CREATE USER '<user>'@'<host>'\G
+```
+
+It's usually best to end the command with the `\G` statement terminator instead of the usual colon (`;`) so that you can view the results a bit more clearly.
+
+To display the properties for the `'useradmin'@'localhost'` account, you would type:
+
+```sql
+SHOW CREATE USER 'useradmin'@'localhost'\G
+```
+```
+*************************** 1. row ***************************
+CREATE USER for useradmin@localhost: CREATE USER 'useradmin'@'localhost' IDENTIFIED WITH 'caching_sha2_password' AS '$A$005$O
+                                              Rl7lM;@Gt{roB4EWchqDdYM142Lq7pfzcCNiK4yUxnRBlrAgr0sE3' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK PASSWORD HISTORY DEFAULT PASSWORD REUSE INTERVAL DEFAULT PASSWORD REQUIRE CURRENT DEFAULT
+1 row in set (0.00 sec)
+```
+
+## How do you change existing MySQL users?
+
+You can change existing users within MySQL using the `ALTER USER` command.  This can be used to change most of the user-related properties of an account, with the exception of account privileges, which are controlled by the `GRANT` and `REVOKE` commands.
+
+The basic syntax for `ALTER USER` looks like this:
+
+```sql
+ALTER USER <user> <properties_to_change>;
+```
+
+### How do you change the password for a MySQL user?
+
+For most people, the most common use of `ALTER USER` is to modify passwords.
+
+
+For example, you can modify the password for `'kamal'@'localhost'` by typing:
+
+```sql
+ALTER USER 'kamal'@'localhost' IDENTIFIED BY '<new_password>';
+```
+
+If you want to set a temporary password for a user that they'll have to replace immediately, you can set and expire a password at the same time:
+
+```sql
+ALTER USER 'kamal'@'localhost' IDENTIFIED BY '<new_password>' PASSWORD EXPIRE;
+```
+
+You can always change your own password, even without the `CREATE USER` privilege.  It's easiest to use the `USER()` function to automatically fill in your own username:
+
+```sql
+ALTER USER USER() IDENTIFIED BY '<new_password>';
+```
+
+### How do you change authentication plugins for a MySQL user?
+
+You can also change the mechanism or plugin used to authenticate an account.
+
+In an earlier example, we configured an account called `'mary'@'localhost'` to use Unix socket authentication.  If we later want to change that account to use conventional password authentication, we can use the `ALTER USER` command again.
+
+First, identify the default authentication plugin for your server.  If it's a password-based authentication method, it's probably best to reuse the default selection:
+
+```sql
+SHOW VARIABLES LIKE 'default_authentication_plugin';
+```
+
+In this case, the default authentication plugin is `caching_sha2_password`, so we'll use that when we switch to password authentication.
+
+Now, change `'mary'@'localhost'` to use the `caching_sha2_password` plugin with a new password:
+
+```sql
+ALTER USER 'mary'@'localhost' IDENTIFIED WITH 'caching_sha2_password' BY '<marys_password>';
+```
+
+The `'mary'@'localhost'` user will no longer be able to login using Unix socket authentication, but they can log in using the provided password.
+
+
+## How do you login to MySQL?
+
+We've discussed how to create and modify MySQL user accounts, including authentication.  However, we haven't talked about how to actually login using these authentication methods.
+
+The `mysql` client is a powerful command line client that can be used to connect to local and remote databases.  We'll use it to talk about how to authenticate using the methods we configured above.
+
+### How do you login to a local database with a password?
+
+To login to a locally hosted MySQL database using a user account with a password, the basic syntax looks like this:
+
+```shell
+mysql --user=<username> --password <dbname>
+```
+
+So, if the `'kamal'@'localhost'` user wants to login to MySQL and connect to the `testing` database from the computer where the system is hosted, they can type:
+
+```shell
+mysql --user=kamal --password testing
+```
+
+The `mysql` client will prompt for the password for `'kamal'@'localhost'`.  If you provide the correct credentials, you'll be connected to the `testing` database.
+
+Specifying a database on the command line is optional.  If none is specified, you'll connect to the server but not to a specific database.
+
+### How do you login to a local database with Unix socket authentication?
+
+To login to a local MySQL server using Unix socket authentication, you need to be logged into your operating system as the account name that matches.  So, if we want to authenticate to `'mary'@'localhost'` using Unix socket authentication, we first have to login to our computer with a username called `mary`.
+
+Once you are using the correct operating system account, you can connect directly to the local database by executing the client, with no options.
+
+```shell
+mysql
+```
+
+As before, you can optionally append a database name to connect to a specific database you'd like.
+
+### How do you login to a remote database with a password?
+
+If your MySQL server isn't running on your local server, you'll have to specify the host that the client should try to connect to.  You can do that by adding the `--host` option.
+
+Most of the time, you'll be authenticating with a password to remote MySQL servers, so the command would look something like this:
+
+```shell
+mysql --user=<username> --password --host=<host> <dbname>
+```
+
+So `'tanya'@'<tanyas_domain>'` could connect to a MySQL server located on `example.com` by typing:
+
+```shell
+mysql --user='tanya' --password --host='example.com' 
+```
+
+## How do you delete MySQL users?
+
+Keeping user accounts around that no longer serve a purpose is a security risk.  You can remove accounts easily with the `DROP USER` command.
+
+The basic syntax looks like this:
+
+```sql
+DROP USER '<user>'@'<host>';
+```
+
+So to delete the `'mary'@'localhost'` user, you would type:
+
+```sql
+DROP USER 'mary'@'localhost';
+```
+
+If you try to delete a user that does not exist, you will receive an error:
+
+```
+ERROR 1396 (HY000): Operation DROP USER failed for 'mary'@'localhost'
+```
+
+To avoid this, you can add the `IF EXISTS` clause before the account name.  If the user exists, it will be deleted.  If it does not, only a warning will be given:
+
+```
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+```
+
+## Conclusion
+
+MySQL's user account management and authentication configuration is highly flexible.  Learning how to create, modify, and get information about users within MySQL will help you administer your database systems more effectively.
+
+Security best practices dictate that you should create accounts for each unique use case, given only the level of access required to perform their scope.  Account creation and authentication are the first stages of this process.  In another guide, we'll talk about granting and revoking privileges to fulfill the other part of that strategy.

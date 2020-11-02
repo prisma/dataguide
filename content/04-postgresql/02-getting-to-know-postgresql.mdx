@@ -43,6 +43,12 @@ Concepts:
 * **interactive session**: An interactive session is a database session where a user interacts with the database interface using ad-hoc commands.  This is in contrast to non-interactive modes, where a complete set of instructions are sent to the server without user intervention.
 * **meta-command**: In `psql`, a meta-command is a command that is intercepted and processed by `psql` itself rather than by the database system as an SQL statement.  These are mostly quality-of-life improvements that allow users to get information about the database server, the connection, and the structure of database objects without having to remember complex queries.
 
+<PrismaOutlinks>
+
+[Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client) is another powerful way to work with your PostgreSQL databases.
+
+</PrismaOutlinks>
+
 ## Authentication and authorization with PostgreSQL roles and privileges
 
 PostgreSQL uses roles and privileges to validate who is connecting to the system and to determine what actions they are allowed to perform.
@@ -79,6 +85,12 @@ Concepts:
 * **database**: A database is an object within a database cluster that defines schemas, roles, and other objects.  Since roles are defined within databases, databases are the object that users authenticate against.
 * **schema**: In PostgreSQL, a schema is a namespace object within a database.  Schemas contain tables, data types, functions, and operators.  Object names must be unique within a schema, but the same name may exist in different schemas.
 * **table**: Tables are the primary data definition structure within PostgreSQL.  Tables define fields and constraints to control the type of data that may be entered.  Tables store data within the structure they define as records.
+
+<PrismaOutlinks>
+
+When working with Prisma Client, [data models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model) in the Prisma schema are equivalent to tables in PostgreSQL.
+
+</PrismaOutlinks>
 
 ## Concurrency and isolation control
 

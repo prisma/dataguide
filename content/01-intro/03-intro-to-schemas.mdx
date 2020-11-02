@@ -128,7 +128,7 @@ Another consideration you will want to think through during this stage are the p
 
 #### Normalizing your data structures
 
-During this process, you might find that it's easier to extract certain elements from logical entities into their own independent tables.  For instance, you may wish to extract shipping address from a customer so that multiple shipping addresses can be associated with a single customer and so that product orders can reference a specific address.  These changes can be though of as part of a process is called [normalization](https://en.wikipedia.org/wiki/Database_normalization).
+During this process, you might find that it's easier to extract certain elements from logical entities into their own independent tables.  For instance, you may wish to extract shipping address from a customer so that multiple shipping addresses can be associated with a single customer and so that product orders can reference a specific address.  These changes can be thought of as part of a process is called [normalization](https://en.wikipedia.org/wiki/Database_normalization).
 
 **Database normalization** is a process that ensures that your database represents each piece of data once and doesn't allow updates that would result in inconsistencies.  Normalization is a huge topic that, for the most part, is outside of the scope of this guide, but you part of the physical schema design process involves figuring out the level of normalization to seek and transforming data entities as necessary to achieve that goal.
 
@@ -191,3 +191,9 @@ Designing effective database schemas takes patience, practice, and often a lot o
 To start, you have to try to develop a good idea of what your data will look like, how your applications will use it, and what usability and data integrity requirements are required.  Afterwards, your goal is to develop a schema that reflects your data's specific features and facilitates the type of use cases you anticipate.
 
 Schema design, like any other type of design, is an iterative process.  Expect to change your design as your understanding of the problem space deepens and as real world performance data becomes available.  While you may have to evolve your schema over time, starting off with a solid foundation will both aid you in this process and reduce the likelihood of dramatic, disruptive schema changes in the future.
+
+<PrismaOutlinks>
+
+Prisma defines the characteristics of its data in the [data model](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model) section of the [Prisma schema](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema) file.  Check out the linked documentation to learn more about how these concepts apply to Prisma.
+
+</PrismaOutlinks>

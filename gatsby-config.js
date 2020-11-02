@@ -59,6 +59,11 @@ module.exports = {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         sitemapSize: 5000,
+        exclude: [
+          // Remove these from sitemap for SEO purposes
+          `/dummy`,
+          `/intro/example`,
+        ]
       },
     },
     {
