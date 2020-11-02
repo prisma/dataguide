@@ -2,6 +2,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import HeaderDiagram from '../icons/HeaderDiagram'
 import PrismaLogo from '../icons/PrismaLogo'
+import SocialShareSection from './socialShareSection'
 
 const HeaderWrapper = styled.div`
   background: linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
@@ -111,6 +112,7 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
+            <SocialShareSection homePage={true}/>
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
             technologies, and teach you how to unlock the potential of your databases. New material

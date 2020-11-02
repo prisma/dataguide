@@ -8,6 +8,7 @@ import { graphql } from 'gatsby'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 import Layout from '../components/layout'
 import PageBottom from '../components/pageBottom'
+import SocialShareSection from '../components/socialShareSection'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps
 
@@ -18,7 +19,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   const {
     mdx: {
       fields: { slug, modSlug },
-      frontmatter: { title, metaTitle, metaDescription, metaImage, toc },
+      frontmatter: { title, metaTitle, metaDescription, metaImage, toc, hnPostId },
       body,
       parent,
       tableOfContents,
@@ -32,12 +33,22 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
 
   return (
     <Layout isHomePage={isHomePage} {...props}>
-      <SEO title={metaTitle || title} description={metaDescription || title} image={metaImage || undefined} />
+      <SEO
+        title={metaTitle || title}
+        description={metaDescription || title}
+        image={metaImage || undefined}
+      />
       {!isHomePage && (
         <section className="top-section">
-          <TopSection title={title} slug={modSlug} toc={toc || toc == null ? tableOfContents : []} />
+          <TopSection
+            title={title}
+            slug={modSlug}
+            toc={toc || toc == null ? tableOfContents : []}
+          />
+          <SocialShareSection hnPostId={hnPostId}/>
         </section>
       )}
+
       <MDXRenderer>{body}</MDXRenderer>
       <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
     </Layout>
@@ -71,6 +82,7 @@ export const query = graphql`
         metaImage
         metaDescription
         toc
+        hnPostId
       }
     }
   }
