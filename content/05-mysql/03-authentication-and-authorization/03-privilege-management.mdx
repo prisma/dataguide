@@ -1,0 +1,351 @@
+---
+title: 'How to use `GRANT` and `REVOKE` to manage privileges in MySQL'
+metaTitle: 'Using `GRANT` and `REVOKE` for MySQL privilege management'
+metaDescription: "In this guide, we'll show you how to use the `GRANT` command and the `REVOKE` command to add and remove privileges in MySQL."
+---
+
+## Introduction
+
+Privilege management is an important part of system and database administration.  Deciding who should have what access to which components and powers and then designing an implementation that enables those policies requires a good deal of thought and care.
+
+MySQL has a robust privilege assignment system that allows you to implement access policies throughout your database system.  In this guide, we will talk about how to use the `GRANT` and `REVOKE` commands to add and remove privileges from MySQL user accounts and implement access policies that match your requirements.
+
+## Prerequisites
+
+To follow along with this guide, you'll need an account on a MySQL server with the appropriate privileges.
+
+### Commands we will use
+
+The most important commands we'll be using in this guide are the `GRANT` and `REVOKE` commands:
+
+* `GRANT`: use to assign new privileges to a user account
+* `REVOKE`: use to remove existing privileges from a user account
+
+### Required privileges
+
+To manage privileges for MySQL users, you need to have the following privileges:
+
+* `GRANT OPTION`: the `GRANT OPTION` privilege allows you to grant or revoke any privilege that you have been granted
+* whatever privileges you wish to assign to other users
+* `SELECT` on `mysql.*`: used to execute `SHOW GRANTS` for other accounts
+
+To follow along with this guide, we will assume that you are using an account with full administrative privileges (including the `GRANT OPTION` privilege).  This could be the common `'root'@'localhost'` user that is configured during installation, or any other user with full privileges.
+
+## How do privileges work in MySQL?
+
+In MySQL, the privilege system determines whether a user can execute a given command or not.
+
+Each time a client attempts to perform an action, MySQL consults its information on the user's privileges to determine whether it should be allowed or not.  If the user has been granted all of the privileges required to perform the action, MySQL executes the statements.  If the user is missing any of the required privileges, an error will occur.
+
+MySQL stores the information about which users have what privileges in a number of different tables in the `mysql` system database.  Here is a review the where MySQL keeps different types of privilege information as was covered in the [introduction to MySQL authentication and authorization article](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/intro-to-authn-and-authz):
+
+* `user`: The `user` table defines each user's static global privileges.  These privileges apply to the whole MySQL server and are not affected by the availability of any plugins or components.
+* `global_grants`: The `global_grants` table defines each user's dynamic global privileges.  Any privileges defined by a plugin or component are registered in this table.
+* `db`: The `db` table defines database-level privileges.  The `db` table matches the user's `User` and `Host` values just like the `user` table but also has a column called `Db` that defines the database scope for the row.
+* `tables_priv`: The `tables_priv` table defines table-level privileges in a similar way that the `db` table does for databases.  To enable table-level scope, a column called `Table_name` is available in addition to the `User`, `Host`, and `Db`.
+* `columns_priv`: A step further than the `tables_priv` table, the `columns_priv` table determines access at the column level.  To add this additional granularity, a column called `Column_name` is included in addition to the columns available within the `tables_priv` table.
+* `procs_priv`: The `procs_priv` table defines privileges for executing procedures and functions.  It uses the `User`, `Host`, `Db`, `Routine_name`, and `Routine_type` columns to scope the user's privileges for different types of processes.
+* `proxies_priv`: The `proxies_priv` table defines a user's proxying privileges.  Proxying allows one user to act as another user, inheriting their privileges.  The `proxies_priv` table uses the `User` and `Host` columns to match a user and then uses separate columns called `Proxied_host` and `Proxied_user` to define who the matched user can act as.
+
+### What privileges are available in MySQL?
+
+MySQL defines many privileges appropriate for various system scopes.  Some of these are useful for everyday use and management of databases, tables, and functions, while others are designed for administrative tasks like replication, backups, and connection management.
+
+You can find a comprehensive list of static privileges (core privileges built into MySQL itself) and their respective scopes in the [Permissible Static Privileges for `GRANT` and `REVOKE` table](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#idm45933608939712) in the MySQL documentation.  The related [Static Privilege Descriptions section](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#privileges-provided-static) of the MySQL documentation provides a detailed overview of what each privilege allows and in many cases, guidance on what scenarios they would be most useful.
+
+Dynamic privileges are the other type of privilege.  Dynamic privileges are defined in plugins or components and are registered with MySQL to enable them.  They are always global in scope and provide additional capabilities or features.  The [Permissible Dynamic Privileges for `GRANT` and `REVOKE` table](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#idm45933608768400) in the MySQL documentation lists each dynamic privilege and its context.  You can find full descriptions of what each is used for in the associated [Dynamic Privilege Descriptions section](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#privileges-provided-dynamic) of the MySQL documentation.
+
+To find out which privileges are enabled and available on your MySQL server, as well as the context in which they're relevant, you can use the following command:
+
+```sql
+SHOW PRIVILEGES
+```
+
+This can help you understand what privileges are best suited for your users' responsibilities.
+
+## How do you see what privileges an account has?
+
+Now that we've reviewed how privileges in MySQL work and what privileges are available, how do you figure out which privileges have been granted to each account?
+
+You can always view the privileges granted to your own user by typing:
+
+```sql
+SHOW GRANTS;
+```
+```
++--------------------------------------------------------------------+
+| Grants for exampleuser@localhost                                   |
++--------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `exampleuser`@`localhost`                    |
+| GRANT ALL PRIVILEGES ON `exampledb`.* TO `exampleuser`@`localhost` |
++--------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+```
+
+Here, we see that `'exampleuser'@'localhost'` has two sets of privileges defined.  The first entry shows that it has been granted `USAGE` globally (indicated by the wildcard `<database>.<table>` scope of `*.*`).  Despite its name, `USAGE` in this context actually means "no privileges are granted".  So, by default, this user hasn't been given any privileges.  The second record shows that they have been granted `ALL PRIVILEGES`, or complete access, to the `exampledb` database.
+
+If the user account you are logged in as has `SELECT` privileges on the internal `mysql` database, you can see the privileges granted to other user accounts.  To show the privileges of other accounts, use the following format:
+
+```sql
+SHOW GRANTS FOR '<user>'@'<host>';
+```
+
+The output will display the privileges of the provided account.
+
+## How do you use the `GRANT` command?
+
+To `GRANT` command is used to assign new privileges to an account.  It is the primary way of adding access to a user account to databases, objects, or actions that they previously did not have.  Whenever you wish to provide additional access to a user account, the `GRANT` command can help.
+
+### Basic syntax
+
+The basic syntax of the `GRANT` command to assign privileges is fairly straightforward.  It follows this format:
+
+```sql
+GRANT <privileges> ON <database>.<object> TO '<user>'@'<host>';
+```
+
+Multiple privileges can be provided, separated by commas.
+
+### Targeting databases, tables, columns, etc.
+
+The `<database>.<object>` part of the syntax above dictates the scope where the privileges will be granted.  This will determine which objects the privileges will be granted for and the specific table in the `mysql` database where the new privileges will be recorded.
+
+To grant a privilege globally, allowing a user account to use the privilege throughout the entire system, use wildcards for both the database and database object part of the scope component:
+
+For example, to grant `SELECT` privileges globally for `'sally'@'localhost'`, you would type:
+
+```sql
+GRANT SELECT ON *.* TO 'sally'@'localhost';
+```
+
+To limit the scope of a grant to a single database, replace the wildcard on the left side of the dot with a database name:
+
+```sql
+GRANT SELECT ON accounting.* TO 'meredith'@'localhost';
+```
+
+If an account only needs access to a single table within a database, specify the table name on the right side of the dot:
+
+```sql
+GRANT UPDATE ON accounting.revenue TO 'frank'@'localhost';
+```
+
+Finally, applying privileges to specific columns follows a slightly different format.  When scoping to the column level, you must provide the columns to which the privilege should apply in parentheses following the privilege name.
+
+For example, to grant the ability to update the value of the `due_by` column in the `library.loans` table, you can type:
+
+```sql
+GRANT UPDATE (due_by) ON library.loans TO 'autorenew'@'localhost';
+```
+### Using the `WITH GRANT OPTION` clause
+
+An additional clause, called `WITH GRANT OPTION`, can be appended to grant statements to allow the user account to manage grants for other users at a particular scope.  Instead of just granting the privilege to the user, you are also granting the ability for that user to pass on any privileges they have at the same scope to other users.
+
+For instance, here, we can give the `'librarymanager'@'localhost'` account `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges, as well as the ability to pass on its privileges at in the `library` database to other users:
+
+```sql
+GRANT SELECT,INSERT,UPDATE,DELETE ON library.* TO 'librarymanager'@'localhost' WITH GRANT OPTION;
+```
+
+It is important to realize that the `WITH GRANT OPTION` clause applies to the account (`'librarymanager'@'localhost'`) and the scope (`library.*`), **not** the specific privileges in the statement.  This means that although we've assigned four new privileges to the `'librarymanager'@'localhost'` account in this statement, the `WITH GRANT OPTION` allows it to pass on **any** of its privileges at the `library.*` scope.  Since the account now has the `GRANT OPTION` for this scope, if we give `'librarymanager'@'localhoast'` additional privileges in the future, it'll also be able to pass on those privileges automatically.
+
+Although you can use the `WITH GRANT OPTION` clause as demonstrated above to allow an account to pass on its privileges while you are giving them additional privileges, it's often more clear if you separate these two actions, like this:
+
+```sql
+GRANT SELECT,INSERT,UPDATE,DELETE ON library.* TO 'librarymanager'@'localhost';
+GRANT GRANT OPTION ON library.* TO 'librarymanager'@'localhost';
+```
+
+When you handle `GRANT OPTION` as a regular privilege, you can also combine it in the list of privileges you are assigning:
+
+```sql
+GRANT SELECT,INSERT,UPDATE,DELETE,GRANT OPTION ON library.* TO 'librarymanager'@'localhost';
+```
+
+In any of these cases, the result is that the `'librarymanager'@'localhost'` account will be able to grant any of the privileges it possesses for the `library` database, now and in the future, to other users.  This makes the `GRANT OPTION` privilege especially dangerous if assigned carelessly, as it can allow the user to give accounts additional privileges not intended by the administrator.
+
+## Granting common privileges to user accounts
+
+Now that we've talked about how granting privileges works in general, we can go through some examples of how to assign various common privileges to user accounts.
+
+### How do you grant users full access?
+
+Often, you want to assign a specific user complete ownership over a database or database component.  For instance, your `sales` database might have a specific user designated to manage the tables, functions, and indexes within.
+
+You can assign full privileges to a user at a specific scope using the `ALL` or `ALL PRIVILEGES` shorthand:
+
+```sql
+GRANT ALL PRIVILEGES ON sales.* TO 'salesadmin'@'localhost';
+```
+
+This will grant every privilege that your user is capable of assigning on the `sales` database to the `'salesadmin'@'localhost'` user, with a couple important exceptions.  The `ALL PRIVILEGES` privilege bundle does not include the `GRANT OPTION` or `PROXY` privileges, which must be assigned separately.  This is to make it easier to assign full privileges without passing on privilege administration and user substitution privileges.
+
+To assign all privileges except `GRANT OPTION` and `PROXY` globally, use the `*.*` scope:
+
+```sql
+GRANT ALL PRIVILEGES ON *.* TO 'systemadmin'@'localhost';
+```
+
+### How do you grant users full access including privilege administration?
+
+To assign full privileges and also give the user the ability to pass on any of its privileges, include the `GRANT OPTION` in the statement.  For example, to give the `'salesadmin'@'localhost'` account from the last example the ability to control other users' access to the `sales` database, you could instead type:
+
+```sql
+GRANT ALL PRIVILEGES ON sales.* TO 'salesadmin'@'localhost' WITH GRANT OPTION;
+```
+
+The account will then not only have full access to the `sales` database, it will also be able to dictate what other users are able to do on the database.
+
+This same logic can be applied globally using the `*.*` context.  In this cases, it'll make the given account a full administrative user:
+
+```sql
+GRANT ALL PRIVILEGES ON *.* TO 'fulladmin'@'localhost' WITH GRANT OPTION;
+```
+
+### How do you grant users read-only access?
+
+Often, at the database or table level, you'll have some accounts that need to be able to access information but should not have the ability to alter the database or object in any way.  These may include reporting tools or any scenario where data needs to be accessible but not modifiable, like with many non-interactive webpages.
+
+The `SELECT` privilege is adequate to give the user read-only privileges on the database or object.  To give the `'salesreport'@'localhost'` user read-only access to the `sales` database, type:
+
+```sql
+GRANT SELECT ON sales.* TO 'salesreport'@'localhost';
+```
+
+This user will be able to query and extract any data it requires from the `sales` database, but it cannot make any changes.
+
+As usual, the global equivalent uses the `*.*` scope:
+
+```sql
+GRANT SELECT ON *.* TO 'globalread'@'localhost';
+```
+
+### How do you grant users read and write access?
+
+The typical companion to the read-only use case is the user who needs read and write access.  This type of access is appropriate for any processes that need to manage the data within the database or the object.  For instance, a process that creates or edits website user profiles would need both read and write privileges.
+
+To assign read and write access to a user, grant them `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges on the object.  For example:
+
+```sql
+GRANT SELECT,INSERT,UPDATE,DELETE ON website.profiles TO 'profilemanager'@'localhost';
+```
+
+### How do you grant users append-only access?
+
+Another common scenario is making an account that can only append data to a table or other object.  This way, the process always has additive permissions to the object, but cannot rewrite or modify entries that are already present.  This can be useful for append-only event logging or scenarios where updates are actually stored as new records to preserve history.
+
+To allow an account append-only privileges on a database object, only grant them `SELECT` and `INSERT` privileges:
+
+```sql
+GRANT SELECT,INSERT ON website.eventlog TO 'weblogger'@'localhost';
+```
+
+If you want the account to selectively be able to update certain parts of the record, you can additionally grant them `UPDATE` privileges on the appropriate columns:
+
+```sql
+GRANT SELECT,INSERT ON website.eventlog TO 'weblogger'@'localhost';
+GRANT UPDATE (comments) ON website.eventlog TO 'weblogger'@'localhost';
+```
+
+## How do you use the `REVOKE` command?
+
+Now that we've taken a look at the `GRANT` command, we need to introduce its counterpart, `REVOKE`.  While the `GRANT` command assigns additional privileges to a user at a specific scope, the `REVOKE` command allows you to remove privileges from an account.
+
+### Basic syntax
+
+The `REVOKE` command mirrors the `GRANT` command fairly closely.  Aside from the command name, you revoke privileges *from* an account rather than granting them *to* the account.
+
+The basic syntax looks like this:
+
+```sql
+REVOKE <privileges> ON <database>.<object> FROM '<user>'@'<host>';
+```
+
+As with `GRANT`, multiple privileges can be named, separated by commas.
+
+### Targeting databases, tables, columns, etc.
+
+Since privileges are tied to a specific scope (global, database, table, etc.), the `REVOKE` command must specify the scope from which to remove the privilege, just as you do when adding privileges.
+
+To remove a privilege at the global level, use the `*.*` wildcard to match any database and any database object:
+
+```sql
+REVOKE SELECT ON *.* FROM 'sally'@'localhost';
+```
+
+To remove a privilege from a specific database, specify the database name on the left side of the dot:
+
+```sql
+REVOKE SELECT ON accounting.* FROM 'meredith'@'localhost';
+```
+
+And finally, to remove a privilege from a database object, name the database and the object name separated by a dot:
+
+```sql
+REVOKE UPDATE ON accounting.revenue FROM 'frank'@'localhost';
+```
+
+It's a good idea to check the user's available privileges after revoking to make sure that they do not still have unwanted access granted through any other means:
+
+```sql
+SHOW GRANTS FOR 'frank'@'localhost';
+```
+
+### Using partial revokes to fine tune privileges
+
+As of MySQL 8.0.16, partial revocation is supported.  This means that you can give an account broad privileges and then selectively remove those privileges for specific scopes.
+
+For example, you can set up an account that has full privileges over the database *except* for on the `mysql` database, which is used to store system information like privileges, authentication details, and more for users.  A partial revoke would allow you to grant full privileges and then add a special exception for that database.
+
+To enable partial revocation in MySQL, you need to enable it.  You can turn it on persistently by typing the following in supported versions (MySQL 8.0.16 or later):
+
+```sql
+SET PERSIST partial_revokes = ON;
+```
+
+Now, to set up the user account described above, you could type:
+
+```sql
+CREATE USER 'normaladmin'@'localhost' IDENTIFIED BY '<password>';
+GRANT ALL PRIVILEGES ON *.* TO 'normaladmin'@'localhost';
+REVOKE ALL PRIVILEGES ON mysql.* FROM 'normaladmin'@'localhost';
+GRANT SELECT ON mysql.* TO 'normaladmin'@'localhost';
+```
+
+Here, we've created a user and granted them full privileges for the entire MySQL server.  Afterwards, we revoke those privileges specifically in the context of the `mysql` database.  We then re-grant the `SELECT` privilege so that the account can still read values from the database.
+
+If you look at the privileges for this account, something similar to this will be displayed:
+
+```sql
+SHOW GRANTS FOR 'normaladmin'@'localhost'\G
+```
+```
+*************************** 1. row ***************************
+Grants for normaladmin@localhost: GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `normaladmin`@`localhost`
+*************************** 2. row ***************************
+Grants for normaladmin@localhost: GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,GROUP_REPLICATION_ADMIN,INNODB_REDO_LOG_ARCHIVE,INNODB_REDO_LOG_ENABLE,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SHOW_ROUTINE,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,XA_RECOVER_ADMIN ON *.* TO `normaladmin`@`localhost`
+*************************** 3. row ***************************
+Grants for normaladmin@localhost: REVOKE INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER ON `mysql`.* FROM `normaladmin`@`localhost`
+3 rows in set (0.00 sec)
+```
+
+The first line is an expanded list of all of the *static* privileges encapsulated in the `ALL PRIVILEGES` shorthand applied globally (using `*.*`).  The second line shows all of the *dynamic* privileges encapsulated by the `ALL PRIVILEGES` shorthand, again applied globally.  The third shows all of the privileges that apply at the database level, with the exception of `SELECT` being revoked from the `mysql` database.
+
+## What is the `SUPER` privilege?
+
+The `SUPER` privilege is a special privilege that has a number of different powerful and potentially dangerous abilities.  As of MySQL 8, the `SUPER` privilege has been deprecated in favor of more granular dynamic privileges to allow a finer level of control.
+
+To learn about the capabilities that the `SUPER` privilege allowed as well as the dynamic privileges that can now be used instead check out these resources included with the MySQL documentation:
+
+* [The capabilities granted by the `SUPER` privilege](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#priv_super)
+* [How to migrate from the `SUPER` privilege to dynamic privileges](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#dynamic-privileges-migration-from-super)
+
+If you are not already using the `SUPER` privilege, MySQL recommends that you use the subset of dynamic privileges you need instead of granting the `SUPER` privilege to new accounts.
+
+## Conclusion
+
+In this guide, we talked about how MySQL's privilege system allows you to control what level of access your user accounts have to various resources at different scopes.  Privileges can be assigned to user accounts globally, at the database level, or more granularly at the database object level.
+
+We introduced the `GRANT` command to add new privileges to user accounts to improve their level of access.  We discussed how the `GRANT OPTION` allows users to pass on their privileges so that administrators can distribute their privilege management responsibilities and then talked about how to assign common privileges to user accounts.  We demonstrated how the `REVOKE` command can be used to remove privileges assigned to accounts and how partially revocation can allow you to codify exceptions to broad allowances.
+
+Understanding how to distribute privileges to your user accounts allows you to set up your access management system using [the principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege).  By granting accounts only the specific privileges they need to do their jobs you can prevent unauthorized behavior, minimize the impact of security problems, and implement isolation strategies to keep different parts of your system from impacting each other.
