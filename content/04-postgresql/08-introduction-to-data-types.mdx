@@ -12,6 +12,57 @@ Data types specify a general pattern for the data they accept and store.  Values
 
 PostgreSQL includes [a wide range of data types](https://www.postgresql.org/docs/current/datatype.html) that are used to label and validate that values conform to appropriate types.  In this guide, we will discuss the most common data types available in PostgreSQL, the different input and output formats they use, and how to configure various fields to meet your applications' needs.
 
+### What are the data types in PostgreSQL?
+
+Before going into detail, let's take a broad view of what data types PostgreSQL provides.
+
+PostgreSQL supports a wide range of data types suitable for various types of simple and complex data.  These include:
+
+* `integer`
+* `smallint`
+* `bigint`
+* `serial`
+* `smallserial`
+* `bigserial`
+* `numeric`
+* `float`
+* `double precision`
+* `money`
+* `char`
+* `varchar`
+* `text`
+* `boolean`
+* `date`
+* `time`
+* `timestamp`
+* `timestamptz`
+* `interval`
+* `enum`
+* `uuid`
+* `json`
+* `jsonb`
+* `xml`
+* `inet` (network address)
+* `cidr` (network address)
+* `macaddr`
+* `polygon`
+* `line`
+* `lseg` (line segment)
+* `box` (rectangular box)
+* `bytea` (hex format)
+* `tsvector` (text search)
+* `tsquery` (text search)
+
+We'll cover the most common of these in more depth throughout this guide.
+
+### Getting started with PostgreSQL data types
+
+PostgreSQL comes with a large number of types built-in to the software itself.  It also allows you to define your own complex types by combining types of different kinds and specifying their parameters.  This allows administrators to precisely define the types of data they expect each column to accept when using `CREATE TABLE` among other commands.  PostgreSQL can then automatically check proposed values to ensure they match the provided criteria.
+
+As you get started with types, it's important to remember that types alone are not always a complete solution to data validation, but a component.  Other database tools, like [constraints](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints) also have a role to play in defining correctness.  Still, data types are often the first line of defense against invalid data.
+
+For many cases, the general types provided by PostgreSQL are appropriate for the kinds of data you'll be storing.  However, sometimes, more specific types are available that can provide additional operators, associated functions, or built-in constraint-like validation.  For example, while you could store the coordinates of a geometric point in two different number columns, the provided [`point` type](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.5) is purpose built to store and validate exactly this type of information.  When choosing types, check to see that you are using the most specific type applicable to your use case.
+
 ## Numbers and numeric values
 
 PostgreSQL includes a good range of numeric data types suitable for different scenarios.  These include *integers*, *floating points*, *arbitrary precision*, and a special integer type with additional features called *serial*.
@@ -22,9 +73,11 @@ The *integer* data type is a category of types used to store numbers without any
 
 The basic list of integer types includes the following:
 
-* **`integer`:** a normal, 4 byte integer that can range from -2147483648 to 2147483647.  This is the most common integer type to use as it represents a good trade off between storage and expressiveness for many practical applications.
-* **`smallint`:** a 2 byte integer that can range from 32768 to 32767.  It is rare to use this except in places with tight storage constraints.
-* **`bigint`:** an 8 byte integer that can be used to store values from -9223372036854775808 to 9223372036854775807.  Typically this type is reserved for scenarios where the `integer` type would have an insufficient range.
+| Integer type | Length  | Applicable range                            | Comment                                                                                                                                           |
+| ------------ | ------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `integer`    | 4 bytes | -2147483648 to 2147483647                   | This is the most common integer type to use as it represents a good trade off between storage and expressiveness for many practical applications. |
+| `smallint`   | 2 bytes | -32768 to 32767                             | It is rare to use this except in places with tight storage constraints.                                                                           |
+| `bigint`     | 8 bytes | -9223372036854775808 to 9223372036854775807 | Typically this type is reserved for scenarios where the `integer` type would have an insufficient range.                                          |
 
 The types above are limited by their valid range.  Any value outside of the range will result in an error.
 
@@ -88,6 +141,16 @@ FLOAT(8)
 
 Because of these design choices, floating point numbers can work with numbers with large number of decimals efficiently, but not always exactly.  The internal representation of numbers may cause slight differences between the input and output.  This can cause unexpected behavior when comparing values, doing floating point math, or performing operations that require exact values.
 
+### Double precision (floating point) vs numeric
+
+Both floating point numbers provided by types like `float` and `double precision` and arbitrary precision numbers provided by the `numeric` type can be used to store decimal values.  How do you know which one to use?
+
+The general rule is that if you need exactness in your calculations, the `numeric` type is always the better choice.  The `numeric` type will store values exactly as they are provided, meaning that the results are entirely predictable when retrieving or computing over values.  The `numeric` type is called arbitrary precision because you specify the amount of precision the type requires and it will store that exact amount of digits in the field.
+
+In contrast, types like `float` and `double precision` are variable precision types.  The amount of precision they maintain depends on the input value.  When they reach the end of their allowed level of precision, they may round the remaining digits, leading to differences between the submitted and retrieved values.
+
+So when would you use variable precision types?  Variable precision types like `float` and `double precision` are well suited for scenarios where exact values are not necessary (for example, if they'll be rounded anyways) and when speed is highly valuable.  Variable precision will generally offer performance benefits over the `numeric` type.
+
 ### Monetary values
 
 PostgreSQL includes a special `money` type that is used to store numeric values representing monetary units.
@@ -109,7 +172,7 @@ Care must also be taken when casting values in and out of the `money` type since
 
 ## Text and characters
 
-PostgreSQL's character and string types can be placed into two categories: *fixed length* and *variable length*.  The choice between these two affects how PostgreSQL allocates space for each value and how it validates input.
+PostgreSQL's character types and string types can be placed into two categories: *fixed length* and *variable length*.  The choice between these two affects how PostgreSQL allocates space for each value and how it validates input.
 
 The simplest character-based data type within PostgreSQL is the *`char`* type.  With no arguments, the `char` type accepts a single character as input:
 
@@ -117,7 +180,7 @@ The simplest character-based data type within PostgreSQL is the *`char`* type.  
 CHAR
 ```
 
-When a positive integer is provided in the declaration, the `char` column will store a fixed length string equal to the number of characters specified:
+When a positive integer is provided in the declaration, the `char` column will store a fixed length character string equal to the number of characters specified:
 
 ```
 CHAR(10)
@@ -163,13 +226,13 @@ There is no difference between these two type declarations, so they can be used 
 
 ## Booleans
 
-PostgreSQL uses the `boolean` type to express true and false values:
+PostgreSQL uses the `boolean` or `bool` type to express true and false values:
 
 ```
 BOOLEAN
 ```
 
-In keeping with [SQL standards](https://en.wikipedia.org/wiki/Three-valued_logic#SQL), the PostgreSQL boolean type can actually express three states:
+In keeping with [SQL standards](https://en.wikipedia.org/wiki/Three-valued_logic#SQL), the PostgreSQL boolean data type can actually express three states:
 
 * **true**: Represented by the SQL keyword `TRUE`.  As input values, the following strings also evaluate to true: true, yes, on, and 1.  The output function represents true values with the string "t".
 * **false**: Represented by the SQL keyword `FALSE`.  As input values, the following strings also evaluate to false: false, no, off, and 0.  The output function represents false values with the string "f".
@@ -212,7 +275,7 @@ Both the `SQL` and `Postgres` formats respect the `DateStyle` value, mentioned e
 
 ### Time
 
-The `time` data type (also called `time without time zone`) can store a specific time of the day without an associated timezone or date.
+The `time` data type (also called `time without time zone`) can store a specific time of day without an associated timezone or date.
 
 > PostgreSQL does not recommend using `time with time zone`, the `time` type's variant that pairs a time zone with the clock time.  This is due to complications and ambiguities that arise that cannot be resolved without additional context, like an associated date.  For times that require a time zone component, the `timezonetz` type, covered in the next section, is a good alternative that provides the date component context.
 
@@ -370,7 +433,11 @@ PostgreSQL can output values from `interval` columns in several formats.  The ou
 
 Along with the types we covered with some depth above, there are additional types that are useful in specific scenarios.  We'll cover these briefly to give you an idea of how to use them and when they may be useful.
 
-### Enumerated types
+### Does PostgreSQL support user defined types?
+
+PostgreSQL supports user defined types in a few different ways.
+
+#### Enumerated types
 
 PostgreSQL enumerated types are user-defined types that have a set number of valid values.  This functions similar to a drop down menu in that a choice can be made from a specific set of options. For example, an `enum` type called `season` could be created with the values `winter`, `spring`, `summer`, and `autumn`.
 
@@ -380,11 +447,21 @@ To use an `enum` type as a column, you must first define it to declare its name 
 CREATE TYPE season AS ENUM ('winter', 'spring', 'summer', 'autumn');
 ```
 
+The syntax specifies the type name, the `ENUM` category, as well as the possible values.
+
 Afterwards, you can define a column to be of the `season` type as you would any other column when creating a table:
 
 ```
 SEASON
 ```
+
+#### Other user defined types
+
+Other types can also be defined with the `CREATE TYPE` command.  These include:
+
+* **Composite types:** Composite types are types that are defined as a combination of two or more different types.  For instance, you could create an `event` type that combines a geographical location and a timestamp to pinpoint a specific time and place.
+* **Range types:** Range types include a valid range for a specified data type.  While PostgreSQL includes [some range types](https://www.postgresql.org/docs/current/rangetypes.html#RANGETYPES-BUILTIN) by default, the `CREATE TYPE` command allows you to create your own.
+* **Base types:** Base types are used to define a completely new type of data that isn't reliant on modifying existing types.  To do this, you'll need to code up type functions in C to show PostgreSQL how to input, output, and process the data.
 
 ### UUID
 
@@ -406,7 +483,7 @@ For input, PostgreSQL understands a number of formats including using upper case
 
 ### JSON
 
-PostgreSQL supports columns in [JSON](https://en.wikipedia.org/wiki/JSON) using the `json` and `jsonb` format.  Data stored as `json` is stored as-is, while data stored with `jsonb` is interpreted and processed and stored in binary for faster execution and processing.  PostgreSQL can also index `jsonb` columns for better performance.  In general, `jsonb` is recommended for this reason:
+PostgreSQL supports columns in [JSON](https://en.wikipedia.org/wiki/JSON) using the `json` and `jsonb` format.  Data stored as `json` is stored as-is, while data stored with `jsonb` is interpreted and processed and stored in binary for faster execution and processing.  PostgreSQL can also index `jsonb` columns for better performance.  In general, `jsonb` is recommended for JSON data for this reason:
 
 ```
 JSONB
