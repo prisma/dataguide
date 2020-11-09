@@ -29,17 +29,17 @@ In PostgreSQL, there is also an intermediary object between databases and tables
 [comment]: # ( @enduml )
 [comment]: # ( ``` )
 
-This guide won't deal directly with Postgres' concept of a schema, but it's good to know it's there.
+This guide won't deal directly with PostgreSQL's concept of a schema, but it's good to know it's there.
 
-Instead, we'll be focusing on how to create and destroy databases and tables.  The examples will primarily use SQL, but [towards the end](#using-administrative-command-line-tools-to-create-and-delete-databases), we'll show you how to do a few of these tasks using the command line.  These alternatives use tools included in the standard PostgreSQL installation that are available if you have administrative access to the Postgres host.
+Instead, we'll be focusing on how to create and destroy PostgreSQL databases and tables.  The examples will primarily use SQL, but [towards the end](#using-administrative-command-line-tools-to-create-and-delete-databases), we'll show you how to do a few of these tasks using the [command line](https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases).  These alternatives use tools included in the standard PostgreSQL installation that are available if you have administrative access to the PostgreSQL host.
 
-Some of the statements covered in this guide, particularly the `CREATE TABLE` statement, have many additional options that were outside of the scope of this article.  If you'd like additional information, find out more by checking out the [official Postgres documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
+Some of the statements covered in this guide, particularly the PostgreSQL `CREATE TABLE` statement, have many additional options that were outside of the scope of this article.  If you'd like additional information, find out more by checking out the [official PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
 
 ## Prerequisites
 
-To follow along with this guide, you will need to log in to a Postgres instance with a user with administrative privileges using the [`psql` command line client](https://www.postgresql.org/docs/current/app-psql.html).  Your Postgres instance can be [installed locally, remotely, or provisioned by a provider](/postgresql/5-ways-to-host-postgresql).
+To follow along with this guide, you will need to log in to a PostgreSQL instance with a user with administrative privileges using the [`psql` command line client](https://www.postgresql.org/docs/current/app-psql.html).  Your PostgreSQL instance can be [installed locally, remotely, or provisioned by a provider](/postgresql/5-ways-to-host-postgresql).
 
-Specifically, your Postgres user will need the `CREATE DB` privilege or be a `Superuser`, which you can check with the `\du` meta-command in `psql`:
+Specifically, your PostgreSQL user will need the `CREATE DB` privilege or be a `Superuser`, which you can check with the `\du` meta-command in `psql`:
 
 ```
 \du
@@ -55,7 +55,7 @@ The `postgres` superuser, which is created automatically upon installation, has 
 
 ## Create a new database
 
-Once you are connected to your Postgres instance using `psql` or any other SQL client, you can create a database using SQL.
+Once you are connected to your PostgreSQL instance using `psql` or any other SQL client, you can create a database using SQL.
 
 The basic syntax for creating a database is:
 
@@ -151,10 +151,12 @@ The `school` database that we created is displayed among the other databases on 
 
 After creating one or more databases, you can begin to define tables to store your data.  Tables consist of a name and a defined schema which determines the fields and [data types](/postgresql/introduction-to-data-types) that each record must contain.
 
+### PostgreSQL `CREATE TABLE` syntax
+
 You can create tables using the `CREATE TABLE` statement.  A simplified basic syntax for the command looks like the following:
 
 ```sql
-CREATE TABLE [IF NOT EXISTS] table_name (
+CREATE TABLE table_name (
     column_name TYPE [column_constraint],
     [table_constraint,]
 );
@@ -162,11 +164,27 @@ CREATE TABLE [IF NOT EXISTS] table_name (
 
 The components of the above syntax include the following:
 
-* **`CREATE TABLE table_name`**: The basic creation statement that signals that you wish to define a table.  The `table_name` placeholder should be replaced with the name you wish to use for your table.
-* **`IF NOT EXISTS`**: An optional qualifier that tells Postgres to ignore the statement if the database already exists.  Without this option, Postgres throws an error if a table already exists with the same name.
+* **`CREATE TABLE table_name`**: The basic creation statement that signals that you wish to define a table.  The `table_name` placeholder should be replaced with the name of the table you wish to use.
 * **`column_name TYPE`**: Defines a basic column within the table.  The `column_name` placeholder should be replaced with the name you wish to use for your column.  The `TYPE` specifies the [PostgreSQL data type](/postgresql/introduction-to-data-types) for the column.  Data stored within the table must conform to the column structure and column data types to be accepted.
 * **`column_constraint`**: [Column constraints](/postgresql/column-and-table-constraints#column-constraints) are optional restraints to add further restrictions on the data that can be stored in the column.  For example, you can require that entries be not null, unique, or positive integers.
 * **`table_constraints`**: [Table constraints](/postgresql/column-and-table-constraints#table-constraints) are similar to column constraints but involve the interaction of multiple columns.  For instance, you could have a table constraint that checks that a `DATE_OF_BIRTH` is before `DATE_OF_DEATH` in a table.
+
+### Create tables conditionally with the `IF NOT EXISTS` clause
+
+By default, if you attempt to create a table in PostgreSQL that already exists within the database, an error will occur.  To work around this problem in cases where you want to create a table if it isn't present, but just continue on if it already exists, you can use the `IF NOT EXISTS` clause.  The `IF NOT EXISTS` optional qualifier that tells PostgreSQL to ignore the statement if the database already exists.
+
+To use the `IF NOT EXISTS` clause, insert it into the command after the `CREATE TABLE` syntax and before the table name:
+
+```sql
+CREATE TABLE IF NOT EXISTS table_name (
+    column_name TYPE [column_constraint],
+    [table_constraint,]
+);
+```
+
+This variant will attempt to create the table.  If a table with that name already exists within the specified database, PostgreSQL will throw a warning indicating that the table name was already taken instead of failing with an error.
+
+### How to create tables in PostgreSQL
 
 The above syntax is enough to create basic tables.  As an example, we'll create two tables within our `school` database.  One table will be called `supplies` and the other will be called `teachers`:
 
@@ -227,7 +245,7 @@ CREATE TABLE supplies (
 );
 ```
 
-This will create the `supplies` table within the `school` database.  The `PRIMARY KEY` column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  Postgres creates indexes for primary key columns to increase querying speed.
+This will create the `supplies` table within the `school` database.  The `PRIMARY KEY` column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  PostgreSQL creates indexes for primary key columns to increase querying speed.
 
 Verify that the new table is present by typing:
 
@@ -285,7 +303,19 @@ CREATE TABLE teachers (
 );
 ```
 
-Verify that the `teachers` table has been added to the database:
+### How to create tables with primary keys and foreign keys
+
+You can find information about creating tables with primary and foreign keys in some of our other PostgreSQL guides.  Primary keys and foreign keys are both types of [database constraint](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints) within PostgreSQL.
+
+A [primary key](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints#primary-key-constraints) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in PostgreSQL uses the following format to specify an automatically assigned incrementing primary key: `id SERIAL PRIMARY KEY`.
+
+[Foreign keys](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints#foreign-key-constraints) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
+
+## How to view tables in PostgreSQL
+
+In PostgreSQL you can list tables in a few different ways depending on what information you are looking for.
+
+If you'd like to see what tables are available within your database, you can use the `\dt` meta-command included with the `psql` client to list all tables, as we demonstrated above:
 
 ```sql
 \dt
@@ -299,7 +329,7 @@ Verify that the `teachers` table has been added to the database:
 (2 rows)
 ```
 
-Check that the schema for the table matches our specifications:
+You can also check that the schema for the table matches your specifications:
 
 ```sql
 \d teachers
@@ -318,6 +348,52 @@ Indexes:
 ```
 
 The `teachers` table seems to match our definition.
+
+## Alter tables
+
+If you need to change the schema of an existing table in PostgreSQL, you can use the `ALTER TABLE` command.  The `ALTER TABLE` command is very similar to the `CREATE TABLE` command, but operates on an existing table.
+
+### Alter table syntax
+
+The basic syntax for modifying tables in PostgreSQL looks like this:
+
+```sql
+ALTER TABLE <table_name> <change_command> <change_parameters>
+```
+
+The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints.  The `<change_parameters>` part of the command contains any additional information that PostgreSQL needs to complete the change.
+
+### Adding columns to tables
+
+You can add a column to a PostgreSQL table with the `ADD COLUMN` change command.  The change parameters will include the column name, type, and options, just as you would specify them in the `CREATE TABLE` command.
+
+For example, to add a column called `missing_column` of the `text` type to a table called `some_table`, you would type:
+
+```sql
+ALTER TABLE some_table ADD COLUMN missing_column text;
+```
+
+### Removing columns from tables
+
+If, instead, you'd like to remove an existing column, you can use the `DROP COLUMN` command instead.  You need to specify the name of the column you wish to drop as a change parameter:
+
+```sql
+ALTER TABLE some_table DROP COLUMN useless_column;
+```
+
+### Changing the data type of a column
+
+To change the data type that PostgreSQL uses for a specific column, you can use `ALTER COLUMN` change command with the `SET DATA TYPE` column command.  The parameters include the column name, its new type, and an optional `USING` clause to specify how the old type should be converted to the new type.
+
+For example, to set the value of a `id` column in the `resident` table to a `int` using an explicit cast, we can type the following:
+
+```sql
+ALTER TABLE resident ALTER COLUMN id SET DATA TYPE int USING id::int;
+```
+
+### Other table changes
+
+Many other types of changes can be achieved with the `ALTER TABLE` command.  For more information about the options available, check out the official [PostgreSQL documentation for `ALTER TABLE`](https://www.postgresql.org/docs/current/sql-altertable.html).
 
 ## Drop tables
 
@@ -355,7 +431,7 @@ We will keep the `teachers` database to demonstrate that the statement to delete
 
 ## Drop databases
 
-The `DROP DATABASE` statement tells Postgres to delete the specified database.  The basic syntax looks like this:
+The `DROP DATABASE` statement tells PostgreSQL to delete the specified database.  The basic syntax looks like this:
 
 ```sql
 DROP DATABASE database_name;
@@ -407,7 +483,7 @@ Open a new connection to one of the databases you do not wish to delete:
 \c defaultdb
 ```
 
-Once the new connection is open, delete the `school` database:
+Once the new connection is open, delete the `school` database with the following command:
 
 ```sql
 DROP DATABASE school;
@@ -419,17 +495,17 @@ This will remove the `school` database along with the `teachers` table defined w
 
 ## Using administrative command line tools to create and delete databases
 
-If you have shell access to the server or cluster where Postgres is installed, you may have access to some additional command line tools that can help create and delete databases.  The [`createdb`](https://www.postgresql.org/docs/current/app-createdb.html) and [`dropdb`](https://www.postgresql.org/docs/current/app-dropdb.html) commands are bundled with Postgres when it is installed.
+If you have shell access to the server or cluster where PostgreSQL is installed, you may have access to some additional command line tools that can help create and delete databases.  The [`createdb`](https://www.postgresql.org/docs/current/app-createdb.html) and [`dropdb`](https://www.postgresql.org/docs/current/app-dropdb.html) commands are bundled with PostgreSQL when it is installed.
 
 ### Create a new database from the command line
 
-The basic syntax for the `createdb` command (which should be run by a system user with admin access to Postgres) is:
+The basic syntax for the `createdb` command (which should be run by a system user with admin access to PostgreSQL) is:
 
 ```bash
 createdb db_name
 ```
 
-This will create a database called `db_name` within Postgres using the [default settings](https://www.postgresql.org/docs/current/manage-ag-templatedbs.html).
+This will create a database called `db_name` within PostgreSQL using the [default settings](https://www.postgresql.org/docs/current/manage-ag-templatedbs.html).
 
 The command also accepts options to alter its behavior, much like the SQL variant you saw earlier.  You can find out more about these options with `man createdb`.  Some of the most important options are:
 
@@ -482,6 +558,6 @@ This will remove the database and any child elements, like tables, within.
 
 ## Conclusion
 
-This article covered the basics of how to create and delete databases and tables within Postgres.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.  Future guides will cover how to build on this knowledge to implement more complex structures like table relations.
+This article covered the basics of how to create and delete databases and tables within PostgreSQL.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.
 
-As mentioned earlier, the SQL statements covered in this guide, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change Postgres' behavior.  You can find out more about these by checking out the [official Postgres documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
+As mentioned earlier, the SQL statements covered in this PostgreSQL tutorial, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change PostgreSQL's behavior.  You can find out more about these by checking out the [official PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
