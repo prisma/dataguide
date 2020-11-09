@@ -4,7 +4,7 @@ metaTitle: 'An introduction to PostgreSQL column and table constraints'
 metaDescription: "Data types provide some broad control over the values accepted by tables.  For more granular control, PostgreSQL offers column and table constraints.  In this guide we'll show how constraints can help you define valid input for your tables."
 ---
 
-## Introduction
+## What are PostgreSQL column and table constraints?
 
 Constraints are *additional* requirements for acceptable values in addition to those provided by [data types](/postgresql/introduction-to-data-types).  They allow you to define narrower conditions for your data than those found in the general purpose data types.
 
@@ -75,7 +75,11 @@ CREATE TABLE qualified_borrowers (
 
 Here, we use the `CHECK` constraint again to check that the `account_number` is not null and that the loan officer has marked the client as having acceptable collateral by checking the `acceptable_collateral` column.  A table constraint is necessary since multiple columns are being checked.
 
+Now is a good time to mention that although we'll mainly be using the `CREATE TABLE` SQL command in these examples to create a new table, you can also add constraints to an existing table with [`ALTER TABLE`](https://www.postgresql.org/docs/current/sql-altertable.html).  When using `ALTER TABLE`, by default, new constraints cause the values currently in the table to be checked against the new constraint.  You can skip this behavior by including the `NOT VALID` clause.
+
 ## Creating names for constraints
+
+### Default constraint names
 
 When you create constraints using the syntax above, PostgreSQL automatically chooses a reasonable, but vague, name.  In the case of the `qualified_borrowers` table above, Postgres would name the constraint `qualified_borrowers_check`:
 
@@ -89,7 +93,15 @@ DETAIL:  Failing row contains (123, f).
 
 This name gives you information about the table and type of constraint when a constraint is violated.  In cases where multiple constraints are present on a table, however, more descriptive names are helpful to help troubleshooting.
 
+### Custom constraint names
+
 You can optionally specify the name for your constraints by preceding the constraint definition with the `CONSTRAINT` keyword followed by the name.
+
+The basic syntax for adding a custom name is this:
+
+```sql
+CONSTRAINT <constraint_name> <constraint_type_and_details>
+```
 
 For example, if you wanted to name the constraint in the `qualified_borrowers`  table `loan_worthiness`, you could instead define the table like this:
 
@@ -138,7 +150,7 @@ For example, we can create a `film_nominations` table that contains films that h
 ```sql
 CREATE TABLE film_nominations (
     title text,
-    director text,
+    director varchar(250),
     release_date date CHECK ('01-01-2019' <= release_date AND release_date <= '12-31-2019'),
     length int,
     votes int,
@@ -184,6 +196,8 @@ In this case, the film has satisfied every condition except for the number of vo
 ### Not null constraints
 
 The `NOT NULL` constraint is much more focused.  It guarantees that values within a column are not null.  While this is a simple constraint, it is used very frequently.
+
+#### How to add not null constraints in PostgreSQL
 
 To mark a column as requiring a non-null value, add `NOT NULL` after the type declaration:
 
@@ -390,11 +404,13 @@ CREATE TABLE national_capitals (
 );
 ```
 
-### Foreign keys constraints
+### Foreign key constraints
 
 [**Foreign keys**](https://en.wikipedia.org/wiki/Foreign_key) are columns within one table that reference column values within another table.  This is desirable and often necessary in a variety of scenarios where tables contain related data.  This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
 
 For example, you may have a `orders` table to track individual orders and a `customers` table to track contact info and information about your customers.  It makes sense to put this information separately since customers may have many orders.  However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
+
+#### How to create foreign key constraints in PostgreSQL
 
 Let's start by trying to model the `customers` table:
 
@@ -479,7 +495,7 @@ We cover how to define [relations](https://www.prisma.io/docs/reference/tools-an
 
 </PrismaOutlinks>
 
-### Deciding what to do with foreign keys when deleting or updating
+#### Deciding what to do with foreign keys when deleting or updating
 
 One consideration you'll need to think about when defining foreign key constraints is what to do when a referenced table is deleted or updated.
 
@@ -505,8 +521,34 @@ CREATE TABLE orders (
 
 These type of actions can also be applied when *updating* a referenced column instead of deleting one by using `ON UPDATE` instead of `ON DELETE`.
 
+### Exclusion constraints
+
+The final type of constraint we'll talk about is exclusion constraints.  While constraints like `CHECK` can check validity for each row individually, an exclusion constraint checks the values of multiple rows against one another.  The `UNIQUE` constraint is a specific type of exclusion constraint that checks that each row has a different value for the column or columns in question.
+
+For example, you can use an exclusion constraint to make sure that there is no overlap between two date ranges with an exclusion like this:
+
+```sql
+CREATE EXTENSION btree_gist;
+
+CREATE TABLE bookings (
+    room int,
+    booking_start date,
+    booking_end date,
+    EXCLUDE USING gist (
+        room WITH =,
+        daterange(booking_start, booking_end, '[]') WITH &&
+    )
+);
+```
+
+Here, we have a create table statement for hotel bookings with a room number and a booking start and end date.  First, specify `CREATE EXTENSION btree_gist` to make sure the index method we'll be using is enabled in the database.  Afterwards, we add an exclusion constraint by using the `EXLUDE USING` syntax.  We specify `gist` as the index method, which tells PostgreSQL how to index and access the values to compare them.
+
+We then list the ways we want to compare items.  We specify that `room` values should be compared with an equal sign, meaning that the constraint will only match against two rows with the same `room`.  The `daterange` checks the `booking_start` and `booking_end` columns together as a date range.  We include `[]` as an optional third parameter to indicate that the range should be compared inclusively.  The `&&` operator specifies that the date range should check for overlap.
+
+So, in total, the constraint makes sure that the same room is not booked for overlapping dates.
+
 ## Conclusion
 
-In this guide, we learned about how PostgreSQL's constraints can be used to hone in on what specific values are valid for our tables.  We talked about the differences between column and table constraints.  Afterwards, we walked through the various types of constraints and demonstrated how to use them to restrict what types of input your tables accept.
+In this tutorial, we learned about how PostgreSQL's constraints can be used to hone in on what specific values are valid for our tables.  We talked about the differences between column and table constraints.  Afterwards, we walked through the various types of constraints and demonstrated how to use them to restrict what types of input your tables accept.
 
-Constraints are one of many features that help you define your expectations in your data structures.  Once you've provided constraints, you can then allow PostgreSQL to validate that any input matches the requirements.  This is one small way to use your database system to enforce guarantees so that your data remains consistent and meaningful.
+Constraints are one of many features that help you define your expectations in your data structures.  Once you've provided constraints, you can then allow PostgreSQL to validate that any input matches the requirements.  This is one small way to use your PostgreSQL database system to enforce guarantees so that your data remains consistent and meaningful.
