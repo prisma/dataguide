@@ -103,7 +103,7 @@ const HomePageHeader = () => {
   return (
     <HeaderWrapper>
       <div className="sub-wrapper">
-        <a href="https://prisma.io" target="_blank"><PrismaLogo /></a>
+        <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
         <div className="container">
           <div className="content">
             <h1>Prisma's Data Guide</h1>
