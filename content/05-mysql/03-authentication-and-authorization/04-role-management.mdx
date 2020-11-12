@@ -1,0 +1,313 @@
+---
+title: 'How to manage privileges with roles in MySQL'
+metaTitle: 'Using roles to manage privileges for users | MySQL'
+metaDescription: "MySQL roles allow you to group and manage multiple privileges under a single name." 
+---
+
+## Introduction
+
+Access control and user management are two areas that can quickly become complex as the number of users and different database entities within your system increases.  Managing many different privileges on various database objects, ensuring users that have the same responsibilities have the same level of access, and auditing and narrowing access all become more difficult with time.
+
+To help address this, MySQL has a concept called "roles" which allows you to group bundles of privileges under a given name, allowing you to assign and modify settings en masse.  In this guide, we'll go over how roles work within MySQL and how to use them to make it easier to manage data access for your users.
+
+### Commands
+
+Here are the primary SQL commands that we will be discussing in relation to managing MySQL roles.
+
+* `CREATE ROLE`: The `CREATE ROLE` command defines a new role within the database system.
+* `DROP ROLE`: The `DROP ROLE` command does the opposite, deleting an existing role.
+* `GRANT`: The `GRANT` command has two distinct purposes related to roles: adding privileges to roles and adding user accounts as members of roles.
+* `REVOKE`: In the context of roles, the `REVOKE` command removes privileges from a role and also removes role membership from user accounts.
+* `SHOW GRANTS`: The `SHOW GRANTS` command shows the privileges of the given user account or role.
+* `SET ROLE`: The `SET ROLE` command changes the roles that a user account is actively using.  This allows you to dictate which sets of permissions apply to the account for the session.
+* `SET DEFAULT ROLE`: The `SET DEFAULT ROLE` command defines the roles that are automatically applied to when a client logs in as a specific user account.
+
+### Required privileges
+
+To follow along with this guide, you will need the following privileges:
+
+* `CREATE ROLE`
+* `GRANT OPTION`
+* `CREATE USER` (to set the default roles for another user)
+* `ROLE_ADMIN` (to set system variables that modify role behavior)
+* `SYSTEM_VARIABLES_ADMIN` (to set system variables that modify role behavior)
+
+The `CREATE ROLE` privilege is a lesser version of the `CREATE USER` privilege, allowing you to create and manage roles.  Accounts that already have the `CREATE USER` privilege automatically have all of the functionality required to manage roles.
+
+The `GRANT OPTION` privilege is required to assign privileges to a role.  You must have `GRANT OPTION` enabled for any privileges you want to assign to a role.
+
+## What are roles?
+
+In MySQL, a role is an entity that functions as a container or collection of privileges.  Administrators can assign privileges to roles in the same way that they assign privileges to user accounts.  You can then add user accounts as members of the role, allowing those accounts access to the privileges associated with the role.
+
+Basically, roles work as a way to bundle different related privileges together to make privilege management easier.  Instead of making sure that each user has the exact level of access they require by assigning individual privileges, using named groupings of privileges allows you to manage fewer, easier to understand assignments.
+
+This has a clear advantage when assigning access levels, as it's easier to assign a `developer`, `sysadmin`, or `financeteam` role to a user than to individually manage dozens of privileges.  It also makes it quick to tweak access to multiple accounts at once.  If you create a new database for the sales team, you can give the `salesteam` role access to it instead of tracking down every account that should have access.
+
+## Creating roles
+
+If you have an account with the `CREATE ROLE` privilege, you can manage roles using the `CREATE ROLE` command.
+
+### What is MySQL's syntax for roles?
+
+Role names must follow a specific format for MySQL to consider them valid.  In many ways, they mirror [the format used to define MySQL user accounts](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/user-management-and-authentication#what-is-mysqls-syntax-for-user-accounts), but with some important differences.
+
+Roles follow the following format:
+
+```sql
+'<role>'@'<host>'
+```
+
+Like users, roles have two components: the role name and the host that the client is connecting from.  However, the way MySQL interprets these components differs.
+
+With roles, the `'<role>'` portion of the name can never be blank.  There is no concept of a role being "anonymous" as there is with users.  On the other hand, omitting the `'<host>'` portion *is* still allowed, and MySQL will use `%` as the host.  However, the `%` in this context is interpreted as a literal character, not a wildcard.
+
+Effectively, this means that although role names superficially share the format of the user account names, they don't undergo any type of evaluation like user accounts do and are just a label with two components.  The reason they *do* have two parts to their name is that you can create user accounts that can function as both users and roles.  When used as a user, the components are subject to the special evaluation rules [described in the user management article](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/user-management-and-authentication#understanding-how-mysql-defines-and-interprets-user-accounts) and when used as a role, the name is just matched directly using the literal component names.
+
+Because of these rules, in many cases, administrators choose to define roles using only the `'<role>'` component.  This causes MySQL to substitute a literal `%` character for the `'<host>'` component, effectively making that part of the name invisible and inconsequential.  If you don't intend for a name to be used as both a user account and a role, you can do the same.
+
+### How do you create roles?
+
+To create new roles, use the `CREATE ROLE` command.
+
+The basic syntax looks like this:
+
+```sql
+CREATE ROLE '<role>'@'<host>';
+```
+
+You can also create multiple roles at the same time by separating each role name with a comma:
+
+```sql
+CREATE ROLE '<role_1>'@'<host>', '<role_2>'@'<host>', '<role_3>'@'<host>';
+```
+
+If any of the roles you specify already exist on the system, the command will fail with an error.
+
+To avoid this and cause MySQL to only issue a warning, you can include the `IF NOT EXISTS` clause after the `CREATE ROLE` command before the role names:
+
+```sql
+CREATE ROLE IF NOT EXISTS '<role>'@'<host>';
+```
+
+As mentioned above, many times administrators omit the `'<host>'` portion of the role name for simplicity, implicitly setting it to the literal `%` character.  So in practice, many of your role creation commands might look more like this:
+
+```sql
+CREATE ROLE '<role>';
+```
+
+## How do you grant privileges to a role?
+
+After creating new roles, your next priority is typically to make them meaningful by granting them privileges.
+
+You grant privileges to roles the same way you [grant privileges to user accounts](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/privilege-management#how-do-you-use-the-grant-command).  You provide the exact privileges you wish to grant, specify a scope by providing the database and database object where the privilege is valid, and the entity that should be granted the privileges — in this case, a role:
+
+```sql
+GRANT <privileges> ON <database>.<object> TO '<role>'@'<host>';
+```
+
+For example, to grant the `SELECT` privilege to a role called `readapp` on the `appdb` database and all objects it contains, you could type:
+
+```sql
+GRANT SELECT ON appdb.* TO 'readapp';
+```
+
+Similarly, you can grant write privileges to the same database to a role called `writeapp` by typing:
+
+```sql
+GRANT SELECT,INSERT,UPDATE,DELETE ON appdb.* TO 'writeapp';
+```
+
+You can grant privileges to and revoke them from roles exactly as you would directly with user accounts.  So you can always modify the privileges associated with a role if you need to adjust the level of access you wish to provide.
+
+## How do you grant users membership to a role?
+
+Once you have added privileges to your roles, you can start adding members to the role to grant them the associated privileges.
+
+To do this, MySQL uses a different form of the same `GRANT` we use to grant privileges to users and roles.  This new form, however, adds roles to a user, allowing the user account access to all of the privileges given to the role.
+
+The basic syntax looks like this:
+
+```sql
+GRANT '<role>'@'<host>' TO '<user>'@'<host>';
+```
+
+For example, if the `'reports'@'localhost'` user needs to be able to read data from the `appdb` database to generate reports, we can add the `readapp` role to the user account, giving it select privileges:
+
+```sql
+GRANT 'readapp' TO 'reports'@'localhost';
+```
+
+Similarly, to give the `'appuser'@'localhost'` the ability to manage the data within the same database, we can make that user a member of the `writeapp` role:
+
+```sql
+GRANT 'writeapp' TO 'appuser'@'localhost';
+```
+
+The `'appuser'@'localhost'` account will now have the ability to insert, update, and remove data from the database.  If new privileges are added to the `writeapp` role, the `'appuser'@'localhost'` account will immediately gain those privileges.
+
+### How do you automatically grant certain roles to every user?
+
+Sometimes there may be roles that you want every user on your system to have access to.  You can define which roles each account is automatically granted by setting the `mandatory_roles` variable.
+
+To modify the `mandatory_roles` variable, your user must have the `ROLE_ADMIN` and `SYSTEM_VARIABLES_ADMIN` privileges.  You can set the roles you wish to give to every user by typing:
+
+```sql
+SET PERSIST mandatory_roles = '`<role_1>`@`<host>`, `<role_2>`@`<host>`, `<role_3>`@`<host>`';
+```
+
+Here, we give each user on the system three roles automatically.  When setting the system variable, the value of `mandatory_roles` must be a string, so we encapsulate the entire role list in single quotes and use backticks to quote individual role components.
+
+You cannot add a role that to `mandatory_roles` list that has the `SYSTEM_USER` privilege.  This is a security measure to ensure that not all of the sessions on the system are system sessions automatically.
+
+## How do you use privileges from roles?
+
+Once you've granted user accounts membership to roles, how do you use them?  To access the privileges granted to an account by a role, it must be activated.
+
+### Viewing the current active roles
+
+Before activating new roles, you can check which roles are currently active for your user session.
+
+To view the active roles for your session, type:
+
+```sql
+SELECT CURRENT_ROLE()
+```
+
+The output will display zero or more roles that are active in your current session.  The privileges associated with those roles will add to what actions you are allowed to perform.
+
+### How to activate roles for the session
+
+To change which roles are active during your session, use the `SET ROLE` command.  You can use this command in a number of different ways.
+
+The basic syntax looks like this:
+
+```sql
+SET ROLE '<rolename>'@'<host>';
+```
+
+This will activate the role in question.  It is important to note that any previously active roles not mentioned in the `SET ROLE` command will now be deactivated.
+
+To activate more than one role at a time, separate each role with a comma:
+
+```sql
+SET ROLE '<role_1>'@'<host>', '<role_2>'@'<host>', '<role_3>'@'<host>';
+```
+
+To activate all of the roles that have been granted to your account, you can specify `ALL` instead of a specific role:
+
+```sql
+SET ROLE ALL;
+```
+
+You can also tell MySQL to activate all of your roles with specific exception by using `ALL EXCEPT`:
+
+```sql
+SET ROLL ALL EXCEPT '<role_1>'@'<host>';
+```
+
+Another option is to disable all roles on your account by specifying `NONE`:
+
+```sql
+SET ROLE NONE
+```
+
+This will deactivate all of your users roles for the session, giving you only the privileges assigned specifically to your user account.
+
+To get back to the default list of roles defined for your account, use the `DEFAULT` keyword:
+
+```sql
+SET ROLE DEFAULT
+```
+
+### How to define default roles for a user account
+
+The roles that are automatically activated when you log in as a user and those that are reactivated when you use `SET ROLE DEFAULT` are configurable.
+
+To define the roles that will be activated by default, use the `SET DEFAULT ROLE` command similar to how you use the `SET ROLE` command:
+
+```sql
+SET DEFAULT ROLE '<role_1>'@'<host>';
+```
+
+This will set the default roles that will be activated for your own account upon login or upon using `SET ROLE DEFAULT`.
+
+If your user has the `CREATE USER` privilege, you can set the default roles for other accounts:
+
+```sql
+SET DEFAULT ROLE ALL TO '<user>'@'<host>';
+```
+
+Here, we specify that the `'<user>'@'<host>'` account should automatically activate all of its roles upon authentication.
+
+This syntax can also be used to define the default roles for more than one account by separating each user with a comma:
+
+```sql
+SET DEFAULT ROLE ALL TO '<user_1>'@'<host>', '<user_2>'@'<host>';
+```
+
+### Activating all roles for all users by default
+
+If you want every account on your MySQL server to activate all of its roles by default, you can can change a system setting to do so.
+
+When the `activate_all_roles_on_login` variable is set to true, MySQL will automatically activate all of the roles associated with an account upon logging in.  This supersedes the settings specified by `SET DEFAULT ROLE`.
+
+To enable this feature, you must have the `SYSTEM_VARIABLES_ADMIN` and `ROLE_ADMIN` privileges.  Enable the feature by typing:
+
+```sql
+SET PERSIST activate_all_roles_on_login = ON;
+```
+
+This will cause user accounts to automatically activate all roles on login.  However, `SET ROLE DEFAULT` will still allow you to activate only the default roles associated with an account.
+
+## Show existing privileges gained from roles
+
+To understand what privileges are available on your account, you can use the `SHOW GRANTS` command.
+
+To check the grants enabled for a user, type:
+
+```sql
+SHOW GRANTS FOR '<user>'@'<host>';
+```
+
+The output will show you all of the privileges directly assigned to the user account as well as all of the roles the user is a member of.
+
+After learning what roles an account is a member of, you can check what privileges that roles provides the user by typing:
+
+```sql
+SHOW GRANTS FOR '<user>'@'<host>' USING '<role>'@'<host>';
+```
+
+For example, to check the privileges of the `'reports'@'localhost'` user, including those granted by its membership in the `readapp` role, you can use:
+
+```sql
+SHOW GRANTS FOR 'reports'@'localhost' USING 'readapp';
+```
+
+This will show you all of the privileges explicitly granted to the `'reports'@'localhost'` user account as well as those added by the `readapp` role.
+
+## Revoking a role from a user
+
+So what happens when you want to remove a role from a user?  Similar to how the `GRANT` command can either add new privileges to a user or role or add roles to a user, the `REVOKE` command can remove privileges from a user or role and can also remove role membership from a user.
+
+The basic syntax used to remove a role from a user account looke like this:
+
+```sql
+REVOKE '<role>' FROM '<user>'@'<host>';
+```
+
+After executing a statement like this, the user will no longer have access to the privileges that were granted through role.
+
+As an example, we can revoke the `writeapp` role from the `'appuser'@'localhost'` user account by typing:
+
+```sql
+REVOKE 'writeapp' FROM 'appuser'@'localhost';
+```
+
+If the user has been granted a privilege through other means however (either directly granted or granted through membership with a different role) they will still have access that privilege.  So if the `'appuser'@'localhost'` user was also a member of the `readapp` role we granted earlier, they would still have `SELECT` privileges on the `appdb` database.
+
+## Conclusion
+
+Using roles to distribute privileges in your MySQL databases can help simplify the management overhead and complexity of your access control system.  It's much easier to ensure that users with the same responsibilities have the same privileges using roles than it is to grant many different privileges directly.
+
+Similarly, roles allow you to be explicit about the intent behind your privilege granting.  Rather than granting large numbers of privileges to accounts without any commentary, carefully chosen role names can help distinguish between different reasons for access.  By taking the time to create and organize roles ahead of time, your ability to manage user access to different parts of your data will be more straightforward in the long run.
