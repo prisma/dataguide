@@ -337,8 +337,8 @@ Defining models with MikroORM involves extending a `BaseEntity` class where the 
 ```javascript
 const user = new User('Dave Johnson', 'dave@johns.on');
 user.age = 14
-const post1 = new Post('Dave's First Post', user);
-const post2 = new Post('Dave's Second Post', user);
+const post1 = new Post("Dave's First Post", user);
+const post2 = new Post("Dave's Second Post", user);
 
 // Persist the post, author will be automatically cascade persisted
 await DI.em.persistAndFlush([post1, post2]);
