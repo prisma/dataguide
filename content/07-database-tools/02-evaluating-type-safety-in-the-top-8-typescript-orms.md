@@ -35,7 +35,9 @@ This article will assume some familiarity with TypeScript and type safety. To le
 
 Prisma differs from most ORMs in that models are not defined in classes but in the *Prisma schema*, the main configuration and data model definition file used by the Prisma toolkit. In the Prisma schema you define your data source, like a PostgreSQL database, and models, like `users` and `posts` and the relations between them. Using this schema, Prisma generates a type-safe *Client* that exposes a Create-Read-Update-Delete (CRUD) API, which you then use to query your database. This Prisma Client functions as a rich query builder that you can use in your Node.js app to return plain JavaScript objects, not instances of a model class.
 
-Prisma is a newer database tool and has gone through several iterations and redesigns, its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2). 
+### What is Prisma?
+
+Prisma is a newer ORM and has gone through several iterations and redesigns, its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2).
 
 ### Type Definitions: Built-in
 
@@ -95,6 +97,8 @@ Prisma's unique design of generating a local CRUD client that encodes your data 
 * [GitHub](https://github.com/sequelize/sequelize/)
 * [npm: sequelize](https://www.npmjs.com/package/sequelize)
 
+### What is Sequelize
+
 Sequelize is an established, mature, promise-based Node.js ORM that supports Postgres, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows a traditional ORM ActiveRecord pattern of defining models by extending a base `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`. It is very popular in the JavaScript community and has been around for a long time. However, the project has stagnated more recently and does not seem to be as active as it once was.
 
 ### Type Definitions: Built-in
@@ -128,6 +132,8 @@ As of v5, Sequelize provides built-in type definitions, but to have any sort of 
 * [Website](https://typeorm.io/#/)
 * [GitHub](https://github.com/typeorm)
 * [npm: TypeORM](https://www.npmjs.com/package/typeorm)
+
+### What is TypeORM?
 
 TypeORM is a Hibernate-influenced JavaScript and TypeScript ORM that can run on multiple platforms like Node.js, web browsers, and Cordova. It was built with TypeScript and type safety in mind and supports both main ORM architecture patterns, Data Mapper and Active Record, offering the developer flexibility to choose between the two. It also includes a query builder and supports many popular databases.
 
@@ -216,6 +222,8 @@ TypeORM is TypeScript ORM with good type safety around its models. Its query bui
 * [GitHub](https://github.com/bookshelf/bookshelf)
 * [npm: Bookshelf](https://www.npmjs.com/package/bookshelf)
 
+### What is Bookshelf.js?
+
 Bookshelf.js is Node.js ORM built on top of the Knex.js query builder library. It is inspired by the Data Mapper ORM pattern and provides a pared-down interface for modeling and interacting with your data. Bookshelf.js gives you the standard set of data modeling, querying, and manipulation tools. Since it's built on top of the Knex.js query builder, you can always drop down and write more involved queries if you find yourself limited by its interface. It is not as active a project as some of the other tools considered in this article, but has been around for a long time and has a core user base that prefers its streamlined style.
 
 ### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
@@ -247,6 +255,8 @@ Although Bookshelf.js does have `@types` type definitions, these provide the bar
 * [Website](https://vincit.github.io/objection.js/)
 * [GitHub](https://github.com/Vincit/objection.js)
 * [npm: Objection](https://www.npmjs.com/package/objection)
+
+### What is Objection.js?
 
 Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to. [Objection to ORM Hatred](https://www.jakso.me/blog/objection-to-orm-hatred), written by the creator of the Objection.js library, concisely summarizes its design goals and where it fits in the raw SQL-to-ORM spectrum. Objection.js seems to be more actively maintained and better documented than Bookshelf.js, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](https://github.com/Vincit/objection.js/issues/1069)
 
@@ -324,6 +334,8 @@ Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built 
 * [GitHub](https://github.com/mikro-orm/mikro-orm)
 * [npm](https://www.npmjs.com/package/mikro-orm)
 
+### What is MikroORM?
+
 MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
 
 ### Type Definitions: Built-in
@@ -400,6 +412,8 @@ MikroORM is a powerful ORM that also packs in the flexible Knex.js query builder
 * [GitHub](https://github.com/balderdashy/waterline)
 * [npm: Waterline](https://www.npmjs.com/package/waterline)
 
+### What is Waterline?
+
 Waterline is the default ORM used in the Sails Node.js framework. Part of its design is to allow you to use "write once, use anywhere" data manipulation code, so that you can write code to query or manipulate your data whether it lives in a MySQL, PostgreSQL, MongoDB, or other database.
 
 ### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
@@ -431,6 +445,8 @@ Waterline's models are not type-safe and data manipulation and creation operatio
 * [Website](https://typegoose.github.io/typegoose/)
 * [GitHub](https://github.com/typegoose/typegoose)
 * [npm: Typegoose](https://www.npmjs.com/package/typegoose)
+
+### What is Mongoose?
 
 Mongoose is a popular and well maintained Node.js data modeling tool for MongoDB. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks. If you're using a MongoDB database with Node.js and want to use an ORM-like tool to map objects to database documents (or ODM), Mongoose is a safe bet: it is a popular, mature project that continues to be actively maintained. 
 
