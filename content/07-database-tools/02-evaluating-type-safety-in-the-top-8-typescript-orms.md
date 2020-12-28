@@ -31,7 +31,7 @@ This article will assume some familiarity with TypeScript and type safety. To le
 
 * [Website](https://www.prisma.io/)
 * [GitHub](https://github.com/prisma/prisma)
-* [npm: @prisma/client](https://www.npmjs.com/package/prisma)
+* [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
 
 Prisma differs from most ORMs in that models are not defined in classes but in the *Prisma schema*, the main configuration and data model definition file used by the Prisma toolkit. In the Prisma schema you define your data source, like a PostgreSQL database, and models, like `users` and `posts` and the relations between them. Using this schema, Prisma generates a type-safe *Client* that exposes a Create-Read-Update-Delete (CRUD) API, which you then use to query your database. This Prisma Client functions as a rich query builder that you can use in your Node.js app to return plain JavaScript objects, not instances of a model class.
 
