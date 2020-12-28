@@ -57,6 +57,7 @@ Many tools blur the lines between these and allow the developer to drop down to 
 - [Website](https://www.prisma.io/)
 - [GitHub](https://github.com/prisma/prisma)
 - [npm: @prisma/cli](https://www.npmjs.com/package/@prisma/cli)
+- [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
 
 Prisma differs from most ORMs in that models are not defined in classes but in the _Prisma schema_, the main configuration and data model definition file used by the Prisma toolkit. In the Prisma schema you define your data source, like a PostgreSQL database, and models, like `users` and `posts` and the relations between them. Using this schema, Prisma generates a _Client_ that exposes a Create-Read-Update-Delete (CRUD) API, which you then use to query your database. This Prisma Client functions as a rich query builder that you can use in your Node.js app to return plain JavaScript objects, not instances of a model class.
 
