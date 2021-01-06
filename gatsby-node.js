@@ -45,6 +45,7 @@ exports.createPages = ({ graphql, actions }) => {
                 title
                 metaTitle
                 metaDescription
+                skipBuild
               }
               body
               parent {
@@ -58,15 +59,17 @@ exports.createPages = ({ graphql, actions }) => {
       }
     `).then(result => {
       result.data.allMdx.edges.forEach(({ node }) => {
-        createPage({
-          path: node.fields.modSlug ? node.fields.modSlug.replace(/\d{2,}-/g, '') : '/',
-          component: path.resolve(`./src/layouts/articleLayout.tsx`),
-          context: {
-            id: node.fields.id,
-            seoTitle: node.frontmatter.metaTitle || node.frontmatter.title,
-            seoDescription: node.frontmatter.metaDescription || node.frontmatter.title,
-          },
-        })
+        if (!node.frontmatter.skipBuild) {
+          createPage({
+            path: node.fields.modSlug ? node.fields.modSlug.replace(/\d{2,}-/g, '') : '/',
+            component: path.resolve(`./src/layouts/articleLayout.tsx`),
+            context: {
+              id: node.fields.id,
+              seoTitle: node.frontmatter.metaTitle || node.frontmatter.title,
+              seoDescription: node.frontmatter.metaDescription || node.frontmatter.title,
+            },
+          })
+        }
       })
       resolve()
     })
