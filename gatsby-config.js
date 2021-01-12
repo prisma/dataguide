@@ -63,7 +63,7 @@ module.exports = {
           // Remove these from sitemap for SEO purposes
           `/dummy`,
           `/intro/example`,
-        ]
+        ],
       },
     },
     {
@@ -106,5 +106,22 @@ module.exports = {
     },
     'gatsby-plugin-remove-trailing-slashes',
     'gatsby-plugin-page-list',
+    {
+      resolve: 'gatsby-plugin-google-tagmanager',
+      options: {
+        id: 'GTM-KCGZPWB',
+
+        // Include GTM in development.
+        //
+        // Defaults to false meaning GTM will only be loaded in production.
+        includeInDevelopment: false,
+
+        // datalayer to be set before GTM is loaded
+        // should be an object or a function that is executed in the browser
+        //
+        // Defaults to null
+        defaultDataLayer: { website: 'dataguide' },
+      },
+    },
   ],
 }
