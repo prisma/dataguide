@@ -14249,6 +14249,13 @@ react-fast-compare@^3.0.0:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.0.2.tgz#8b0bfa93a049ec1eef9d54ab5e5c6036c317144d"
   integrity sha512-1fBw8Efm6fb1blbRorZcO3OqzWgxYWxXzlaNeqEVXcrDdyFzeqygrPVU6qrPuqnqYMpUJVkQBdDgDJQTmCXp+Q==
 
+react-feather@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/react-feather/-/react-feather-2.0.9.tgz#6e42072130d2fa9a09d4476b0e61b0ed17814480"
+  integrity sha512-yMfCGRkZdXwIs23Zw/zIWCJO3m3tlaUvtHiXlW+3FH7cIT6fiK1iJ7RJWugXq7Fso8ZaQyUm92/GOOHXvkiVUw==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-ga@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-3.0.0.tgz#4d665389cf0c489c36c5fdf97722a7e53efdfc5b"

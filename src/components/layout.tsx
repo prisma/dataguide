@@ -13,6 +13,7 @@ import Sidebar from './sidebar'
 
 interface PathProps {
   isHomePage?: boolean
+  slug?: string;
 }
 
 // interface ThemeProps {
@@ -25,9 +26,10 @@ interface PathProps {
 
 type LayoutProps = React.ReactNode & RouterProps & PathProps
 
-const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
+  const isIndexPage = slug && slug.includes('index')
 
   // const isHomePage = useLocation().pathname === '/'
 
@@ -50,7 +52,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) 
     }
   `
 
-  const MaxWidth = styled.div`
+  const MaxWidth = styled.div<{noIndex: boolean}>`
     > section {
       background: var(--white-color);
       box-shadow: 0px 4px 8px rgba(47, 55, 71, 0.05), 0px 1px 3px rgba(47, 55, 71, 0.1);
@@ -68,6 +70,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) 
         &.top-section {
           padding-top: 24px;
         }
+      }
+
+      &:last-of-type {
+        padding-bottom: ${p=> p.noIndex && '164px'};
       }
     }
   `
@@ -91,7 +97,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage }) 
           </NotMobile>
         )}
         <Content moveUp={isHomePage}>
-          <MaxWidth>{children}</MaxWidth>
+          <MaxWidth noIndex={!isIndexPage}>{children}</MaxWidth>
         </Content>
       </Wrapper>
       <Footer footerProps={footer} isHomePage={isHomePage}/>
