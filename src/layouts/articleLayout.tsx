@@ -9,6 +9,7 @@ import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 import Layout from '../components/layout'
 import PageBottom from '../components/pageBottom'
 import SocialShareSection from '../components/socialShareSection'
+import NextPrevious from '../components/nextPrevious'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps
 
@@ -32,7 +33,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   const isHomePage = slug === '/'
 
   return (
-    <Layout isHomePage={isHomePage} {...props}>
+    <Layout isHomePage={isHomePage} slug={slug} {...props}>
       <SEO
         title={metaTitle || title}
         description={metaDescription || title}
@@ -50,6 +51,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
       )}
 
       <MDXRenderer>{body}</MDXRenderer>
+      {!slug.includes('index') && <NextPrevious slug={modSlug}/>}
       <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
     </Layout>
   )
