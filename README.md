@@ -15,14 +15,14 @@ Download the code and get started by running the following commands:
 ```
 git clone git@github.com:prisma/dataguide.git
 cd dataguide
-yarn
-yarn dev
+npm install
+npm run dev
 ```
 
 To prettify or format the code, run:
 
 ```
-yarn prettify
+npm run prettify
 ```
 
 Visit `http://localhost:8000/` to view the app.
