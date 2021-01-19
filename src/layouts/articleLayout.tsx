@@ -1,6 +1,6 @@
 import { RouterProps } from '@reach/router'
 import * as React from 'react'
-import { ArticleQueryData } from '../interfaces/Article.interface'
+import { ArticleQueryData, CreateArticleContext } from '../interfaces/Article.interface'
 import TopSection from '../components/topSection'
 // import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
@@ -11,16 +11,16 @@ import PageBottom from '../components/pageBottom'
 import SocialShareSection from '../components/socialShareSection'
 import NextPrevious from '../components/nextPrevious'
 
-type ArticleLayoutProps = ArticleQueryData & RouterProps
+type ArticleLayoutProps = ArticleQueryData & RouterProps & CreateArticleContext
 
-const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
+const ArticleLayout = ({ data, pageContext: { seoTitle, seoDescription }, ...props }: ArticleLayoutProps) => {
   if (!data) {
     return null
   }
   const {
     mdx: {
       fields: { slug, modSlug },
-      frontmatter: { title, metaTitle, metaDescription, metaImage, toc, hnPostId },
+      frontmatter: { title, metaImage, toc, hnPostId },
       body,
       parent,
       tableOfContents,
@@ -35,8 +35,8 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
   return (
     <Layout isHomePage={isHomePage} slug={slug} {...props}>
       <SEO
-        title={metaTitle || title}
-        description={metaDescription || title}
+        title={seoTitle}
+        description={seoDescription}
         image={metaImage || undefined}
       />
       {!isHomePage && (
