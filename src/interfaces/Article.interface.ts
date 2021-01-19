@@ -47,3 +47,10 @@ export interface TableOfContents {
     title: string
   }[]
 }
+
+export interface CreateArticleContext {
+  pageContext: {
+    seoTitle: string
+    seoDescription: string
+  }
+}

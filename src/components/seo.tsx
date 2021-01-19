@@ -12,8 +12,7 @@ type SEOProps = {
 
 const SEO = ({ title, description, image }: SEOProps) => {
   const location = useLocation()
-  const [pathTechParams] = location.pathname.split('/').splice(-1)
-  const { site, allSitePage } = useStaticQuery(query)
+  const { site } = useStaticQuery(query)
   const {
     siteMetadata: {
       pathPrefix,
@@ -28,15 +27,7 @@ const SEO = ({ title, description, image }: SEOProps) => {
     },
   } = site
 
-  const currentPage = allSitePage.edges.find(
-    (page: any) => page.node.path.split('/').splice(-1)[0] === pathTechParams
-  )
   const metaImageURL = image ? `${siteUrl + pathPrefix}${image}` : `${siteUrl + pathPrefix}${oUrl}`
-
-  const seoTitle =
-    currentPage && currentPage.node.context ? currentPage.node.context.seoTitle : title
-  const seoDescription =
-    currentPage && currentPage.node.context ? currentPage.node.context.seoDescription : description
 
   let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`
 
@@ -44,20 +35,20 @@ const SEO = ({ title, description, image }: SEOProps) => {
     <Helmet htmlAttributes={{ lang: 'en' }}>
       {/* <meta charSet="utf-8" /> */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>{seoTitle}</title>
-      <meta name="description" content={seoDescription} />
+      <title>{title}</title>
+      <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content={tSite} />
-      <meta name="twitter:title" content={seoTitle} />
-      <meta name="twitter:description" content={seoDescription} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
       <meta name="twitter:creator" content={tCreator} />
       <meta name="twitter:image" content={metaImageURL} />
       {/* Open Graph */}
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:title" content={seoTitle} />
-      <meta property="og:description" content={seoDescription} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
       <meta property="og:site_name" content={oSite} />
       <meta property="og:type" content={oType} />
       <meta property="og:image" content={metaImageURL} />
@@ -94,17 +85,6 @@ const query = graphql`
             height
             width
           }
-        }
-      }
-    }
-    allSitePage {
-      edges {
-        node {
-          context {
-            seoTitle
-            seoDescription
-          }
-          path
         }
       }
     }
