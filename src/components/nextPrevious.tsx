@@ -127,6 +127,7 @@ const NextPrevious = ({ slug }: any) => {
       }
     }
   }
+  if (currentIndex === 0) return null
 
   return (
     nav &&
