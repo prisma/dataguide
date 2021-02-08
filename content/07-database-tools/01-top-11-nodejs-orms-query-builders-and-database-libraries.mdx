@@ -284,7 +284,7 @@ TypeORM and Sequelize are the two most popular relational database ORMs. TypeORM
 - [GitHub](https://github.com/Automattic/mongoose)
 - [npm: Mongoose](https://www.npmjs.com/package/mongoose)
 
-Mongoose is a popular and well maintained Node.js object modeling tool for MongoDB. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks.
+Mongoose is a popular and well maintained Node.js object modeling tool for MongoDB. Stricly speaking, Mongoose is an _object document mapper_, because Mongoose is a document based database. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks.
 
 ### Popularity
 
@@ -485,8 +485,8 @@ Objection.js is most similar to Bookshelf.js in that it builds a set of ORM-like
 
 ### Evaluation Summary
 
-- **Popularity**: Popular
-- **Repo Activity**:   Not very active
+- **Popularity**: Somewhat Popular
+- **Repo Activity**: Not very active
 - **Support**: Average
 - **Maturity and Stability:** Mature
 - **Supported Databases**: MySQL, PostgreSQL, MongoDB. Via community adapters: Redis, MS-SQL, Oracle, and many more.
@@ -655,9 +655,22 @@ At the lowest level of the abstraction spectrum sit database drivers, which can 
 - **MongoDB**: [node-mongodb-native](https://github.com/mongodb/node-mongodb-native)
 - **Redis:** [node-redis](https://github.com/NodeRedis/node-redis), [ioredis](https://github.com/luin/ioredis)
 
-## Conclusion
+## Summary
 
-![Summary Infographic](/content/database-tools/top-nodejs-orms-2020/orm_infographic.png)
+<!-- ![Summary Infographic](/content/database-tools/top-nodejs-orms-2020/orm_infographic.png) -->
+
+| Library          | Type                          | Popularity | Activity | Support  | Maturity and Stability                                       | Officially Supported Databases                                         |
+| ---------------- | ----------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Prisma**       | ORM + Query Builder           | 💜💜       | 🌳🌳🌳🌳 | 🔵🔵🔵🔵 | Newer, backed by the company Prisma                          | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL (Preview)                    |
+| **Sequelize**    | ORM                           | 💜💜💜     | 🌳🌳     | 🔵🔵     | Mature, no Funding                                           | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL                              |
+| **TypeORM**      | ORM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$15k)                        | PostgreSQL, MySQL, MariaDB SQLite, MSSQ, CockroachDB, Oracle, Sap Hana |
+| **Mongoose**     | ODM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$100k), backed by Automattic | MongoDB                                                                |
+| **Bookshelf.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳       | 🔵🔵     | Mature, no Funding                                           | PostgreSQL, MySQL, SQLite                                              |
+| **Objection.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳🌳     | 🔵🔵🔵   | Mature, no Funding                                           | PostgreSQL, MySQL, SQLite                                              |
+| **Waterline**    | ORM                           | 💜         | 🌳       | 🔵🔵     | Mature, backed by Sails Company                              | PostgreSQL, MySQL, MongoDB                                             |
+| **Knex.js**      | Query Builder                 | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, no Funding                                           | PostgreSQL, MySQL, MariaDB, SQlite, MSSQL, Oracle, Amazon Redshift     |
+
+## Conclusion
 
 This article summarizes the most popular Node.js ORMs, database toolkits, and query builders. Their health as open-source projects is assessed according to criteria like repository contributions and developer support.
 
