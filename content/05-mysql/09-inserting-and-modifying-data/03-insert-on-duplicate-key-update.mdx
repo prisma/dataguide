@@ -1,0 +1,189 @@
+---
+title: 'How to use `ON DUPLICATE KEY UPDATE` to upsert data in MySQL'
+metaTitle: 'ON DUPLICATE KEY UPDATE to upsert and modify data in MySQL'
+metaDescription: "The `INSERT...ON DUPLICATE KEY UPDATE` clause lets you handle scenarios where a record should be modified if it exists and added if it does not exist."
+---
+
+## Introduction
+
+In many situations, you may want to ensure that a record exists in a table without a conflicting entry.  Essentially, you want to find and modify the current record if it exists or add a new record with the values you want if one is not already present.  This is typically referred to as an "upsert" operation (a combination of "insert" and "update").
+
+MySQL allows you to perform this action using the `ON DUPLICATE KEY UPDATE` clause to modify the `INSERT` command.  In this guide, we'll cover how to use this construct to update the values of an entry if it exists or else add it as a new row in the table.
+
+## How to use the `INSERT...ON DUPLICATE KEY UPDATE` construct
+
+The basic syntax for the insert or update operation looks like this:
+
+```sql
+INSERT INTO my_table (column1, column2)
+VALUES
+    (value1, value2),
+    (value3, value4),
+    (value5, value6),
+    (value7, value8)
+ON DUPLICATE KEY UPDATE
+    <column1> = <value1>,
+    <column2> = <value2>;
+```
+
+Multiple columns can be provided after the `ON DUPLICATE KEY UPDATE` clause, each defining what the new value should be if there's a conflict with an existing record.
+
+To demonstrate this feature, we'll imagine a table called `director` with the following columns and populated data:
+
+```sql
+CREATE TABLE director (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    latest_film VARCHAR(200)
+);
+
+INSERT INTO director (name)
+VALUES
+    ('frank'),
+    ('bob'),
+    ('sue');
+```
+
+The data within the table looks like this:
+
+```sql
+SELECT * FROM director;
+```
+```
++----+-------+-------------+
+| id | name  | latest_film |
++----+-------+-------------+
+|  1 | frank | NULL        |
+|  2 | bob   | NULL        |
+|  3 | sue   | NULL        |
++----+-------+-------------+
+3 rows in set (0.00 sec)
+```
+
+If you attempt to insert another row with an `id` column of "3", MySQL will notify you of a conflict with the existing row:
+
+```sql
+INSERT INTO director (id, name) VALUES (3, 'susan');
+```
+```
+ERROR 1062 (23000): Duplicate entry '3' for key 'director.PRIMARY'
+```
+
+If we want anticipate this possibility and want to update the existing row with the new information, we can avoid this error.  The `ON DUPLICATE KEY UPDATE` clause allows us to do this:
+
+```sql
+INSERT INTO director (id, name) VALUES (3, 'susan')
+ON DUPLICATE KEY UPDATE name = 'susan';
+```
+```
+Query OK, 2 rows affected (0.00 sec)
+```
+
+MySQL considers an `ON DUPLICATE KEY UPDATE` where an update occurs to the existing row as two rows affected.  If no conflict had occurred and the new record had been added, it would instead show one row affected.  If an existing record was found but the columns already had the correct value, no rows would be reported as affected.
+
+You can confirm the row has been updated with the new information by typing:
+
+```sql
+SELECT * FROM director;
+```
+```
++----+-------+-------------+
+| id | name  | latest_film |
++----+-------+-------------+
+|  1 | frank | NULL        |
+|  2 | bob   | NULL        |
+|  3 | susan | NULL        |
++----+-------+-------------+
+3 rows in set (0.00 sec)
+```
+
+## How to insert or update multiple records at once
+
+If you are attempting to insert or update multiple records at the same time, the value to set each column likely depends on which record or records conflicted.  For instance if you are trying to insert four new rows, but the third row has an `id` column that conflicts with an existing record, you most likely want to update the existing row based on the data you had in mind for the third row.
+
+MySQL allows you to reference that proposed data using the [`VALUES()` function](https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_values).  The function takes a column name as an argument and provides the value given in the `INSERT` portion of the statement.
+
+The basic syntax looks like this:
+
+```sql
+INSERT INTO my_table (column1, column2)
+VALUES
+    (value1, value2),
+    (value3, value4),
+    (value5, value6),
+    (value7, value8)
+ON DUPLICATE KEY UPDATE
+    <column1> = VALUES(<column1>),
+    <column2> = VALUES(<column2>);
+```
+
+This tells MySQL to use the data that is associated with the conflicting row to update the values.
+
+To see how this works, let's go back to the `director` table from before:
+
+```sql
+SELECT * FROM director;
+```
+```
++----+-------+-------------+
+| id | name  | latest_film |
++----+-------+-------------+
+|  1 | frank | NULL        |
+|  2 | bob   | NULL        |
+|  3 | susan | NULL        |
++----+-------+-------------+
+3 rows in set (0.00 sec)
+```
+
+Suppose we wanted to ensure that the following records exist in the table:
+
+```
++----+--------+-------------+
+| id | name   | latest_film |
++----+--------+-------------+
+|  4 | meg    | NULL        |
+|  2 | robert | NULL        |
+|  5 | tamara | NULL        |
++----+--------+-------------+
+```
+
+We could create an `INSERT...ON DUPLICATE KEY UPDATE` statement that looks like this:
+
+```sql
+INSERT INTO director (id, name)
+VALUES
+    (4, 'meg'),
+    (2, 'robert'),
+    (5, 'tamara')
+ON DUPLICATE KEY UPDATE
+    name = VALUES(name)
+```
+
+MySQL would accept the statement, inserting two new rows and updating one where it conflicted with an existing record (there is already a record with an `id` of "2"):
+
+```
+Query OK, 4 rows affected, 1 warning (0.01 sec)
+Records: 3  Duplicates: 1  Warnings: 1
+```
+
+If you view the table's data, you can see that the two new rows appear as expected and the values of the conflicting row have been updated with the appropriate new information:
+
+```sql
+SELECT * FROM director;
+```
+```
++----+--------+-------------+
+| id | name   | latest_film |
++----+--------+-------------+
+|  1 | frank  | NULL        |
+|  2 | robert | NULL        |
+|  3 | susan  | NULL        |
+|  4 | meg    | NULL        |
+|  5 | tamara | NULL        |
++----+--------+-------------+
+5 rows in set (0.00 sec)
+```
+
+## Conclusion
+
+MySQL's `INSERT...ON DUPLICATE KEY UPDATE` construct allows you to insert data while avoiding conflicts with existing records.  Combined with the `VALUES()` function, you can use it to make contextual updates to records that already exist without issuing multiple statements.  This powerful feature can help you minimize the amount of checks and conditional logic you have to use outside of your SQL statements.

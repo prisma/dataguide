@@ -1,0 +1,118 @@
+---
+title: 'Connecting to MySQL databases'
+metaTitle: "Connecting to MySQL databases | Prisma's Data Guide"
+metaDescription: "Learn how to connect to local and remote MySQL databases using the `mysql` client"
+---
+
+## Introduction
+
+One of the first things you'll need to think about when working with a MySQL database is how to connect and interact with the database instance.  This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual MySQL instance that stores, organizes, and provides access to your data.
+
+Because of this, you need to understand how to connect as a client by providing the required information to authenticate.  In this guide, we'll cover how to connect to a MySQL database using the native [`mysql` command line client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html) — one of the most common and useful ways of interacting with a database instance.
+
+In a companion guide, you can find out how to [configure MySQL's authentication to meet your project's needs](/mysql/authentication-and-authorization/user-management-and-authentication).  Consider reading both guides for a more complete picture of how authentication works in MySQL.
+
+## Basic information about the `mysql` client
+
+The `mysql` client is the default command line client and SQL shell for MySQL.  You can use it interactively to spawn a shell session with your server or you can feed it SQL files to run without user interaction.  It is especially useful when implementing configuration options and setting up your environment.  Interactive exploration and ad-hoc queries are also a strong suit while developing the access patterns your programs will use.
+
+The way that to connect to and authenticate with a MySQL server depends on your server's configuration.  In the following sections, we'll go over some of the basic connection options.  For clarity's sake, we'll differentiate between local and remote connections:
+
+* **local connection**: a connection where the client and the MySQL instance are located on the same server 
+* **remote connection**: where the client is connecting to a network-accessible MySQL instance running on a different computer
+
+Let's start with connecting to a database from the same computer.
+
+## Connecting to a local database with `mysql`
+
+Without any arguments, the `mysql` command attempts to connect to a [Unix socket file](https://en.wikipedia.org/wiki/Unix_file_types) to access a local database.  Usually, the default socket file location is determined either by a configuration file or by a compiled in default value.  By default, your operating system's username is used to attempt to connect to the database.
+
+So if your current user is a valid MySQL user on your local database, you can try to connect by typing:
+
+```bash
+mysql
+```
+
+If the account exists and does not require a password or if [MySQL socket authentication](https://dev.mysql.com/doc/refman/8.0/en/socket-pluggable-authentication.html) is configured for the account, you will be logged in automatically.  If the username does not exist in MySQL or if a password or additional authentication is required, the command will fail.
+
+To control the way that `mysql` tries to login to the database, pass additional information with your command using command line options:
+
+* **`--user=<username>`** or **`-u <username>`**: specifies the MySQL user to authenticate with.
+* **`--password`** or **`-p`**: tells MySQL to prompt for a password for the MySQL user.
+* **`--host=127.0.0.1`** or **`-h 127.0.0.1`**: tells `mysql` to connect to the local MySQL instance using the local TCP loopback address instead of a Unix socket.  This is important to use if your MySQL server is not configured to use Unix sockets.
+
+**Note:** MySQL interprets `127.0.0.1` differently than it does `localhost`.  Specifying `127.0.0.1` indicates that you want to use a TCP connection, while `localhost` will cause MySQL to try to use a Unix socket to connect to the local database.
+
+So, if you need to log in as the MySQL user `eva` with a password, but still using the Unix socket to connect, you could type:
+
+```shell
+mysql --user=eva --password
+```
+
+The `mysql` client will prompt you for a password for the account.
+
+If you want to try to log in with the same username but over a TCP connection to the local database, you would instead type:
+
+```shell
+mysql --user=eva --password --host=127.0.0.1
+```
+
+The default authentication configuration as well as the initial administrative username and password may differ depending on how MySQL was installed.  Many methods, however, set up MySQL to use a Unix socket and include a default `root` user as the administrative account.
+
+In these cases, you can log into the database as the `root` user by typing:
+
+```shell
+mysql --user=root --password
+```
+
+You will be prompted for the administrative password that was selected or generated during installation to proceed.
+
+All of these methods allow you to connect to a local MySQL database.
+
+## Connecting to a remote database
+
+If you wish to connect to a remote MySQL database, you will have to provide the network location of the remote host and potentially add some additional information.
+
+The available authentication methods vary based on the MySQL instance's configuration.  Most commonly, though, you need to provide the following parameters to authenticate:
+
+| **Option** | **Description** |
+| ---------- | --------------- |
+| **`--host=`** or **`-h`** | The network host name or the IP address of the MySQL server. |
+| **`--port=`** or **`-P`**| The network port that the MySQL server is running on.  If the server is using port 3306, the default MySQL port, this parameter may be omitted. |
+| **`--user=`** or **`-u`** | The database username you wish to connect as.  If not specified, your operating system username will be used. |
+| **`--password`** or **`-p`** | Indicate that you want to provide a password for the specified account.  The `mysql` client will prompt you for the password once you press <kbd>Enter</kbd>. |
+| **MySQL database** | The MySQL database name that you want to access.  If not specified, `mysql` will connect to the server without connecting to a specific database. |
+
+The basic format for connecting to a remote database typically looks something like this:
+
+```bash
+mysql --host=<hostname> --port=<port> --user=<user> --password <database>
+```
+
+After pressing <kbd>Enter</kbd>, the `mysql` client will prompt you for the password.  If you authenticate successfully, a new interactive MySQL session will be started.
+
+As an example, we can imagine wanting to connect to a database with the following requirements:
+
+* hostname: `myhost`
+* port: 1234
+* database: `applicationdb`
+* username: `myapplicationuser`
+* password: `mypass`
+
+Calling `mysql` with the following options would allow you to authenticate:
+
+```bash
+mysql --host=myhost --port=1234 --user=myapplicationuser --password applicationdb
+```
+
+Upon pressing enter, you'd be prompted a password where you can authenticate with `mypass`.
+
+## Adjusting a MySQL server's authentication configuration
+
+If you want to modify the rules that dictate how users can authenticate to your MySQL instances, you can do so by modifying your server's configuration.  You can find out [how to modify MySQL's authentication configuration in this article](/mysql/authentication-and-authorization/user-management-and-authentication).
+
+## Conclusion
+
+In this guide, we covered MySQL authentication from the client side.  We demonstrated how to use the `mysql` command line client to connect to both local and remote database instances.
+
+Knowing how to connect to various MySQL instances is one of the first steps you need to understand as you start to work the database system.  You may run a local MySQL instance for development that doesn't need any special authentication, but your databases in staging and production will almost certainly require authentication.  Being able to authenticate in either case will allow you to work well in different environments.
