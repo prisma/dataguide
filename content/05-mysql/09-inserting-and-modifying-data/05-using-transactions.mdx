@@ -1,0 +1,283 @@
+---
+title: 'Understanding and using transactions in MySQL'
+metaTitle: 'Using Transactions | Inserting and modifying data | Data Guide'
+metaDescription: "Transactions are one way that MySQL is able to guarantee data consistency when modifying related data.  In this article, we'll discuss what transactions are and how they can help perform complex operations safely."
+---
+
+## Introduction
+
+Transactions are a way for a database to group related statements together to be executed as a single unit by the system.  The statements are handled as a unit, with all component parts either completing successfully or reverting back to their original state.  This is one way of maintaining consistency for changes that take multiple individual steps to achieve a single goal.
+
+In this article, we'll talk about what transactions are and how they can be useful.  We will then see how MySQL uses transactions in various ways to control exactly how statements are applied to the database.
+
+## What are transactions?
+
+Transactions are a way to group together and isolate multiple statements for processing as a single operation.  Instead of executing each command individually as it is sent to the server, in a transaction, commands are bundled together and executed in a separate context than other requests.
+
+Isolation is an important part of transactions.  Within a transaction, the executed statements can only affect the environment within the transaction itself.  From inside the transaction, statements can modify data and the results are immediately visible.  From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
+
+These features help databases achieve [ACID compliance](/datamodeling/in-vivo) by providing atomicity (actions in a transaction are either all committed or all rolled back) and isolation (outside of the transaction, nothing changes until the commit, while inside, each statement has immediate consequences).  These together help the database maintain consistency (by guaranteeing that partial data transformations cannot occur).  Furthermore, changes in transactions are not returned as successful until they are committed to non-volatile storage, which provides durability.
+
+To achieve these goals, transactions employ a number of different strategies and different database systems use different methods.  MySQL uses a system called [Multiversion Concurrency Control (MVCC)](https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html), which allows the database to perform these actions using data snapshots.  All together, these systems comprise one of the fundamental building blocks of modern relational databases, allowing them to safely process complex data in a crash-resistant manner.
+
+## Types of consistency failures
+
+One reason people use transactions is to gain certain guarantees about the consistency of their data and the environment in which it is processed.  Consistency can be broken in many different ways, which affects how databases attempt to prevent them.
+
+There are four primary ways that inconsistency can arise depending on the transaction implementation.  Your tolerance for scenarios where these scenarios may arise will affect how you use transactions in your applications.
+
+### Dirty reads
+
+Dirty reads occur when the statements within a transaction are able to read data written by other in-progress transactions.  This means that even though the statements of a transaction have *not* been committed yet, they can be read and thus influence other transactions.
+
+This is often considered a severe breach of consistency, as transactions are not properly isolated form one another.  Statements that may never be committed to the database can affect the execution of other transactions, modifying their behavior.
+
+Transactions that allow dirty reads cannot make any reasonable claims about the consistency of the resulting data.
+
+### Non-repeatable reads
+
+Non-repeatable reads occur when a commit outside of the transaction alters the data seen within the transaction.  You can recognize this type of problem if, within a transaction, the same data is read twice but different values are retrieved in each instance.
+
+As with dirty reads, transactions that allow non-repeatable reads don't offer full isolation between transactions.  The difference is that with non-repeatable reads, the statements affecting the transaction have actually been committed outside of the transaction.
+
+### Phantom read
+
+A phantom read is a specific type of non-repeatable read that occurs when the rows returned by a query are different the second time it is executed within a transaction.
+
+For instance, if a query within the transaction returns four rows the first time it is executed, but five rows the second time, this is a phantom read.  Phantom reads are caused by commits outside of the transaction altering the number of rows that satisfy the query.
+
+### Serialization anomalies
+
+Serialization anomalies occur when the results of multiple transactions committed concurrently will result in different outcomes than if they were committed one after another.  This can occur any time that a transaction allows two commits to occur that each modify the same table or data without resolving conflicts.
+
+## Transaction isolation levels
+
+Transactions are not a "one size fits all" solution.  Different scenarios require different trade-offs between performance and protection.  Fortunately, MySQL allows you to specify the type of transaction isolation you need.
+
+The isolation levels offered by most database systems include the following:
+
+### Read uncommitted
+
+**Read uncommitted** is the isolation level that offers the fewest guarantees about maintaining data consistency and isolation.  While transactions using `read uncommitted` have certain features frequently associated with transactions, like the ability to commit multiple statements at once or to roll back statements if a mistake occurs, they *do* allow numerous situations where consistency can be broken.
+
+Transactions configured with the `read uncommitted` isolation level allow:
+
+* dirty reads
+* non-repeatable reads
+* phantom reads
+* serialization anomalies
+
+This level of isolation is not generally recommended as it provides almost no guarantees about data consistency and isolation.  This is mainly useful if you need to group statements together in an "all or nothing" commitment model, but do not need any integrity guarantees (a very infrequent occurrence).
+
+### Read committed
+
+**Read committed** is an isolation level that specifically protects against dirty reads.  When transactions use the `read committed` level of consistency, uncommitted data can never affect the internal context of a transaction.  This provides a basic level of consistency by ensuring that uncommitted data never influences a transaction.
+
+Although `read committed` offers greater protection than `read uncommitted`, it does not protect against all types of inconsistency.  These problems can still arise:
+
+* non-repeatable reads
+* phantom reads
+* serialization anomalies
+
+### Repeatable read
+
+The **repeatable read** isolation level builds off of the guarantee provided by `read committed`.  It avoids dirty reads as before, but prevents non-repeatable reads as well.
+
+Although `repeatable read` can prevent non-repeatable reads and dirty reads, it still can suffer from these isolation issues:
+
+* phantom reads
+* serialization anomalies
+
+In most cases, phantom reads will also be prevented, but there are [some circumstances where they may still occur](https://stackoverflow.com/a/41178461).  In the linked example, a `SELECT` query in a transaction returns no results, even after a row is inserted and committed by another transaction.  However, issuing a query that would update the new row results in the query returning data, even though the update should not know about the row committed by the other transaction.  The `SELECT` query thereafter returns the data.
+
+For MySQL's InnoDB engine (the normal engine for most cases), the repeatable read isolation method is the default.
+
+### Serializable
+
+The **serializable** isolation level offers the highest level of isolation and consistency.  It prevents all of the scenarios that the `repeatable read` level does while also removing the possibility of serialization anomalies.
+
+Serializable isolation guarantees that concurrent transactions are committed as if they were executed one after another.  If a scenario occurs where a serialization anomaly could be introduced, one of the transactions will have a serialization failure instead of introducing inconsistency to the data set.
+
+## Defining a transaction
+
+Now that we've covered the different isolation levels that MySQL can use in transactions, let's demonstrate how to define transactions.
+
+In MySQL, by default, every statement *outside* of an explicitly marked transaction is actually executed in its own, single-statement transaction.  To explicitly start a transaction block, you can use either the `START TRANSACTION` or `BEGIN` commands.  The `START TRANSACTION` form can take modifiers that the `BEGIN` form cannot, so MySQL recommends that you use `START TRANSACTION`.  To commit a transaction, issue the `COMMIT` command.
+
+The basic syntax of a transaction therefore looks like this:
+
+```sql
+START TRANSACTION;
+
+statements
+
+COMMIT;
+```
+
+As a more concrete example, imagine that we are attempting to transfer $1000 from one account to another.  We want to ensure that the money will always be in one of the two accounts but never in both of them.
+
+We can wrap the two statements that together encapsulate this transfer in a transaction that looks like this:
+
+```sql
+ START TRANSACTION;
+
+            UPDATE accounts
+               SET balance = balance - 1000
+             WHERE id = 1;
+
+            UPDATE accounts
+               SET balance = balance + 1000
+             WHERE id = 2;
+
+            COMMIT;
+```
+
+Here, the $1000 will not be taken out of the account with `id = 1` without also putting $1000 into the account with `id = 2`.  While these two statements are executed sequentially *within* the transaction, they will be committed, and thus be executed on the underlying data set, simultaneously.
+
+## Rolling back transactions
+
+Within a transaction, either all or none of the statements will be committed to the database.  Abandoning the statements and modifications made within a transaction instead of applying them to the database is known as "rolling back" the transaction.
+
+Transactions can be rolled back either automatically or manually.  MySQL automatically rolls back transactions if one of the statements within results in an error or in other scenarios to avoid problems.
+
+To manually roll back statements that have been given during the current transaction, you can use the `ROLLBACK` command.  This will cancel all of the statements within the transaction, in essence turning back the clock to the start of the transaction.
+
+For instance, supposing we're using the same bank accounts example we were using before, if we find out after issuing the `UPDATE` statements that we accidentally transferred the wrong amount or used the wrong accounts, we could rollback the changes instead of committing them:
+
+```sql
+START TRANSACTION;
+
+           UPDATE accounts
+              SET balance = balance - 1500
+            WHERE id = 1;
+           
+           UPDATE accounts
+              SET balance = balance + 1500
+            WHERE id = 3;  -- Wrong account number here!  Must rollback
+
+/* Gets us back to where we were before the transaction started */
+         ROLLBACK;
+```
+
+Once we `ROLLBACK`, the $1500 will still be in the account with `id = 1`.
+
+## Using save points when rolling back
+
+By default, the `ROLLBACK` command resets the transaction to where it was when the `START TRANSACTION` or `BEGIN` commands were first called.  But what if we only want to revert some of the statements within the transaction?
+
+While you cannot specify arbitrary places to roll back to when issuing `ROLLBACK` command, you *can* roll back to any "save points" that you've set throughout the transaction.  You can mark places in your transaction ahead of time with the `SAVEPOINT` command and then reference those specific locations when you need to roll back.
+
+These save points allow you to create an intermediate roll back point.  You can then optionally revert any statements made between where you are currently and the save point and then continue working on your transaction.
+
+To specify a save point, issue the `SAVEPOINT` command followed by a name for the save point:
+
+```sql
+SAVEPOINT save_1;
+```
+
+To roll back to that save point, use the `ROLLBACK TO` command:
+
+```sql
+ROLLBACK TO save_1;
+```
+
+Let's continue the account-focused example we've been using:
+
+```sql
+START TRANSACTION;
+   
+           UPDATE accounts
+              SET balance = balance - 1500
+            WHERE id = 1;
+
+/* Set a save point that we can return to */
+        SAVEPOINT save_1;
+        
+           UPDATE accounts
+              SET balance = balance + 1500
+            WHERE id = 3;  -- Wrong account number here!  We can rollback to the save point though!
+
+/* Gets us back to the state of the transaction at `save_1` */
+         ROLLBACK TO save_1;
+
+/* Continue the transaction with the correct account number */
+           UPDATE accounts
+              SET balance = balance + 1500
+            WHERE id = 4;
+
+           COMMIT;
+```
+
+Here, we're able to recover from a mistake we made without losing all of the work we've done in the transaction so far.  After rolling back, we continue with the transaction as planned using the correct statements.
+
+## Setting the isolation level of transactions
+
+To set the level of isolation you'd like for a transaction, you can use the `SET TRANSACTION` statement with the `ISOLATION LEVEL` clause.  The `SET TRANSACTION` statement allows you to modify the isolation levels and read and write permission of transactions.
+
+By default, the `SET TRANSACTION` statement only affects the properties of the next transaction that is started.  It must be given before the `START TRANSACTION` or `BEGIN` statement.  The basic syntax looks like this:
+
+```sql
+SET TRANSACTION ISOLATION LEVEL <isolation_level>;
+START TRANSACTION;
+
+statements
+
+COMMIT;
+```
+
+The `<isolation_level>` can be any of these (described in detail earlier):
+
+* `READ UNCOMMITTED`
+* `READ COMMITTED`
+* `REPEATABLE READ` (MySQL's default mode of operation)
+* `SERIALIZABLE`
+
+You can also provide the keywords `GLOBAL` or `SESSION` when issuing the command to affect a different scope.
+
+If you type `SET GLOBAL TRANSACTION ISOLATION LEVEL`, the isolation level will be changed globally for all *future* sessions.  Any current sessions will use the old isolation level, so be sure to modify those scopes explicitly if you need to change those using the transaction level or `SESSION` level.
+
+The `SESSION` modifier (as in `SET SESSION TRANSACTION ISOLATION LEVEL`) allows you to change the isolation level for any future transactions within the same session.  Once again, this does not affect any existing transactions.
+
+The other aspect that you can modify with `SET TRANSACTION` is whether the transaction is read/write capable or read only.  By default, transactions in MySQL are read and write capable.  You can make a session read only by using `SET TRANSACTION READ ONLY`.  If you want to explicitly make a session read/write, you can also issue `SET TRANSACTION READ WRITE`.
+
+## Chaining transactions
+
+If you have multiple transactions that should be executed sequentially, you can optionally chain them together using the `COMMIT AND CHAIN` command.
+
+The `COMMIT AND CHAIN` command completes the current transaction by committing the statements within.  After the commit has been processed, it immediately opens a new transaction with the same isolation level.  This allows you to group another set of statements together in a transaction.
+
+The statement works exactly as if you'd issued `COMMIT; SET TRANSACTION ISOLATION LEVEL <isolation_level>; START TRANSACTION`:
+
+```sql
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+START TRANSACTION;
+   
+           UPDATE accounts
+              SET balance = balance - 1500
+            WHERE id = 1;
+
+           UPDATE accounts
+              SET balance = balance + 1500
+            WHERE id = 2;
+
+/* Commit the data and start a new transaction that will take into account the committed data and isolation level from the last transaction */
+ COMMIT AND CHAIN;
+
+           UPDATE accounts
+              SET balance = balance - 1000
+            WHERE id = 2;
+
+           UPDATE accounts
+              SET balance = balance + 1000
+            WHERE id = 3;
+
+           COMMIT;
+```
+
+Chaining transactions helps create multiple transactions without having to explicitly set the transaction level each time or modify the session or global defaults.
+
+## Conclusion
+
+Transactions provide some useful functionality that can help keep your data in a coherent state.  However, the various isolation levels have a number of trade offs you should try to keep in mind.  Determining the appropriate level of protection for your use case can require some exploration and thought.  This is especially true if the transactions will run for a long time, as the database may change significantly before a commit occurs, which can lead to rollbacks and more manual work.
+
+Even with their shortcomings, transactions are still helpful in many scenarios as they represent a significant contribution to the ACID guarantees that relational databases are expected to provide.  Understanding when to use them, what type of isolation level makes sense, and how to avoid automatic rollbacks is knowledge worth investing in.
