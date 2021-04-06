@@ -156,7 +156,7 @@ The first step the team takes is to create the new `playground` table beside the
  sq_ft INT
 ```
 
-Next, the client application is updated to write any new playground-related data to both the `equipment` table and the `playground` table by configuring the application to write to all tables returned by the [feature flag]() `DATABASE:equipment_location:write` defined as a list on their Redis server.  While they are adding this change, they also implement another feature flag that checks the value of `DATABASE:equipment_location:read` to determine which data source to read from.
+Next, the client application is updated to write any new playground-related data to both the `equipment` table and the `playground` table by configuring the application to write to all tables returned by the feature flag `DATABASE:equipment_location:write` defined as a list on their Redis server.  While they are adding this change, they also implement another feature flag that checks the value of `DATABASE:equipment_location:read` to determine which data source to read from.
 
 After the change to the client code, the most recent two records are recorded in both locations:
 
