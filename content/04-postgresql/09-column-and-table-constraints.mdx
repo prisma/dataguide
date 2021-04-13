@@ -311,7 +311,7 @@ If we still want to make sure we don't end up with duplicate entries while allow
 ```sql
 CREATE TABLE national_capitals (
     country text,
-    captial text,
+    capital text,
     UNIQUE (country, capital)
 );
 ```
@@ -541,7 +541,7 @@ CREATE TABLE bookings (
 );
 ```
 
-Here, we have a create table statement for hotel bookings with a room number and a booking start and end date.  First, specify `CREATE EXTENSION btree_gist` to make sure the index method we'll be using is enabled in the database.  Afterwards, we add an exclusion constraint by using the `EXLUDE USING` syntax.  We specify `gist` as the index method, which tells PostgreSQL how to index and access the values to compare them.
+Here, we have a create table statement for hotel bookings with a room number and a booking start and end date.  First, specify `CREATE EXTENSION btree_gist` to make sure the index method we'll be using is enabled in the database.  Afterwards, we add an exclusion constraint by using the `EXCLUDE USING` syntax.  We specify `gist` as the index method, which tells PostgreSQL how to index and access the values to compare them.
 
 We then list the ways we want to compare items.  We specify that `room` values should be compared with an equal sign, meaning that the constraint will only match against two rows with the same `room`.  The `daterange` checks the `booking_start` and `booking_end` columns together as a date range.  We include `[]` as an optional third parameter to indicate that the range should be compared inclusively.  The `&&` operator specifies that the date range should check for overlap.
 
