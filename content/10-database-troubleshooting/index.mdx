@@ -1,6 +1,6 @@
 ---
-title: 'Database Troubleshooting'
-metaTitle: 'Database Troubleshooting'
+title: 'Troubleshooting Database Outages and Connection Issues'
+metaTitle: 'Troubleshooting Database Outages and Connection Issues'
 metaDescription: 'When your database goes down in the middle of the night, the most stressful part is not knowing why. This article guides you through the possible reasons your database might be down and what you can do to fix it.'
 metaImage: '/social/meta-orms.png'
 ---
@@ -9,13 +9,19 @@ metaImage: '/social/meta-orms.png'
 
 A suspected database outage can be a stressful event for everyone. Users become frustrated and worry their data might be lost, developers scramble to find the cause, and company stakeholders count every minute that might incur revenue loss.
 
-Getting your database back to a healthy state in the event of an outage is priority one. However, it can be difficult to even reason about what the problem might be in the midst of such a stressful event. This article aims to help guide you through some of the most common reasons your database might be down and what you can do to fix it.
+Getting your database back to a healthy state in the event of an outage is priority one. However, it can be difficult to even reason about what the problem might be in the midst of such a stressful event. This article aims to help guide you through some of the most common reasons your database might be down and what you can do to fix it. More specifically, this article will cover:
 
-The assumption for this article is that you're using a managed database on a cloud hosting provider. For example, Postgres deployed to DigitalOcean, MySQL deployed to AWS RDS, MongoDB on Atlas, etc. If, instead, you are fully managing your own database deployment on your own servers or on bare servers with cloud providers then you are likely already aware of the guidance outlined below (and likely more).
+- Testing whether the database is acccepting connections
+- Searching for and inspecting database logs
+- Determining if there are network-related problems
+- Assessing issues caused by large data volumes
+- Looking for recent code changes that may have broken the applications
 
 The best time to read this article is long before your database goes down. If your database is already down, the second best time is now.
 
-## Clues from Application Logs
+## Database Connection Issues
+
+### Clues from Application Logs
 
 If your database appears to be down, your application logs might give you insight into any problems accepting requests or connecting to the database. Because the application server handles both client requests and requests to the database, it usually logs errors if there are problems with the database.
 
@@ -54,13 +60,29 @@ Can't reach database server at `db-postgresql-563564.b.db.ondigitalocean.com`:`5
 
 The log above indicates that your application server can't reach the database. In such cases, check the database URL in your application server.
 
-### Database problems troubleshooting
+### Database Problems Troubleshooting
 
 Now that you know that your application server is running but is unable to reach the database, the next step would be to determine the reason. This is best approached by eliminating potential sources of the problem.
 
 If you're using a managed service for your database, it's good to first check the status page of your cloud provider. Most cloud providers provide a way to check if their infrastructure is operational, e.g. [Digital Ocean](https://status.digitalocean.com/), [Google Cloud Platform](https://status.cloud.google.com/), and [AWS](https://status.aws.amazon.com/).
 
-Once you've ruled out any problems with the cloud platform, the next thing to check is the logs or status of your database instance. Most cloud platforms provide a way to view database logs in addition to some metrics such as throughput and query statistics.
+Once you've ruled out any problems with the cloud platform, the next thing to check is the logs or status of your database instance.
+
+### Managed Database Logs
+
+If the managed database provider you are using appears to be operational, it's best to next check the logs for your specific database instance.
+
+Most cloud platforms provide a way to view database logs in addition to some metrics such as throughput and query statistics. The layout and level of detail for logs differs from one cloud provider to the next. However, most cloud providers offer a sufficient level of detail to help you search for problems.
+
+Each cloud provider also has a different way to access the database logs. Most make the logs easily accessible from the deployment management page.
+
+For example, DigitalOcean provides a tab called "Logs & Queries" that is accessible directly from the deployment management menu.
+
+![DigitalOcean Logs & Queries Menu Item](/content/database-troubleshooting/do-logs.png)
+
+This section contains several different kinds of logging information, including a general "Recent Logs" section. It's in this section that you may find indications of issues connecting to the database or other problems that might be occuring.
+
+![DigitalOcean Recent Logs section](/content/database-troubleshooting/do-recent-logs.png)
 
 ## Networking Issues
 
@@ -77,13 +99,13 @@ When your database appears to be down or unresponsive, some common networking re
 
 When provisioning cloud resources such as databases on cloud platforms, they are isolated within a virtual private cloud. A virtual private cloud (VPC) is a private cloud computing environment contained within a public cloud. In practical terms, the VPC serves as a private network for your application resources and is isolated from the public internet. If your database and application are not in the same VPC (or the same cloud), you typically need to configure the VPC's firewall rules to allow the application's IP access to the database.
 
-### Firewall rules
+### Firewall Rules
 
 When your application and database are deployed to different cloud platforms or different VPCs, the firewall needs to be configured to allow access from the application to the database.
 
 If your application's IP is dynamic, it can change at any time. When the application's IP changes, it might fail to connect to the database until the firewall has been updated to allow the new IP access.
 
-### Firewall rules remedies
+### Firewall Rules Remedies
 
 It's generally recommended to deploy the application and database in the same VPC and the same region because the two will communicate over a private network and won't be prone to any bottlenecks that public networks might incur. However, if that isn't possible, there are several possible fixes.
 
@@ -91,11 +113,9 @@ The first approach would be to use a dedicated IP for your application and add a
 
 If using a dedicated IP is not feasible due to cloud platform limitations or the deployment approach, e.g., serverless, consider enabling access to the database via public networks. While this approach decreases the security of the database, it ensures that when the IP of the application changes your application won't experience any sudden downtime until you update firewall rules. Moreover, the database would still be protected by the authentication mechanism.
 
-### Database connections
+Please note that opening up connections to your database from the public internet is not recommended. Where possible, we recommend limiting connections to a specific IP address or using techniques such as VPC peering.
 
-In a three-tier architecture, most requests to the application involve sending queries to the database. In such situations, there are several scenarios relating to database connections that can cause the database to appear down.
-
-### Latency and timeouts
+### Latency and Timeouts
 
 When the geographical and network distance between the application and database is substantial, increased request latency and timeout errors can be a problem. In such scenarios, increasing the connection timeout to the database from your application might be necessary to avoid timeout errors.
 
@@ -103,7 +123,7 @@ ORMs and query builders hold a pool of connections to the database. These connec
 
 It's recommended to set an initial baseline timeout value and load test the application to see how it performs. Based on the number of failed requests from the load test, you might want to adjust the timeout and try again until you're confident that timeouts are not the cause of the problem. If your connection timeout configuration is too low, you run the risk of these timeouts leading to failed requests.
 
-### Exhausted connection limit
+### Exhausted Connection Limit
 
 Another common challenge with connection-based databases like MySQL and Postgres is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
 
@@ -193,6 +213,28 @@ The query for the second page would then just set the value of `LIMIT` to the `O
 SELECT * from contacts WHERE userId = 123 LIMIT 25 OFFSET 25;
 ```
 
+### Troubleshooting Data Volume Issues
+
+Most databases offer tools that can help troubleshoot data volume issues. In particular, many databases offer an `EXPLAIN` command which will surface the execution plan for a query and offer insights any associated problems.
+
+For example, in Postgres, the `EXPLAIN` command shows the the query plan for the statements under consideration and will display estimated execution cost. This is an estimate of how long it will take the query to run.
+
+This information can be helpful to narrow in on the specific tables or query statements that are causing bottlnecks.
+
+In addition to manaully calling the `EXPLAIN` command, many cloud database providers offer a way to automatically visualize the queries that are causing problems. This information is often found in the "Slow Queries" view for cloud providers. Check the Slow Queries section of your database provider to find which queries might be adversely impacting your application.
+
+### Adding Indexes
+
+Problems associated with large data volumes can often be remediated using indexes.
+
+Indexes for a database table can be conceptualized in the same way as an index in a book. If you are looking for information on a specific topic in a book, it would take a long time to read through the entire book to find it. Instead, you can consult the index to look up the specific topic of interest. If it exists, it will point you to the specific pages that the topic is discussed in the book.
+
+The same concept is applied to database indexes. Adding indexes to a database table based on common access patterns allows for fast lookups.
+
+For example, if you have a database table of users that contains a column for `email` and that table is queried to look for users based on their email, it helps to improve performance to create an index for that table based on the `email` column. Without the index, the whole table will be scanned to find the user by their email address. If the table size is very large, this can create significant performance issues. If, however, an index is created for that column, lookups will be fast because searching for a specific email will immediately point to the exact row that is needed.
+
+Adding indexes to a database requires planning and consideration and is something that should be done before your database causes outages in your application. However, if you can find a specific query or queries that are resposibible for producing the outage, it can be helpful to immediately add an index to alleviate the strain.
+
 ## Breaking Code Changes
 
 A suspected database outage might be traced back to recent breaking changes made to client or server code. In these cases, it is likely not the database itself that is experiencing an outage, but rather the code used to retrieve data, process it, and return it to the client may have broken.
@@ -218,3 +260,11 @@ Code changes to app code in the client or the server, even if small, can have th
 - the client might be calling a server endpoint that no longer exists
 - a server endpoint has changed the validation rules for payloads or query parameters
 - the server is trying to access properties from returned data that has become invalid from a recent schema change
+
+## Conclusion
+
+Database outages, regardless of the underlying cause, can be very stressful events. In the rush to try to get the application back up and running, it can be difficult to properly reason about where the database problems might be originating.
+
+Every databaes outage is unique and there's no one-size-fits-all solution when one occurs. However, being well-versed in possible problems and their associated solutions can help you determine the cause of the problem more easily and reduce the time it takes to getting back up and running.
+
+As with most problem solving, it's best to become familiar with potential solutions to problems before they happen. We hope this guide helps you on your way to acheive just that.
