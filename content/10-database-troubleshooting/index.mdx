@@ -11,13 +11,13 @@ A suspected database outage can be a stressful event for everyone. Users become 
 
 Getting your database back to a healthy state in the event of an outage is priority one. However, it can be difficult to even reason about what the problem might be in the midst of such a stressful event. This article aims to help guide you through some of the most common reasons your database might be down and what you can do to fix it. More specifically, this article will cover:
 
-- Testing whether the database is acccepting connections
+- Testing whether the database is accepting connections
 - Searching for and inspecting database logs
 - Determining if there are network-related problems
 - Assessing issues caused by large data volumes
 - Looking for recent code changes that may have broken the applications
 
-The best time to read this article is long before your database goes down. If your database is already down, the second best time is now.
+The best time to read this article is long before your database goes down. If your database is already down, the second-best time is now.
 
 ## Database Connection Issues
 
@@ -26,6 +26,12 @@ The best time to read this article is long before your database goes down. If yo
 If your database appears to be down, your application logs might give you insight into any problems accepting requests or connecting to the database. Because the application server handles both client requests and requests to the database, it usually logs errors if there are problems with the database.
 
 ### Is the application server handling connections successfully?
+
+An application server which exposes an API and serves request by querying the database has two kinds of connections:
+- User requests to the API exposed by the application server
+- Application server requests to the database
+
+When debugging an outage, keep in mind that problems with both kinds of connections can cause the outage.
 
 Application server frameworks usually come with a built-in logger. It's common practice to log that the server can accept connections once the server has started.
 
@@ -48,7 +54,7 @@ Each incoming request log contains a timestamp, the URL, and other information a
 
 ### Were there any database errors recently?
 
-Since you're trying to debug a problem relating to the database, you should specifically look for failed requests. You can find these by filtering for requests with a response status code of 5xx, e.g., 500, that indicate a server error.
+Since you're trying to debug a problem relating to the database, you should specifically look for failed requests. You can find these by filtering for requests with a response status code of 5xx, e.g., 500, that indicates a server error.
 
 If you notice multiple requests with the 500 status code, look for the point at which these started and check for any other logged errors.
 
@@ -62,25 +68,25 @@ The log above indicates that your application server can't reach the database. I
 
 ### Database Problems Troubleshooting
 
-Now that you know that your application server is running but is unable to reach the database, the next step would be to determine the reason. This is best approached by eliminating potential sources of the problem.
+Now that you know that your application server is running but cannot reach the database, the next step would be to determine why. It's best to approach this by eliminating potential sources of the problem.
 
-If you're using a managed service for your database, it's good to first check the status page of your cloud provider. Most cloud providers provide a way to check if their infrastructure is operational, e.g. [Digital Ocean](https://status.digitalocean.com/), [Google Cloud Platform](https://status.cloud.google.com/), and [AWS](https://status.aws.amazon.com/).
+If you're using a managed service for your database, check your cloud provider's status page first. Most cloud providers provide a way to check if their infrastructure is operational, e.g. [Digital Ocean](https://status.digitalocean.com/), [Google Cloud Platform](https://status.cloud.google.com/), and [AWS](https://status.aws.amazon.com/).
 
 Once you've ruled out any problems with the cloud platform, the next thing to check is the logs or status of your database instance.
 
 ### Managed Database Logs
 
-If the managed database provider you are using appears to be operational, it's best to next check the logs for your specific database instance.
+If the managed database provider you are using appears to be operational, your next step would be to check the logs for your specific database instance.
 
-Most cloud platforms provide a way to view database logs in addition to some metrics such as throughput and query statistics. The layout and level of detail for logs differs from one cloud provider to the next. However, most cloud providers offer a sufficient level of detail to help you search for problems.
+Most cloud platforms provide a way to view database logs in addition to some metrics such as throughput and query statistics. The layout and level of detail for logs differ from one cloud provider to the next. However, most cloud providers offer a sufficient level of detail to help you search for problems.
 
 Each cloud provider also has a different way to access the database logs. Most make the logs easily accessible from the deployment management page.
 
-For example, DigitalOcean provides a tab called "Logs & Queries" that is accessible directly from the deployment management menu.
+For example, DigitalOcean provides a tab called "Logs & Queries" accessible directly from the deployment management menu.
 
 ![DigitalOcean Logs & Queries Menu Item](/content/database-troubleshooting/do-logs.png)
 
-This section contains several different kinds of logging information, including a general "Recent Logs" section. It's in this section that you may find indications of issues connecting to the database or other problems that might be occuring.
+This section contains several different kinds of logging information, including a general "Recent Logs" section. You may find indications of issues connecting to the database or other problems that might be occurring.
 
 ![DigitalOcean Recent Logs section](/content/database-troubleshooting/do-recent-logs.png)
 
@@ -88,36 +94,39 @@ This section contains several different kinds of logging information, including 
 
 Network-related issues can cause your database to be unavailable or seem to be down. In a three-tier application consisting of the client tier, the application tier (the back end), and the data tier (the database), networking issues can arise between the three tiers.
 
-When your database appears to be down or unresponsive, some common networking related issues might cause this:
-
-- VPC and firewall issues
+ networking related issues include:
+- VPC and firewall policy issues
 - Latency and timeouts between the application and database
+
+When your database appears to be down or unresponsive, and you suspect that this might be related to network problems, it's best first to determine whether traffic is blocked to firewall policies or there are actual network problems.
 
 > Note: The recommendations below are based on assumptions that might not apply to your architecture. Hence it's recommended to understand the failure modes and their causes when debugging issues with your database.
 
 ### VPCs
 
-When provisioning cloud resources such as databases on cloud platforms, they are isolated within a virtual private cloud. A virtual private cloud (VPC) is a private cloud computing environment contained within a public cloud. In practical terms, the VPC serves as a private network for your application resources and is isolated from the public internet. If your database and application are not in the same VPC (or the same cloud), you typically need to configure the VPC's firewall rules to allow the application's IP access to the database.
+When provisioning cloud resources such as databases on cloud platforms, they are isolated within a virtual private cloud (VPC). In practical terms, the VPC serves as a private network for your application resources and is isolated from the public internet. If your database and application are not in the same VPC (or the same cloud), you typically need to configure the VPC's firewall rules to allow the application's IP access to the database.
 
 ### Firewall Rules
 
-When your application and database are deployed to different cloud platforms or different VPCs, the firewall needs to be configured to allow access from the application to the database.
+When you deploy your application and database to different cloud platforms or different VPCs, you need to configure the firewall to allow access from the application to the database.
 
-If your application's IP is dynamic, it can change at any time. When the application's IP changes, it might fail to connect to the database until the firewall has been updated to allow the new IP access.
+While some firewall policies use _black hole_ policies to silently drop traffic that is not allowed, others send a rejected response which can help you determine if the firewall is responsible for the disrupted connection. Likewise, if you have a "no route to host" type error, that can mean either that a network segment is down or that the routing logic is incorrect.
+
+Moreover, If your application's IP is dynamic, it can change at any time. When the application's IP changes, it might fail to connect to the database until the firewall has been updated to allow the new IP access.
 
 ### Firewall Rules Remedies
 
-It's generally recommended to deploy the application and database in the same VPC and the same region because the two will communicate over a private network and won't be prone to any bottlenecks that public networks might incur. However, if that isn't possible, there are several possible fixes.
+It's generally better to deploy the application and database in the same VPC and the same region so that the two communicate over a private network. It also prevents bottlenecks that public networks might incur. However, if that isn't possible, there are several possible fixes.
 
 The first approach would be to use a dedicated IP for your application and add a firewall rule allowing access from the IP. This approach ensures that you don't need to update the firewall rules because the IP remains the same.
 
-If using a dedicated IP is not feasible due to cloud platform limitations or the deployment approach, e.g., serverless, consider enabling access to the database via public networks. While this approach decreases the security of the database, it ensures that when the IP of the application changes your application won't experience any sudden downtime until you update firewall rules. Moreover, the database would still be protected by the authentication mechanism.
+If using a dedicated IP is not feasible due to cloud platform limitations or the deployment approach, e.g., serverless, consider enabling access to the database via public networks. While this approach decreases the database's security, it ensures that your application won't experience any sudden downtime until you update firewall rules when your application's IP changes. Moreover, your database's authentication mechanism remains the main line of defense.
 
 Please note that opening up connections to your database from the public internet is not recommended. Where possible, we recommend limiting connections to a specific IP address or using techniques such as VPC peering.
 
 ### Latency and Timeouts
 
-When the geographical and network distance between the application and database is substantial, increased request latency and timeout errors can be a problem. In such scenarios, increasing the connection timeout to the database from your application might be necessary to avoid timeout errors.
+When the geographical and network distance between the application and database is substantial, increased request latency and timeout errors can be a problem. In such scenarios, increasing the database connection timeout in your application might be necessary to avoid timeout errors.
 
 ORMs and query builders hold a pool of connections to the database. These connections usually have a connection timeout configuration that controls how long to wait before timing out when establishing a connection.
 
@@ -127,7 +136,7 @@ It's recommended to set an initial baseline timeout value and load test the appl
 
 Another common challenge with connection-based databases like MySQL and Postgres is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
 
-When you deploy your application using the traditional long-running process model, you can multiplex many incoming requests on fewer DB connections in a pool. For example, a single server instance might be able to handle 100 concurrent HTTP requests with a pool of 20 DB connections.
+When you deploy your application using the traditional long-running process model, you can multiplex many incoming requests on fewer DB connections in a pool. For example, a single server instance might handle 100 concurrent HTTP requests with a pool of 20 DB connections.
 
 On serverless functions, however, each function instance can only handle 1 HTTP request at a time. Because each incoming request requires at least one connection to the database, there is no way for you to multiplex database connections.
 
@@ -137,7 +146,7 @@ For serverless deployments, consider running an external connection pooler like 
 
 ## Data Volume Issues
 
-As an application grows, the data volume for that app will most likely grow as well. A key consideration for both performance and database uptime is the volume of data being processed to furnish a given request. Inefficient queries written for the app when total data volume is small can turn into bottlenecks that can tank performance and cause outages when that data grows.
+As an application grows, the data volume for that app will most likely grow as well. A key consideration for both performance and database uptime is the volume of data being processed to furnish a given request. Inefficient queries written for the app when the total data volume is small can turn into bottlenecks that can tank performance and cause outages when that data grows.
 
 Large data volumes can have an impact at three locations:
 
@@ -149,7 +158,7 @@ Large data volumes can have an impact at three locations:
 
 When a database query is made from the app server, the database server's responsibility is to retrieve the requested data and send it back to the app server. In doing so, the database server must first scan the retrieved data into its own memory. When data volumes are small, the process of scanning data into memory and forwarding it to the app server is trivial. However, if a very large amount of data is returned from the query, an underprovisioned database server can crumble under the load.
 
-This scenario often arises when queries that were initially sufficient with small total database size are not properly optimized as the data size grows.
+This scenario often arises when queries that were initially sufficient with a small total database size are not adequately optimized as the data size grows.
 
 Consider a scenario where an application needs to display a list of contacts for a user. A typical database query to furnish this data likely selects data scoped to that user.
 
@@ -165,19 +174,19 @@ However, consider what would happen if there was no `WHERE` clause in the above 
 SELECT * from contacts;
 ```
 
-If, instead, the query asked for _all_ contacts in the database and the app server was then responsible for filtering the list based on `userId` before forwarding the results to the client, the difference in data volume could be astronomical.
+If instead, the query asked for _all_ contacts in the database and the app server was then responsible for filtering the list based on `userId` before forwarding the results to the client, the difference in data volume could be astronomical.
 
-With relatively small overall data volumes, this inadequate query might go undetected. As data volumes grow, performance degradations might become noticable but might not totally break the application. As this happens, however, the database server will be loaded beyond what it may be provisioned for. As data volumes continue to grow even further, a tipping point may be reached where the database server is no longer able to handle the load.
+With relatively small overall data volumes, this inadequate query might go undetected. As data volumes grow, performance degradations might become noticeable but might not totally break the application. As this happens, however, the database server will be loaded beyond what it may be provisioned for. As data volumes continue to grow even further, a tipping point may be reached where the database server is no longer able to handle the load.
 
 ### The App Server
 
 Much like the database server does not have unlimited capacity to process large volumes of data, the same is true for the app server. It's possible that you have more control over capacity and sizing for your app server than you do for your database server, but increasing capacity on the app server may be unnecessary.
 
-A large volume of data returned from the database server will take time and resources to process on the app server. If the app server is responding to a request from a client applciation, long waits at the app server can be problematic. Many cloud hosting providers enforce a request timeout after several minutes have passed. Web browsers will automatically retry requests after several minutes of a request sitting in a "pending" state, putting further strain on the system.
+A large volume of data returned from the database server takes time and resources to process on the app server. If the app server is responding to a request from a client application, long waits at the app server can be problematic. Many cloud hosting providers enforce a request timeout after several minutes have passed. Web browsers will automatically retry requests after several minutes of a request sitting in a "pending" state, putting further strain on the system.
 
 ### The Client
 
-Client applications might be most susceptible to bottlenecks caused by large data volumes. Unlike the app server and database server where you may have the ability to increase capacity, client applications that run in the browser or on mobile devices are subject to limitations of the browser, operating system, or both.
+Client applications might be most susceptible to bottlenecks caused by large data volumes. Unlike the app server and database server, where you may have the ability to increase capacity, client applications that run in the browser or on mobile devices are subject to limitations of the browser, operating system, or both.
 
 Sending an inordinately large volume of data to a client application will cause delays in processing and can severely degrade responsiveness. Once a given data size has been reached, the browser may become completely unresponsive and ultimately crash.
 
@@ -189,7 +198,7 @@ The fix for performance degradations and outages caused by data volume issues is
 
 #### Scope Data with `WHERE` Clauses
 
-In the ficticious query example above, the entire contacts table for a database was queried. This means the database server needs to scan the whole table into memory before filtering down to the desired results which can put tremendous load on the database server and app server.
+In the fictitious query example above, the entire contacts table for a database was queried. This means the database server needs to scan the whole table into memory before filtering down to the desired results, which can put tremendous load on the database server and app server.
 
 Start by looking for queries that are casting too wide a net. Chances are that these queries are taking a long time to process at the database server. Looking at the logs for long-running queries can give indications of where this is happening. Instead of returning many results and then filtering through them with app code, construct your queries to return the subset of results that are truly needed. In SQL, use the `WHERE` clause to get specific about the data you actually require.
 
@@ -197,9 +206,9 @@ Start by looking for queries that are casting too wide a net. Chances are that t
 
 If large volumes of data are truly required for client applications, it's advisable to introduce pagination.
 
-Pagination is a design pattern which limits the total number of records to be queried and returned at a given time. If a user would like to see more records, they must request them explicitly.
+Pagination is a design pattern that limits the total number of records to be queried and returned at a given time. If a user would like to see more records, they must request them explicitly.
 
-This design pattern is most often implemented using the `LIMIT` and `OFFSET` clauses. By choosing to skip a certain number of records and also limiting the number of returned results, the client and app servers can acheieve a pagination experience.
+This design pattern is most often implemented using the `LIMIT` and `OFFSET` clauses. By choosing to skip a certain number of records and also limiting the number of returned results, the client and app servers can achieve a pagination experience.
 
 The query for the first page might look like this:
 
@@ -215,29 +224,29 @@ SELECT * from contacts WHERE userId = 123 LIMIT 25 OFFSET 25;
 
 ### Troubleshooting Data Volume Issues
 
-Most databases offer tools that can help troubleshoot data volume issues. In particular, many databases offer an `EXPLAIN` command which will surface the execution plan for a query and offer insights any associated problems.
+Most databases offer tools that can help troubleshoot data volume issues. In particular, many databases offer an `EXPLAIN` command, which will surface the execution plan for a query and offer insights into any associated problems.
 
-For example, in Postgres, the `EXPLAIN` command shows the the query plan for the statements under consideration and will display estimated execution cost. This is an estimate of how long it will take the query to run.
+For example, in Postgres, the `EXPLAIN` command shows the query plan for the statements under consideration and will display estimated execution cost. This is an estimate of how long it will take the query to run.
 
-This information can be helpful to narrow in on the specific tables or query statements that are causing bottlnecks.
+This information can be helpful to narrow in on the specific tables or query statements that are causing bottlenecks.
 
-In addition to manaully calling the `EXPLAIN` command, many cloud database providers offer a way to automatically visualize the queries that are causing problems. This information is often found in the "Slow Queries" view for cloud providers. Check the Slow Queries section of your database provider to find which queries might be adversely impacting your application.
+In addition to manually calling the `EXPLAIN` command, many cloud database providers offer a way to automatically visualize the queries that are causing problems. This information is often found in the "Slow Queries" view for cloud providers. Check the Slow Queries section of your database provider to find which queries might be adversely impacting your application.
 
 ### Adding Indexes
 
 Problems associated with large data volumes can often be remediated using indexes.
 
-Indexes for a database table can be conceptualized in the same way as an index in a book. If you are looking for information on a specific topic in a book, it would take a long time to read through the entire book to find it. Instead, you can consult the index to look up the specific topic of interest. If it exists, it will point you to the specific pages that the topic is discussed in the book.
+Indexes for a database table can be conceptualized in the same way as an index in a book. If you were looking for information on a specific topic in a book, it would take a long time to read through the entire book to find it. Instead, you can consult the index to look up the specific topic of interest. If it exists, it will point you to the specific pages that the topic is discussed in the book.
 
 The same concept is applied to database indexes. Adding indexes to a database table based on common access patterns allows for fast lookups.
 
 For example, if you have a database table of users that contains a column for `email` and that table is queried to look for users based on their email, it helps to improve performance to create an index for that table based on the `email` column. Without the index, the whole table will be scanned to find the user by their email address. If the table size is very large, this can create significant performance issues. If, however, an index is created for that column, lookups will be fast because searching for a specific email will immediately point to the exact row that is needed.
 
-Adding indexes to a database requires planning and consideration and is something that should be done before your database causes outages in your application. However, if you can find a specific query or queries that are resposibible for producing the outage, it can be helpful to immediately add an index to alleviate the strain.
+Adding indexes to a database requires planning and consideration and is something that should be done before your database causes outages in your application. However, if you can find a specific query or queries responsible for producing the outage, it can be helpful to add an index to alleviate the strain immediately.
 
 ## Breaking Code Changes
 
-A suspected database outage might be traced back to recent breaking changes made to client or server code. In these cases, it is likely not the database itself that is experiencing an outage, but rather the code used to retrieve data, process it, and return it to the client may have broken.
+A suspected database outage might be traced back to recent breaking changes made to client or server code. In these cases, it is likely not the database itself experiencing an outage, but rather the code used to retrieve data, process it, and return it to the client may have broken.
 
 Code changes that might cause interruptions generally fall into three categories:
 
@@ -251,7 +260,7 @@ Changes to database queries, even if they are small, can impact an application. 
 
 Inspect source control changes to look for recent changes to database access (SQL statements or ORM usage). Try to isolate queries that are related to specific areas of the application that are impacted.
 
-If there are no indications of changes to database access, another possibility is that the database schema has changed but migrations have not been run. Look for any recent migrations that might still need to be applied to the production database.
+If there are no indications of changes to database access, another possibility is that the database schema has changed, but migrations have not been run. Look for any recent migrations that might still need to be applied to the production database.
 
 ### Client and Server Code
 
@@ -265,6 +274,6 @@ Code changes to app code in the client or the server, even if small, can have th
 
 Database outages, regardless of the underlying cause, can be very stressful events. In the rush to try to get the application back up and running, it can be difficult to properly reason about where the database problems might be originating.
 
-Every databaes outage is unique and there's no one-size-fits-all solution when one occurs. However, being well-versed in possible problems and their associated solutions can help you determine the cause of the problem more easily and reduce the time it takes to getting back up and running.
+Every database outage is unique, and there's no one-size-fits-all solution when one occurs. However, being well-versed in possible problems and their associated solutions can help you determine the cause of the problem more efficiently and reduce the time it takes to getting back up and running.
 
-As with most problem solving, it's best to become familiar with potential solutions to problems before they happen. We hope this guide helps you on your way to acheive just that.
+As with most problem solving, it's best to become familiar with potential solutions to problems before they happen. We hope this guide helps you on your way to achieving just that.
