@@ -9,13 +9,16 @@ metaImage: '/social/meta-orms.png'
 
 A suspected database outage can be a stressful event for everyone. Users become frustrated and worry their data might be lost, developers scramble to find the cause, and company stakeholders count every minute that might incur revenue loss.
 
-Getting your database back to a healthy state in the event of an outage is priority one. However, it can be difficult to even reason about what the problem might be in the midst of such a stressful event. This article aims to help guide you through some of the most common reasons your database might be down and what you can do to fix it. More specifically, this article will cover:
+Getting your database back to a healthy state in the event of an outage is priority one. However, it can be difficult to even reason about what the problem might be in the midst of such a stressful event. This article aims to help guide you through some of the most common reasons your database might be down and what you can do to fix it.
 
-- Testing whether the database is acccepting connections
-- Searching for and inspecting database logs
-- Determining if there are network-related problems
-- Assessing issues caused by large data volumes
-- Looking for recent code changes that may have broken the applications
+The article covers a variety of areas to look for when dealing with database outages, including:
+
+| Problem                                              | Potential Issues                                                                                        | Actions                                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Database appears to not accept connections           | Problems with database user credentials, problems with the connection string, connection limits reached | Inspect database server logs to determine cause                                             |
+| Network communications seem impaired                 | VPC and firewall issues, latency and timeouts between the application and database                      | Check firewall rules, looks for latency and timeouts, check for exhausted connection limits |
+| Database server or application server is crashing    | Potential data volume issues causing database server and app server to reach resource limits            | Look for large amounts of returned data, optimize queries, add indexes                      |
+| Database server is up but app is not displaying data | Potential recent changes to code including schema changes, unapplied migrations, malformed queries      | Inspect source control history to look for recent changes and revert if necessary           |
 
 The best time to read this article is long before your database goes down. If your database is already down, the second best time is now.
 
