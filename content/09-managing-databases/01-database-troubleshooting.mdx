@@ -27,6 +27,12 @@ The best time to read this article is long before your database goes down. If yo
 
 If your database appears to be down, your application logs might give you insight into any problems accepting requests or connecting to the database. Because the application server handles both client requests and requests to the database, it usually logs errors if there are problems with the database.
 
+<PrismaOutlinks>
+
+If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can [configure logging](https://www.prisma.io/docs/concepts/components/prisma-client/working-with-prismaclient/logging) to control how logs are generated.
+
+</PrismaOutlinks>
+
 ### Is the application server handling connections successfully?
 
 An application server which exposes an API and serves request by querying the database has two kinds of connections:
@@ -69,6 +75,12 @@ Can't reach database server at `db-postgresql-563564.b.db.ondigitalocean.com`:`5
 
 The log above indicates that your application server can't reach the database. In such cases, check the database URL in your application server.
 
+<PrismaOutlinks>
+
+If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), the [error code reference](https://www.prisma.io/docs/reference/api-reference/error-reference#error-codes) can help diagnose what errors mean and how to fix them.
+
+</PrismaOutlinks>
+
 ### Database Problems Troubleshooting
 
 Now that you know that your application server is running but cannot reach the database, the next step would be to determine why. It's best to approach this by eliminating potential sources of the problem.
@@ -97,7 +109,7 @@ This section contains several different kinds of logging information, including 
 
 Network-related issues can cause your database to be unavailable or seem to be down. In a three-tier application consisting of the client tier, the application tier (the back end), and the data tier (the database), networking issues can arise between the three tiers.
 
-networking related issues include:
+Networking related issues include:
 
 - VPC and firewall policy issues
 - Latency and timeouts between the application and database
@@ -138,7 +150,7 @@ It's recommended to set an initial baseline timeout value and load test the appl
 
 ### Exhausted Connection Limit
 
-Another common challenge with connection-based databases like MySQL and Postgres is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
+Another common challenge with connection-based databases like MySQL and PostgreSQL is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
 
 When you deploy your application using the traditional long-running process model, you can multiplex many incoming requests on fewer DB connections in a pool. For example, a single server instance might handle 100 concurrent HTTP requests with a pool of 20 DB connections.
 
@@ -230,7 +242,7 @@ SELECT * from contacts WHERE userId = 123 LIMIT 25 OFFSET 25;
 
 Most databases offer tools that can help troubleshoot data volume issues. In particular, many databases offer an `EXPLAIN` command, which will surface the execution plan for a query and offer insights into any associated problems.
 
-For example, in Postgres, the `EXPLAIN` command shows the query plan for the statements under consideration and will display estimated execution cost. This is an estimate of how long it will take the query to run.
+For example, in PostgreSQL, the `EXPLAIN` command shows the query plan for the statements under consideration and will display estimated execution cost. This is an estimate of how long it will take the query to run.
 
 This information can be helpful to narrow in on the specific tables or query statements that are causing bottlenecks.
 
