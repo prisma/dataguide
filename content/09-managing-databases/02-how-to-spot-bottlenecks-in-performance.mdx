@@ -7,7 +7,7 @@ metaImage: '/social/performance-bottlenecks.png'
 
 ## Introduction
 
-If your application has slowed down, there’s a very good chance the issue is related––at least in part––to your database.
+If your application has slowed down, there’s a very good chance the issue is related — at least in part — to your database.
 
 Knowing that your application's performance problems might involve your database is a good first step to reducing lag. The tricky part is to find out _where_ and _why_ these bottlenecks might exist.
 
@@ -89,7 +89,7 @@ The `EXPLAIN` statement used ahead of a regular query in PostgreSQL, for example
 - The estimated start-up cost
 - The estimated total cost
 - The estimated number of rows output
-- Thed average width (in bytes) of the rows
+- The average width (in bytes) of the rows
 
 For example, the following usage of `EXPLAIN`:
 
@@ -113,7 +113,7 @@ Queries that aren't optimized or that are overly broad in their scope might retu
 
 When a large amount of data is returned from a query, it needs to be scanned into memory on the database server. This can lead to CPU spikes and the need for burst mode usage. This can lead to crashes at your database server. If the data is returned from the database server, it maybe also be too large for your app server to handle if your app server is underprovisioned.
 
-Data overfetching requires that queries be optimized to scope the selection to relevant records. The solution is often to reach for the `WHERE` clause but you first need to find queries that are causing problems.
+Addressing data overfetching requires that queries be optimized to scope the selection to relevant records. The solution is often to reach for the `WHERE` clause but you first need to find queries that are causing problems.
 
 Your cloud database provider logs and metrics can give some indication that large amounts of data are being returned from the database. You might see burst credit usage or CPU spikes. It can, however, be difficult to tell which queries are responsible just from these metrics.
 
