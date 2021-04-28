@@ -1,0 +1,53 @@
+---
+title: 'Syncing Development Databases Bewteen Team Members'
+metaTitle: 'How to Sync Data Between Developers'
+metaDescription: 'Working on a team means you need to keep database changes in sync between developers. Find out some ways to approach database syncing in this guide.'
+metaImage: '/social/performance-bottlenecks.png'
+---
+
+## Introduction
+
+If a project has more than one developer working on it, keeping up with changes to development databases can be challenging. Syncing those changes across the whole development team can be tedious and time consuming. When various team members work on a database schema or with data from development databases that isn't reflective of the most recent state, it can cause frustration and lead to bugs that might end up in production.
+
+In particular, these problems can arise in the following scenarios:
+
+- Developers are working on different iterations of a database schema
+- Data in a development database is not reflective of the current state of the schema
+
+In this guide, we'll look at some ways that teams can keep their database schemas and development data up-to-date and in sync across teams.
+
+## Onboarding
+
+Before changes to database schemas and development data can be shared across team members, those team members need to be bootstrapped with some initial database state. For most teams, this is part of the onboarding process when they are hired. The level of sophistication for this process largely depends on the size and maturity of the organization and its needs.
+
+The starting point for most developers who are onboarding is to clone and install the project locally. Next, they usually need to connect to a development database. The two most common ways that new developers get set up with a development database are:
+
+1. **Run a script to seed the data**
+2. **Connect to a shared remote development database**
+
+Both of these approaches come with their own set of benefits and drawbacks. 
+
+### Seeding a Database Locally
+
+Seeding a local database is beneficial because it alleviates the need to have a remote development database running. Developers can have more control over the data that goes into their development database as they get started. They can also reset the database more easily than if a shared remote database is used.
+
+If this approach is taken, it requires extra effort to keep seeding data and logic up-to-date with the current schema. If changes occur frequently, this can pose a challenge and may cause problems getting developers onboarded smoothly.
+
+<PrismaOutlinks>
+
+If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can use the [integrated seeding functionality](https://www.prisma.io/docs/guides/database/seed-database) to easily populate a database.
+
+</PrismaOutlinks>
+
+### Connecting to a Shared Remote Database
+
+Having developers connect to a shared remote development database can alleviate the burden of populating the new developer's database locally. This can be beneficial because it makes onboarding easier initially, allowing the developer to be productive faster. Using a shared remote database might also be beneficial because changes to the database can be migrated on a regular basis by a single developer and those changes can then be consumed by all team members. 
+
+The downside to using a shared remote development database is that it requires additional resources to be running, possibly incurring additional cost. If all developers are working against the same database, it can be easy to overwrite data. If schema changes are adopted by team members asynchronously, out-of-band changes might negatively affect the state of the data making it difficult to work with.
+
+## Ongoing
+
+## Offboarding
+
+## Services That Help
+
