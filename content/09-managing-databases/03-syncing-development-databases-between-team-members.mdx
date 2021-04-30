@@ -1,8 +1,7 @@
 ---
 title: 'Syncing Development Databases Bewteen Team Members'
-metaTitle: 'How to Sync Data Between Developers'
-metaDescription: 'Working on a team means you need to keep database changes in sync between developers. Find out some ways to approach database syncing in this guide.'
-metaImage: '/social/performance-bottlenecks.png'
+metaTitle: 'How to Keep Schema Changes and Data In-Sync Between Team Members'
+metaDescription: 'Working on a team means you need to keep database changes in-sync between developers. Find out some ways to approach database syncing in this guide.'
 ---
 
 ## Introduction
@@ -14,13 +13,13 @@ In particular, these problems can arise in the following scenarios:
 - Developers are working on different iterations of a database schema
 - Data in a development database is not reflective of the current state of the schema
 
-In this guide, we'll look at some ways that teams can keep their database schemas and development data up-to-date and in sync across teams.
+In this guide, we'll look at some ways that teams can keep their database schemas and development data up-to-date and in-sync across teams.
 
-## Onboarding
+## Onboarding New Users
 
 Before changes to database schemas and development data can be shared across team members, those team members need to be bootstrapped with some initial database state. For most teams, this is part of the onboarding process when they are hired. The level of sophistication for this process largely depends on the size and maturity of the organization and its needs.
 
-The starting point for most developers who are onboarding is to clone and install the project locally. Next, they usually need to connect to a development database. The two most common ways that new developers get set up with a development database are:
+The starting point for most developers who are onboarding is to clone and install the project locally. Next, they usually need to connect to a development database. The two most common ways that new developers get set up with a development database are to:
 
 1. **Run a script to seed the data**
 2. **Connect to a shared remote development database**
@@ -43,11 +42,61 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 Having developers connect to a shared remote development database can alleviate the burden of populating the new developer's database locally. This can be beneficial because it makes onboarding easier initially, allowing the developer to be productive faster. Using a shared remote database might also be beneficial because changes to the database can be migrated on a regular basis by a single developer and those changes can then be consumed by all team members. 
 
-The downside to using a shared remote development database is that it requires additional resources to be running, possibly incurring additional cost. If all developers are working against the same database, it can be easy to overwrite data. If schema changes are adopted by team members asynchronously, out-of-band changes might negatively affect the state of the data making it difficult to work with.
+The downside to using a shared remote development database is that it requires additional resources to be running, possibly incurring additional cost. If all developers are working against the same database, it can be easy to overwrite data. If schema changes are adopted by team members asynchronously, out-of-band changes might negatively affect the state of the data, making it difficult to work with.
 
-## Ongoing
+## Ongoing Database Updates
 
-## Offboarding
+Once developers are set up with a database to work against, whether it be local or remote, they will need to continuously check for updates to the database schema and possibly the data in the database itself. This can be difficult if team sizes are large and changes are made frequently.
 
-## Services That Help
+There's no one-size-fits-all approach for keeping team members up-to-date with schema changes. The right approach for your team is context-dependent.
 
+The following serves as a set of possbilities for keeping data and schema changes in-sync across your teams.
+
+### Use Migrations
+
+When working with relational databases in a team setting, it's vital to use migrations as a starting point for your database schema change strategy.
+
+A database migration is a set of artifacts that, through automation, can change a database's structure. At the simplest, a migration is a SQL file that includes the statements necessary to apply a schema change. For example, the addition of a field to a database model might produce the following SQL file:
+
+```sql
+ALTER TABLE User ADD bio varchar(255);
+```
+
+While this command could be run on its own by a single developer within the context of their local development environment, having it exist as a database migration file allows all other developers on the team to apply the exact same changes through automation.
+
+Specific database migration strategies differ between languages and frameworks. However, in general, they follow a similar pattern:
+
+1. Alter the code describing a database model
+2. Generate a set of migration files
+3. Run the migrations to execute the statements and have the changes take effect
+
+<PrismaOutlinks>
+
+[Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate) makes it easy to describe your database models and produce migrations from them. It offers a very simple way to keep data in-sync between team members.
+
+</PrismaOutlinks>
+
+### Notifying Team Members of Changes
+
+Using database migrations as a change strategy will help to keep database structure changes in-sync between team members. However, notifying developers of those changes can be challenging.
+
+This becomes a problem when two or more team members are working on the same part of the database schema or part of the application that consumes a given part of the schema. Such a scenario is likely to produce mege conflicts and cause frustration.
+
+While this situation is best addressed by improving team communication, technology can help to some extent.
+
+[Git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) can be used to notify developers about changes to a schema at various times. For example, a hook can be used to check for schema changes that have already been merged and applied upstream before allowing a developer to push their changes. This can help to alleviate merge conflicts and allow the team to be more in-sync.
+
+This behavior can be scripted and applied to your team's specific scenario using [git-migration-hook](https://github.com/richardbrinkman/git-migration-hook) as a starting point.
+
+
+### Automated Data Syncing
+
+When a database schema changes, it's likely that the whole team will need to re-seed the database such that the data within abides by the new schema. It can be tedious to maintain a seed script, distribute it, and have everyone on the team apply it in an ongoing fashion.
+
+One option for automating this process is to use a service that provides bi-directional data syncing between databases. While such a service is more often meant to sync remote production databases for various purposes, it could also be used to sync development data across teams. Doing so allows for teams to use their own local or remote development databases that are continually updated. One example of such a serviec is [SQL Data Sync for Azure](https://docs.microsoft.com/en-us/azure/azure-sql/database/sql-data-sync-data-sql-server-sql-database). 
+
+## Conclusion
+
+Keeping development database changes in-sync between team members can be a challenging task. When teams move quickly and collaborate on the same schema, opportunities for collisions are plentiful.
+
+By introducing workflows with Git hooks and other tools to provide automation, teams can more easily keep schema changes and data in-sync.
