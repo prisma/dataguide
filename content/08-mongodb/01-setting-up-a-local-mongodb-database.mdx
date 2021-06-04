@@ -1,0 +1,412 @@
+---
+title: 'Setting up a local MongoDB database'
+metaTitle: "Set up a local MongoDB database | Prisma's Data Guide"
+metaDescription: 'Learn how to set up a MongoDB database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
+metaImage: '/content/mssql/setting-up-a-local-database/header-image.png'
+toc: false
+---
+
+## Overview
+
+This page explains how to install and configure a [MongoDB database server](https://www.mongodb.com/what-is-mongodb) and the default [`mongo` shell](https://docs.mongodb.com/manual/mongo/). This guide will cover how to install and set up these components on your computer for local access.
+
+This guide will cover the following platforms:
+
+- [Setting up MongoDB on Windows](#setting-up-mongodb-on-windows)
+- [Setting up MongoDB on macOS](#setting-up-mongodb-on-macos)
+- [Setting up MongoDB on Linux](#setting-up-mongodb-on-linux)
+  - [Debian and Ubuntu](#debian-and-ubuntu)
+  - [CentOS](#centos)
+
+Navigate to the sections that match the platforms you will be working with.
+
+## Setting up MongoDB on Windows
+
+MongoDB provides a native Windows installer to install and configure your databases.
+
+Visit the [download page for the MongoDB Community Server](https://www.mongodb.com/try/download/community) and select the latest msi package available for Windows. Click **Download** to get the installer:
+
+![MongoDB download page](/content/mongodb/setting-up-a-local-database/windows/01_download_page.png)
+
+Once the download is complete, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
+
+Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
+
+![MongoDB installer greeting](/content/mongodb/setting-up-a-local-database/windows/02_installer_welcome.png)
+
+Click **Next** on the initial page to continue.
+
+On the next page, read and review the end-user license agreement and check the box confirming that you agree to the terms
+
+![MongoDB EULA agreement](/content/mongodb/setting-up-a-local-database/windows/03_accept_eula.png)
+
+Click **Next** to continue.
+
+The next page allows you to choose which components you wish to install:
+
+![MongoDB installation type](/content/mongodb/setting-up-a-local-database/windows/04_select_installation_type.png)
+
+Choose the **Complete** installation to install all of the MongoDB components.
+
+The next screen allows you to customize the installation location and other configuration items:
+
+![MongoDB service configuration](/content/mongodb/setting-up-a-local-database/windows/05_service_config.png)
+
+The default values should work well for most scenarios.  Click **Next** when you are satisfied with your selections.
+
+Next, choose whether you want to install MongoDB Compass, a graphical interface that you can use to connect to and manage MongoDB servers.  This component is optional:
+
+![MongoDB compass installation](/content/mongodb/setting-up-a-local-database/windows/06_compass_installation.png)
+
+Click **Next** after making your decision.
+
+The next screen indicates that the pre-installation configuration is complete and that MongoDB is ready to install:
+
+![MongoDB ready to install](/content/mongodb/setting-up-a-local-database/windows/07_ready_to_install.png)
+
+Click **Install** to begin installing all of the MongoDB components on your computer.
+
+Once the installation is complete, MongoDB Compass may open automatically.  If so, you can ignore it for now.
+
+Now that MongoDB is installed, we can run the server and connect to it using the included MongoDB shell.  Both of these components are run from the command line.
+
+In your start menu, type `cmd` and click on the Windows Command Prompt to launch a terminal session.
+
+Before you run the server, you need to create the default directory where MongoDB stores its data: `\data\db`.  You can create that directory by typing:
+
+```
+md \data\db
+```
+
+![MongoDB create data directory](/content/mongodb/setting-up-a-local-database/windows/09_make_data_dir.png)
+
+Afterwards, you can start up the MongoDB server by typing in the absolute path to the `mongod.exe` executable file.  Part of the path contains the MongoDB version number that you installed, so your installation path may be slightly different than the one used below:
+
+```
+C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe
+```
+
+![MongoDB run server](/content/mongodb/setting-up-a-local-database/windows/10_run_mongo_server.png)
+
+If everything is functioning correctly, the server will start up and output diagnostic information to the console.  To verify that the startup was successful, look for a message that indicates that it is now accepting connections from clients:
+
+![MongoDB waiting for connections](/content/mongodb/setting-up-a-local-database/windows/11_waiting_for_connections.png)
+
+To connect to your running MongoDB server, open another Command Prompt window.  Similar to before, we need to type in the absolute path to the executable file.
+
+In this case, we are trying to run the `mongo.exe` executable so, taking into account the differences in version numbers, the command should look something like this:
+
+```
+C:\Program Files\MongoDB\Server\4.4\bin\mongo.exe
+```
+
+![MongoDB run shell](/content/mongodb/setting-up-a-local-database/windows/12_run_mongo_shell.png)
+
+Once the shell connects to the server, it will print information about the connection and drop you into a MongoDB prompt:
+
+![MongoDB connect to database](/content/mongodb/setting-up-a-local-database/windows/13_connect_to_db.png)
+
+To verify that the server is responding to commands, run the `show dbs` command:
+
+![MongoDB show_dbs](/content/mongodb/setting-up-a-local-database/windows/14_show_dbs.png)
+
+If you installed the MongoDB Compass component, you can also connect to and manage your MongoDB server from a graphical interface.
+
+Open up MongoDB Compass to begin.
+
+The initial screen will give you the opportunity to connect to a running MongoDB server by providing a connection string:
+
+![MongoDB compass connect](/content/mongodb/setting-up-a-local-database/windows/15_compass_connect.png)
+
+If you click **Connect** without entering any information, Compass will automatically attempt to connect to a local MongoDB server running with the default configuration.
+
+Click **Connect** to connect to the MongoDB server you are running.
+
+Once Compass connects to your local server, it will display information about the databases within and allow you to manage your data using a friendly graphical interface:
+
+![MongoDB compass running](/content/mongodb/setting-up-a-local-database/windows/16_compass_running.png)
+
+When you are finished working with your MongoDB server, you can stop each of the components.
+
+In MongoDB Compass, click the **Connect** menu and select **Disconnect** to drop the connection to your MongoDB server.  Afterwards, you can safely close the MongoDB Compass application.
+
+In the MongoDB shell, you can type `exit` to end your session.
+
+To stop the MongoDB server, type <kbd>CTRL</kbd>-<kbd>c</kbd> to begin the shutdown process for the server component.
+
+## Setting up MongoDB on macOS
+
+MongoDB provides a native macOS installer to install and configure your database.
+
+Visit the [download page for the MongoDB Community Server](https://www.mongodb.com/try/download/community) and select the latest `.tgz` file  available for macOS. Click **Download** to get the installer:
+
+![MongoDB download page](/content/mongodb/setting-up-a-local-database/macos/download_installer.png)
+
+Once the download completes, open a new terminal window and navigate to the location where you downloaded the MongoDB `.tgz` file.
+
+Extract the contents of the `.tgz` file by typing:
+
+```bash
+tar xzvf mongodb-macos*.tgz
+```
+
+![MongoDB extract tarball](/content/mongodb/setting-up-a-local-database/macos/extract_tarball.png)
+
+Change into the extracted directory and then copy the executables to your `/usr/local/bin` directory so that they are a part of `PATH` that the operating system uses to search for executables:
+
+```bash
+cd mongodb-macos*
+sudo cp bin/* /usr/local/bin
+```
+
+![MongoDB copy executables](/content/mongodb/setting-up-a-local-database/macos/copy_executables.png)
+
+Before you can start the MongoDB server, you need to create some of the directories that it will need.
+
+First, create the MongoDB server data directory by typing:
+
+```bash
+sudo mkdir -p /usr/local/var/mongodb
+```
+
+![MongoDB create data directory](/content/mongodb/setting-up-a-local-database/macos/create_data_directory.png)
+
+Next, create a directory that MongoDB can use to store its logs:
+
+```bash
+sudo mkdir -p /usr/local/var/log/mongodb
+```
+
+![MongoDB create log directory](/content/mongodb/setting-up-a-local-database/macos/create_log_directory.png)
+
+Next, give your current user ownership over the new directories so that MongoDB can write to them when you run the server with your user:
+
+```bash
+sudo chown $USER /usr/local/var/mongodb
+sudo chown $USER /usr/local/var/log/mongodb
+```
+
+![MongoDB reassign ownership](/content/mongodb/setting-up-a-local-database/macos/assign_owner.png)
+
+Now that the directories that the MongoDB server needs are in order, you can run start the MongoDB server with the paths we created by typing:
+
+```bash
+mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
+```
+
+![MongoDB start server](/content/mongodb/setting-up-a-local-database/macos/start_server.png)
+
+Depending on your version of macOS, it's possible you will see a prompt stating that the execution of the MongoDB server has been blocked:
+
+![MongoDB execution blocked](/content/mongodb/setting-up-a-local-database/macos/execution_blocked.png)
+
+This is a security policy that is activated whenever an application is run that Apple does not recognize.  You can allow an exception for your MongoDB server by going in to your **System Preferences**, clicking **Security and Privacy** and then clicking **Allow Anyway** next to the MongoDB server entry:
+
+![MongoDB allow execution](/content/mongodb/setting-up-a-local-database/macos/allow_execution.png)
+
+When you run the command again, another prompt will likely appear.  However, this time, you have the option to allow the program to execute by clicking **Open**:
+
+![MongoDB confirm execution](/content/mongodb/setting-up-a-local-database/macos/confirm_execution.png)
+
+Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server.  To run the MongoDB shell, type:
+
+```bash
+mongo
+```
+
+![MongoDB run_shell](/content/mongodb/setting-up-a-local-database/macos/run_shell.png)
+
+Depending on your version of macOS, you may receive a notice that the execution was blocked again.  If that's the case, go through the same procedure as before to allow an exception and confirm that you want to run the MongoDB shell.
+
+When all goes well, the  MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt:
+
+![MongoDB shell connected](/content/mongodb/setting-up-a-local-database/macos/shell_connected.png)
+
+To verify that the server is responding to commands, run the `show dbs` command:
+
+```
+show dbs
+```
+
+![MongoDB show databases](/content/mongodb/setting-up-a-local-database/macos/show_dbs.png)
+
+You can also optionally install a graphical MongoDB manager called MongoDB compass.  To install Compass, use the `install_compass` command that's been included in the MongoDB installation:
+
+```bash
+install_compass
+```
+
+![MongoDB install compass](/content/mongodb/setting-up-a-local-database/macos/install_compass.png)
+
+Occasionally, the installer will run into an error, as shown above, but usually it does not affect the actual installation.
+
+The initial screen will give you the opportunity to connect to a running MongoDB server by providing a connection string:
+
+![MongoDB compass connect](/content/mongodb/setting-up-a-local-database/macos/compass_connect.png)
+
+If you click **Connect** without entering any information, Compass will automatically attempt to connect to a local MongoDB server running with the default configuration.
+
+Click **Connect** to connect to the MongoDB server you are running.
+
+Once Compass connects to your local server, it will display information about the databases within and allow you to manage your data using a friendly graphical interface:
+
+![MongoDB compass connect](/content/mongodb/setting-up-a-local-database/macos/compass_running.png)
+
+When you are finished working with your MongoDB server, you can stop each of the components.
+
+In MongoDB Compass, click the **Connect** menu and select **Disconnect** to drop the connection to your MongoDB server.  Afterwards, you can safely close the MongoDB Compass application.
+
+In the MongoDB shell, you can type `exit` to end your session.
+
+To stop the MongoDB server, you can find and kill the MongoDB server process by typing:
+
+```bash
+pkill mongod
+```
+
+## Setting up MongoDB on Linux
+
+Installation methods differ depending on the Linux distribution you are using. Follow the section below that matches your Linux distribution.
+
+- [Debian and Ubuntu](#debian-and-ubuntu)
+- [CentOS](#centos)
+
+### Debian and Ubuntu
+
+The best way to install MongoDB on Ubuntu or Debian is to configure your system to use the repositories that MongoDB maintains.
+
+First, download the MongoDB GPG key to your collection of trusted `apt` signing keys by typing:
+
+```bash
+curl -L https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+```
+
+Next, find and record the latest version of MongoDB available for your operating system by typing:
+
+```bash
+LATEST_MONGO_VERSION=$(. /etc/os-release && curl -L repo.mongodb.org/apt/${ID}/dists/${VERSION_CODENAME}/mongodb-org | grep -Eo '[0-9]+\.[0-9]+' | sort -V | tail -1)
+```
+
+Afterwards, configure the `apt` repository appropriate for your operating system.
+
+If you are running **Ubuntu**, type:
+
+```bash
+(. /etc/os-release && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/${ID} ${VERSION_CODENAME}/mongodb-org/${LATEST_MONGO_VERSION} multiverse") | sudo tee /etc/apt/sources.list.d/mongodb-org-${LATEST_MONGO_VERSION}.list
+```
+
+If you are running **Debian**, type this instead:
+
+```bash
+(. /etc/os-release && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/${ID} ${VERSION_CODENAME}/mongodb-org/${LATEST_MONGO_VERSION} main") | sudo tee /etc/apt/sources.list.d/mongodb-org-${LATEST_MONGO_VERSION}.list
+```
+
+With the MongoDB apt repository configured, update the local package index and install MongoDB by typing:
+
+```bash
+sudo apt update
+sudo apt install mongodb-org
+```
+
+Once the software is installed, you can start the MongoDB server by typing:
+
+```bash
+sudo systemctl start mongod.service
+```
+
+Optionally, you can also automatically start MongoDB on boot with the `enable` command:
+
+```bash
+sudo systemctl enable mongod.service
+```
+
+Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server.  To run the MongoDB shell, type:
+
+```bash
+mongo
+```
+
+When all goes well, the  MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt.  To verify that the server is responding to commands, run the `show dbs` command:
+
+```
+show dbs
+```
+
+When you are finished working with your MongoDB server, you can stop each of the components.
+
+In the MongoDB shell, you can type `exit` to end your session.
+
+To stop the MongoDB server, type:
+
+```bash
+sudo systemctl stop mongod.service
+```
+
+### CentOS
+
+The best way to download and install MongoDB on CentOS is to use the repositories maintained by the MongoDB.
+
+First, find and record the latest version of MongoDB available for your operating system by typing:
+
+```bash
+LATEST_MONGO_VERSION=$(. /etc/os-release && curl -L repo.mongodb.org/yum/redhat/${VERSION_ID}/mongodb-org | grep -Eo '[0-9]+\.[0-9]+' | sort -V | tail -1)
+```
+
+Next, write the repository definition file using the version info you just queried.  You can type the following command to write the repository file to the filesystem:
+
+```bash
+sudo tee /etc/yum.repos.d/mongodb-org-${LATEST_MONGO_VERSION}.repo << EOF
+[mongodb-org-${LATEST_MONGO_VERSION}]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/${LATEST_MONGO_VERSION}/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-${LATEST_MONGO_VERSION}.asc
+EOF
+```
+
+With the repository definition file in place, you can install the MongoDB server package by typing:
+
+```bash
+sudo yum install mongodb-org
+```
+
+Once the software is installed, you can start the MongoDB server by typing:
+
+```bash
+sudo systemctl start mongod.service
+```
+
+Optionally, you can also automatically start MongoDB on boot with the `enable` command:
+
+```bash
+sudo systemctl enable mongod.service
+```
+
+Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server.  To run the MongoDB shell, type:
+
+```bash
+mongo
+```
+
+When all goes well, the  MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt.  To verify that the server is responding to commands, run the `show dbs` command:
+
+```
+show dbs
+```
+
+When you are finished working with your MongoDB server, you can stop each of the components.
+
+In the MongoDB shell, you can type `exit` to end your session.
+
+To stop the MongoDB server, type:
+
+```bash
+sudo systemctl stop mongod.service
+```
+
+<PrismaOutlinks>
+
+If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
+
+</PrismaOutlinks>
