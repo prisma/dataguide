@@ -74,7 +74,7 @@ const Input = styled.input`
   opacity: 0;
   z-index: -1;
   &:checked ~ .tab-content {
-    max-height: 2000px;
+    max-height: fit-content;
     padding-bottom: 8px;
   }
 `
