@@ -34,7 +34,7 @@ const SocialWrapper = styled.div`
   align-items: center;
 `
 
-const twitterShareUrl = `https://twitter.com/intent/tweet?text=I%27ve%20found%20this%20%40dataguide%20page%20helpful%21%20`
+const twitterShareUrl = `https://twitter.com/intent/tweet?text=I%27ve%20found%20this%20page%20on%20%40prisma%27s%20%23DataGuide%20useful%21%20`
 
 const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
   const currentDocsPageURL =
