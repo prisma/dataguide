@@ -97,7 +97,9 @@ docker pull mcr.microsoft.com/mssql/server:2019-latest
 
 This will download all of the required image layers to your local system, allowing a faster startup.
 
-When you're ready to start the container, type the following command (remember to replace `<password>` with the value of your intended password):
+When you're ready to start the container, type the following command.
+
+Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy.  At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
 
 ```bash
 docker run --env "ACCEPT_EULA=Y" --env "SA_PASSWORD=<password>" --publish 1433:1433 --name mssql --hostname mssql --detach mcr.microsoft.com/mssql/server:2019-latest
@@ -469,7 +471,9 @@ sudo docker pull mcr.microsoft.com/mssql/server:2019-latest
 
 This will download all of the required image layers to your local system, allowing a faster startup.
 
-When you're ready to start the container, type:
+When you're ready to start the container, type the following command.
+
+Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy.  At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
 
 ```bash
 sudo docker run --env "ACCEPT_EULA=Y" --env "SA_PASSWORD=<password>" --publish 1433:1433 --name mssql --hostname mssql --detach mcr.microsoft.com/mssql/server:2019-latest
