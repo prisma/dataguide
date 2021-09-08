@@ -58,8 +58,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
-        sitemapSize: 5000,
-        exclude: [
+        entryLimit: 5000,
+        excludes: [
           // Remove these from sitemap for SEO purposes
           `/dummy`,
           `/intro/example`,
@@ -81,7 +81,6 @@ module.exports = {
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
-        decks: [],
         defaultLayouts: {
           default: require.resolve('./src/layouts/articleLayout.tsx'),
         },
