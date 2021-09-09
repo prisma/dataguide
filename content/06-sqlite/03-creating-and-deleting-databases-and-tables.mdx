@@ -1,0 +1,157 @@
+---
+title: 'Creating and deleting databases and tables with SQLite'
+metaTitle: "Managing databases and tables | SQLite | Prisma's Data Guide"
+metaDescription: 'Learn how to create and destroy databases and tables using SQLite.'
+---
+
+## Introduction
+
+In this article we are going to cover the creation and destruction of *databases* and *tables* in SQLite. We can quickly refresh our memory of these two terms:
+
+* **Databases**: divide different sets of structures and data from one another
+* **Tables**: define the data structure and store the actual data values within the database
+
+SQLite utilizes the command line for working with your database files. In order to follow along you will need to download the respective [SQLite CLI](https://www.prisma.io/dataguide/sqlite/setting-up-a-local-sqlite-database) for your machine. Let's begin.
+
+
+
+## Create a database
+
+To begin, start a new SQLite shell by typing `sqlite3` into your command prompt. The result will look similar to the following:
+
+```shell
+>sqlite3
+SQLite version 3.32.3 2020-06-18 17:32:03
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite>
+```
+
+By default, a SQLite session begins using an in-memory database. This means that it is not currently reading from a file.
+
+If you already have a persistent database, you can open its existing file by using the `.open <FILENAME>` command. For example, in the following command, the pre-existing `test.db` database is opened.
+
+```sql
+.open test.db;
+```
+
+**Note**: If you indicate a file name that does not already exist, then the `sqlite3` tool will create the database file.
+
+
+
+To more explicitly create a new database, append `--new` to the `.open <FILENAME>` command. Here we demonstrate the command by creating the `people.db`.
+
+```
+.open --new people.db;
+```
+
+This will save your existing changes to your given database file for the remainder of the session. 
+
+
+
+## List database connections
+
+Now that you have created databases, you can check your connections by using the `.databases` command. 
+
+```sql
+.databases;
+```
+
+The following illustrates what the return of the command will look like resulting in the `main` database displayed.
+
+```sql
+sqlite> .databases;
+main: /Users/user/people.db
+sqlite>
+```
+
+
+
+For some use cases you may want to add other databases to the current connection. This can be done using the `ATTACH DATABASE` statement as demonstrated below by the addition of `test.db` to our active connection.
+
+```sql
+ATTACH DATABASE "test.db" AS test;
+```
+
+Now when we run the `.databases` command we will get the following two connections returned, the `main` and `test` databases.
+
+```sql
+sqlite> .databases;
+main: /Users/user/people.db
+test: /Users/user/test.db
+sqlite>
+```
+
+
+
+## Creating tables within a database in SQLite
+
+With your databases created and connections verified, you can begin introducing data structure to your database(s).
+
+
+
+### How to use SQLite's `CREATE TABLE` command
+
+In this section we will add the data structure to our newly created `people.db` database by creating a `students` table. In order to create a table within your database, you will utilize the `CREATE TABLE` statement with the following syntax:
+
+```sql
+CREATE TABLE students (
+	id INTEGER PRIMARY KEY, 
+	first_name TEXT, 
+	last_name TEXT, 
+	age INTEGER,
+	student_email TEXT NOT NULL, 
+	class TEXT
+	);
+```
+
+We can break down the above statement into the following pieces:
+
+* `CREATE TABLE <table name>`: This is the basic command statement. In the example, the `<table name>` is `students` and should be whatever you intend to name your table.
+* `<column name> <data type>`: This syntax defines a basic column within the table. In the example, a column name would be `first_name` and its corresponding data type defined by [SQLite Data Types](https://www.sqlite.org/datatypes.html) is `TEXT`. 
+* `<column constraint>`: Column constraints are optional restraints adding additional requirements for the data entering your table. In the example, the column constraint `Not Null` is added to the `student_email` column. This ensures no entry is made without this column being populated.
+* `<table constraint>`: Like a column constraint, table constraints are optional to add additional requirements to your data. There is an exception if the constraint effects the interaction of multiple columns instead of a singular column. In our example, the addition of `PRIMARY KEY` to the `id` field is an example of a table constraint.
+
+### How to create tables only if they do not already exist
+
+In order to ensure that you are creating a table that does not already exist, the optional `IF NOT EXISTS` clause can be added to the previous example as follows:
+
+```sql
+CREATE TABLE IF NOT EXISTS students (
+	id INTEGER PRIMARY KEY, 
+	first_name TEXT, 
+	last_name TEXT, 
+	age INTEGER,
+	student_email TEXT NOT NULL, 
+	class TEXT
+	);
+```
+
+By default, SQLite will throw an error when attempting to create an already present table without the `IF NOT EXISTS` clause. By adding this clause, the default behavior is overridden with a warning instead of an error. The rest of the command's behavior remains the same.
+
+
+
+## Dropping a table
+
+In order to drop a table from a database in SQLite, you will use the `DROP TABLE` statement. This statement is used as follows for dropping the `students` table:
+
+```sql
+DROP TABLE IF EXISTS students;
+```
+
+The `IF EXISTS` statement is optional when dropping a table. The behavior it adds makes sure that the command only runs if the table exists. If it does not exist, then the statement is simply ignored and nothing happens.
+
+
+
+## Dropping a database
+
+Because SQLite does not have a separate server process like other relational databases such as MySQL or PostgreSQL, there is not a need for a `DROP DATABASE` statement. SQLite is an embedded database engine, so in order to drop a database you have to delete the file from the machine. This action will make the database no longer accessible.
+
+
+
+## Conclusion
+
+This article covers the basics of creating and dropping databases and tables in SQLite. The commands walked through are some of the most basic to get started with SQLite and allow you to start organizing and structuring your data.
+
+Within the statements mentioned, like `CREATE TABLE` and `DROP TABLE`, there are many additional parameters that can be considered depending on the use case. You can read into more detail on statements like these in the [official SQLite documentation](https://www.sqlite.org/docs.html). 
