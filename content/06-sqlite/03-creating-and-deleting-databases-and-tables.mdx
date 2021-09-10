@@ -6,12 +6,12 @@ metaDescription: 'Learn how to create and destroy databases and tables using SQL
 
 ## Introduction
 
-In this article we are going to cover the creation and destruction of *databases* and *tables* in SQLite. We can quickly refresh our memory of these two terms:
+In this article, we are going to cover the creation and destruction of *databases* and *tables* in SQLite. We can quickly refresh our memory of these two terms:
 
 * **Databases**: divide different sets of structures and data from one another
 * **Tables**: define the data structure and store the actual data values within the database
 
-SQLite utilizes the command line for working with your database files. In order to follow along you will need to download the respective [SQLite CLI](https://www.prisma.io/dataguide/sqlite/setting-up-a-local-sqlite-database) for your machine. Let's begin.
+SQLite utilizes the command line for working with your database files. To follow along, you will need to download the respective [SQLite CLI](https://www.prisma.io/dataguide/sqlite/setting-up-a-local-sqlite-database) for your machine. Let's begin.
 
 
 
@@ -33,17 +33,17 @@ By default, a SQLite session begins using an in-memory database. This means that
 If you already have a persistent database, you can open its existing file by using the `.open <FILENAME>` command. For example, in the following command, the pre-existing `test.db` database is opened.
 
 ```sql
-.open test.db;
+.open test.db
 ```
 
-**Note**: If you indicate a file name that does not already exist, then the `sqlite3` tool will create the database file.
+**Note**: If you indicate a file name that does not already exist, the sqlite3 tool will create the database file.
 
 
 
-To more explicitly create a new database, append `--new` to the `.open <FILENAME>` command. Here we demonstrate the command by creating the `people.db`.
+To create a new database more explicitly, add `--new` to the `.open <FILENAME>` command. Here we demonstrate the command by creating the `people.db`.
 
-```
-.open --new people.db;
+```shell
+.open --new people.db
 ```
 
 This will save your existing changes to your given database file for the remainder of the session. 
@@ -52,32 +52,32 @@ This will save your existing changes to your given database file for the remaind
 
 ## List database connections
 
-Now that you have created databases, you can check your connections by using the `.databases` command. 
+Now that you have created databases, you can check your connections by using the `.database` command. 
 
 ```sql
-.databases;
+.database
 ```
 
-The following illustrates what the return of the command will look like resulting in the `main` database displayed.
+The following illustrates what the return of the command will look like resulting in the `main` database being displayed.
 
 ```sql
-sqlite> .databases;
+sqlite> .database
 main: /Users/user/people.db
 sqlite>
 ```
 
 
 
-For some use cases you may want to add other databases to the current connection. This can be done using the `ATTACH DATABASE` statement as demonstrated below by the addition of `test.db` to our active connection.
+For some use cases, you may want to add other databases to the current connection. This can be done using the `ATTACH DATABASE` statement as demonstrated below by the addition of `test.db` to our active connection.
 
 ```sql
 ATTACH DATABASE "test.db" AS test;
 ```
 
-Now when we run the `.databases` command we will get the following two connections returned, the `main` and `test` databases.
+Now when we run the `.database` command we will get the following two connections returned, the `main` and `test` databases.
 
 ```sql
-sqlite> .databases;
+sqlite> .database
 main: /Users/user/people.db
 test: /Users/user/test.db
 sqlite>
@@ -93,10 +93,10 @@ With your databases created and connections verified, you can begin introducing 
 
 ### How to use SQLite's `CREATE TABLE` command
 
-In this section we will add the data structure to our newly created `people.db` database by creating a `students` table. In order to create a table within your database, you will utilize the `CREATE TABLE` statement with the following syntax:
+In this section, we will add the data structure to our newly created `people.db` database by creating a `student` table. To create a table within your database, you will utilize the `CREATE TABLE` statement with the following syntax:
 
 ```sql
-CREATE TABLE students (
+CREATE TABLE student (
 	id INTEGER PRIMARY KEY, 
 	first_name TEXT, 
 	last_name TEXT, 
@@ -108,17 +108,17 @@ CREATE TABLE students (
 
 We can break down the above statement into the following pieces:
 
-* `CREATE TABLE <table name>`: This is the basic command statement. In the example, the `<table name>` is `students` and should be whatever you intend to name your table.
+* `CREATE TABLE <table name>`: This is the basic command statement. In the example, the `<table name>` is `student` and should be whatever you intend to name your table.
 * `<column name> <data type>`: This syntax defines a basic column within the table. In the example, a column name would be `first_name` and its corresponding data type defined by [SQLite Data Types](https://www.sqlite.org/datatypes.html) is `TEXT`. 
 * `<column constraint>`: Column constraints are optional restraints adding additional requirements for the data entering your table. In the example, the column constraint `Not Null` is added to the `student_email` column. This ensures no entry is made without this column being populated.
-* `<table constraint>`: Like a column constraint, table constraints are optional to add additional requirements to your data. There is an exception if the constraint effects the interaction of multiple columns instead of a singular column. In our example, the addition of `PRIMARY KEY` to the `id` field is an example of a table constraint.
+* `<table constraint>`: Like a column constraint, table constraints are optional to add additional requirements to your data. There is an exception if the constraint affects the interaction of multiple columns instead of a singular column. In our example, the addition of `PRIMARY KEY` to the `id` field is an example of a table constraint.
 
-### How to create tables only if they do not already exist
 
-In order to ensure that you are creating a table that does not already exist, the optional `IF NOT EXISTS` clause can be added to the previous example as follows:
+
+It is important to note that the `CREATE TABLE` statement will create the table you specify in the `main` database by default. If you have multiple connections open to databases, you need to specify `<database>.<table>` in your statement to create the table in a database other than `main`. Adjusting the previous example will look like this to create the table in `test`:
 
 ```sql
-CREATE TABLE IF NOT EXISTS students (
+CREATE TABLE test.student (
 	id INTEGER PRIMARY KEY, 
 	first_name TEXT, 
 	last_name TEXT, 
@@ -128,16 +128,72 @@ CREATE TABLE IF NOT EXISTS students (
 	);
 ```
 
-By default, SQLite will throw an error when attempting to create an already present table without the `IF NOT EXISTS` clause. By adding this clause, the default behavior is overridden with a warning instead of an error. The rest of the command's behavior remains the same.
+
+
+### How to create tables only if they do not already exist
+
+To ensure that you are creating a table that does not already exist, the optional `IF NOT EXISTS` clause can be added to the previous example as follows:
+
+```sql
+CREATE TABLE IF NOT EXISTS student (
+	id INTEGER PRIMARY KEY, 
+	first_name TEXT, 
+	last_name TEXT, 
+	age INTEGER,
+	student_email TEXT NOT NULL, 
+	class TEXT
+	);
+```
+
+SQLite will throw an error when attempting to create an already present table without the `IF NOT EXISTS` clause by default. By adding this clause, the default behavior is overridden with a warning instead of an error. The rest of the command's behavior remains the same.
+
+
+
+### How to validate your table with `.schema`
+
+After creating your table, you can verify the structure of your table by using the `.schema` command. If we want to make sure the previously created `student` table is structured the way we intended, we can check using the following syntax:
+
+```sql
+.schema student
+```
+
+The returned result will look as follows for the `student` table:
+
+```shell
+sqlite> .schema student
+CREATE TABLE student (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, age INTEGER, student_email TEXT NOT NULL, class TEXT);
+sqlite>
+```
+
+To get a more easily read result, you can use the `.fullschema --indent` command. This will show you the schema of the connected database with better spacing:
+
+```sql
+.fullschema --indent
+```
+
+```shell
+sqlite> .fullschema --indent
+CREATE TABLE student (
+	id INTEGER PRIMARY KEY, 
+	first_name TEXT, 
+	last_name TEXT, 
+	age INTEGER, 
+	student_email TEXT NOT NULL, 
+	class TEXT
+);
+sqlite>
+```
+
+**Note**: The `.fullschema` command will also include dumps of the statistics tables if they exist. We won't cover that for now, but it can be useful to have this output in some cases.
 
 
 
 ## Dropping a table
 
-In order to drop a table from a database in SQLite, you will use the `DROP TABLE` statement. This statement is used as follows for dropping the `students` table:
+To drop a table from a database in SQLite, you will use the `DROP TABLE` statement. This statement is used as follows for dropping the `student` table:
 
 ```sql
-DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS student;
 ```
 
 The `IF EXISTS` statement is optional when dropping a table. The behavior it adds makes sure that the command only runs if the table exists. If it does not exist, then the statement is simply ignored and nothing happens.
@@ -154,4 +210,6 @@ Because SQLite does not have a separate server process like other relational dat
 
 This article covers the basics of creating and dropping databases and tables in SQLite. The commands walked through are some of the most basic to get started with SQLite and allow you to start organizing and structuring your data.
 
-Within the statements mentioned, like `CREATE TABLE` and `DROP TABLE`, there are many additional parameters that can be considered depending on the use case. You can read into more detail on statements like these in the [official SQLite documentation](https://www.sqlite.org/docs.html). 
+Within the statements mentioned, like `CREATE TABLE` and `DROP TABLE`, many additional parameters that can be considered depending on the use case. You can read into more detail on statements like these in the [official SQLite documentation](https://www.sqlite.org/docs.html). 
+
+
