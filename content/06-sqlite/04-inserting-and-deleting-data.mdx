@@ -1,0 +1,148 @@
+---
+title: 'Inserting and deleting data with SQLite'
+metaTitle: "Inserting and deleting data | SQLite | Prisma's Data Guide"
+metaDescription: 'Learn how to insert and delete data using SQLite.'
+---
+
+## Introduction
+
+The keys to controlling what data is maintained by your database are the addition and deletion operations. To insert, you specify items that fulfill each of the column requirements of the table for each new row. To remove, you provide the match criteria for rows in the table you wish to remove.
+
+In this article, we'll dive into how to use the `INSERT` and `DELETE` commands to add or remove data from SQLite tables. We will cover syntax as well as slightly more advanced variations of the commands for operating on multiple rows in a single statement.
+
+## Reviewing the table's structure
+
+Before you start inserting data, you must know the table's structure so that you can meet the requirements of the table's columns, data types, and constraints.
+
+To find the structure of a table called `student`, you can use the SQLite `.schema <table_name>` command:
+
+```sql
+.schema student
+```
+
+```sql
+CREATE TABLE student (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, age INTEGER, student_email TEXT NOT NULL, class TEXT);
+```
+
+The output displays the table's column names, data types, and other information relating to the requirements of the to-be-inserted data.
+
+To get a more easily read result, you can use the `.fullschema --indent` command. This will show you the schema of the connected database with better spacing:
+
+```sql
+.fullschema --indent
+```
+
+```sql
+CREATE TABLE student (
+	id INTEGER PRIMARY KEY, 
+	first_name TEXT, 
+	last_name TEXT, 
+	age INTEGER, 
+	student_email TEXT NOT NULL, 
+	class TEXT
+);
+```
+
+**Note**: The `.fullschema` command will also include dumps of the statistics tables if they exist. We won't cover that for now, but it can be useful in some cases to have this output.
+
+## Using `INSERT` to add new records to tables
+
+The SQL `INSERT` command is used to add rows of data to an existing table. Once you know the table's structure, you can form a command that matches the table's columns with the corresponding values you want to insert for the new record.
+
+The basic syntax of the command looks as follows:
+
+```sql
+INSERT INTO my_table(column1, column2)
+VALUES ('value1', 'value2');
+```
+
+The columns in the column list correspond directly to the values provided within the value list.
+
+As an example, to insert a new student into the `student` table listed above, we could type:
+
+```sql
+INSERT INTO student(first_name, last_name, student_email)
+VALUES ('Bob', 'Smith', 'bob.smith@smith.com');
+```
+
+We provide values for `first_name` , `last_name` , `student_email`. We leave the `id` field empty, as SQLite can populate this field automatically. If you query the table, you can see that the new record has been added:
+
+```sql
+SELECT * FROM student;
+```
+
+```
++-------------+------------+-----------+---------------------+
+|     id      | first_name | last_name |   student_email     |
++-------------+------------+-----------+---------------------+
+|      1      | Bob        | Smith     | bob.smith@smith.com |
++-------------+------------+-----------+---------------------+
+```
+
+## Using `INSERT` to add multiple rows at once
+
+Inserting multiple rows of data at once is a more efficient way of populating your database than doing insertions one by one. SQLite allows you to specify multiple rows to add to the same table. Each new row is surrounded by parentheses, with each set of parentheses separated by commas.
+
+The basic syntax for multi-record insertion looks like this:
+
+```sql
+INSERT INTO my_table(column_name, column_name2)
+VALUES
+	('value', 'value2'),
+	('value3', 'value4'),
+	('value5', 'value6');
+	
+```
+
+For the `student` table we've been referencing, you can add three new students in a single statement by typing:
+
+```sql
+INSERT INTO student(first_name, last_name, student_email)
+VALUES
+	('Abigail', 'Spencer', 'abispence@university.com'),
+	('Tamal', 'Wayne', 'tamalwayne@university.com'),
+	('Felipe', 'Espinosa', 'felesp@university.com');
+	
+```
+
+## Using `DELETE` to remove rows from tables
+
+The SQL `DELETE` command is used to remove records from tables, serving as the complement to `INSERT`. To remove rows from a table, you must specify the rows you wish to target by providing criteria within a `WHERE` clause.
+
+The basic syntax looks like this:
+
+```sql
+DELETE FROM <table>
+WHERE <condition>;
+```
+
+For example, to remove every row in our `student` table that has its `last_name` set to `Wayne`, we could type this:
+
+```sql
+DELETE FROM student
+WHERE last_name = 'Wayne';
+```
+
+## Using `DELETE` to remove multiple rows at once
+
+Similarly to `INSERT`, it can be cumbersome to use `DELETE` commands one at a time. You can remove multiple rows at once with `DELETE` by manipulating the selection criteria in the `WHERE` clause.
+
+For instance, to remove multiple rows by `id`, you could type the following:
+
+```sql
+DELETE FROM student
+WHERE id in (1,2);
+```
+
+You are also able to remove all rows from a given table by omitting the `WHERE` clause:
+
+```sql
+DELETE FROM student;
+```
+
+## Conclusion
+
+In this article, we covered the basics of how to insert and remove data from SQLite tables. We first discussed how to find your table's structure to ensure the construction of valid data insertion queries. We then covered how to insert and delete data both one at a time and in batches.
+
+The `INSERT` and `DELETE` commands are some of the most useful commands for managing what data is maintained inside of your tables. A comprehension of their basic syntax and operation will allow you to add or remove records from your database structures quickly and effectively.
+
