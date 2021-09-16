@@ -1,0 +1,240 @@
+---
+title: 'How to perform basic queries with `SELECT` with SQLite'
+metaTitle: "Basic queries with SELECT | SQLite | Prisma's Data Guide"
+metaDescription: "Learn how to perform basic queries with `SELECT` using SQLite."
+---
+
+## Introduction
+
+The `SELECT` SQL command is the most fitting command for querying and returning information from inside your tables in SQLite. This command achieves what its name implies by *selecting* the matching records based on the criteria specified in the command. This command is not only useful for reading data, but also for targeting updates and other actions within your database.
+
+In this article, we will cover the basics of the `SELECT` command and demonstrate how to use it to return data. `SELECT` is capable of handling many more advanced use cases, but we will stick to the simpler forms in our demonstration to highlight the basic command structure.
+
+## The general syntax of the `SELECT` command
+
+The basic format of a `SELECT` command will look something like this:
+
+```sql
+SELECT <column_names> FROM <table_name> <additional_conditions_and_formatting>;
+```
+
+This statement is made up of several components:
+
+* `SELECT`: The `SELECT` command itself. This SQL command indicates that we want to query tables or views for data they contain. The arguments and clauses surrounding it determine both the contents and the format of the output returned.
+
+* `<column_names>`: The `SELECT` statement can return entire rows (if specified with the `*` wildcard character) or a subset of the available columns. If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
+
+* `FROM <table_name>`: The `FROM` keyword is used to indicate the table or view that should be queried. In most simple queries, this consists of a single table that contains the data you're interested in.
+
+* `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command. You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
+
+## Specifying columns to display with `SELECT`
+
+The column specification component of the `SELECT` command requires you to name the columns you want to display for your queried data.
+
+If you do not have column display requirements, one of the most helpful options for ad hoc querying and data exploration is to use an asterisk to indicate that you want to display values from every column available:
+
+```sql
+SELECT * FROM my_table;
+```
+
+This will display all of the records from `my_table` since there is no specified column name in the statement. All of the columns for each record will be shown in the order they are defined within `my_table`.
+
+
+
+**Note**: The asterisk wildcard option is going to be best for testing, ad hoc querying, and data exploration. It is not a useful method for real application development where a more controlled, explicit statement syntax is stronger and more reliable.
+
+
+
+You can also choose to view a subset of available columns by specifying their names. Column names are separated by commas and will be displayed in the order you specify:
+
+```sql
+SELECT column2, column1 FROM my_table;
+```
+
+This will display all of the records from `my_table`, but only show `column2` and `column1`, in that exact order.
+
+## Using column aliases with `AS` to modify the resulting table
+
+Compared to other SQL databases such as MySQL and PostgreSQL, SQLite does not show column names in its query output by default. In order to force the display of column names in SQLite, a series of commands can be run.
+
+First you use the `.header` command which is an on|off switch for the display of headers in your output:
+
+```sql
+.header on
+```
+Second you use the `.mode` command to set the output mode to column. This makes it so the headers are in alignment with the corresponding column values:
+
+<CodeWithResult>
+
+<Cmd>
+
+```sql
+.mode column
+```
+</Cmd>
+
+<CmdResult>
+
+```
++------------+-----------+--------------+--------------+
+| first_name | last_name | address      | phone_number |
++------------+-----------+--------------+--------------+
+| john       | abed      | 456 side st  | 5557654321   |
+| rachael    | smith     | 789 other st | 5559876543   |
++------------+-----------+--------------+--------------+
+```
+</CmdResult>
+</CodeWithResult>
+Now when running a query, the output display will include column names above the results. This now allows you to optionally set *column aliases* to modify the name used for columns in the output:
+
+```sql
+SELECT column1 AS 'first column' FROM my_table;
+```
+
+This will show each of the values for `column1` in `my_table`. The column in the output will display now as `first column` instead of `column1`.
+
+The setting of aliases is especially useful when the output combines column names from multiple tables that might share names or if it includes computed columns that don't already have a name.
+
+## Defining sort order with `ORDER BY`
+
+SQLite stores data in tables in an unspecified order. If you use the `SELECT` statement to query data without any criteria defining the order, your result's order will be unspecified.
+
+The `ORDER BY` clause can be used to sort the resulting rows according to specific criteria. Its general syntax looks like this:
+
+```sql
+SELECT * FROM my_table ORDER BY <sort expression>;
+```
+
+This will display the values for all columns in all records within `my_table`. The records will be ordered according to the expression placeholder `<sort expression>`.
+
+To give an example, suppose there is a `student` table that contains columns for `first_name`, `last_name`, and `student_email`. If we want to display the results in alphabetical order by `last_name`, we can use the following command:
+
+```sql
+SELECT * FROM student ORDER BY last_name;
+```
+
+The result will display the student last names from A to Z according to the values in `last_name`. 
+
+```
++-------------+------------+-----------+--------------------------+
+|     id      | first_name | last_name |   student_email          |
++-------------+------------+-----------+--------------------------+
+|      1      | Felipe     | Espinosa  | felesp@university.com    |
++-------------+------------+-----------+--------------------------+
+|      2      | Bob        | Smith     | bobsmith@university.com  |
++-------------+------------+-----------+--------------------------+
+|      3      | Abigail    | Smith     | abismith@university.com  |
++-------------+------------+-----------+--------------------------+
+|      4      | Tamal      | Wayne     | tamalwayne@university.com|
++-------------+------------+-----------+--------------------------+
+```
+
+
+
+To reverse the resulting order, we can add the `DESC` modifier to the end of the `ORDER BY` clause:
+
+```sql
+SELECT * FROM student ORDER BY last_name DESC;
+```
+
+The result will be the reverse of the previous query showing results Z to A according to the values in `last_name`.
+
+```
++-------------+------------+-----------+--------------------------+
+|     id      | first_name | last_name |   student_email          |
++-------------+------------+-----------+--------------------------+
+|      4      |  Tamal     | Wayne     | tamalwayne@university.com|
++-------------+------------+-----------+--------------------------+
+|      3      |  Abigail   | Smith     | abismith@university.com  |
++-------------+------------+-----------+--------------------------+
+|      2      |  Bob       | Smith     | bobsmith@university.com  |
++-------------+------------+-----------+--------------------------+
+|      1      | Felipe     | Espinosa  | felesp@university.com    |
++-------------+------------+-----------+--------------------------+
+```
+
+
+
+It is also possible to sort by multiple columns. This can be useful especially in a case where people share a surname for instance. The query would look like this:
+
+```sql
+SELECT * FROM student ORDER BY last_name, first_name;
+```
+
+The result will display both sorts in ascending order. The results will first be sorted by `last_name` A to Z. Next the results will be sorted by `first_name` alphabetically. If `last_name` is the same for multiple records, the sort of `first_name` will show the student with a first name earlier in the alphabet first.
+
+```
++-------------+------------+-----------+--------------------------+
+|     id      | first_name | last_name |   student_email          |
++-------------+------------+-----------+--------------------------+
+|      1      | Felipe     | Espinosa  | felesp@university.com    |
++-------------+------------+-----------+--------------------------+
+|      3      | Abigail    | Smith     | abismith@university.com  |
++-------------+------------+-----------+--------------------------+
+|      2      | Bob        | Smith     |  bobsmith@university.com |
++-------------+------------+-----------+--------------------------+
+|      4      | Tamal      | Wayne     | tamalwayne@university.com|
++-------------+------------+-----------+--------------------------+
+```
+
+## Getting distinct results
+
+If you want to query your table for the range of values in a column in SQLite, you can achieve this by using the `SELECT DISTINCT` variant. This will show a single row for each unique value of a column.
+
+Its basic syntax looks as follows:
+
+```sql
+SELECT DISTINCT column1 FROM my_table;
+```
+
+The result will be one row per unique value in `column1`.
+
+For example, to display all of the different values for `color` that your `shoe` table contains, you can type:
+
+```sql
+SELECT DISTINCT color FROM shoe;
+```
+
+```
+--------+
+ color  |
+--------+
+ blue   |
+ green  |
+ orange |
+ red    |
+ yellow |
+--------+
+```
+
+To show uniqueness across multiple columns, you can add additional columns into the query separated by commas.
+
+For example, the following query will display all of the different combinations of `color` and `shoe_size` for the `shoe` table:
+
+```sql
+SELECT DISTINCT color, shoe_size FROM shoe;
+```
+
+This displays all of the unique combinations of `color` and `shoe_size` within your shoe collection.
+
+```
+--------+------------+
+ color  | shoe_size  |
+--------+------------+
+ blue   | 11         |
+ blue   | 7          |
+ green  | 8.5        |
+ green  | 4          |
+ green  | 13.5       |
+ orange | 9.5        |
+ orange | 6          |
+ red    | 15         |
+ yellow | 8          |
+--------+------------+
+```
+
+## Conclusion
+
+This article introduces the basics of the `SELECT` command for returning data from SQLite tables. There are many more optional clauses that modify the behavior of the command, allowing you to control the results to the specifications you want. In later articles, we dive into these modifiers to develop even more the usefulness of `SELECT`.
+
