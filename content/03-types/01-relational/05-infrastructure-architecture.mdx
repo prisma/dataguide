@@ -7,9 +7,11 @@ metaImage: '/content/types/relational/infrastructure-architecture/header-image.p
 
 ## Introduction
 
-Figuring out what kind of infrastructure you need to match your applications' performance, reliability, and scaling requirements can be a difficult task.  There are many different ways to go from a single database handling all of your infrastructure needs to more complex systems and many trade-offs to consider. 
+Figuring out what kind of database infrastructure you need to match your applications' performance, reliability, and scaling requirements can be a difficult task.  The choices you make for your database topology can impact how your entire application stack responds to different types of usage and what failure scenarios it can account for.  Because of this, it's important to understand your options and make an informed decision that aligns with your goals.
 
-In this guide, we'll cover some common patterns for database infrastructure and how they align with different usage patterns.  We'll also talk about the impact of different decisions on your overall operations complexity.
+There are many different ways to go from a single database handling all of your infrastructure needs to more complex systems.  Along with this, there are many trade-offs to consider.
+
+In this guide, we'll introduce some of the most common patterns for relational database infrastructure and how they align with different usage patterns.  We'll walk through what advantages each configuration offers as well as some of the shortcomings that you need to account for.  We'll also talk about the impact of different decisions on your overall operations complexity.  Once you've finished, you should be able to make a better decision about what designs are best suited for your current needs and which options you may wish to experiment with as your needs change.
 
 ## Scaling vertically
 
@@ -93,8 +95,22 @@ Queries are forwarded to the database processors through a routing proxy that kn
 
 Serverless databases have many of the same properties as traditional database services that implement autoscaling features.  Both can allocate capacity based on demand.  However, serverless databases allow you to separate storage costs from processing costs and can scale processing down to zero when not needed.  Additionally serverless solutions tend to be able to scale up much quicker to meet demand compared to the autoscaling offered by traditional offerings.
 
+Although serverless databases may be a good fit for some, they are not a silver bullet.  In cases where the database processors *were* scaled down to zero, there can be delays in processing again due to cold starts.  Furthermore, the churn through connections between the various components in a serverless database stack can lead to additional latency.
+
+Serverless database platforms can also be difficult from an operations standpoint.  Deployments and database changes can be more difficult to reason about and monitor.  The local development environment may also differ significantly from the production environment because of the dynamic state of the database system.  And finally, as with any other cloud service, using serverless databases can potentially put you in danger of vendor lock-in.  It is important to remember these trade-offs when designing around a serverless platform.
+
 ## Conclusion
 
 There are many ways to design, deploy, and manage your database infrastructure as your application requirements become more serious.  Each solution has its strengths and limitations that are important to understand when trying to find a fit for your environment.
 
 Learning about how database infrastructure impacts the availability, performance, and integrity of your data allows you to avoid costly mistakes and implementations that do not provide the guarantees you need.  If one of the above designs does not cover your requirements, you may be able to combine some of the elements of different approaches to gain additional advantages.
+
+If you'd like to learn more about the general patterns covered above, here are some additional resources you may want to check out:
+
+* [Scaling up versus scaling out](https://en.wikipedia.org/wiki/Scalability#Horizontal_(scale_out)_and_vertical_scaling_(scale_up))
+* [Command query responsibility segregation](https://martinfowler.com/bliki/CQRS.html)
+* [Multi-primary replication](https://en.wikipedia.org/wiki/Multi-master_replication)
+* [Caching read queries](https://redis.com/blog/query-caching-redis/)
+* [Data sharding](https://en.wikipedia.org/wiki/Shard_(database_architecture))
+* [Decentralized data management](https://martinfowler.com/articles/microservices.html#DecentralizedDataManagement)
+* [Serverless databases](https://en.wikipedia.org/wiki/Serverless_computing#Serverless_databases)
