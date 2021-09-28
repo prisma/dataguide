@@ -87,7 +87,7 @@ const HeaderWrapper = styled.div`
     .container .content {
       padding: 0 20px;
     }
-    .container svg {
+    .container .main-image {
       width: 400px;
       height:300px
     }
@@ -120,7 +120,7 @@ const HomePageHeader = () => {
           </p> */}
           </div>
           <div>
-            <HeaderDiagram />
+            <HeaderDiagram className="main-image"/>
           </div>
         </div>
       </div>
