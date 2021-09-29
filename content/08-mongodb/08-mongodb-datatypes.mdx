@@ -257,7 +257,7 @@ db.mytestcoll.insertOne({ price: 9999999.4999999999 })
 
 When we query for this data, we get the following result:
 
-```
+```shell
 db.mytestcoll.find().pretty()
 {
 		_id: ObjectId("614b37296a124db40ae74d24"), 
@@ -359,8 +359,8 @@ db.mytestcoll.find().pretty()
 {
 				"_id" : ObjectId("614b37296a124db40ae74d22"),
  				firstDate: 'Tue Sep 28 2021 11:28:52 GMT+0200 (Central European Summer Time)',
-   			secondDate: ISODate("2021-09-28T09:29:01.924Z"),
-    		thirdDate: ISODate("2021-09-28T09:29:12.151Z")
+   				secondDate: ISODate("2021-09-28T09:29:01.924Z"),
+    				thirdDate: ISODate("2021-09-28T09:29:12.151Z")
 }
 ```
 
