@@ -1,0 +1,289 @@
+---
+title: 'Glossary of common database terminology'
+metaTitle: "Database glossary | Prisma's Data Guide"
+metaDescription: "Database terminology can be difficult to understand.  This glossary was designed to help you learn important terminology by providing definitions and context in one place."
+---
+
+## Introduction
+
+When dealing with databases, there is a lot of terminology that you must learn in order to understand the technology, how best to use it, and how it relates to other parts of your environment.  This glossary aims to collect common terminology used in the database community and provide definitions and context to help you grow your knowledge.
+
+This glossary is a work in progress and a living document.  We intend to update it to add new topics and refine the existing entries as time goes on.  We have a backlog of terms we hope to add in the near future, but if you have anything you'd like us to talk about, please open a [GitHub issue](https://github.com/prisma/dataguide/issues/new?title=Glossary%20suggestion%3A%20) to add your suggestions.
+
+## Terminology
+
+<dl>
+<dt><strong>1NF</strong></dt>
+<dd>
+1NF, or first normal form, describes a type of database normalization where each table column only has a single value.  A column that has a nested table as a value or multiple values is not in 1NF.
+</dd>
+
+<p></p>
+
+<dt><strong>2NF</strong></dt>
+<dd>
+2NF, or second normal form, describes a type of database normalization that: 1) satisfies the requirements of 1NF, 2) has no values that are tied directly to a subset of a candidate key.  In other words, a relation is in 2NF if it is in 1NF and all of the non-candidate values are dependent on the composite key in whole, not just a portion of the candidate key.  For example, a `book` table that has a candidate key composed of `title` and `author` cannot be in 2NF if it also includes a `dob` field describing the author's date of birth.  That column value is dependent only on the value of `author` and could lead to inconsistencies if the values get out of sync.
+</dd>
+
+<p></p>
+
+<dt><strong>3NF</strong></dt>
+<dd>
+3NF, or third normal form, describes a type of database normalization that: 1) satisfies the requirements of 2NF, 2) each non-key attribute is not transitively dependent on a key attribute.  For example, if a `user` table has a `user_id` column as a primary key, a `user_city` column, and a `user_state` column, it would not be in 3NF because `user_state` is transitively dependent on `user_id` through `user_city` (the city and state should be extracted to their own table and referenced together).
+</dd>
+
+<p></p>
+
+<dt><strong>4NF</strong></dt>
+<dd>
+4NF, or fourth normal form, describes a type of database normalization that: 1) satisfies the requirements of BCNF, 2) for every non-trivial multivalued dependency, the determining attribute in the dependency is either a candidate key or a superset of it.  In other words, if a field has multiple dependent fields that are independent from one another, it can lead to redundancies that violate 4NF rules.
+</dd>
+
+<p></p>
+
+<dt><strong>ACID</strong></dt>
+<dd>
+ACID — an acronym created from the words atomicity, consistency, isolation, and durability — describes a set of characteristics that database transactions are meant to provide.  Atomicity guarantees that all operations in a transaction will complete successfully or will be rolled back.  Consistency, often considered a property maintained by the application rather than the database, is often achieved through transactions to make sure that all related values are updated at once.  Transaction isolation aims to allow simultaneous transactions to execute independently.  Durability means that transactions are meant to be stored on non-volatile storage when committed.
+</dd>
+
+<p></p>
+
+<dt><strong>Access control list (ACL)</strong></dt>
+<dd>
+An access control list, often shorted to ACL, is a security policy list that dictates which actions each user or process can perform on which resources.  There are many different types of ACLs, but they each describe the permissions and access patterns that are allowed by a system.
+</dd>
+
+<p></p>
+
+<dt><strong>Active record ORM</strong></dt>
+<dd>
+An active record ORM is an object-relational mapper that functions by trying to represent each table in a database as a class in the application.  Each record in the table is represented as an instance of the class.  Database entries are added and managed by interacting with these representations in the application.
+</dd>
+
+<p></p>
+
+<dt><strong>Anti-caching</strong></dt>
+<dd>
+Anti-caching is a strategy that can be used when data is not found in the faster in-memory cache and must be retrieved from slower, persistent storage.  The technique involves aborting the transaction and kicking off an asynchronous operation to fetch the data from the slower medium to memory.  The transaction can be retried later and the information will be ready to served from memory.
+</dd>
+
+<p></p>
+
+<dt><strong>Atomicity</strong></dt>
+<dd>
+Atomicity is a quality mainly associated with database transactions that means that the operations encapsulated in the transaction are handled in an all-or-nothing fashion.  This prevents partial updates from occurring where some operations were performed before an error condition arose, leading to inconsistent data.  In the case of transactions, either all of the operations are committed or every operation is rolled back to leave the database in the same state that it was in when the transaction began.
+</dd>
+
+<p></p>
+
+<dt><strong>Attributes</strong></dt>
+<dd>
+Attributes are characteristics that describe a certain entity in a database.  In the ER (entity-relationship) model, attributes are any additional properties that are not relationships that add information about an entity.
+</dd>
+
+<p></p>
+
+<dt><strong>Authentication</strong></dt>
+<dd>
+Authentication is an action that validates an identity.  In computing and databases, authentication is mainly used as a way to prove that the person or process requesting access has the credentials to validate that they can operate with a specific identity.  In practical terms, this might include providing an identity (like a username) and associated authentication material (such as a password, a certificate or key file, or a secret generated by a hardware device belonging to the person associated with the identity).  Authentication is used in conjunction with authorization to determine if a user has permission to perform actions on a system.
+</dd>
+
+<p></p>
+
+<dt><strong>Authorization</strong></dt>
+<dd>
+Authorization is an action that determines if a certain user or process should be allowed to perform a certain action.  Authorization involves checking the requested action against a set of guidelines that describe who should be allowed perform what actions.  Authorization usually relies on a trusted authentication process to take place before the request in order to confirm the subject's identity.
+</dd>
+
+<p></p>
+
+<dt><strong>Availability</strong></dt>
+<dd>
+Availability is a property that describes the degree to which a system is running and capable of performing work.  In terms of computing systems like databases, for a single machine, availability is synonymous with the uptime of the application on that computer.  For distributed systems, availability is subject to rules that dictate in what capacity the system is allowed to continue functioning if a subset of the system is unavailable.
+</dd>
+
+<p></p>
+
+<dt><strong>BASE</strong></dt>
+<dd>
+BASE —  an acronym created from the words Basically Available, Soft-state, and Eventually consistent — describes a set of characteristics of some NoSQL databases.  It is offered as an description for certain databases that do not conform to the properties described by ACID-compliance (atomicity, consistency, isolation, and durability).  BASE databases choose to remain available at the expense of strict data consistency in cases of network partitions.  The soft-state component refers to the fact that the state of the system can be in flux as the different members negotiate the most correct values in the system.  Eventually consistent is another related statement indicating that the system will eventually achieve consistency given enough time and assuming new inconsistencies aren't introduced during that time.
+</dd>
+
+<p></p>
+
+<dt><strong>BCNF</strong></dt>
+<dd>
+BCNF, or Boyce-Codd normal form, describes a type of database normalization that: 1) satisfies the requirements of 3NF, 2) where the determining attribute in each dependency (the attribute that dictates another attribute's value) is either a _superset_ of the dependent attribute, is a candidate key, or is a superset of a candidate key.
+</dd>
+
+<p></p>
+
+<dt><strong>Blue-green deployments</strong></dt>
+<dd>
+Blue-green deployments are a technique for deploying software updates with little to no downtime by managing active traffic between two identical sets of infrastructure.  New releases can be deployed to the inactive infrastructure group and tested independently.  To release the new version, a traffic routing mechanism is switched to direct traffic from the current infrastructure to the infrastructure with the new version.  The previously-active infrastructure now functions as the target for the next updates.  This strategy is helpful in that the routing mechanism can easily switch back and forth to roll backwards or forwards depending on the success of a deployment.
+</dd>
+
+<p></p>
+
+<dt><strong>Bottleneck</strong></dt>
+<dd>
+In computing, a bottleneck occurs when the performance or capacity of a system is limited by contention around a single component.  In databases, this can be related to the hardware that the database runs on or the network environment that is available.  Application usage patterns can also affect which resource is most under contention.  To solve bottlenecks, you must first identify the resource limiting your system's performance and then either add additional capacity or take measures to reduce the rate of usage.
+</dd>
+
+<p></p>
+
+<dt><strong>CAP theorem</strong></dt>
+<dd>
+CAP theorem is a statement about distributed databases that states that any system can only provide at most two out of the following three qualities: consistency, availability, and partition tolerance.  Generally, it is agreed that partition tolerance must be a feature of any distributed system (as the only way to avoid all network partitions is to have a non-distributed system).  Therefore, each distributed system must make a decision as to whether they want to prioritize data consistency (by not accepting new changes in the case of a partition) or system availability (by sacrificing some consistency for the sake of still being able to introduce new changes during the partition).
+</dd>
+
+<p></p>
+
+<dt><strong>CRUD</strong></dt>
+<dd>
+CRUD — an acronym standing for Create, Read, Update, and Delete — describes the basic operations that one uses to operate on stored data.  In SQL, the components of CRUD broadly correspond to the operations `INSERT`, `SELECT`, `UPDATE`, and `DELETE`, but many other operations facilitate more granular actions.  More generally, CRUD is also often discussed in the context of user interfaces and APIs as a description of the types of actions that a system may permit.
+</dd>
+
+<p></p>
+
+<dt><strong>Cache</strong></dt>
+<dd>
+A cache is a component of a system designed to allow faster retrieval for high value or frequently requested pieces of data.  In general, caches function by storing a useful fraction of data on media that is either higher performance or closer to the client than the general use persistent media focused on long term, non-volatile storage.  In general, caches tend to be higher performance but tend to have more limited capacity and be more expensive.
+</dd>
+
+<p></p>
+
+<dt><strong>Cache invalidation</strong></dt>
+<dd>
+Cache invalidation is the process of targeting and removing specific items from a cache.  Most often, this is performed as part of a routine when updating records so that the data in the cache does not serve stale data to clients.
+</dd>
+
+<p></p>
+
+<dt><strong>Canary releases</strong></dt>
+<dd>
+A canary release describes a release strategy where new versions of software are deployed to a small subset of servers to test new changes in an environment with limited impact.  The deployment and resulting behavior of the test group are observed and the team can then decide if they want to roll back the changes or continue to deploy the changes to a wider range of hosts.  Canary releases are a way of testing in production while limiting the number of clients impacted by any problems.
+</dd>
+
+<p></p>
+
+<dt><strong>Candidate key</strong></dt>
+<dd>
+A candidate key in a relational database is the term for a minimal superkey.  In other words, a candidate key is any column or combination of columns that can be used to uniquely identify each record in a relation without including columns that do not help in specificity.  In a `cars` table, a unique `car_id` column would be a candidate key as well as a combination of the `make`, `model`, and `year` columns (assuming that's specific enough to eliminate any duplicates).  However, `car_id` and `make` would not be a candidate key since in this instance, `make` does nothing to narrow down the uniqueness of each row.
+</dd>
+
+<p></p>
+
+<dt><strong>Cascade</strong></dt>
+<dd>
+In relational databases, cascade is an option for how to handle deletes or updates for records that have related entries in other tables.  Cascade means that the operation (delete or update) should be applied to the child, dependent rows as well.  This helps you avoid orphaned rows in the case of deletes and out of sync values in the case of updates.
+</dd>
+
+<p></p>
+
+<dt><strong>Cassandra</strong></dt>
+<dd>
+Apache Cassandra is a distributed, wide-column NoSQL database focused on operating on and managing large volumes of data.  Cassandra scales incredibly well and each node in the cluster can accept reads or writes.  Data is stored in rows that are uniquely identifiable and partitioned based on partition key.  Each partition key returns a row of data with both column names and values defined internally, meaning each row in the same column family may contain different columns.
+</dd>
+
+<p></p>
+
+<dt><strong>Check constraint</strong></dt>
+<dd>
+A check constraint is perhaps the most flexible table or column constraint that can be added to a relational database.  It is defined as a boolean condition that must be met for the proposed data to be accepted by the system.  Because of the nature of the condition is fairly open-ended, check constraints can be used to model many different types of requirements to ensure that the data coming into the system conforms to expectations.
+</dd>
+
+<p></p>
+
+<dt><strong>Cluster</strong></dt>
+<dd>
+In computing, a cluster is a group of computers all dedicated to helping with a shared task.  Database clusters are used to increase the capacity, availability, and performance of certain types of actions compared to database deployed on a single computer.  There are many different topologies, technologies, and trade-offs that different clustered systems employ to achieve different levels of performance or fault tolerance.  Because of the diversity of different implementations, it can be difficult to generalize specific characteristics that apply to all clustered database systems.
+</dd>
+
+<p></p>
+
+<dt><strong>Collation</strong></dt>
+<dd>
+Collation in databases refers to the ordering and comparison characteristics of different character systems.  Most databases allow you to assign collation settings, which impact how text in the system are sorted, displayed, and compared against one another.  Collation is often defined using a set of labels that describe the character set, language context, and different options about sensitivity or insensitivity to capitalization, accents, and other character modifiers.
+</dd>
+
+<p></p>
+
+<dt><strong>Collections</strong></dt>
+<dd>
+In document databases, collections are containers that are used to store groups of documents together.  The collections may have semantic meaning assigned by the application and database designers, but otherwise are simply a way to partition different sets of documents from one another in the system.  Different collections can be assigned different properties and actions can be performed targeting specific collections of documents.
+</dd>
+
+<p></p>
+
+<dt><strong>Column</strong></dt>
+<dd>
+Columns are a component of table-oriented databases that label and potentially define the type of each value stored in that column.  In traditional relational databases, the properties of a series of columns are one of the primary ways of defining the properties of the table in general.  Each row added to the table must provide values that conform to the requirements associated with the table's columns.  In non-relational databases, columns can have many different properties.  Generally, however, they are used to label and define the characteristics for values that records choose to store in that column.
+</dd>
+
+<p></p>
+
+<dt><strong>Column database</strong></dt>
+<dd>
+A column database or column-oriented database is a table-oriented database similar to a traditional relational database that stores data in the background by column instead of by record.  This means that the data associated with a single column are stored together rather than grouping all of the data associated with a single record.  This can provide different performance characteristics depending on usage patterns, but generally doesn't affect how the user interacts with the data in the table on a daily basis.  Although often confused in the literature, column databases are not to be confused with wide column databases or column family databases.
+</dd>
+
+<p></p>
+
+<dt><strong>Column family</strong></dt>
+<dd>
+A column family is a database object that stores groups of key-value pairs where each key is a row identifier and each value is a group of column names and values.  All together, a column family constructs something that is akin to a table in relational databases.  However, each row can define its own columns, meaning that rows are of varying lengths and do not have to match each other in the columns represented or the data types stored.
+</dd>
+
+<p></p>
+
+<dt><strong>Command query responsibility segregation</strong></dt>
+<dd>
+Command query responsibility segregation is a application design pattern that allows you to separate operations based on their impact on the underlying database.  In general, this usually means providing different mechanisms for queries that read data versus queries that change data.  Separating these two contexts allows you to make infrastructure and system changes to scale each use-case independently, increasing performance.
+</dd>
+
+<p></p>
+
+<dt><strong>Commit</strong></dt>
+<dd>
+In the context of databases, committing data is the process whereby you execute and durably store a set of proposed actions.  Many databases are configured to automatically commit each statement as it is received by the system, but transactions, for example, are one mechanism through which you can control the commit behavior of the database by grouping multiple statements together and committing them as a group.  Committing in database is the action that is actually responsible for performing a permanent action on the system.
+</dd>
+
+<p></p>
+
+<dt><strong>Composite key</strong></dt>
+<dd>
+In relational databases, a composite key is a key composed of two or more columns that can be used to uniquely identify any record in a table.  For example, if we have a `shirts` table that only stores a single record for each combination of size and color could have a composite key defined by a combination of the `color` and `size` columns.
+</dd>
+
+<p></p>
+
+<dt><strong>Concurrency</strong></dt>
+<dd>
+Concurrency is the ability of a system to work on multiple tasks at once without affecting the overall result.  Concurrency allows systems to execute operations in parallel, increasing the relative performance of the group of tasks.
+</dd>
+
+<p></p>
+
+<dt><strong>Consistency</strong></dt>
+<dd>
+Consistency is a property of data systems that means that the individual data entities do not conflict and continue to model the information they intend to even as changes are introduced.  Each piece of data and change must be validated to ensure that it conforms to the rules imposed on the data structures and care must be taken to balance out any changes that should impact other data (like debiting and crediting different accounts at the same time).
+</dd>
+
+<p></p>
+
+<dt><strong>Constraint</strong></dt>
+<dd>
+A constraint is a limitation imposed on a specific column or table that impacts the range of values accepted by the system.  Constraints are used to define rules that the database system can enforce to ensure that values conform to requirements.
+</dd>
+
+<p></p>
+
+<dt><strong>Cursor</strong></dt>
+<dd>
+A database cursor is a way for clients to iterate over records and query results in a controlled, precise manner.  Cursors are primarily used to page through results that match a query one-by-one by iteratively returning the next row for processing.  This can help you operate on an unknown number of records by accessing the results as a queue.  Care must be taken when using cursors as they take up resources on the database system, can result in locking, and often result in many more network round trips than would be required otherwise.
+</dd>
+
+<p></p>
+
+</dl>
