@@ -286,4 +286,199 @@ A database cursor is a way for clients to iterate over records and query results
 
 <p></p>
 
+<dt><strong>Data</strong></dt>
+<dd>
+In the broadest sense, data are facts or pieces of information.  They are measurements or values that contain information about something.  In some contexts, data is defined as distinct from information in that information is analyzed or processed data while data consists only of raw values.  Practically speaking, however, these terms are often used as synonyms and typically encapsulate any fact along with the relevant context necessary to interpret or contextualize it.  Data is an essential component of almost all communication and activity and it can gain meaning and value as it is collected, analyzed, and contextualized.
+</dd>
+
+<p></p>
+
+<dt><strong>Data definition language (DDL)</strong></dt>
+<dd>
+A data definition language, or DDL, is a set of commands or actions that are used to define database structures and objects.  They are a key component to relational and other databases and are expressed as a subset of the available commands available to manage data in languages like SQL.  Data definition language is the portion of the language dedicated to describing, creating, and modifying structures and the frameworks that will hold data.
+</dd>
+
+<p></p>
+
+<dt><strong>Data independence</strong></dt>
+<dd>
+Data independence is a term used to describe the separation of database clients or applications from the underlying structure responsible for representing and storing the data.  Data independence is achieved if the database is able to abstract the structure in a way that allows user applications to continue running even if additional attributes are added to a relation (logical independence) or if the details of the storage medium changes (physical independence), for instance.
+</dd>
+
+<p></p>
+
+<dt><strong>Data mapper ORM</strong></dt>
+<dd>
+A data mapper ORM, or just simply a data mapper, is an application component that acts as a go between to translate between database representations and the data structures present in applications.  Data mappers allow your application logic and database data representations to remain independent.  The data mapper manages and translates data between these two mediums so that each representation is independent and can be structured intelligently.
+</dd>
+
+<p></p>
+
+<dt><strong>Data type</strong></dt>
+<dd>
+A data type is a category or attribute that expresses a constraint on valid values.  For example, an integer type specifies that only whole numbers are appropriate and expected for a variable or field.  Data types allow you to specify expectations and requirements about your data during when defining a field or container.  The programming language or application can then validate that introduced data meets the necessary criteria.  Data types are also help determine the available operations that can be performed on a piece of data.
+</dd>
+
+<p></p>
+
+<dt><strong>Database</strong></dt>
+<dd>
+A database is a structure used to organize, structure, and store data.  Databases are often managed by a database management system which provides an interface to manipulate and interact with the database and the data it manages.  Databases can be highly structured or allow more flexible data storage patterns and can store many different types of data in a way that allows for querying, recalling, and combining data at the time of retrieval.
+</dd>
+
+<p></p>
+
+<dt><strong>Database abstraction layer</strong></dt>
+<dd>
+A database abstraction layer is a programming interface that attempts to abstract differences between underlying database technologies to provide a unified experience or interface to the application layer.  Database abstraction layers are often helpful for developers because they help to normalize the implementation differences between various offerings and can stay stable even as the underlying technology evolves.  However, there are some challenges as well, such as leaking abstractions, masking implementation-specific features or optimizations from the user, and creating a dependency that can be difficult to dislodge.
+</dd>
+
+<p></p>
+
+<dt><strong>Database administrator (DBA)</strong></dt>
+<dd>
+A database administrator, or DBA, is a role responsible for configuring, managing, and optimizing database systems and the related ecosystem of software and hardware.  Some responsibilities they may be involved with include architecture planning, configuration, schema and change management, migrations, replication and load balancing, sharding, security considerations, managing backup strategies, and more.  Database administrators are typically expected to have expertise in database design and theory and be able to help organizations make decisions about database technology selection and implementation.  In many modern organizations, the responsibilities traditionally held by DBAs are now distributed between various members of the development and operations teams or have been offloaded to external providers to simplify some of the infrastructure management portions of the job.
+</dd>
+
+<p></p>
+
+<dt><strong>Database engine</strong></dt>
+<dd>
+A database engine is the piece of a database management system responsible for defining how data is stored and retrieved, as well as the actions supported for interacting with the system and data.  Some database management systems support multiple database engines that offer different features and designs, while other systems only support a single database engine that has been designed to align with the goals of the software.
+</dd>
+
+<p></p>
+
+<dt><strong>Database management system (DBMS)</strong></dt>
+<dd>
+A database management system, often called a DBMS or even just a "database", is an application responsible for organizing and managing data.  DBMSs can follow many different paradigms and prioritize certain goals.  Generally, at the very least, they are responsible for persisting data, organizing and categorizing data, and ingesting, manipulating, and querying data.  Most often, DBMSs offer a client / server model where the server is responsible for controlling and managing the data while clients, libraries, or APIs can be used to interact with the server to add or query data, change data structures, or manage other aspects of the system.
+</dd>
+
+<p></p>
+
+<dt><strong>Database model</strong></dt>
+<dd>
+A database model is the overall strategy used by a database management system for storing, organizing, and providing access to data.  There are many different database models available, but the relational model, which uses highly structured tables to store data in a specific format, is perhaps the most common type.  Other types of databases include document databases, wide-column databases, hierarchical databases, key-value stores, and more.  Some database systems are designed to be "multi-model", meaning they support databases with different types of models running within the same system.
+</dd>
+
+<p></p>
+
+<dt><strong>Database proxy</strong></dt>
+<dd>
+A database proxy is a software component responsible for managing connections between database clients and database servers.  Database proxies are used for a number of reasons including organizing access to a limited number of connections, allowing transparent scaling of the database layer, and redirecting traffic for deployments and similar scenarios.  Database proxies are usually designed to be transparent for applications, meaning that the applications can connect to the proxy as if they were connecting directly to the backend database.
+</dd>
+
+<p></p>
+
+<dt><strong>Dataset</strong></dt>
+<dd>
+A dataset, sometimes spelled data set, is a single collection of data.  Typically, this represents a chunk of related data applicable to a certain task, application, or area of concern.  Typically, datasets are a combination of the data itself as well as the structure and context necessary to interpret it.  They often consist of a combination of quantitative and qualitative values that can act as the raw data for further analysis and interpretation.
+</dd>
+
+<p></p>
+
+<dt><strong>Denormalization</strong></dt>
+<dd>
+Denormalization is a process where the data and structure within a database is "denormalized" or taken out of a normalized state.  This can happen accidentally if a data structure that is intended to be normalized is ill defined or mismanaged.  However, it is often also performed intentionally in certain scenarios.  Denormalization tends to allow faster access to data by storing values redundantly in different places.  The drawback of this is that write performance suffers and there is a possibility that data can get out of sync since multiple locations are used to represent the same data.
+</dd>
+
+<p></p>
+
+<dt><strong>Dirty read</strong></dt>
+<dd>
+A dirty read is a specific type of anomaly that can occur where one transaction can read data that hasn't been committed by another transaction.  If the second transaction is rolled back instead of committed, the first transaction will be using a value that doesn't reflect the actual state of the database.  Dirty reads are possible at certain isolation levels for transactions and represent a risk that can lead to inconsistency when manipulating data in parallel.
+</dd>
+
+<p></p>
+
+<dt><strong>Distributed database</strong></dt>
+<dd>
+A distributed database is a database system that spans multiple physical systems.  Data is spread across a number of machines for the sake of performance or availability.  While distributed systems can help scale a database to handle more load, they also represent a significant increase in complexity that can lead to consistency and partition challenges as well as certain negative performance impacts like an increase in data writes in some cases.
+</dd>
+
+<p></p>
+
+<dt><strong>Document</strong></dt>
+<dd>
+In the context of document databases, a document is considered a container for information representing a single record or object containing related descriptive data.  Documents can have a flexible structure that does not have to match the other documents on the system and can often be nested.  Documents are typically represented in a data serialization format like JSON or YAML that can organize the document with labels and metadata.
+</dd>
+
+<p></p>
+
+<dt><strong>Document database</strong></dt>
+<dd>
+A document database is a database model that represents items in individual objects called documents.  While documents can be grouped together for organization, they don't have to share the same structure and can be designed to uniquely capture the data required to describe the item in question.  Document databases typically don't support robust join operations to link different documents together, but are often praised for their flexibility and quick time-to-productivity due to their flexibility and ease in representing programmatic data structures.
+</dd>
+
+<p></p>
+
+<dt><strong>Durability</strong></dt>
+<dd>
+Durability is a quality of data that signifies that it has been captured on persistent storage that will survive in the event of a program crash.  Typically, this means flushing the data to a non-volatile storage medium like a hard drive that doesn't require electricity to maintain state.
+</dd>
+
+<p></p>
+
+<dt><strong>Encoding</strong></dt>
+<dd>
+Encoding is a system that translates between a character system that can represents the components used in written language and a digital representation that the computer can store and operate on.  Different encoding systems have been developed with a wide variety of character ranges.  Some are targeted at specific languages or language families (like ASCII) while others attempt to provide representation for much larger character sets appropriate for different many languages (like the UTF unicode varieties).
+</dd>
+
+<p></p>
+
+<dt><strong>Encrypted transport</strong></dt>
+<dd>
+Encrypted transport is any type of communication process that encrypts its messages prior to sending them to the recipient.  Transport encryption is necessary to ensure privacy (prevent others from seeing sensitive information) as well as avoid tampering (making manipulation of the data obvious).  Many different encrypted transport systems can used when deploying databases, including TLS/SSL encryption, VPNs, and private networks.
+</dd>
+
+<p></p>
+
+<dt><strong>Ephemerality</strong></dt>
+<dd>
+Ephemerality is a characteristic that indicates that a piece of data or circumstance is not permanent.  In many ways, it is the opposite of durability.  In databases, certain items, like data you wish to persist, should not be ephemeral.  However, other components, like a secret key used to encrypt a connection between a database and client, can benefit from being ephemeral by preventing key leakage from effecting future or past sessions.
+</dd>
+
+<p></p>
+
+<dt><strong>Ephemeral storage</strong></dt>
+<dd>
+Ephemeral storage, also sometimes called volatile or non-durable storage, is any storage medium that persists for a short time, often associated with certain conditions.  For instance, in applications, data being stored in memory will only survive while the process is running.  Similarly, data stored to a temporary directory is only available until the system reboots.  Often, ephemeral storage is useful for temporary data or as a holding area before data can be stored on a more permanent medium.
+</dd>
+
+<p></p>
+
+<dt><strong>Eventual consistency</strong></dt>
+<dd>
+Eventual consistency is a description of a consistency / availability strategy implemented by certain distributed computing or database systems.  The CAP theorem of distributed systems states that systems must choose whether prioritize availability or data consistency in the face of a network partition.  Eventual consistent systems make the choice to favor availability by continuing to serve requests even if the server's peers are not available to confirm operations.  Eventually, when the partition is resolved, a consistency routine will run to decide on the most correct state of any inconsistent data, but there will be a time where the data on different servers are not in agreement.
+</dd>
+
+<p></p>
+
+<dt><strong>Eviction</strong></dt>
+<dd>
+In the context of caches, eviction is a process where a piece of data is removed from a cache.  This can happen because the current value has been invalidated by an operation or it can occur automatically as a result of policies designed to remove the data that is the oldest or least used.
+</dd>
+
+<p></p>
+
+<dt><strong>Expand and contract pattern</strong></dt>
+<dd>
+The expand and contract pattern is a strategy for introducing new changes to a database schema without affecting existing applications.  It works by introducing changes in carefully controlled stages by first adding new or changed structures alongside existing structures and then expanding the application logic to use both structures simultaneously.  Eventually, after testing, the application can stop writing to original structure and it can be removed.
+</dd>
+
+<p></p>
+
+<dt><strong>Extract-transform-load (ETL)</strong></dt>
+<dd>
+Extract, transform, and load, often abbreviated as ETL, is a process of copying and processing data from a data source to a managed system.  First the data is extracted from its current system to make it accessible to the destination system.  Next, the data is manipulated and modified to match the requirements and format of the new system.  Finally, the reconstructed data is loaded into the new system.
+</dd>
+
+<p></p>
+
+<dt><strong>Feature flags</strong></dt>
+<dd>
+A feature flag, or a feature toggle, is a programming strategy that involves gating functionality behind an external switch or control.  The switch is typically first set to indicate that the feature should not be active.  When the organization is ready, they can activate the switch and the program will start using its new functionality.  This allows new features to be deployed without immediately activating them.  It decouples the deployment of new software from the release of the software, offering greater control over how a change is introduced and for greater testing in a production environment.
+</dd>
+  
+
 </dl>
