@@ -1,0 +1,209 @@
+---
+title: 'Understanding database replication'
+metaTitle: "What is Database Replication?| Prisma's Data Guide"
+metaDescription: 'In this article, we cover the concept of database replication and the different ways it can be achieved.'
+---
+
+## Introduction
+
+In the case of many modern day applications, their back-end is configured as a distributed database. Data is stored and processed using an arrangement, or cluster, of systems instead of one in particular. The distributed model can ensure that if there is a single system failure that the retrieval of data is not impossible. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic to be covered in this guide, database replication. 
+
+We will cover what database replication is, the benefits of implementing it, the different schemes for replicating, the different methods, architectures, and lastly the various database replication types.
+
+## What is database replication?
+
+***Database replication*** is the practice of keeping a copy of data on multiple machines that are connected via a network. As briefly alluded to in the introduction, there are several reasons why one would want to have a distributed database and therefore, implement database replication. Some of the most common benefits include the following:
+
+* improve the availability of data
+
+* increase the speed of data access
+
+* enhance server performance
+
+* accomplish disaster recovery
+
+* improve analytics
+
+
+### Improve the availability of data
+
+*Replication* improves the availability of data because it ensures against relying on a single point being compromised and losing database access. If there were some sort of technical glitch, power outage, malware, or any number of different occurrences that affected that single point, then your application would not be able to access the data needed for its proper function. 
+
+Data replication enhances the resiliency and reliability of systens by storing data across multiple nodes. If one node goes down, there is another one to step up with the exact same data on it to keep operations running smoothly.
+
+### Increase the speed of data access
+
+For companies both large and small, there may be employees located globally. Database replication helps ensure that for any given employee in the company that needs particular data that they can get it timely and without too much delay.
+
+Replicating data to local servers in the locations near to where it is being accessed, provides users with faster data access and queries. If a company had a single node in the USA, then an employee trying to pull data in Europe could experience latency when trying to access it. A company with a cluster in the USA as well as a replicated cluster in Europe would ensure that this employee can work efficiently with the data that they need when they need it.
+
+### Enhance server performance
+
+Database replication also reduces the load on the primary server of the database. If data was only able to be accessed on a single server, that server would be handling every request coming to the database. With replication, that load can be dispersed among other nodes in the distributed system. Because all of the nodes have identical replicas of the data, some queries could get handled by secondary nodes and leave the primary to handle only certain reads or only writes.
+
+Saving the primary for handling on write operations can prove to be beneficial because if it were handling all reads and writes that would put immense strain on the processing power. This could make sense for a situation where there are not many operations coming in to the database. However, in times of scaling and growth, it is best practice to delegate tasks across a distributed system rather than putting all the load on a single node's plate.
+
+### Accomplish disaster recovery
+
+In the case of catastrophe, replication also secures recovery of that gets lost or corrupted. It facilitates recovery by maintaining accurate backups at well-monitored locations. If one node in the distribution is compromised for any reason, there are nodes at the ready to help recover what was lost because of their identical replicas.
+
+This adds a level of enhanced data protection that would not be present without.
+
+### Improve analytics
+
+Similar to the benefits mentioned from enhancing server performance, replication allows for the dedication of nodes specifically for analytics. By having exact replicas of data available outside of a single site/node, there is now the option to have a secondary that is specifically used only for running analytics on the data.
+
+This makes it so any nodes handling write operations or other heavy reads are not strained also by handling analytics queries from database users. For example, your analytics team that is pulling data to put together user growth reports for the past quarter will have a dedicated node to work with and not strain any of the core nodes. This improves the performance experienced by the analytics team as well as keeping unneccesary load off the primary -- all with data that is completely the same and up to date.
+
+
+
+## Data replication schemes
+
+Decisions about data replication start with the scheme and then work down to be more and more specific until you select the type. Depending on the use case, each kind of data replication scheme may be suitable. It is important to replicate based on your business requirements and what tradeoffs you are willing to accept. We'll discuss the three most widely-adopted replication schemes.
+
+### Full data replication
+
+*Full data replication* is the practice of replicating the complete database at every site of the distributed system and can be visualized like below:
+
+[insert graphic]
+
+This scheme provides strong data availability and redundancy across a global network. For example, if a company has users in Europe, North America, and Asia, a user in Germany will still have access to the European data even if the European based server goes down because it is replicated on both North America and Asia. In the same vein, global queries tend to have faster execution because the results can come from any local server.
+
+The price to pay for maximization of availability is that the update process tends to have more latency and be on the slower side compared to other schemes.
+
+### Partial data replication
+
+Instead of replicating the full database across each site, one can practice a *partial data replication* scheme. Partial replication involves only replicating certain pieces of the database to different sites depending on the importance of that data being accessible at that location. The scheme would look something like the following:
+
+[insert graphic]
+
+If we use the same global company example from before, partial replication would make sense if there were not business requirements for each continents' data to be on every replica. Users in Europe do not need access to Asian data so there is no need to replicate that data locally to Europe. 
+
+There is a tradeoff of availability in this scheme, but if that availability is not necessary then you avoid the processing costs of full data replication and potential latency in updates. 
+
+### No replication
+
+The last scheme we will cover is *no replication*. No replication results in one fragment existing on each site of the distributed system. It would like this:
+
+[insert graphic]
+
+While this scheme provides very poor data availability across the distributed system, it does contribute to easier data recovery. In addition, this scheme can have an adverse effect on the execution speed of queries since many users access the same server instead of being spread across multiple access points.
+
+## Data replication methods
+
+Whether replicating fully or partially, the next step to understand in data replication is the method in which to replicate. There are three main methods to consider, replicating synchronously, semi-synchronously, or asynchronously. Both options have their pros and cons depending on use case, business requirements, and willingness to accept certain tradeoffs.
+
+### Synchronous
+
+In a synchronous replication process, a transaction that is written to a log on the primary server is shipped immediately over the network to the secondaries. The primary will not commit the transaction until the secondaries have confirmed that they have recorded the write on their end. 
+
+There are several benefits to this method. It ensures that every node in the cluster is at the same commit point. Reads will be consistent regardless of what node they come from. Also, any node can take over as the primary without risk of data loss because every node is in sync.
+
+The downside to this method is that if any of the secondary nodes are experiencing network latency or is completely unresponsive, then the write cannot be processed until the replication to the secondaries can happen. Potentially the primary may be in a state where it must block all writes until the synchronous replica is available again. 
+
+### Semi-synchronous
+
+In practice, those who choose a synchronous method for data replication typically take a semi-synchronous approach. This stems from the potential pitfall of a single node being down prohibiting any writes from occurring. This method allows for the replication process to only need at least one secondary to be replicated to synchronously and respond to the primary for the write to occur. 
+
+This method combines synchronous with the next method we'll cover, asynchronous replication. 
+
+### Asynchronous
+
+Contrary to the synchronous method, asynchronous replication does not immediately ship transactions to the secondaries and instead has another process uphold that responsibility. When a write occurs on the primary practicing asynchronous replication, the transaction is written to a log on the primary that is then committed and flushed to disk. A separate process is then responsible for shipping those logs to the secondaries where they are applied *as soon as possible*. Naturally, there is always some lag between what is commited on the primary and what is committed on the secondaries. 
+
+This gap may be too small in practice to ever notice, but it could be seconds, minutes, or hours. There is no guarantee that the commit from one secondary to another will be the same if there is a technical glitch in connectivity. The durability provided by the synchronous method is lost because a write is confirmed to the client even if the secondaries fall behind. 
+
+The advantage to this method is that the primary can continue processing writes, even if all the secondaries fall behind. Eventually the secondaries may be able to catch up, but there is this additional risk of replication lag and operating with eventual consistency. With a heavy write application, it may be imperative to make sure that your replication process is not prohibiting writes from occuring, making asynchronous more advantageous over synchronous.
+
+
+
+## Data replication architectures
+
+The server architecture is an important aspect to understand when it comes to database replication. There are three main architectures when it comes to database replication. These are *Single-leader*, *Multi-leader*, and *No-leader*.  Each architecture has their advantages and disadvantages that we'll dive into. 
+
+### Single-leader
+
+In a *Single-leader* architecture, there is a primary server that receives all writes from clients, and the replicas (followers) draw data from there. This architecture is the classic approach and most common. For illustration it looks like so:
+
+[insert graphic]
+
+This architecture uses a synchronized replication method. It keeps a clear, simple hierarchy among the primary and its replicas, but this also results in inflexibility. There are a few guarantees that can come with a single-leader architecture:
+
+* there will be no consistency conflicts because all writes occur against one node
+* All operations will results in the same outputs on each node assuming they are all deterministic
+
+The simplicity offered by single-leader is definitely advantageous. There is a lack of conflict resolution that can be seen in the subsequent architectures, but if more flexibility is desired it may not be the best option for a use case.
+
+
+
+#### Replication log formats [Potential Addition]
+
+
+
+### Multi-leader
+
+*Multi-leader* architecture takes the approach of having multiple servers that receive writes and serve as a model for replicas. This architecture avoids the inflexibility of having just a single node handle all write operations and serve as a singular point of replication. It can look something like below:
+
+[insert graphic]
+
+In addition to the added flexibility, multi-leader architecture is advantageous for use cases where replicas are spread out geographically. This architecture allows for leaders to stationed near their replicas and prevents latency during the replication process. 
+
+In single-leader, every write must go over the internet to the datacenter with the leader. In multi-leader, every write can be processed in the local datacenter and is replicated asynchronously to the other datacenters. The interdatacenter network delays potentially experience in single-leader are no longer perceived.
+
+Multi-leader architecture does present some challenges. For one, data may be concurrently modified in two different datacenters, and those write conflicts must be resolved. This adds some additional complexity to the system with added logic or tools. 
+
+Multi-leader can also introduce subtle configuration pitfalls with other database features. Most commonly are issues with autoincrementing keys, triggers, and integrity constraints.
+
+### No-leader
+
+Lastly, is the *No-leader* architecture. Some of the earliest replicated data systems were leaderless. This architecture allows any replica to directly accepts writes from clients. Clients send each write to several nodesm and read from several nodes in parrallel to detect inconsistencies in the data and correct them.
+
+Two potential ways for a no-leader architecture to be effective are the client directly sending writes to several replicas and another is for a coordinator node to do this on behalf of the client. Regardless, the client does not enforce a particular ordering of writes.
+
+## Types of data replication
+
+When replicating data to other sites, there are several different types of way in which this can be achieved depending on the database tools. In this section, we will cover some of the most commonly seen. All options have their pros and cons depending on the use case the replication is serving and the necessary requirements of the organization.
+
+### Full Table
+
+The first way we'll cover of replicating data is *Full table*. In this method, the entire data set is replicated in each replication job. This includes, new, updated, and existing data from the source. When replicating the full table each time to the secondary sites, it is typical for higher costs to be incurred. This higher cost stems from the fact that processing power and network bandwidth will be hit harder because the whole set is getting replicated each time. In addition, depending on the size of the table, increased latency can occur during the replication process.
+
+With higher costs, there are benefits to replicating this way. For example, it is a good option for recovery of hard-deleted data. Full table has strong resiliency because the full data is being processed and will be available to be rolled back to even if data has been hard-deleted, whether accidental or not.
+
+In addition to increased resiliency, data does also not need to possess replication keys. We'll discuss replication keys in greater detail later on. 
+
+### Transactional
+
+*Transactional* database replication is another type of replication, and it is a log-based method. Log-based replication involves a "log" of events that occur within a database and then the replication is based off of those events. With transactional replication, any identified modifications to records such as inserts, updates, and deletes are replicated from the primary to the secondary sites using the database's binary log files.
+
+Initially, the secondary sites are replicated with full initial copies of the data, and then the subscribing databases receive updates whenever the data is modified. This method is efficient than *Full table* because it only ships the new information to be replicated rather than the whole table for every replication job.
+
+The downside to *Transactional* replication occurs when a database has a very high volume of insert, update, and delete activity. This can be hard to manage for replication because of the timing of replication and the intermediate data states that are created. One would need to decide if an application should respond to each change or the net data change at a certain time. 
+
+### Snapshot
+
+*Snapshot* database replication does what its names implies and replicates data based on a snapshot exactly as it appears at any given time. With snapshot replication, the replication job occurs regardless of any changes in the data. This makes this method preferable for databases with very infrequent changes.
+
+Rather than transactional, snapshot replication makes the most sense when business requirements do not specify needing to replicate transactions when they are committed. Snapshot replication is also going to be best for instances where the replication job is small, and it does not matter that for some time the replications may be locked until the snapshot is taken.
+
+### Merge
+
+*Merge* data replication is most commonly found in server-to-client environments, and its process involves the publisher and subscriber to both make changes to the data dynamically. The data from two or more databases are then combined to form a single database. This technique entails quite a bit of complexity which is its main downside.
+
+*Merge* replication is best used for use cases where users cannot be constantly connected to the publisher entity, but whose changes to the database need to be incorporated into all versions of the database when there is a connection. An example would be a use case involving integration of data from multiple sites or consumer point of sale applications where a connection may not always be present due to network availability.
+
+### Key-based incremental
+
+*Key-based incremental* data replication is similar to *Transactional* because it only copies data that has changed since the last update. It is also commonly referred to as *key-based incremental data capture*. As mentioned briefly in the *Transactional* section, database replication can utilize a *Replication key*. These are columns in a database that are used to identify new and updated data to be replicated. During the replication process, the replication key is what a query will use to trigger relevant data replication to the secondary sites.
+
+This technique offers significantly lower costs than *Full table* for example because only a few rows are copied during each update. Where *key-based incremental* would not be ideal is in the instance of hard-deleted data because the replication key would also be deleted with the record. 
+
+
+
+## Conclusion
+
+In this article we covered the main facets that compose the concept of database replication. Understanding the different schemes, methods, and types of database replication are key to making decisions that are best for your application. Database replication is key for the development and reliability of modern applications. 
+
+While there are some disadvantages such as additional storage, additional processing to handle replicas, and complexity added to the database, the benefits of database replication prove worth the effort.
+
+Checkout out [Prisma Schema](https://www.prisma.io/docs/concepts/components/prisma-schema), [Client](https://www.prisma.io/client), and [Migrate tools](https://www.prisma.io/migrate) to work with your application and making sure with every change to your database stays in sync and type safe. Join the discussion in our [slack community](https://slack.prisma.io/).
