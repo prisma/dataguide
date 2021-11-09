@@ -5,7 +5,7 @@ metaDescription: "Learn about using foreign keys to describe relationships which
 ---
 ## Introduction
 
-Foreign keys describe relationships, and the entity-relationship diagrams (ERDs) introduced in *[Correctness and Constraints](correctness-constraints#on-the-database-foreign-keys)* map networks or graphs of those foreign keys. In these examples, there are only a few tables and relationships among them, but a visual layout is still a useful reference when it comes time to make sure every required relationship is accounted for. With larger databases, ERDs are invaluable, full stop. Many database clients have built-in tools to generate diagrams, although manual adjustment is usually required to make them readable.
+Foreign keys describe relationships, and the entity-relationship diagrams (ERDs) introduced in *[Correctness and Constraints](https://www.prisma.io/dataguide/datamodeling/correctness-constraints#on-the-database-foreign-keys)* map networks or graphs of those foreign keys. In these examples, there are only a few tables and relationships among them, but a visual layout is still a useful reference when it comes time to make sure every required relationship is accounted for. With larger databases, ERDs are invaluable, full stop. Many database clients have built-in tools to generate diagrams, although manual adjustment is usually required to make them readable.
 
 ![The first steps toward a database schema design for tracking books and patrons in a library system.](/content/modeling/libraries-initial.png)
 
@@ -15,7 +15,7 @@ This attention to detail is at least in part an historical artifact from the day
 
 ## Cascading Behaviors
 
-Inserting an invalid `author_id` into `books` isn't the only way to violate a foreign key constraint: changes to `authors` can also invalidate existing data in `books`. [Back in *Correctness and Constraints*](correctness-constraints#on-the-database-foreign-keys), unenforced foreign keys led to a copy of *Don Quixote* with a spurious `author_id`. How to resolve the contradiction between Pierre Menard and Miguel Cervantes?
+Inserting an invalid `author_id` into `books` isn't the only way to violate a foreign key constraint: changes to `authors` can also invalidate existing data in `books`. [Back in *Correctness and Constraints*](https://www.prisma.io/dataguide/datamodeling/correctness-constraints#on-the-database-foreign-keys), unenforced foreign keys led to a copy of *Don Quixote* with a spurious `author_id`. How to resolve the contradiction between Pierre Menard and Miguel Cervantes?
 
 If the Menard record could be deleted from `authors`, the copy of the *Quixote* in question would no longer have a valid `author_id`. The database rejects this, as violations cannot be allowed either from the child or the parent table. To get rid of Pierre Menard, one must first dispose of *Don Quixote*, either by deleting it or by changing its `author_id`.
 
@@ -99,7 +99,7 @@ CREATE TABLE library_patrons (
 );
 ```
 
-`checkouts`, you might have noticed, doesn't follow the same naming convention as `library_patrons` -- it's not `patron_books` or vice versa. That's because it's [more than a junction table](know-your-problem-space#what-is-important-enough-to-qualify-as-an-entity). Like `library_patrons`, `checkouts` maintains foreign keys to the tables it connects in a many-to-many relationship, but it must also include information about each patron-book connection: the date checked out, the date due or returned, whether an extension has been granted. It's also perfectly possible for someone to check out the same book multiple times, so `(patron_id, book_id)` is not a viable primary key.
+`checkouts`, you might have noticed, doesn't follow the same naming convention as `library_patrons` -- it's not `patron_books` or vice versa. That's because it's [more than a junction table](https://www.prisma.io/dataguide/datamodeling/know-your-problem-space#what-is-important-enough-to-qualify-as-an-entity). Like `library_patrons`, `checkouts` maintains foreign keys to the tables it connects in a many-to-many relationship, but it must also include information about each patron-book connection: the date checked out, the date due or returned, whether an extension has been granted. It's also perfectly possible for someone to check out the same book multiple times, so `(patron_id, book_id)` is not a viable primary key.
 
 ## Building Blocks
 
