@@ -59,11 +59,11 @@ With those categories in mind, we can start to look at the available services.
 
 ### Overview
 
-* Released: 2014
-* Focus: General serverless computing.  AWS service integration.
-* Language support: Broad
-* Maturity: Mature
-* Pricing: By invocation and resource consumption.  Additional costs for edge deployment or provisioned warm instances.
+* **Released:** 2014
+* **Focus:** General serverless computing.  AWS service integration.
+* **Language support:** Broad
+* **Maturity:** Mature
+* **Pricing:** By invocation and resource consumption.  Additional costs for edge deployment or provisioned warm instances.
 
 ### General description
 
@@ -140,11 +140,11 @@ Overall, however, AWS Lambda is a strong, general choice for serverless function
 
 ### Overview
 
-* Released: 2016
-* Focus: General serverless computing.  Azure service integration.
-* Language support: Broad
-* Maturity: Mature
-* Pricing: By invocation and resource consumption.  Tiered bundles available.
+* **Released:** 2016
+* **Focus:** General serverless computing.  Azure service integration.
+* **Language support:** Broad
+* **Maturity:** Mature
+* **Pricing:** By invocation and resource consumption.  Tiered bundles available.
 
 ### General description
 
@@ -216,11 +216,11 @@ In the end, your choice of Microsoft Azure Functions is probably similar to othe
 
 ### Overview
 
-* Released: 2016
-* Focus: General serverless computing.  GCP service integration.
-* Language support: Broad
-* Maturity: Mature
-* Pricing: By invocation and resource consumption.  Additional charge for function storage.
+* **Released:** 2016
+* **Focus:** General serverless computing.  GCP service integration.
+* **Language support:** Broad
+* **Maturity:** Mature
+* **Pricing:** By invocation and resource consumption.  Additional charge for function storage.
 
 ### General description
 
@@ -286,11 +286,11 @@ Like Microsoft, Google seems to still be following Amazon's lead in the serverle
 
 ### Overview
 
-* Released: 2018
-* Focus: Edge and performance computing.
-* Language support: JavaScript-compilable and WASM compatible languages.
-* Maturity: Newer
-* Pricing: By invocation and duration.  Different plans available.
+* **Released:** 2018
+* **Focus:** Edge and performance computing.
+* **Language support:** JavaScript-compilable and WASM compatible languages.
+* **Maturity:** Newer
+* **Pricing:** By invocation and duration.  Different plans available.
 
 ### General description
 
@@ -368,11 +368,11 @@ While Cloudflare Workers are probably not the best solution for every type of se
 
 ### Overview
 
-* Released: 2018
-* Focus: Web application integration.
-* Language support: Narrow
-* Maturity: Newer
-* Pricing: By invocation and duration.  Different tiers available.
+* **Released:** 2018
+* **Focus:** Web application integration.
+* **Language support:** Narrow
+* **Maturity:** Newer
+* **Pricing:** By invocation and duration.  Different tiers available.
 
 ### General description
 
@@ -441,11 +441,11 @@ Netlify Functions doesn't aim to be a general serverless solution.  Instead, it 
 
 ### Overview
 
-* Released: 2016
-* Focus: Web application integration
-* Language support: Broad
-* Maturity: Newer
-* Pricing: Bundled with platform
+* **Released:** 2016
+* **Focus:** Web application integration
+* **Language support:** Broad
+* **Maturity:** Newer
+* **Pricing:** Bundled with platform
 
 ### General description
 
@@ -457,7 +457,7 @@ Vercel Functions come in two flavors: Serverless Functions, which execute like r
 
 Vercel Functions are entirely focused on improving the development, deployment, and delivery experience for modern web applications.  Its offering is tightly integrated with the rest of Vercel's features to create a good experience for these workflows.
 
-This narrow focus means that Vercel Functions are not designed for general use cases, but are extremely useful if your project matches Vercel's domain.  The platform helps you use serverless functions to improve your web application's functionality and performance.
+This focus means that Vercel Functions are designed to using serverless within a web applications easier, so if your project fits in that category, it can be extremely useful.  The platform helps you implement this functionality in order to add features and increase performance.
 
 ### Features
 
