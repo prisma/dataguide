@@ -1,5 +1,5 @@
 ---
-title: 'Comparing serverless computing providers'
+title: 'Top 13 serverless computing and database providers'
 metaTitle: 'Comparing the top serverless platform options'
 metaDescription: 'Comparing popular serverless platforms: AWS Lambda, Microsoft Azure Functions, Google Cloud Functions, Cloudflare Workers, Netlify Functions, and Vercel Functions'
 metaImage: '/content/serverless/serverless-comparison/header.png'
@@ -32,6 +32,8 @@ While other options _do_ exist, in this article, we'll take a look at some of th
 * Netlify Functions
 * Vercel Functions
 
+Each of these these offerings represents an implementation of serverless computing.  To get a better sense of what serverless computing is and what benefits it can provide, check out our ["What is serverless?" article](https://www.prisma.io/dataguide/serverless/what-is-serverless).
+
 As we describe the services offered by various providers, it's helpful to be able to compare each option using the same general categories.  For this guide, we'll take a look at how each of these serverless platforms compare across:
 
 * **focus:** What is the provider's primary goal for the service?  Are they a general offering or focused on a specific aspect of the market?
@@ -41,13 +43,31 @@ As we describe the services offered by various providers, it's helpful to be abl
 * **price:** How much does it cost to use the service?  Are there free and paid tier?  What ways are usage accounted for?
 * **limitations:** What are the limits and caps on workload execution? What are the thresholds for execution time, request and response sizes, executions per day or month, etc.?
 
+We'll also briefly cover some serverless database options that can be useful to improve your serverless strategy.  We'll mention the following providers and services:
+
+* Amazon DynamoDB and Aurora Serverless
+* Microsoft Cosmos DB Serverless and Azure SQL Serverless
+* Google Firestore
+* PlanetScale
+* MongoDB Atlas Serverless
+* CockroachDB Serverless
+* Fauna
+
 With those categories in mind, we can start to look at the available services.
 
 ## AWS Lambda
 
+### Overview
+
+* Released: 2014
+* Focus: General serverless computing.  AWS service integration.
+* Language support: Broad
+* Maturity: Mature
+* Pricing: By invocation and resource consumption.  Additional costs for edge deployment or provisioned warm instances.
+
 ### General description
 
-Perhaps the best known provider in the serverless space is AWS Lambda.  Introduced in 2014, Amazon's Lambda service was one of the first providers to capture major market interest, in a large part due to the builtin customer base from other service offerings.
+Perhaps the best known provider in the serverless space is [AWS Lambda](https://aws.amazon.com/lambda/).  Introduced in 2014, Amazon's Lambda service was one of the first providers to capture major market interest, in a large part due to the builtin customer base from other service offerings.
 
 AWS Lambda remains the main service that other offerings are compared against due to its stability, range of features, and general familiarity.
 
@@ -118,9 +138,17 @@ Overall, however, AWS Lambda is a strong, general choice for serverless function
 
 ## Microsoft Azure Functions
 
+### Overview
+
+* Released: 2016
+* Focus: General serverless computing.  Azure service integration.
+* Language support: Broad
+* Maturity: Mature
+* Pricing: By invocation and resource consumption.  Tiered bundles available.
+
 ### General description
 
-Microsoft Azure Functions is the serverless offering of the Azure cloud ecosystem, released in 2016.  While AWS Lambda had a head start, Microsoft was able to use their example as a starting point for developing their own pricing strategy, positioning, and features.
+[Microsoft Azure Functions](https://azure.microsoft.com/en-us/services/functions/) is the serverless offering of the Azure cloud ecosystem, released in 2016.  While AWS Lambda had a head start, Microsoft was able to use their example as a starting point for developing their own pricing strategy, positioning, and features.
 
 Because Azure Functions aims to fill the same niche in its service catalog as AWS Lambda it is, in many ways, a similar product.  Even so, there are some important distinctions that distinguish Microsoft's offering.
 
@@ -186,9 +214,17 @@ In the end, your choice of Microsoft Azure Functions is probably similar to othe
 
 ## Google Cloud Functions
 
+### Overview
+
+* Released: 2016
+* Focus: General serverless computing.  GCP service integration.
+* Language support: Broad
+* Maturity: Mature
+* Pricing: By invocation and resource consumption.  Additional charge for function storage.
+
 ### General description
 
-Google Cloud Functions is a general serverless solution available on the Google Cloud Platform.  Released in 2016, Google Cloud Functions served to bridge the gap created by AWS Lambda a few years prior.
+[Google Cloud Functions](https://cloud.google.com/functions) is a general serverless solution available on the Google Cloud Platform.  Released in 2016, Google Cloud Functions served to bridge the gap created by AWS Lambda a few years prior.
 
 Google Cloud Functions follows the general product model offered by competing cloud platforms by offering a high performance, stable platform for deploying functionality without management.  As with other providers, care has been taken to integrate it with other services in Google's catalog to complement users already invested in the ecosystem.
 
@@ -248,9 +284,17 @@ Like Microsoft, Google seems to still be following Amazon's lead in the serverle
 
 ## Cloudflare Workers
 
+### Overview
+
+* Released: 2018
+* Focus: Edge and performance computing.
+* Language support: JavaScript-compilable and WASM compatible languages.
+* Maturity: Newer
+* Pricing: By invocation and duration.  Different plans available.
+
 ### General description
 
-Cloudflare Workers is a serverless option provided by Cloudflare that combines the functions-as-a-service model with edge computing.  Released in 2018, Cloudflare Workers decided to approach the problem from a different angle given that they are a more of a web tooling company than a general cloud provider.
+[Cloudflare Workers](https://workers.cloudflare.com/) is a serverless option provided by Cloudflare that combines the functions-as-a-service model with edge computing.  Released in 2018, Cloudflare Workers decided to approach the problem from a different angle given that they are a more of a web tooling company than a general cloud provider.
 
 Cloudflare Workers are capable of delivering high performance at a lower cost to developers due to their implementation details and some self-imposed limitations.  If your applications fit the Cloudflare Workers paradigm, it is a great choice for delivering low latency responses to your clients.
 
@@ -300,7 +344,7 @@ Cloudflare Workers are charged based on both the number of requests and the dura
 
 Bundled plans include a set amount of requests per month with a limit to the duration of each request.  The unbound plan, on the other hand, does not have a limit to execution duration but charges for both the number of requests and the amount of time spent executing.
 
-Cloudflare Workers tend to be less expensive to run than their more traditional counterparts.  The V8 execution model allows for a single machine to host more isolated functions than other runtime environments.  This increased density allows Cloudflare to handle greater capacity with the same hardware and the costs they charge is lower as a result.
+Cloudflare Workers tend to be less expensive to run than their more traditional counterparts.  The V8 execution model allows for a single machine to host more isolated functions than other runtime environments.  This increased density allows Cloudflare to handle greater capacity with the same hardware and the costs they charge are lower as a result.
 
 ### Limitations
 
@@ -322,9 +366,17 @@ While Cloudflare Workers are probably not the best solution for every type of se
 
 ## Netlify Functions
 
+### Overview
+
+* Released: 2018
+* Focus: Web application integration.
+* Language support: Narrow
+* Maturity: Newer
+* Pricing: By invocation and duration.  Different tiers available.
+
 ### General description
 
-Netlify Functions is a serverless offering provided by Netlify, a web application build and deployment platform.  The Functions product, released in 2018, is actually a value added service built on top of AWS Lambda focused on making it easier to integrate serverless functionality into the Netlify ecosystem.
+[Netlify Functions](https://www.netlify.com/products/functions/) is a serverless offering provided by Netlify, a web application build and deployment platform.  The Functions product, released in 2018, is actually a value added service built on top of AWS Lambda focused on making it easier to integrate serverless functionality into the Netlify ecosystem.
 
 While different from some of the other offerings because of this positioning, Netlify Functions is interesting because of the way that it integrates serverless within a coherent ecosystem focused on application delivery.
 
@@ -387,9 +439,17 @@ Netlify Functions doesn't aim to be a general serverless solution.  Instead, it 
 
 ## Vercel Functions
 
+### Overview
+
+* Released: 2016
+* Focus: Web application integration
+* Language support: Broad
+* Maturity: Newer
+* Pricing: Bundled with platform
+
 ### General description
 
-Vercel Functions are another entry aimed at simplifying the serverless experience for web application developers.  Like Netlify Functions, Vercel Functions are part of an overall platform focused on making web application development and delivery better a better experience.
+[Vercel Functions](https://vercel.com/docs/concepts/functions/introduction) are another entry aimed at simplifying the serverless experience for web application developers.  Like Netlify Functions, Vercel Functions are part of an overall platform focused on making web application development and delivery better a better experience.
 
 Vercel Functions come in two flavors: Serverless Functions, which execute like regular serverless services, and Edge Functions, which are deployed to and run by Vercel's edge network.  This flexibility allows you to choose between the deployment type based on what suits each function best.
 
@@ -397,7 +457,7 @@ Vercel Functions come in two flavors: Serverless Functions, which execute like r
 
 Vercel Functions are entirely focused on improving the development, deployment, and delivery experience for modern web applications.  Its offering is tightly integrated with the rest of Vercel's features to create a good experience for these workflows.
 
-This narrow focus means that Vercel Functions are not appropriate for general use cases, but are extremely useful if your project matches Vercel's domain.  The platform helps you use serverless functions to improve your web application's functionality and performance.
+This narrow focus means that Vercel Functions are not designed for general use cases, but are extremely useful if your project matches Vercel's domain.  The platform helps you use serverless functions to improve your web application's functionality and performance.
 
 ### Features
 
@@ -430,7 +490,7 @@ Evaluating the maturity of Vercel Functions is slightly complicated because of i
 
 Vercel's Serverless Functions are run on AWS Lambda, similar to the way that Netlify wraps that functionality.  For those cases, Lambda's stability is an asset to Vercel's own reliability.
 
-Vercel's Edge Functions are a newer offering that does not appear to use Amazon Lambda's infrastructure.  Instead, it runs on the V8 runtime directly similar to Cloudflare Workers.  As Edge Functions are still in beta, they probably shouldn't be considered a mature option for most contexts.
+Vercel's Edge Functions are a newer offering that does not appear to use Amazon Lambda's infrastructure.  Instead, it runs on the V8 runtime directly similar to Cloudflare Workers.  As Edge Functions are still in beta, they should probably be considered less stable and more likely to change than their Serverless Functions.
 
 ### Price
 
@@ -460,9 +520,51 @@ Vercel Functions are a good solution for web application developers using the Ve
 
 For users who need serverless for their Next.js application, Vercel is an obvious choice.  For other web application developers, Vercel Functions and the rest of the Vercel platform may be able to help you manage both your serverless needs and your application life cycle management.
 
+## Serverless computing adjacent: serverless databases
+
+While we've tried to cover some of the most common and interesting providers in the serverless computing space, there are other related services that are also worth mentioning.  In this section, we'll briefly introduce some serverless database offerings that may complement your serverless computing needs.
+
+You can read more about how serverless databases work in our ["What is serverless?" article](https://www.prisma.io/dataguide/serverless/what-is-serverless).
+
+### Amazon DynamoDB and Aurora Serverless
+
+Amazon offers a few serverless database services depending on your needs.
+
+Amazon's [DynamoDB](https://aws.amazon.com/dynamodb/) is a NoSQL serverless database solution that can scale up and down as needed to accommodate the level of requests its receiving.  It functions as a key-value store and is able to respond and scale very rapidly.
+
+For SQL oriented workloads, Amazon offers [Aurora Serverless](https://aws.amazon.com/rds/aurora/serverless/), a serverless relational database solution that scales the data processing units according to demand.
+
+### Microsoft Cosmos DB Serverless and Azure SQL Serverless
+
+Microsoft similarly offers a few options for serverless databases.
+
+Microsoft [Cosmos DB Serverless](https://docs.microsoft.com/en-us/azure/cosmos-db/serverless) is a serverless tier for their NoSQL Cosmos database.  It offers multi-model operation compatible with a few different NoSQL technologies.
+
+For relational data, Microsoft also has [Azure SQL Serverless](https://docs.microsoft.com/en-us/azure/azure-sql/database/serverless-tier-overview).  This is the serverless tier for their managed SQL database service, which scales automatically to match the incoming requests.
+
+### Google Firestore
+
+Google's serverless database offering is [Firestore](https://cloud.google.com/firestore).  Firestore is a NoSQL document database that is designed to automatically match the processing required for the queries it receives.  It focuses on being a "set it and forget it" option for document-based storage that lets you easily hook up applications during development and production.
+
+### PlanetScale
+
+[PlanetScale](https://planetscale.com/) is a MySQL-compatible serverless database platform built on Vitess, a relational database implementation built for scaling in Kubernetes environments.  PlanetScale is able to provide versioned data branching, non-blocking schema changes, and other advanced features with simple to deploy tooling.
+
+### MongoDB Atlas Serverless
+
+MongoDB Atlas is a hosted, multi-cloud version of MongoDB.  They now are offering [MongoDB Atlas Serverless](https://www.mongodb.com/cloud/atlas/serverless) as a way of interacting MongoDB according to the serverless model.  While still in preview, the serverless version of their hosted database aims offer a seamless scaling experience to accommodate different levels of use.
+
+### CockroachDB Serverless
+
+[CockroachDB Serverless](https://www.cockroachlabs.com/blog/announcing-cockroachdb-serverless/) is a newly announced offering from CockroachDB that aims to augment its flexible SQL database with serverless capabilities.  The database will automatically scale up and down according to user demand.
+
+### Fauna
+
+Fauna offers serverless transactional database instances designed to work with modern applications in diverse cloud-based contexts.  Fauna provides API based data operations that act more as a utility than a piece of infrastructure you need to manage.  This model perfectly fits with the serverless paradigm that you are already using to build your applications.
+
 ## Wrapping up
 
-To summarize the serverless offerings we've covered, we've distilled some of the details into the following table to make it easier to compare at a glance:
+To summarize the serverless offerings we've covered, we've distilled some of the details into the following table to make it easier to compare at a glance.  We'll only include the serverless compute options to avoid confusion:
 
 | Product                   | Focus                            | Language support                                                                                                                                            | Recommended usage                                                                                                 | Additional comments                                                                                                                                                                                                                                                       |
 |---------------------------|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
