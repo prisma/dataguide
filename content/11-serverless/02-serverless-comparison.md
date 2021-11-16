@@ -560,7 +560,7 @@ MongoDB Atlas is a hosted, multi-cloud version of MongoDB.  They now are offerin
 
 ### Fauna
 
-Fauna offers serverless transactional database instances designed to work with modern applications in diverse cloud-based contexts.  Fauna provides API based data operations that act more as a utility than a piece of infrastructure you need to manage.  This model perfectly fits with the serverless paradigm that you are already using to build your applications.
+[Fauna](https://fauna.com/) offers serverless transactional database instances designed to work with modern applications in diverse cloud-based contexts.  Fauna provides API based data operations that act more as a utility than a piece of infrastructure you need to manage.  This model perfectly fits with the serverless paradigm that you are already using to build your applications.
 
 ## Wrapping up
 
