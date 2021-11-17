@@ -34,6 +34,8 @@ While other options _do_ exist, in this article, we'll take a look at some of th
 
 Each of these these offerings represents an implementation of serverless computing.  To get a better sense of what serverless computing is and what benefits it can provide, check out our ["What is serverless?" article](https://www.prisma.io/dataguide/serverless/what-is-serverless).
 
+Note that we're avoiding discussion of container-based solutions here.  Container services are widespread and, in many cases, overlap in some of the value that serverless computing provides.  However, the container-based ecosystem is much broader than the short-lived, demand-oriented serverless use case, so we will maintain our focus on solutions that fit this narrower design to limit our scope.
+
 As we describe the services offered by various providers, it's helpful to be able to compare each option using the same general categories.  For this guide, we'll take a look at how each of these serverless platforms compare across:
 
 * **focus:** What is the provider's primary goal for the service?  Are they a general offering or focused on a specific aspect of the market?
@@ -43,7 +45,7 @@ As we describe the services offered by various providers, it's helpful to be abl
 * **price:** How much does it cost to use the service?  Are there free and paid tier?  What ways are usage accounted for?
 * **limitations:** What are the limits and caps on workload execution? What are the thresholds for execution time, request and response sizes, executions per day or month, etc.?
 
-We'll also briefly cover some serverless database options that can be useful to improve your serverless strategy.  We'll mention the following providers and services:
+We'll also briefly cover some serverless computing adjacent technologies like serverless databases that can be useful to improve your serverless strategy.  We'll mention the following providers and services:
 
 * Amazon DynamoDB and Aurora Serverless
 * Microsoft Cosmos DB Serverless and Azure SQL Serverless
@@ -52,6 +54,11 @@ We'll also briefly cover some serverless database options that can be useful to 
 * MongoDB Atlas Serverless
 * CockroachDB Serverless
 * Fauna
+
+At the end, we'll introduce a few newer tools and services that you might want to keep an eye out for if you are building serverless applications.  While they may not be ready for production at this time, they may be able to provide value soon:
+
+* Deno Deploy
+* Prisma Data Proxy
 
 With those categories in mind, we can start to look at the available services.
 
@@ -358,6 +365,10 @@ Cloudflare workers have the following limits or quota on their usage:
 
 As you may have noticed, the expectations for Cloudflare Workers is vastly different from the previous solutions in terms of expected execution time and resource usage.  This should provide a hint as to what types of workloads are best suited for Cloudflare's environment.
 
+It's also important to keep in mind some limitations that come from Cloudflare Workers' unique implementation.  One important limitation is that they are unable to make TCP connections, which means that database connections and other external connections might be difficult or impossible.  Cloudflare provides some other products (Workers KV: a key value store, R2: an object store, and Durable objects: objects to maintain state) meant to fill these niches in its own catalog, but it may not fit your use cases.
+
+Another limitation inherent to the V8 runtime is that the Node.js standard library isn't available, which limits the types of library functions you can use.  Keep this in mind if you are planning on writing functions that rely on the Node.js standard library.
+
 ### Summary
 
 Cloudflare Workers is a very attractive solution for many projects due to its low latency delivery and high performance execution environment.  The platform is designed specifically to allow for quick execution of small, focused functions at the edge.
@@ -561,6 +572,25 @@ MongoDB Atlas is a hosted, multi-cloud version of MongoDB.  They now are offerin
 ### Fauna
 
 [Fauna](https://fauna.com/) offers serverless transactional database instances designed to work with modern applications in diverse cloud-based contexts.  Fauna provides API based data operations that act more as a utility than a piece of infrastructure you need to manage.  This model perfectly fits with the serverless paradigm that you are already using to build your applications.
+
+## Newer options to keep an eye out for
+
+Finally, we'll introduce a few tools and services that you might want to keep in mind for the future.  These are just getting their start, but have potential to help with many serverless projects.
+
+
+### Deno Deploy
+
+[Deno Deploy](https://deno.com/deploy/) is a new serverless compute offering being introduced by Deno.  Similar to Cloudflare Workers, Deno Deploy allows you to deploy code to edge servers running Chrome's V8.  Because of this runtime choice, it has many of the same benefits and limitations of Cloudflare Workers (high density and performance, no support for opening TCP connections or using full Node.js libraries).
+
+Deno Deploy hopes to provide you with a unified developing experience by using the same technology as the Deno CLI.  Deno Deploy is currently in beta, so it is worth taking a look at its current progress and checking back in often.
+
+### Prisma Data Proxy
+
+[Prisma Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy) is a new tool designed to make connecting to databases simpler in a serverless context.  Because the instances used by serverless providers to execute functions are, by nature, ephemeral, it is easy to exhaust the connection pool to any backing databases if too many function instances are active at once.
+
+Prisma Data Proxy provides a solution for this problem by acting as an intermediary to a database.  Serverless instances can instead connect to the Data Proxy which manages the connection pooling automatically to avoid failed or delayed serverless evocations due to resource contention.
+
+Prisma Data Proxy is currently an Early Access feature so it isn't ready for production environments quite yet.  You can follow the progress, however, to get an idea of how it works and to get a heads up when it's stable.
 
 ## Wrapping up
 
