@@ -1,7 +1,7 @@
 ---
 title: 'Tables, Tuples, Types'
-metaTitle: "Data Modeling | Tables, Tuples, Types | Prisma's Data Guide"
-metaDescription: "Calling tables the \"basic building block\" of relational databases is a little reductive. While it's hard to miss the mark by much in drawing up a list of each datum you're interested in and declaring this an integer, that a date, and so forth, effective relational database design depends first and foremost on well-thought-out and well-formulated table designs. "
+metaTitle: "Tables, Tuples, and Data Types in Databases | Data Modeling"
+metaDescription: "Effective database design depends first on well-thought-out and well-formulated table designs. Here we discuss data types, tuples, tables, and more."
 ---
 ## Introduction
 
@@ -62,7 +62,7 @@ It bears mentioning here that relational databases are not especially good at be
 
 For most of the history of relational databases, substrings and the like have been the limit of delving into large objects, which are otherwise structurally opaque. What data types like `JSON` and `XML` ask is "what if they weren't?". Both JSON and XML documents are hierarchical, something earlier database designers had to break out the foreign keys and `JOIN`s to accommodate. Moreover, semi-structured types describe their own schemas. The only requirement the database can impose is that values be correctly formed, whatever their contents.
 
-Hierarchies are not uncommon, even in information systems mostly operating by relational rules. An addressable, processable hierarchy-as-data-type makes storage and retrieval about as simple as possible, and allows blending relational and document strategies to good effect. A table that does little more than wrap a document field can even make a helpful prototyping tool in the especially early stages of defining the schema. And while SQL is unlikely ever to match e.g. JavaScript's facility with a format named after it, the functionality that exists around these types (hierarchic or otherwise) opens up a lot of possibilities for [database programming](functional-units).
+Hierarchies are not uncommon, even in information systems mostly operating by relational rules. An addressable, processable hierarchy-as-data-type makes storage and retrieval about as simple as possible, and allows blending relational and document strategies to good effect. A table that does little more than wrap a document field can even make a helpful prototyping tool in the especially early stages of defining the schema. And while SQL is unlikely ever to match e.g. JavaScript's facility with a format named after it, the functionality that exists around these types (hierarchic or otherwise) opens up a lot of possibilities for [database programming](https://www.prisma.io/dataguide/datamodeling/functional-units).
 
 ### Collections and More
 
@@ -78,7 +78,7 @@ User-defined types in SQL Server or Oracle, composite types in PostgreSQL: they 
 
 A list of each datum you're interested in, this an integer, that a date, and so forth. Types and tuples, columns and rows, make a table functionally complete. But there's more than completeness to think about: how can a table ensure that the information it records is *correct*?
 
-Coming up in [*Correctness and Constraints*](correctness-constraints), we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
+Coming up in [*Correctness and Constraints*](https://www.prisma.io/dataguide/datamodeling/correctness-constraints), we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
 
 <AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
 
