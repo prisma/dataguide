@@ -1,0 +1,105 @@
+---
+title: 'Introduction to common serverless challenges'
+metaTitle: 'Serverless computing challenges'
+metaDescription: 'Learn about common serverless challenges like cold starts, lock-in, debugging trouble and more.'
+metaImage: '/content/serverless/what-is-serverless/header.png'
+---
+
+## Introduction
+
+The serverless paradigm represents a notable shift in the way that application and web developers interact with infrastructure, language runtimes, and supplemental services.  It offers the freedom to focus on your primary area of concern by abstracting away and taking responsibility for many of the environmental factors that traditionally affect the way code runs in production.
+
+While [serverless computing has many benefits](https://www.prisma.io/dataguide/serverless/what-is-serverless#when-is-serverless-a-good-choice), it also has some challenges that must be acknowledged or addressed before you can be successful.  In this guide, we'll talk about some of the main pain points of the current generation of solutions and discuss what they mean and how you might work around them.  You should come away with a better understanding of what requirements you may have to fulfill and what roadblocks you may run into.
+
+<PrismaOutlinks>
+
+[Prisma's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+
+</PrismaOutlinks>
+
+## Cold start problems
+
+One of the most commonly discussed challenges when working with serverless is called the *cold start* problem.  While the goal with serverless is allow functions to immediately be executed on demand, there are some scenarios that may result in predictable delays.
+
+### What is the cold start problem?
+
+One big selling point for serverless is the ability to scale to zero in periods of no activity.  If a function is not actively being executed, the function's resources are spun down, returning capacity to the platform and reducing the cost for the user of reserving those components.  This is ideal from a cost perspective as it means users only pay for the time and resources their code actually executes.
+
+The downside to this is that when the resources spin down completely, there is a predictable delay the next time it needs to execute.  The resources need to be reallocated to run the function, which takes time.  You end up with one set of performance characteristics for "hot" functions that have been recently used and another profile for "cold" functions that need to wait for the platform to create the execution environment.
+
+### How do developers try to address cold start?
+
+There are a number of ways developers and platforms have tried to address this problem.  Some developers schedule "dummy" requests to keep the resources associated with their functions on standby.  Many platforms have added an additional tier to their services to allow developers to automatically keep resources on standby.
+
+These solutions start to blur the line a bit as to what constitutes a serverless environment.  When developers are forced to pay for standby resources when their code is not actively executing, it raises some questions about some of the fundamental claims of the serverless paradigm.
+
+A recent alternative to preallocating resources has been to sidestep the problem by switching to a lighter runtime environment.  Runtimes like V8 have a much different execution strategy than traditional serverless and are able to avoid cold start problems by using different isolation technologies and a more pared down environment.  They avoid cold start issues at the expense of compatibility with functions that have dependencies on a more robust environment.
+
+## Application design constraints
+
+Another challenge that is fundamental to the serverless model is the application design it imposes.  Serverless platforms are only useful for applications that can work within their constraints.  Some of these are inherent in cloud computing in general, while other requirements are dictated by the serverless model specifically.
+
+### Designing a cloud-friendly architecture
+
+The first requirement that applications must meet to use serverless platforms is to be designed in a cloud-friendly way.  In the context of this discussion, at the very least this means that the application must be at least partly deployable to a cloud service that the other components are able to communicate with.  And while it's possible to implement monolithic functions in your design, the serverless model best accommodates microservice architectures.
+
+The upshot of this is that your application must be designed in part as a series of functions executed by your serverless provider.  You must be comfortable with the processing taking place on infrastructure that you do not control.  Furthermore, you must be able to decompose your application's functionality into discrete functions that can be executed remotely.
+
+### Dealing with stateless execution
+
+Serverless functions are, by design, stateless.  That means that, while some information may possibly be cached if the function is executed with the same resources, you can't rely on any state being shared between invocations of your functions.
+
+You must design your functions to have all of the information they need to execute internally.  Any external state must be fetched at the beginning of invocation and exported before finishing.  Since functions may be executed in parallel, this also limits what type of state may reasonable acted upon.  In general, the less state that your functions have to manage, the faster and cheaper they will be to execute and the less complexity you will have to manage.
+
+There are other side effects of the function's ephemeral nature as well.  If your functions need to reach out to a database system, there is a good chance you may quickly exhaust your database's connection pool.  Since each invocation of your functions can be executed in a different context, your database's connection pool can quickly drain as it responds to different invocations or tries to return resources to its pool.  Solutions like [Prism's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy) help mitigate these issues by managing the connection resources for the serverless instances in front of whatever connection pooling is in place.
+
+## Provider lock-in concerns
+
+One challenge that is difficult to get away from with serverless is provider lock-in.  When you architect your application to rely on external functions running on a specific provider's platform, it can be difficult to migrate to a different platform at a later time.
+
+### What types of lock-in can occur?
+
+For applications built targeting a specific serverless platform, many different factors can interfere with cleanly migrating to another provider.  These may result from the serverless implementation itself or from use of the provider's related services that might be integrated into the application design.
+
+In terms of lock-in caused by the actual serverless implementation, one of the most basic differences between providers can be the languages supported for defining functions.  If your application functions are written in a language not supported by other candidate providers, migration will be impossible without reimplementing the logic in a supported language.  A more subtle example of serverless incompatibilities are the differences in the way that different providers conceptualize and expose the triggering mechanisms for functions within the platform.  You might need to redefine how your trigger is implemented on your new platform if those mechanisms differ significantly.
+
+Other types of lock-in can occur when serverless applications use other services in their provider's ecosystem to support their application.  For example, since serverless functions don't handle state, it's common to use the provider's object storage offering to store any artifacts produced during invocation.  While object storage is widely implemented using a standard interface, it demonstrates how the constraints of the serverless architecture can lead to greater adoption and dependence on the ecosystem of other available services.
+
+### What developers do to try to limit lock-in
+
+There are some ways that developers can attempt to minimize the likelihood or impact of lock-in for their applications.
+
+Writing your functions in a widely supported language like JavaScript is one of the easiest ways to avoid hard dependencies.  If your language of choice is supported by many providers, it gives you options for other platforms that might be able to run your code.
+
+Developers can also try to limit their use of services to those that are commodity offerings supported almost the same on each platform.  For instance, the object storage example we used before is actually an ideal example of a service that is likely replaceable by another provider's offering.  The more specialized the service you're depending on, the more difficult it will be to move out of the ecosystem.  This is a trade-off you'll have to evaluate on a case-by-case basis, as you might have to forgo specialized tools for their more generic counterparts.
+
+## Concerns about lack of control and insight when debugging
+
+One of the common complaints levied at serverless by developers evaluating it for future projects is the lack of control and insight serverless platforms provide.  Part of this is inherent in the offering itself, as control of the infrastructure running the code would, necessarily, disqualify the service from the serverless category.  Still, developers are often still apprehensive about deploying in an environment that limits visibility and control, especially when it comes to diagnosing issues that might affect uptime and impact production.
+
+### What types of differences can developers expect?
+
+The promise of the serverless paradigm is to shift the responsibility for everything but the code itself to the platform provider.  This can yield many advantages in terms of operations overhead and simplifying the execution environment for developers, but it also makes many techniques and tools that developers might typically rely on either more difficult or impossible to use.
+
+For instance, some developers are used to being able to debug by accessing the programming environment directly, either by connecting to a host with SSH or by introspecting the code and using data that is exposed by the process.  These are not generally possible or easy in serverless environments because the execution environment is opaque to the user and only specific interfaces like function logs are available for debugging.  This can make it difficult to diagnose problems, especially when it's impossible to reproduce locally or when multiple functions are invoked in a pipeline.
+
+### What options are available to help?
+
+There are a number of different strategies developers can adopt to help them work within this more limited debugging environment.
+
+Some serverless functionality can be run or emulated locally, allowing developers to debug on their own machine what they are unable to debug in production on their provider.  A number of tools were designed to emulate common serverless platforms so that developers can recapture some of the diagnostic capabilities they might be missing.  They can allow you to step through functions, see state information, and set breakpoints.
+
+For debugging on the platform itself, you have to try to take advantage of all of the tools offered by the provider.  This often means logging heavily within your functions, using API testing tools to trigger functions automatically with different input, and using any metrics the platform offers to try to gain insight into what may be happening in the execution environment.
+
+## Wrapping up
+
+Serverless environments offer a lot of value in terms of developer productivity, reduced operational complexity, and real cost savings.  However, it's important to remain aware of the limitations of the paradigm and some of the special challenges that you might have to address when designing applications to operate in serverless environments.
+
+By gaining familiarity with the different obstacles that you might face, you can make a better informed decision as to what applications might benefit most from the trade-offs present.  You will also be better prepared to approach these problems with a better understanding of how to mitigate them or avoid them through additional tooling or design considerations.
+
+
+<PrismaOutlinks>
+
+[Prisma's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+
+</PrismaOutlinks>
