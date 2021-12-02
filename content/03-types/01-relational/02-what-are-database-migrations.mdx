@@ -17,7 +17,7 @@ In this article, we'll go over what database schema migrations are, what problem
 
 Database migrations, also known as [schema migrations](https://en.wikipedia.org/wiki/Schema_migration), database schema migrations, or simply migrations, are controlled sets of changes developed to modify the structure of the objects within a relational database.  Migrations help transition database schemas from their current state to a new desired state, whether that involves adding tables and columns, removing elements, splitting fields, or changing types and constraints.
 
-Migrations manage incremental, often reversible, changes to data structures in a programmatic way.  The goals of database migration software is to make database changes repeatable, shareable, and testable without loss of data.  Generally, migration software produces artifacts that describe the exact set of operations required to transform a database from a known state to the new state.  These can be checked into and managed by normal version control software to track changes and share among team members.
+Migrations manage incremental, often reversible, changes to data structures in a programmatic way.  The goals of database migration software are to make database changes repeatable, shareable, and testable without loss of data.  Generally, migration software produces artifacts that describe the exact set of operations required to transform a database from a known state to the new state.  These can be checked into and managed by normal version control software to track changes and share among team members.
 
 While preventing data loss is generally one of the goals of migration software, changes that drop or destructively modify structures that currently house data can result in deletion.  To cope with this, migration is often a supervised process involving inspecting the resulting change scripts and making any modifications necessary to preserve important information.
 
@@ -33,7 +33,7 @@ Some other benefits include being allowed (and sometimes required) to manually t
 
 Migration systems are not without their faults but fortunately, most of these can be mitigated through processes and oversight.
 
-Because migrations modify existing database structures, care must be taken to avoid data loss.  This can be caused by incorrect assumptions made by the tooling or by transformations that require understanding of the meaning behind the data structures.  Although it may be tempting to presume that the generated migration files are correct, since the migrations files are primarily concerned with the data structures, it is your responsibility to ensure that the data is also preserved or transformed correctly.
+Because migrations modify existing database structures, care must be taken to avoid data loss.  This can be caused by incorrect assumptions made by the tooling or by transformations that require an understanding of the meaning behind the data structures.  Although it may be tempting to presume that the generated migration files are correct, since the migrations files are primarily concerned with the data structures, it is your responsibility to ensure that the data is also preserved or transformed correctly.
 
 Migrations can also go poorly if they are applied to a database that is in a different state than assumed.  For example, this can happen when changes are made to the database structure outside of the bounds of the migration system or when migrations are applied in the wrong order.  All migration systems rely on understanding the current state of the database to correctly modify the existing structures.  If the actual state diverges from the assumed state, the migrations may fail or may change the database in undesirable ways.
 
@@ -47,7 +47,7 @@ There are two main types of schema transformation strategies employed by migrati
 
 State based migration software creates artifacts that describe how to recreate the desired database state from scratch.  The files that it produces can be applied to an empty relational database system to bring it fully up to date.
 
-After the describing the desired state are created, the actual migration involves comparing the generated files against the current state of the database.  This process allows the software to analyze the difference between the two states and generate a new file or files to bring the current database schema in line with the schema described by the files.  These change operations are then applied to the database to reach the goal state.
+After the artifacts describing the desired state are created, the actual migration involves comparing the generated files against the current state of the database.  This process allows the software to analyze the difference between the two states and generate a new file or files to bring the current database schema in line with the schema described by the files.  These change operations are then applied to the database to reach the goal state.
 
 #### What to keep in mind with state based migrations
 
@@ -91,11 +91,11 @@ Put another way, database schema migrations are one of the changes you'll be mai
 
 ### During testing and deployment
 
-Once your migrations have been created, you will usually deploy the them in increasingly important environments to ensure that they work as expected and that all of your code's requirements are satisfied.  While you likely developed and applied the migrations in a development environment, you will probably need to test it in additional environments with more realistic data, integrations, and load, just as you would with code changes.
+Once your migrations have been created, you will usually deploy them in increasingly important environments to ensure that they work as expected and that all of your code's requirements are satisfied.  While you likely developed and applied the migrations in a development environment, you will probably need to test it in additional environments with more realistic data, integrations, and load, just as you would with code changes.
 
 At this point, you need to ensure that the migration files apply cleanly to the target database, that the initial target state shares the structure and the assumptions you had while developing the migration files, and that the data held by the database is not negatively impacted by the changes you are making.  A mixture of manual and automated checks may be performed to confirm these requirements are satisfied.
 
-Once the changes have been validated as safe and functional in the staging environments, they may be ready to applied to production database systems.  Before applying the migrations to production systems, it is important to consider performing a full backup of the current data if a recent copy is not currently available.  Backups are vital in the event that the migration has unforeseen consequences or if differences between the staging environments and production cause data loss.
+Once the changes have been validated as safe and functional in the staging environments, they may be ready to be applied to production database systems.  Before applying the migrations to production systems, it is important to consider performing a full backup of the current data if a recent copy is not currently available.  Backups are vital in the event that the migration has unforeseen consequences or if differences between the staging environments and production cause data loss.
 
 ## How to choose the best migration tools
 
