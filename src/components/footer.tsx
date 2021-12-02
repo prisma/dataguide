@@ -103,7 +103,7 @@ const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
             <h4>Prisma's Data Guide</h4>
             <p>A growing library of articles focused on making databases more approachable.</p>
           </div>
-          <div className="love">Made with ❤️ by <a href="https://prisma.io" target="_blank">Prisma</a></div>
+          <div className="love">Made with ❤️ by <a href="https://www.prisma.io" target="_blank">Prisma</a></div>
         </div>
       </div>
     </FooterWrapper>

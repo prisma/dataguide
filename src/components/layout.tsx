@@ -10,6 +10,7 @@ import customMdx from '../components/customMdx'
 import HomePageHeader from '../components/homePageHeader'
 import './layout.css'
 import Sidebar from './sidebar'
+import Banner from './banner'
 
 interface PathProps {
   isHomePage?: boolean
@@ -88,6 +89,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
   return (
     // <ThemeProvider theme={theme}>
     <MDXProvider components={customMdx}>
+      <Banner />
       {!isHomePage && <Header headerProps={header} />}
       {isHomePage && <HomePageHeader />}
       <Wrapper>
