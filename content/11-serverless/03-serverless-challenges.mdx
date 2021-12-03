@@ -19,7 +19,7 @@ While [serverless computing has many benefits](https://www.prisma.io/dataguide/s
 
 ## Cold start problems
 
-One of the most commonly discussed challenges when working with serverless is called the *cold start* problem.  While the goal with serverless is allow functions to immediately be executed on demand, there are some scenarios that may result in predictable delays.
+One of the most commonly discussed challenges when working with serverless is called the [*cold start* problem](https://www.prisma.io/dataguide/serverless/serverless-glossary#cold-start).  While the goal with serverless is allow functions to immediately be executed on demand, there are some scenarios that may result in predictable delays.
 
 ### What is the cold start problem?
 
@@ -49,13 +49,13 @@ The upshot of this is that your application must be designed in part as a series
 
 Serverless functions are, by design, stateless.  That means that, while some information may possibly be cached if the function is executed with the same resources, you can't rely on any state being shared between invocations of your functions.
 
-You must design your functions to have all of the information they need to execute internally.  Any external state must be fetched at the beginning of invocation and exported before finishing.  Since functions may be executed in parallel, this also limits what type of state may reasonable acted upon.  In general, the less state that your functions have to manage, the faster and cheaper they will be to execute and the less complexity you will have to manage.
+You must design your functions to have all of the information they need to execute internally.  Any external state must be fetched at the beginning of invocation and exported before finishing.  Since functions may be executed in parallel, this also limits what type of state may reasonable be acted upon.  In general, the less state that your functions have to manage, the faster and cheaper they will be to execute and the less complexity you will have to manage.
 
 There are other side effects of the function's ephemeral nature as well.  If your functions need to reach out to a database system, there is a good chance you may quickly exhaust your database's connection pool.  Since each invocation of your functions can be executed in a different context, your database's connection pool can quickly drain as it responds to different invocations or tries to return resources to its pool.  Solutions like [Prism's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy) help mitigate these issues by managing the connection resources for the serverless instances in front of whatever connection pooling is in place.
 
 ## Provider lock-in concerns
 
-One challenge that is difficult to get away from with serverless is provider lock-in.  When you architect your application to rely on external functions running on a specific provider's platform, it can be difficult to migrate to a different platform at a later time.
+One challenge that is difficult to get away from with serverless is [provider lock-in](https://www.prisma.io/dataguide/serverless/serverless-glossary#vendor-lock-in).  When you architect your application to rely on external functions running on a specific provider's platform, it can be difficult to migrate to a different platform at a later time.
 
 ### What types of lock-in can occur?
 
