@@ -359,3 +359,40 @@ Joins are an essential part of what makes relational databases powerful and flex
 Prisma allows you to [define relations](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/relations) between models in the Prisma schema file.  You can then use [relation queries](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/relation-queries) to work with data that spans multiple models.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>Does PostgreSQL support outer join?</summary>
+
+Yes, PostgreSQL supports outer joins. For example, you can use `LEFT OUTER JOIN` or just `LEFT JOIN` like in the following:  
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+LEFT JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
+
+<details><summary>What is Lateral Join in PostgreSQL?</summary> 
+
+Yes, the `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/9.3/sql-select.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
+
+</details>
+
+<details><summary>Does PostgreSQL support cross join?</summary> 
+
+Yes, a `CROSS JOIN` can be done in PostgreSQL. The syntax will look something like:
+
+```sql
+SELECT select_list
+FROM t1
+CROSS JOIN t2;
+```
+
+An example output can be seen [here](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#cross-join)
+
+</details>
