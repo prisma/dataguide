@@ -619,3 +619,67 @@ It is important to know what data types are available to you when using a databa
 
 If you are interested in checking out Prisma with a MongoDB database, you can check out the [data connector documentation](https://www.prisma.io/docs/concepts/database-connectors/mongodb).
 
+## FAQ
+
+<details><summary>Can you store regular expression patterns in MongoDB?</summary>
+
+Yes, MongoDB allows for the storage of regular expression with the [`Regular Expression` data type](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#regular-expression).
+
+For instance, you can insert the `Regular Expression` data type like this:
+
+```sql
+db.mytestcoll.insertOne({exampleregex: /tt/})
+{
+        "acknowledged": true,
+        "insertedId": ObjectId("614b37296a124db40ae74d16")
+}
+db.mytestcoll.insertOne({exampleregext:/t+/})
+{
+        "acknowledged": true,
+        "insertedId": ObjectId("614b37296a124db40ae74d17")
+}
+```
+
+</details>
+
+<details><summary>How are dates represented as a data type in MongoDB?</summary>
+
+There are three methods for returning date values.
+
+`Date()` - returns a string
+
+`new Date()` - returns a date object using the ISODate() wrapper
+
+`ISODate()` - also returns a date object using the ISODate() wrapper
+
+[Here](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date) is an example of inserting data using each method and how that data is returned from a query.
+
+</details>
+
+<details><summary>Does MongoDB support transactional data?</summary>
+
+Yes, MongoDB supports both single document structure and multi-document structure for transactional data.
+
+An [API](https://docs.mongodb.com/manual/core/transactions/#transactions-api) and other [operations](https://docs.mongodb.com/manual/core/transactions/#transactions-and-operations) are also available to use with transactional data.
+
+</details>
+
+<details><summary>How does MongoDB store images?</summary>
+
+For images less than 16MB in size, MongoDB can store images using the [`BinData`](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#binary-data) data type.
+
+For images greater than 16MB, MongoDB recommends using [GridFS](https://docs.mongodb.com/manual/core/gridfs/#when-to-use-gridfs) for storing in your database.
+
+</details>
+
+<details><summary>Can MongoDB store arrays?</summary>
+
+Yes, MongoDB can store arrays with the BSON Array type. It is represented in MongoDB as follows:
+
+```
+       Type         | Number |     Alias    |
+ ------------------ | ------ | ------------ |
+       Array        |    4   |    "array"   |
+```
+
+</details>

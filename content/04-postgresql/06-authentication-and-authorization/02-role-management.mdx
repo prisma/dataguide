@@ -441,3 +441,57 @@ RESET ROLE;
 ## Conclusion
 
 PostgreSQL's system of roles, role attributes, grants, and authentication create a flexible system that allows administrators to effectively manage permissions and database access.  This guide described what exactly roles are and how they encompass a broad range of use cases.  It also covered how to create, modify, and delete roles and manage the role attributes that determine their global capabilities.  Understanding how to manage these identities is necessary in order to secure your databases and provide usable access to your legitimate users.
+
+## FAQ
+
+<details><summary>How can you alter a role's password in PostrgreSQL?</summary>
+
+To [change a role's password](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#changing-existing-roles) in PostgreSQL, you can user the `ALTER` statement with `PASSWORD`. The syntax would look like this:
+
+```sql
+ALTER ROLE <role> WITH PASSWORD '<password>';
+```
+
+Alternatively, you can also use the `psql` meta-command like so:
+
+```sql
+- To change your own password
+\password
+-- To change the password for another role
+\password <role>
+```
+
+</details>
+
+<details><summary>How do check your current user attributes in PostgreSQL?</summary>
+
+To find the [attributes of the current role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#listing-your-own-attributes), you can use `psql` meta-commands with the `USER` variable which will be substitued with the current connected role.
+
+The basic syntax and result would look like:
+
+```sql
+\du :USER
+```
+```sql
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+```
+</details>
+
+<details><summary>How can you check grant user privileges in PostgreSQL?</summary>
+
+To check whether a role can [grant user privileges or create roles](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#check-whether-you-have-role-management-privileges), you can use use the following SQL statement:
+
+```sql
+SELECT rolname as "Users who can manage roles" FROM pg_roles WHERE rolsuper OR rolcreaterole;
+```
+
+To check if your user has these privileges you can use the following statement:
+
+```sql
+SELECT 'Yes' AS "Can I manage roles?" FROM pg_roles WHERE rolname = :'USER' AND (rolsuper OR rolcreaterole);
+```
+
+</details>

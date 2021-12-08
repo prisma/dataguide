@@ -561,3 +561,63 @@ This will remove the database and any child elements, like tables, within.
 This article covered the basics of how to create and delete databases and tables within PostgreSQL.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.
 
 As mentioned earlier, the SQL statements covered in this PostgreSQL tutorial, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change PostgreSQL's behavior.  You can find out more about these by checking out the [official PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
+
+## FAQ
+
+
+<details><summary>Does PostgreSQL support the `IF NOT EXISTS` clause when using the `CREATE DATABASE` command?</summary>
+
+Yes, PostgreSQL supports the use of `IF NOT EXISTS` when creating both databases and tables. The below demonstrates using the clause for table creation, and you can read more about its use [here](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#create-tables-conditionally-with-the-if-not-exists-clause) 
+
+```sql
+CREATE TABLE IF NOT EXISTS table_name (
+    column_name TYPE [column_constraint],
+    [table_constraint,]
+);
+```
+
+</details>
+
+<details><summary>How do you create a database from a dump in PostgreSQL?</summary>
+
+To create a database from a dump, PostgreSQL provides the [utility program `pg_dump`](https://www.postgresql.org/docs/9.1/backup-dump.html).
+
+This program recreates the database in the same state as it was at the time of the dump. Example syntax would look like the following:
+
+```sql
+pg_dump dbname > outfile
+```
+
+</details>
+
+<details><summary>Which command line creates a database in PostrgreSQL?</summary>
+
+To create a database in PostgreSQL, use the `CREATE DATABASE` command. The syntax is as follows:
+
+```sql
+CREATE DATABASE db_name;
+```
+
+</details>
+
+<details><summary>How do you drop a database in PostgreSQL?</summary>
+
+The [`DROP DATABASE`](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#drop-databases) statement tells PostgreSQL to delete the specified database. The basic syntax looks like this:
+
+```sql
+DROP DATABASE database_name;
+```
+
+</details>
+
+<details><summary>How do you change a column's data type in PosgreSQL?</summary>
+
+To change the data type for a specific column, use the `ALTER COLUMN` change command with the `SET DATA TYPE` column command.
+
+The basic syntax includes column name, the new type, and an optional `USING` clause to specify the old type's conversion.
+
+```sql
+ALTER TABLE resident ALTER COLUMN id SET DATA TYPE int USING id::int;
+```
+
+</details>

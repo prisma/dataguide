@@ -467,3 +467,72 @@ MongoDB's user management and authentication configuration lets you control who 
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>How do you list existing users in MongoDB?</summary>
+
+To list existing users in MongoDB, you can use the `db.getUsers()` method to show all of the users within the current database. 
+
+The syntax would look like:
+
+```sql
+db.getUsers()
+```
+More details can be seen [here](https://www.prisma.io/dataguide/mongodb/configuring-mongodb-user-accounts-and-authentication#how-do-you-show-existing-users).
+
+</details>
+
+<details><summary>How do you create a database admin user in MongoDB?</summary>
+
+In order to create a [database admin user](https://www.prisma.io/dataguide/mongodb/authorization-and-privileges#what-roles-are-available-in-mongodb-by-default) in MongoDB, you will want to use the `db.createUser()` method in the `admin` database. 
+
+The following demonstrates the syntax to use, and more detail can be found [here](https://www.prisma.io/dataguide/mongodb/authorization-and-privileges#what-roles-are-available-in-mongodb-by-default).
+
+```sql
+db.createUser(
+{	user: "tom",
+	pwd: "hellothere",
+
+	roles:[{role: "dbAdmin" , db:"admin"}]})
+```
+
+</details>
+
+<details><summary>How do you drop a user in MongoDB?</summary>
+
+To remove a MongoDB user you can use the `db.dropUser()` method. This needs to be done in the `admin` database, and the syntax would look like this:
+
+```sql
+db.dropUser("tom")
+```
+
+</details>
+
+<details><summary>How do you check if a database user exists in MongoDB?</summary>
+
+To get a list of all existing users in MongoDB, you can use the `db.getUsers()` method.
+
+The basic syntax would look like:
+
+```sql
+use admin
+db.getUsers()
+```
+
+</details>
+
+<details><summary>How can you check user privileges in MongoDB?</summary>
+
+To query for a [specific user](https://www.prisma.io/dataguide/mongodb/configuring-mongodb-user-accounts-and-authentication#how-do-you-show-existing-users), you can use the `db.getUser()` method with the `showPrivileges` `arg` set to `true`.
+
+The basic syntax would look like:
+
+```sql
+use admin
+db.getUser("tom",
+{
+    showPrivileges: true,
+})
+```
+</details>
