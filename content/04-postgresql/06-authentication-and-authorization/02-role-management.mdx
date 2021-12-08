@@ -495,3 +495,28 @@ SELECT 'Yes' AS "Can I manage roles?" FROM pg_roles WHERE rolname = :'USER' AND 
 ```
 
 </details>
+
+<details><summary>What is the replication role attribute in PostgreSQL?</summary>
+
+`REPLICATION` is a role attribute in PostgreSQL that allows the role to initiate streaming replication.
+
+Roles with this attribute must also have the `LOGIN` attribute.
+
+</details>
+
+<details><summary>How do you create user roles in PostgreSQL?</summary>
+
+You can create roles in PostgreSQL by using the [`CREATE ROLE`](https://www.postgresql.org/docs/current/sql-createrole.html) command.
+
+The basic syntax looks like:
+
+```sql
+CREATE ROLE <role>;
+```
+And with attributes:
+
+```sql
+CREATE ROLE <role> WITH <options>;
+```
+
+</details>
