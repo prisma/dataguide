@@ -580,12 +580,12 @@ CREATE TABLE IF NOT EXISTS table_name (
 
 <details><summary>How do you create a database from a dump in PostgreSQL?</summary>
 
-To create a database from a dump, PostgreSQL provides the [utility program `pg_dump`](https://www.postgresql.org/docs/9.1/backup-dump.html).
+To create a database from a dump ([pg_dump](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date)), PostgreSQL provides the [utility program `pg_restore`](https://www.postgresql.org/docs/current/app-pgrestore.html).
 
 This program recreates the database in the same state as it was at the time of the dump. Example syntax would look like the following:
 
 ```sql
-pg_dump dbname > outfile
+pg_restore [connection-option...][option...][filename]
 ```
 
 </details>
