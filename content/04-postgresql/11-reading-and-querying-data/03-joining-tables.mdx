@@ -396,3 +396,37 @@ CROSS JOIN t2;
 An example output can be seen [here](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#cross-join)
 
 </details>
+
+<details><summary>Does PostgreSQL support full joins?</summary>
+
+Yes, PostgreSQL support [full joins](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#full-join). They can be specified as `FULL OUTER JOIN` or as `FULL JOIN`.
+
+The syntax would look like:
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+FULL JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
+
+<details><summary>How do you specify an inner join in PostgreSQL?</summary>
+
+The default join in PostgreSQL is an [**inner join**](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#inner-join), and it can be specified by using `INNER JOIN` or just `JOIN`.
+
+The syntax is:
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+[INNER] JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
