@@ -379,7 +379,7 @@ LEFT JOIN table_2
 
 <details><summary>What is a Lateral Join in PostgreSQL?</summary> 
 
-Yes, the `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/9.3/sql-select.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
+The `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/current/app-createdb.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
 
 </details>
 
@@ -393,7 +393,7 @@ FROM t1
 CROSS JOIN t2;
 ```
 
-An example output can be seen [here](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#cross-join)
+The above example would display something like this [example output](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#cross-join)
 
 </details>
 

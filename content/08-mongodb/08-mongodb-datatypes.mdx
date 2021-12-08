@@ -644,6 +644,8 @@ db.mytestcoll.insertOne({exampleregext:/t+/})
 
 <details><summary>How are dates represented as a data type in MongoDB?</summary>
 
+[BSON Date](https://docs.mongodb.com/manual/reference/bson-types/#std-label-document-bson-type-date) is a 64-bit integer that represents the number of milliseconds since the [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time).
+
 There are three methods for returning date values.
 
 `Date()` - returns a string
@@ -652,7 +654,7 @@ There are three methods for returning date values.
 
 `ISODate()` - also returns a date object using the ISODate() wrapper
 
-[Here](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date) is an example of inserting data using each method and how that data is returned from a query.
+The [returned data's display](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date) depends on which method it is stored.
 
 </details>
 

@@ -567,7 +567,7 @@ As mentioned earlier, the SQL statements covered in this PostgreSQL tutorial, pa
 
 <details><summary>Does PostgreSQL support the `IF NOT EXISTS` clause when using the `CREATE DATABASE` command?</summary>
 
-Yes, PostgreSQL supports the use of `IF NOT EXISTS` when creating both databases and tables. The below demonstrates using the clause for table creation, and you can read more about its use [here](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#create-tables-conditionally-with-the-if-not-exists-clause) 
+Yes, PostgreSQL supports the use of [`IF NOT EXISTS`](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#create-tables-conditionally-with-the-if-not-exists-clause) when creating both databases and tables. The below demonstrates using the clause for table creation. 
 
 ```sql
 CREATE TABLE IF NOT EXISTS table_name (
@@ -592,10 +592,10 @@ pg_dump dbname > outfile
 
 <details><summary>Which command line creates a database in PostrgreSQL?</summary>
 
-To create a database in PostgreSQL, use the `CREATE DATABASE` command. The syntax is as follows:
+To create a database in PostgreSQL, use the [`createdb` command](https://www.postgresql.org/docs/current/app-createdb.html). The syntax is as follows:
 
 ```sql
-CREATE DATABASE db_name;
+createdb db_name;
 ```
 
 </details>
