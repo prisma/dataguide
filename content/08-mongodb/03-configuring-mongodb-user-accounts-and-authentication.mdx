@@ -476,7 +476,7 @@ To list existing users in MongoDB, you can use the `db.getUsers()` method to sho
 
 The syntax would look like:
 
-```sql
+```
 use admin
 db.getUsers()
 ```
@@ -490,7 +490,7 @@ In order to create a [database admin user](https://www.prisma.io/dataguide/mongo
 
 The following demonstrates the syntax to use for creating database admins. 
 
-```sql
+```
 use admin
 db.createUser(
 {	user: "tom",
@@ -505,7 +505,7 @@ db.createUser(
 
 To remove a MongoDB user you can use the `db.dropUser()` method. This needs to be done in the `admin` database, and the syntax would look like this:
 
-```sql
+```
 use admin
 db.dropUser("tom")
 ```
@@ -518,7 +518,7 @@ To get a list of all existing users in MongoDB, you can use the `db.getUsers()` 
 
 The basic syntax would look like:
 
-```sql
+```
 use admin
 db.getUsers()
 ```
@@ -531,7 +531,7 @@ To query for a [specific user](https://www.prisma.io/dataguide/mongodb/configuri
 
 The basic syntax would look like:
 
-```sql
+```
 use admin
 db.getUser("tom",
 {
