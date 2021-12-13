@@ -51,9 +51,14 @@ Saving the primary for handling write operations can prove to be beneficial beca
 
 ### Accomplish preparation for disaster recovery
 
-In the case of catastrophe, replication also gives you the tools you need to recover data that may have otherwise been lost or corrupted. It facilitates recovery by maintaining accurate backups at well-monitored locations. If one node in the distribution goes down for any reason, there are nodes at the ready to help recover what was lost because of their identical replicas.
+In the case of a catastrophe, replication also secures recovery of what gets lost or corrupted.
+While replicas are not backups themselves because they continuously apply changes, they can be a target your database backups.
 
-This adds a level of enhanced data protection that would not be present without.
+For instance, if you want to back up your data, you can turn replication off briefly on one of the secondaries to get data in a consistent state, back up the data when there are no more write operations incoming, and then restart replication to catch back up on new updates. The replica gives you a snapshot of consistent data to target for disaster recovery without interrupting operations.
+
+An additional way replication facilitates preparation for disaster recovery is by explicitly configuring a replica to be a lagging follower. This replica would apply operations with a delay of a defined time. This delay allows the database monitoring team to notice an issue and avoid applying changes to the replica from a corrupted primary. They then can turn off the replication and have a mostly up-to-date server ready and running to keep operations going. 
+
+These methods add a level of enhanced data protection that would not be present without database replication.
 
 ### Improve analytics
 
