@@ -359,3 +359,74 @@ Joins are an essential part of what makes relational databases powerful and flex
 Prisma allows you to [define relations](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/relations) between models in the Prisma schema file.  You can then use [relation queries](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/relation-queries) to work with data that spans multiple models.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>Does PostgreSQL support outer joins?</summary>
+
+Yes, PostgreSQL supports outer joins. For example, you can use `LEFT OUTER JOIN` or just `LEFT JOIN` like in the following:  
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+LEFT JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
+
+<details><summary>What is a Lateral Join in PostgreSQL?</summary> 
+
+The `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/current/app-createdb.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
+
+</details>
+
+<details><summary>Does PostgreSQL support cross joins?</summary> 
+
+Yes, a `CROSS JOIN` can be done in PostgreSQL. The syntax will look something like:
+
+```sql
+SELECT select_list
+FROM t1
+CROSS JOIN t2;
+```
+
+The above example would display something like this [example output](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#cross-join)
+
+</details>
+
+<details><summary>Does PostgreSQL support full joins?</summary>
+
+Yes, PostgreSQL support [full joins](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#full-join). They can be specified as `FULL OUTER JOIN` or as `FULL JOIN`.
+
+The syntax would look like:
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+FULL JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
+
+<details><summary>How do you specify an inner join in PostgreSQL?</summary>
+
+The default join in PostgreSQL is an [**inner join**](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#inner-join), and it can be specified by using `INNER JOIN` or just `JOIN`.
+
+The syntax is:
+
+```sql
+SELECT
+    *
+FROM
+    table_1
+[INNER] JOIN table_2
+    ON table_1.id = table_2.table_1_id;
+```
+
+</details>
