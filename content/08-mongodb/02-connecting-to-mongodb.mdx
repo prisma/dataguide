@@ -228,7 +228,7 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 <details><summary>What happens when a MongoDB connection is refused?</summary>
 
-Whether connecting to [MongoDB](https://docs.mongodb.com/guides/server/drivers/) locally or remotely, a connection fail will result in an error message from MongoDB. The most common sources of a connection error are an incorrect username or password, attempting to connect with a non-whitelisted IP address on the database, or potentially too many connections to the database.
+Whether connecting to [MongoDB](https://docs.mongodb.com/guides/server/drivers/) locally or remotely, a connection failure will result in an error message from MongoDB. The most common sources of a connection error are an incorrect username or password, attempting to connect with a non-whitelisted IP address, or potentially too many connections to the database.
 
 You can read more about connecting to [MongoDB](https://www.prisma.io/dataguide/mongodb/connecting-to-mongodb) database to ensure you have all of the necessary pieces.
 
@@ -261,7 +261,7 @@ db.auth('admin','password');
 
 The `mongo` client is a command line JavaScript client for connecting to, controlling, and interacting with MongoDB database servers.
 
-The way you connect and use the `mongo` shell will depend on your configuration, but you can generally begin using the command line by typing `mongo` into the shell.
+The way you connect and use the `mongo` shell will depend on your configuration, but you can generally begin by using the command line by typing `mongo` into the shell.
 
 MongoDB also has the `--help` add-on from the command line if needed.
 
