@@ -383,3 +383,49 @@ This lets us retrieve rows of data from a query in manageable chunks.
 There are many ways to filter and otherwise constrain the results you get from queries.  Clauses like `WHERE` and `HAVING` evaluate potential rows or groups of rows to see if they satisfy certain criteria.  The `GROUP BY` clause helps you summarize data by grouping together records that have one or more column values in common.  The `LIMIT` clause offers users the ability to set a hard maximum on the number of records to retrieve.
 
 Learning how these clauses can be applied, individually or in combination, will allow you to extract specific data from large datasets.  Query modifiers and filters are essential for turning the data that lives within PostgreSQL into useful answers.
+
+## FAQ
+
+<details><summary>How do you filter multiple columns in PostgreSQL?</summary>
+
+You can filter multiple columns in PostgreSQL by adding additional conditions to create compound expressions using [operators](https://www.postgresql.org/docs/current/functions.html).
+
+An example of an additional condition is the logical operator `AND`. An example of the syntax would look like the following:
+
+```sql
+SELECT * FROM customer WHERE first_name = 'John' AND last_name = 'Smith';
+``` 
+
+</details>
+
+<details><summary>How do I limit row results in PostgreSQL?</summary>
+
+You can limit the number of records a query returns by using the `LIMIT` clause. Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned.
+
+The basic syntax looks like this:
+
+```sql
+SELECT * FROM my_table LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
+```
+
+</details>
+
+<details><summary>What is an aggregate function in PostgreSQL?</summary>
+
+[Aggregate functions](https://www.postgresql.org/docs/current/functions-aggregate.html) in PostgreSQL are functions that compute a single result from a set of input values. 
+
+</details>
+
+<details><summary>What is `array_agg()` in PostgreSQL?</summary>
+
+PostgreSQL's `array_agg()` is a [user-defined aggregate function](https://www.postgresql.org/docs/current/xaggr.html) that accepts a set of values and returns an array where each value in the input set is assigned to an element of the array.
+
+</details>
+
+<details><summary>Can you `GROUP BY` timestamp values in PostgreSQL?</summary>
+
+Yes, you can `GROUP BY` a timestamp value in PostgreSQL. However, this value includes a time element that would need timestamps to be identical to the millisecond to get grouped together.
+
+Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PosgreSQL's `DATE` data type](https://www.prisma.io/dataguide/postgresql/date-types#postgresql-date-data-type) which has no associated time value.
+
+</details>
