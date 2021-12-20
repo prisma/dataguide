@@ -223,3 +223,54 @@ Knowing how to connect to various MongoDB instances is vital as you start to wor
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What happens when a MongoDB connection is refused?</summary>
+
+Whether connecting to [MongoDB](https://docs.mongodb.com/guides/server/drivers/) locally or remotely, a connection failure will result in an error message from MongoDB. The most common sources of a connection error are an incorrect username or password, attempting to connect with a non-whitelisted IP address, or potentially too many connections to the database.
+
+You can read more about connecting to [MongoDB](https://www.prisma.io/dataguide/mongodb/connecting-to-mongodb) database to ensure you have all of the necessary pieces.
+
+</details>
+
+<details><summary>How do you connect to MongoDB remotely?</summary>
+
+To connect to a [remote MongoDB database](https://www.prisma.io/dataguide/mongodb/connecting-to-mongodb#connecting-to-a-remote-database), you have to include additional details when using the `mongo` shell like `--host` and potentially `--port`.
+
+The basic structure of the command will look something like:
+
+```
+mongo --host <mongo_server_address> --port <mongo_server_port> --user <mongo_username> --password
+```
+
+Your MongoDB database also will need to be configured to accept remote connections either in the [configuration file](https://docs.mongodb.com/manual/reference/configuration-options/) or the [Atlas IP whitelist](https://docs.atlas.mongodb.com/security/ip-access-list/).
+
+</details>
+
+<details><summary>How do you connect to MongoDB as an admin?</summary>
+
+Assuming the admin user has already been created using [these steps](https://www.prisma.io/dataguide/mongodb/configuring-mongodb-user-accounts-and-authentication#how-do-you-create-users), you can use something similar to the following syntax:
+
+```
+use admin
+db.auth('admin','password');
+```
+
+</details>
+
+<details><summary>How do you use the MongoDB command line?</summary>
+
+The `mongo` client is a command line JavaScript client for connecting to, controlling, and interacting with MongoDB database servers.
+
+The way you connect and use the `mongo` shell will depend on your configuration, but you can generally begin by using the command line by typing `mongo` into the shell.
+
+MongoDB also has the `--help` add-on from the command line if needed.
+
+</details>
+
+<details><summary>Can you connect to MongoDB with Java?</summary>
+
+Yes, you can connect to [MongoDB with Java](https://docs.mongodb.com/guides/server/drivers/). The first step in the procedure will require installing the [Java driver](https://mongodb.github.io/mongo-java-driver/).
+
+</details>
