@@ -350,3 +350,65 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 MySQL's user account management and authentication configuration is highly flexible.  Learning how to create, modify, and get information about users within MySQL will help you administer your database systems more effectively.
 
 Security best practices dictate that you should create accounts for each unique use case, given only the level of access required to perform their scope.  Account creation and authentication are the first stages of this process.  In another guide, we'll talk about granting and revoking privileges to fulfill the other part of that strategy.
+
+## FAQ
+
+<details><summary>How do you change user passwords in MySQL?</summary>
+
+The most common way to change a user's password is to use `ALTER USER`. For example you can modify the password for `'kamal'@'localhost'` by using:
+
+```sql
+ALTER USER 'kamal'@'localhost' IDENTIFIED BY '<new_password>';
+```
+You can also set a temporary password by using:
+
+```sql
+ALTER USER 'kamal'@'localhost' IDENTIFIED BY '<new_password>' PASSWORD EXPIRE;
+```
+
+</details>
+
+<details><summary>How do I fix root user access errors in MySQL?</summary>
+
+There are several potential reasons that you might receive an error when trying to login as a root user to a MySQL database. MySQL addresses the [troubleshooting checks](https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html) that you can do in their documenation. 
+
+Some common cases include needing to reset the root user password or editing the [configuration file](https://dev.mysql.com/doc/refman/8.0/en/option-files.html).
+
+</details>
+
+<details><summary>How do you drop users in MySQL?</summary>
+
+You can drop users in MySQL by using the `DROP USER` command. The basic syntax looks like this:
+
+```sql
+DROP USER '<user>'@'<host>';
+```
+The avoid attempting to drop a user that does not exist, you can include the `IF EXISTS` clause before the account name.
+
+</details>
+
+<details><summary>How do you show all users in MySQL?</summary>
+
+To list all users in a MySQL instance, you can use use a `SELECT` statement on the `mysql.user` database. The syntax would look as follows when also including `host` and `plugin`:
+
+```sql
+SELECT user,host,plugin FROM mysql.user
+```
+
+</details>
+
+<details><summary>How do you show grants for a user in MySQL?</summary>
+
+To show grants for your current user, you can use the following syntax:
+
+```sql
+SHOW GRANTS;
+```
+
+And for other users you can use:
+
+```sql
+SHOW GRANTS FOR '<user>'@'<host>';
+```
+
+</details>
