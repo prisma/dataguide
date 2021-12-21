@@ -383,7 +383,7 @@ You can drop users in MySQL by using the `DROP USER` command. The basic syntax l
 ```sql
 DROP USER '<user>'@'<host>';
 ```
-The avoid attempting to drop a user that does not exist, you can include the `IF EXISTS` clause before the account name.
+To avoid attempting to drop a user that does not exist, you can include the `IF EXISTS` clause before the account name.
 
 </details>
 
@@ -392,7 +392,7 @@ The avoid attempting to drop a user that does not exist, you can include the `IF
 To list all users in a MySQL instance, you can use use a `SELECT` statement on the `mysql.user` database. The syntax would look as follows when also including `host` and `plugin`:
 
 ```sql
-SELECT user,host,plugin FROM mysql.user
+SELECT user,host,plugin FROM mysql.user;
 ```
 
 </details>
