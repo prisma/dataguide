@@ -1,6 +1,6 @@
 ---
-title: 'How to use create and delete users in PostgreSQL'
-metaTitle: "How to use create and delete users in PostgreSQL"
+title: 'How to create and delete users in PostgreSQL'
+metaTitle: "How to create and delete users in PostgreSQL"
 metaDescription: "This short guide will cover how to create and delete users in PostgreSQL."
 ---
 
@@ -13,7 +13,7 @@ In this short guide, we will cover the basics of creating and deleting database 
 
 ## Create a user
 
-PostgreSQL has the `CREATE USER` psql command and `createuser` for the command line. Both options define a new database user account. In order to create users, you need to be a [superuser role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#what-is-a-superuser-role) for the database cluster.
+PostgreSQL has the `CREATE USER` psql command and `createuser` for the command line. Both options define a new database user account. In order to create users, you need to be a [superuser role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#what-is-a-superuser-role) for the database cluster. Alternatively, any user with the `CREATE ROLE` privilege is also able to create new users.
 
 The basic syntax for `createuser` looks like this:
 
@@ -23,20 +23,20 @@ createuser <options>
 and for `CREATE USER`:
 
 ```
-CREATE USER <name><options>
+CREATE USER <name> <options>
 ```
-The [options component](https://www.postgresql.org/docs/current/app-createuser.html) of the command is where you can define parameters such as username, whether this user can create databases, superuser, and the need for a password when connecting to the server. 
+The [options component](https://www.postgresql.org/docs/current/app-createuser.html) of the command is where you can define parameters such as whether this user can create databases, is a superuser, and the need for a password when connecting to the server. 
 
-The syntax can look something like:
+The command line syntax can look something like for creating `user1`:
 
 ```
 createuser --createdb --password user1
 ```
-In addition to creating users, it is important to know the different privileges that can be granted so users are only able to work with the database in specified ways. For the purpose of this guide we are just covering the basics to get started, but you can read more about [granting privleges in PostgreSQL](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/managing-privileges) for more advanced settings.
+In addition to creating users, it is important to know the different privileges that can be granted so users are only able to work with the database in specified ways. For the purpose of this guide we are just covering the basics to get started, but you can read more about [granting privileges in PostgreSQL](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/managing-privileges) for more advanced settings.
 
 ## Delete a user
 
-With the ability now to create users, it is important to also know how to delete a user when their access is no longer needed. Similar to creating a user, there are two ways to delete one. You can use both `dropuser` and `DROP USER`.
+With the ability now to create users, it is important to also know how to delete a user when their access is no longer needed. Similar to creating a user, there are two ways to delete one. You can use both the command line utility `dropuser` or the `psql` command `DROP USER`.
 
 The basic syntax for `dropuser` is:
 
@@ -48,7 +48,7 @@ There are [additonal options](https://www.postgresql.org/docs/current/app-dropus
 The basic psql command option syntax looks like:
 
 ```
-DROP USER <name><options>
+DROP USER <name> <options>
 ```
 A common syntax using the command line would look something like:
 
