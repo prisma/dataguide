@@ -1,6 +1,6 @@
 ---
-title: 'How to use create and delete users in MySQL'
-metaTitle: "How to use create and delete users in MySQL"
+title: 'How to create and delete users in MySQL'
+metaTitle: "How to create and delete users in MySQL"
 metaDescription: "This short guide will cover how to create and delete users in MySQL."
 ---
 
@@ -25,7 +25,7 @@ CREATE USER '<user>'@'<host>';
 This will create a basic account without configuring any details beyond its user and host at creation.
 
 ### How do you create a user with a password?
-Often, you want to configure authentication while you're creating the user. You can do this by adding the optional `IDENTIFIED BY` clause onto `CREATE USER` statement:
+Often, you want to configure authentication while you're creating the user. You can do this by adding the optional `IDENTIFIED BY` clause onto the `CREATE USER` statement:
 
 ```
 CREATE USER '<user>'@'<host>' IDENTIFED BY '<password>';
@@ -33,9 +33,9 @@ CREATE USER '<user>'@'<host>' IDENTIFED BY '<password>';
 
 This creates a new user account, as before, and assigns a password for the account at the same time. We will cover how to assign a password after the fact or how to change a user's password later on.
 
-### How do you create a user with a password?
+### How do you create a user with Unix socket authentication?
 
-While password authentication is the most common authentication method for most users, it's not the only option. MySQL provides many different internal and external authentication mechanisms that you can configure to your user accounts to use. As an example, we'll configure a new account using Unix socket authentication.
+While password authentication is the most common authentication method for most users, it's not the only option. MySQL provides many different internal and external authentication mechanisms that you can configure your user accounts to use. As an example, we'll configure a new account using Unix socket authentication.
 
 Unix socket authentication can be used in Linux or Unix-like environments so that an account on the operating system is given access to the same account name within MySQL without further authentication. In this configuration, the MySQL administrator knows that user accounts on the operating system are tightly controlled.
 
@@ -64,7 +64,7 @@ You should be signed in automatically through the Unix socket authentication you
 
 ## How do you delete MySQL users?
 
-Keeping user accounts around that no longer serve a purpose is a security risk. You can remove accounts easily with the DROP USER command.
+Keeping user accounts around that no longer serve a purpose is a security risk. You can remove accounts easily with the `DROP USER` command.
 
 The basic syntax looks like this:
 ```
