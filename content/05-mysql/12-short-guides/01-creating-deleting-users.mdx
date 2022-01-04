@@ -1,0 +1,93 @@
+---
+title: 'How to create and delete users in MySQL'
+metaTitle: "How to create and delete users in MySQL"
+metaDescription: "This short guide will cover how to create and delete users in MySQL."
+---
+
+
+## Introduction
+
+More often than not, when working with a database you will need to be able to create and delete users. Whether working in a team that has multiple members needing access to the database or creating and deleting test users to simulate database privileges, knowing how to add and remove database users is important.
+
+In this short guide, we will cover the basics of creating and deleting database users in MySQL. These commands will have you ready to get started on granting database access and establish a foundation for future [role management](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/role-management).
+
+## How do you create MySQL users?
+Creating users in MySQL is key for collaborating with others  and for testing access rights and privileges. It is important to note that in order to create users you must login with a user with the privileges described in the [prerequisites](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/user-management-and-authentication#prerequisites).
+
+### Basic Syntax
+Basic syntax
+The basic syntax for creating a new user is relatively simple. You use the CREATE USER command and then specify the user and host for the new account:
+
+```
+CREATE USER '<user>'@'<host>';
+```
+
+This will create a basic account without configuring any details beyond its user and host at creation.
+
+### How do you create a user with a password?
+Often, you want to configure authentication while you're creating the user. You can do this by adding the optional `IDENTIFIED BY` clause onto the `CREATE USER` statement:
+
+```
+CREATE USER '<user>'@'<host>' IDENTIFED BY '<password>';
+```
+
+This creates a new user account, as before, and assigns a password for the account at the same time. We will cover how to assign a password after the fact or how to change a user's password later on.
+
+### How do you create a user with Unix socket authentication?
+
+While password authentication is the most common authentication method for most users, it's not the only option. MySQL provides many different internal and external authentication mechanisms that you can configure your user accounts to use. As an example, we'll configure a new account using Unix socket authentication.
+
+Unix socket authentication can be used in Linux or Unix-like environments so that an account on the operating system is given access to the same account name within MySQL without further authentication. In this configuration, the MySQL administrator knows that user accounts on the operating system are tightly controlled.
+
+So if there is a `mary` user on the operating system, they will be able to login to the `'mary'@'localhost'` account within MySQL if Unix socket authentication is the defined authentication mechanism. Let's configure this now.
+
+Socket authentication requires the `auth_socket` plugin, so first load the plugin by typing:
+
+```
+INSTALL PLUGIN auth_socket SONAME 'auth_socket.so';
+```
+
+Next, create a user account that matches a user account you have on your operating system. For this example, we'll use the `mary` account we discussed above. If you don't use a name that matches one of your operating system names, you won't be able to authenticate using this user.
+
+To create the user with socket authentication, we need to use the `IDENTIFIED WITH` clause (different than the `IDENTIFIED BY` clause used earlier) to specify the authentication plugin to use:
+
+```
+CREATE USER 'mary'@'localhost' IDENTIFIED WITH auth_socket;
+```
+
+Now, you should be able to authenticate to the `'mary'@'localhost'` MySQL user from the `mary` user on your operating system. When logged in as `mary`, connect to the database without providing any username or password:
+
+```
+mysql
+```
+You should be signed in automatically through the Unix socket authentication you configured.
+
+## How do you delete MySQL users?
+
+Keeping user accounts around that no longer serve a purpose is a security risk. You can remove accounts easily with the `DROP USER` command.
+
+The basic syntax looks like this:
+```
+DROP USER '<user>'@'<host>';
+```
+So to delete the 'mary'@'localhost' user, you would type:
+
+```
+DROP USER 'mary'@'localhost';
+```
+If you try to delete a user that does not exist, you will receive an error:
+
+```
+ERROR 1396 (HY000): Operation DROP USER failed for 'mary'@'localhost'
+```
+To avoid this, you can add the IF EXISTS clause before the account name. If the user exists, it will be deleted. If it does not, only a warning will be given:
+
+```
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+```
+
+## Conclusion
+
+In this quick guide, we covered the basics of creating and deleting users for MySQL databases as well as some additional options. 
+
+Once your users are created, we have additional informative articles diving deeper in [user role management](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/role-management) in MySQL as well as [user authentication](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/intro-to-authn-and-authz).
