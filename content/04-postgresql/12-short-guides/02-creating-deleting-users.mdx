@@ -11,7 +11,7 @@ More often than not, when working with a database you will need to be able to cr
 In this short guide, we will cover the basics of creating and deleting database users in PostgreSQL. These commands will have you ready to get started on granting database access and establish a foundation for future [role management](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management).
 
 
-## Create a user
+## How do you create PostgreSQL users?
 
 PostgreSQL has the `CREATE USER` psql command and `createuser` for the command line. Both options define a new database user account. In order to create users, you need to be a [superuser role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#what-is-a-superuser-role) for the database cluster. Alternatively, any user with the `CREATE ROLE` privilege is also able to create new users.
 
@@ -34,7 +34,7 @@ createuser --createdb --password user1
 ```
 In addition to creating users, it is important to know the different privileges that can be granted so users are only able to work with the database in specified ways. For the purpose of this guide we are just covering the basics to get started, but you can read more about [granting privileges in PostgreSQL](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/managing-privileges) for more advanced settings.
 
-## Delete a user
+## How do you delete PostgreSQL users?
 
 With the ability now to create users, it is important to also know how to delete a user when their access is no longer needed. Similar to creating a user, there are two ways to delete one. You can use both the command line utility `dropuser` or the `psql` command `DROP USER`.
 
