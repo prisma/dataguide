@@ -423,3 +423,67 @@ Creating and managing databases and collections is an important skill when using
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>Can you create multiple collections in MongoDB?</summary>
+
+Yes, you can have multiple collections within a [database in MongoDB](https://docs.mongodb.com/manual/core/databases-and-collections/). Collections can be thought of as analogous to tables in relational databases.
+
+</details>
+
+<details><summary>How do you delete all databases in MongoDB?</summary>
+
+There is not a single command to drop every database in MongoDB, but it is possible with a [script or series of queries](https://stackoverflow.com/questions/6376436/mongodb-drop-every-database).
+
+To drop a database, the basic syntax looks like:
+
+```
+use playground
+db.dropDatabase()
+```
+</details>
+
+<details><summary>How do you rename a collection in MongoDB?</summary>
+
+To rename a collection in MongoDB, you can use the [`renameCollection()`](https://docs.mongodb.com/manual/reference/method/db.collection.renameCollection/) method. 
+
+The basic syntax would look like:
+
+```
+db.collectionName.renameCollection("new collection name")
+```
+
+With `collectionName` being the the current name of the collection and `"new collection name"` being the desired change.
+
+</details>
+
+<details><summary>How do you list all collections in MongoDB?</summary>
+
+You can show all the available collections in the database you are working in my using the `show collections` method.
+
+If you want to see all of the collections in the `admin` database, the basic syntax would look like:
+
+```
+use admin
+show collections
+```
+
+Alternatively, you can also use the `db.getCollectionNames()` method to get the same results in an array.
+
+```
+db.getCollectionNames()
+```
+```
+[ "system.roles", "system.users", "system.version" ]
+```
+
+</details>
+
+<details><summary>How do you list collections with c#?</summary>
+
+In order to use MongoDB with c#, you will need to download the [compatible driver](https://docs.mongodb.com/drivers/csharp/) version of c#.
+
+Once downloaded, you will be able to conduct [read operations with c#](https://www.mongodb.com/blog/post/quick-start-c-and-mongodb-read-operations) such as listing collections.
+
+</details>
