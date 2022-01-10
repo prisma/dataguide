@@ -475,3 +475,81 @@ Learning how to create, query for, update, and remove documents gives you the sk
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is an embedded document in MongoDB?</summary>
+
+An [embedded, or nested, document](https://www.mongodb.com/basics/embedded-mongodb) in MongoDB is a document which contains another document inside of it. 
+
+The following is an example of an embedded document where `address` is a subdocument that can be accessed with the `user` record.
+
+```
+db.user.findOne({_id: 111111})
+    
+{    
+    _id: 111111,    
+    email: “email@example.com”,    
+    name: {given: “Jane”, family: “Han”},    
+    address: {    
+    street: “111 Elm Street”,    
+    city: “Springfield”,    
+    state: “Ohio”,    
+    country: “US”,    
+    zip: “00000”,    
+    }    
+}
+```
+
+</details>
+
+<details><summary>What is the MongoDB maximum document size limit?</summary>
+
+The maximum document size in MongoDB is 16 megabytes.
+
+This limitation helps ensure that a single document cannot use an execessive amount of RAM or, during transmission, excessive amount of bandwidth.
+
+To store documents larger than 16mb, MongoDB provides the [GridFS API](https://docs.mongodb.com/database-tools/mongofiles/#mongodb-binary-bin.mongofiles).
+
+</details>
+
+<details><summary>How do you delete a document in MongoDB?</summary>
+
+To remove documents, you can either use the `deleteOne()` or `deleteMany()` methods. They have the same syntax, and differ only in how many documents they operate on.
+
+To delete a single document, the basic syntax looks as follows for removing a document with a specific `_id`:
+
+```
+db.students.deleteOne({
+	_id: ObjectId("60e8792d4655cbf49ff7cb87")
+})
+```
+And to delete many documents matching a certain criteria, the syntax looks similarly:
+
+```
+db.students.deleteMany({
+    grade_level: { $eq: null }
+})
+```
+
+</details>
+
+<details><summary>How do you append to a document in MongoDB?</summary>
+
+To modify documents in MongoDB, there are a few [related update methods](https://www.prisma.io/dataguide/mongodb/managing-documents#how-to-update-existing-documents).
+
+Specifically, for appending new data to a document, you can use the `$addToSet` [update operator](https://www.prisma.io/dataguide/mongodb/managing-documents#update-operators). This operator adds values to the array of the document unless they're already present.
+
+</details>
+
+<details><summary>How do you compare two documents in MongoDB?</summary>
+
+There is not a specific method to explicitly compare one document to another in MongoDB. It can be done by configuring a query comparing equality between any of the documents' fields with [operators](https://docs.mongodb.com/manual/reference/operator/query/).
+
+Comparison can also be done by configuring an [aggregation pipeline](https://docs.mongodb.com/manual/aggregation/). This method allows you to create stages that:
+
+* group values from multiple documents 	together
+* perform operations on the grouped data to return a single result
+* analyze data changes over time
+
+</details>
