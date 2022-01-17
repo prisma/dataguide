@@ -157,9 +157,11 @@ In this guide, we took a look at the basic ways that you can modify existing dat
 
 ## FAQ
 
-<details><summary>How do you perform a bulk update in SQLite?</summary>
+<details><summary>How do you edit records in SQLite?</summary>
 
-In SQLite, you can use the `UPDATE` command looking something like the following:
+You can edit records in SQLite by using an `UPDATE` statement.
+
+The basic syntax would look like:
 
 ```
 UPDATE my_table
@@ -170,7 +172,22 @@ WHERE
         id = 1;
 ```
 
-This syntax allows you to update in bulk depending on the `WHERE` critera to determine which records match.
+</details>
+
+<details><summary>How do you perform a bulk update in SQLite?</summary>
+
+In SQLite, you can use the `UPDATE` command looking something like the following:
+
+```
+UPDATE my_table
+SET
+        column1 = value1,
+        column2 = value2,
+WHERE
+        color = 'blue';
+```
+
+This syntax allows you to update in bulk depending on the `WHERE` critera. In this case the columns are updated for any record where the `color` column is `'blue'`.
 
 </details>
 
@@ -180,7 +197,7 @@ By default, SQLite does not show the nummber of rows impacted by an `UPDATE` sta
 
 However, SQLite does have the `RETURNING` clause to return all or part of the records that were modifed.
 
-The basic syntax looks like this with `*` to return all of the columns:
+The basic syntax looks like this with `*` specifying to return all column names:
 
 ```
 UPDATE my_table
@@ -199,23 +216,6 @@ RETURNING *;
 In SQLite, there is not an `IF EXISTS` clause like many other relational databases. 
 
 To control an `INSERT` or `UPDATE` for data existing, you will want to add an [`ON CONFLICT` clause to your statement](https://sqlite.org/lang_conflict.html).
-
-</details>
-
-<details><summary>How do you edit records in SQLite?</summary>
-
-You can edit records in SQLite by using an `UPDATE` statement.
-
-The basic syntax would look like:
-
-```
-UPDATE my_table
-SET
-        column1 = value1,
-        column2 = value2,
-WHERE
-        id = 1;
-```
 
 </details>
 
