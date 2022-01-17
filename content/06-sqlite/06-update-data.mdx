@@ -154,3 +154,75 @@ SELECT * FROM author;
 ## Conclusion
 
 In this guide, we took a look at the basic ways that you can modify existing data within a table using the `UPDATE` command. Execution of these basic concepts allows you to specify the exact criteria necessary to identify the existing rows within a table, update column names with values, and optionally return the rows that were impacted with `RETURNING`. The `UPDATE` command is critical for managing your data after the initial insertion into your databases.
+
+## FAQ
+
+<details><summary>How do you perform a bulk update in SQLite?</summary>
+
+In SQLite, you can use the `UPDATE` command looking something like the following:
+
+```
+UPDATE my_table
+SET
+        column1 = value1,
+        column2 = value2,
+WHERE
+        id = 1;
+```
+
+This syntax allows you to update in bulk depending on the `WHERE` critera to determine which records match.
+
+</details>
+
+<details><summary>How do you return records modified by the `UPDATE` command in SQLite?</summary>
+
+By default, SQLite does not show the nummber of rows impacted by an `UPDATE` statement.
+
+However, SQLite does have the `RETURNING` clause to return all or part of the records that were modifed.
+
+The basic syntax looks like this with `*` to return all of the columns:
+
+```
+UPDATE my_table
+SET
+        column1 = value1,
+        column2 = value2,
+WHERE
+        id = 1
+RETURNING *;
+```
+
+</details>
+
+<details><summary>How do you insert or update in SQLite depending on whether data exists?</summary>
+
+In SQLite, there is not an `IF EXISTS` clause like many other relational databases. 
+
+To control an `INSERT` or `UPDATE` for data existing, you will want to add an [`ON CONFLICT` clause to your statement](https://sqlite.org/lang_conflict.html).
+
+</details>
+
+<details><summary>How do you edit records in SQLite?</summary>
+
+You can edit records in SQLite by using an `UPDATE` statement.
+
+The basic syntax would look like:
+
+```
+UPDATE my_table
+SET
+        column1 = value1,
+        column2 = value2,
+WHERE
+        id = 1;
+```
+
+</details>
+
+<details><summary>How do you update with join in SQLite?</summary>
+
+To perform an `UPDATE` with a join in SQLite, you can use the [`UPDATE FROM` extension](https://www.sqlite.org/lang_update.html#upfrom). This extension to SQL allows an `UPDATE` statement to be driven by other tables in the database.
+
+With `UPDATE-FROM`, you can join the target table against other tables in the database in order to help compute which rows need updating and what new values should be on those rows.
+
+</details>
