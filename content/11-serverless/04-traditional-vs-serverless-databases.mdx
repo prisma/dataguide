@@ -26,6 +26,8 @@ Before we dive into the advantages and disadvantages of various strategies, let'
 * maintaining an up-to-date, stable, and secure operating system, and
 * configuring, optimizing, and managing the database management system
 
+![Traditional databases](/content/serverless/traditional-vs-serverless-dbs/traditional-databases.png)
+
 In general, this option provides enormous amounts of control and flexibility.  Every part of the system can be examined, optimized, and changed to suit the needs of the users and applications.
 
 This comes at the cost of a greater management burden.  All levels of the system must be maintained and optimized to provide ideal application performance while maintaining the availability and security of the system and data.
@@ -52,6 +54,8 @@ Many organizations adopt this style of management because it allows their develo
 ### Serverless databases
 
 *Serverless databases* are a relatively new approach offered by cloud providers that takes on an even larger part of the management responsibility from users.  Serverless databases decouple the part of a database management system that deals with storage from the part that executes queries.  This means both can be scaled independently.  In serverless databases, these components are both managed exclusively by the provider.
+
+![Serverless databases](/content/serverless/traditional-vs-serverless-dbs/serverless-databases.png)
 
 In practice, this allows serverless databases to be treated as an infinitely large repository where data can be stored, operated on, and retrieved.  The backend storage will be scaled out as needed and the number of query executors will also be adjusted according to demand.  The user only needs to access the database through an API-like interface that routes commands to the correct components automatically.
 
@@ -120,6 +124,15 @@ Serverless database services not only manage the infrastructure and database man
 This sounds similar to how managed databases are often described, but in practice it ends up being significantly different.  You don't have to make many decisions ahead of time with serverless databases.  Mainly, you configure any thresholds for costs that you want to maintain and any specific tweaks to the scaling you want to make, like always having at least one query executor available, for instance.  The system handles nearly everything else to ensure that your application's database usage is always available, performing up to standards, and responding to the current request environment.
 
 ## Conclusion
+
+| Features                      | Traditional Databases                                                     | Serverless Databases                                                                                  |
+|-------------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Level of control              | High                                                                      | Minimal                                                                                               |
+| Data privacy                  | Private by default, configurable by administrators                        | Must trust provider with data                                                                         |
+| Performance                   | Capable of very high performance, depending on hardware and configuration | Performance can dip if there are spikes in demand (can be mitigated with query processors on standby) |
+| Cost                          | Static, the database costs the same whether under high demand or not      | Variable, pay only for what you use                                                                   |
+| Scalability                   | Depends on configuration, can be complex                                  | Automatic scaling based on demand and service settings                                                |
+| Responsibility for management | Responsible for everything                                                | Minimal responsibility                                                                                |
 
 In this article, we took a look at some of the key differences between traditional, self-managed databases and serverless database services.  We talked about how they are different from a user's perspective and what trade-offs you must consider when deciding on a database strategy depending on your organization's priorities.
 
