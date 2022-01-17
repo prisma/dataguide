@@ -455,3 +455,75 @@ This will remove the `school` database along with the `teachers` table defined w
 This article covered the basics of how to create and delete databases and tables with MySQL.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.
 
 As mentioned earlier, the SQL statements covered in this MySQL tutorial, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change the system's behavior.  You can find out more about these by checking out the [official MySQL documentation](https://dev.mysql.com/doc/refman/8.0/en/create-table.html).
+
+## FAQ
+
+<details><summary>How do you create a database in MySQL workbench?</summary>
+
+In MySQL Workbench, you start by [creating a new model](https://dev.mysql.com/doc/workbench/en/wb-getting-started-tutorial-creating-a-model.html).
+
+Once you have a model you'll be able to add a new schema which in MySQL is equivalent to a new database. 
+
+</details>
+
+<details><summary>How do you alter a table and add a column in MySQL?</summary>
+
+The basic syntax for altering a table in MySQL uses `ALTER TABLE` and looks like the following:
+
+```
+ALTER TABLE <table_name> <change_command> <change_parameters>;
+```
+
+The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints. 
+
+The `<change_parameters>` part of the command contains any additional information that MySQL needs to complete the change.
+
+To add a table you can use the `ADD` change command. It looks like:
+
+```
+ALTER TABLE some_table ADD missing_column text;
+```
+
+</details>
+
+<details><summary>How do you drop all tables in a MySQL database?</summary>
+
+There is not a single command that drops all tables at once in MySQL. You would need a script to run through all tables.
+
+The basic syntax for dropping a table uses the `DROP TABLE` SQL statement with `IF EXISTS` optionally included.
+
+The basic syntax is:
+
+```
+DROP TABLE IF EXISTS <table_name>;
+```
+
+</details>
+
+<details><summary>How do I drop an index in MySQL?</summary>
+
+To drop an index in MySQL, you can use the `DROP INDEX` command. The basic syntax includes the `<index_name>` and `<table_name>`.
+
+It looks like:
+
+```
+DROP INDEX <index_name> ON <table_name>;
+```
+
+</details>
+
+<details><summary>How do I create a temporary table in MySQL?</summary>
+
+You can use the [`TEMPORARY` keyword](https://dev.mysql.com/doc/refman/8.0/en/create-temporary-table.html#:~:text=To%20create%20a%20temporary%20table,INSERT%20%2C%20UPDATE%20%2C%20or%20SELECT%20.) when creating a table in MySQL. This creates a temporary table that is only visible within the current session, and it is dropped automatically when the session is closed.
+
+The basic syntax looks the same as when creating a table except for the inclusion of `TEMPORARY`. It looks as follows:
+
+```
+CREATE TEMPORARY TABLE table_name(
+   column_1_definition,
+   column_2_definition,
+   ...,
+   table_constraints
+);
+```
+</details>
