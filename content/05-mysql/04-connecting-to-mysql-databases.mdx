@@ -116,3 +116,55 @@ If you want to modify the rules that dictate how users can authenticate to your 
 In this guide, we covered MySQL authentication from the client side.  We demonstrated how to use the `mysql` command line client to connect to both local and remote database instances.
 
 Knowing how to connect to various MySQL instances is one of the first steps you need to understand as you start to work the database system.  You may run a local MySQL instance for development that doesn't need any special authentication, but your databases in staging and production will almost certainly require authentication.  Being able to authenticate in either case will allow you to work well in different environments.
+
+## FAQ
+
+<details><summary>Can you connect to a MySQL database in Python?</summary>
+
+Yes, you can connect to a MySQL database using Python. You will need to download the MySQL Python connector and use the `connect()` constructor.
+
+MySQL provides a [developer guide](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html) once the connector is downloaded.
+
+</details>
+
+<details><summary>Can you connect to a MySQL database in Java?</summary>
+
+Yes, you can connect to a MySQL database using Java. You will need to download the MySQL Java connector.
+
+MySQL provides an [installation guide](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-installing.html) for the connector and examples to get started.
+
+</details>
+
+<details><summary>How do you remotely connect to a MySQL database?</summary>
+
+If you wish to connect to a remote MySQL database, you will have to provide the network location of the remote host and potentially add some additional information.
+
+The available authentication methods vary base on the MySQL instance's configuration. Most commonly, though, you need to provide the following parameters to authenticate:
+
+| Option | Description |
+| ------ | ----------- |
+| `--host=` or `-h` | The network host name or the IP address of the MySQL server |
+| `--port` or `-P` | The network port that the MySQL server is running on. If the server is using port 3306, the default MySQL port, this parameter may be omitted. |
+| `--user=` or `-u` | The database username you wish to connect as. If not specified, your operating system usernamme will be used. |
+| `--password` or `-p` | Indicate that you want to provide a password for the specified account. The `mysql` client will prompt you for the password once you press <kbd>Enter</kbd>. |
+| *MySQL database* | The MySQL database name that you want to access. If not specified, `mysql` will connect to the server without connecting to a specific database. |
+
+</details>
+
+<details><summary>What is the maximum amount of connections MySQL can accept?</summary>
+
+The amount of connections MySQL can accept is controlled by the `max_connections` variable. By default this value is 151.
+
+You can manually increase this value if needed, and your server has enough RAM to support the increased connections.
+
+</details>
+
+<details><summary>How do you list all database connections in MySQL?</summary>
+
+There are a couple of ways to identify the number of connections on a MySQL database. The most common way is through `mysql` command line.
+
+You can use the [`threads_connected`](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_connected) variable which shows an out put of the number of connections.
+
+You can also use the [`show processlist`](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-processlist-table.html) command which indicates the operations currently being performed by the set of threads executing within the server.
+
+</details>
