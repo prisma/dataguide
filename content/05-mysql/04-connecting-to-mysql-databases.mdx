@@ -127,7 +127,15 @@ MySQL provides a [developer guide](https://dev.mysql.com/doc/connector-python/en
 
 </details>
 
-<details><summary>How do you allow MySQL to accept remote connections?</summary>
+<details><summary>Can you connect to a MySQL database in Java?</summary>
+
+Yes, you can connect to a MySQL database using Java. You will need to download the MySQL Java connector.
+
+MySQL provides an [installation guide](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-installing.html) for the connector and examples to get started.
+
+</details>
+
+<details><summary>How do you remotely connect to a MySQL database?</summary>
 
 If you wish to connect to a remote MySQL database, you will have to provide the network location of the remote host and potentially add some additional information.
 
@@ -153,18 +161,10 @@ You can manually increase this value if needed, and your server has enough RAM t
 
 <details><summary>How do you list all database connections in MySQL?</summary>
 
-There are a couple of ways to identify the amount of connections on a MySQL database. The most common way is through `mysql` command line.
+There are a couple of ways to identify the number of connections on a MySQL database. The most common way is through `mysql` command line.
 
 You can use the [`threads_connected`](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_connected) variable which shows an out put of the number of connections.
 
 You can also use the [`show processlist`](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-processlist-table.html) command which indicates the operations currently being performed by the set of threads executing within the server.
-
-</details>
-
-<details><summary>Can you connect to a MySQL database in Java?</summary>
-
-Yes, you can connect to a MySQL database using Java. You will need to download the MySQL Java connector.
-
-MySQL provides an [installation guide](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-installing.html) for the connector and examples to get started.
 
 </details>
