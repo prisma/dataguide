@@ -302,3 +302,61 @@ If you are using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-
 In the data model used by Prisma schema, data types are represented by [field types](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model#defining-fields).  Check out our documentation to learn more.
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is the range of the `DECIMAL` data type in MySQL?</summary>
+
+The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D). The ranges of values for the argumments are as follows:
+
+* *M* is the maximum number of digits (the precision). It has a range of 1 to 65.
+* *D* is the number of digits to the right of the decimal point (the scale). It has a range of 0 to 30 and must be no larger than *M*. 
+
+</details>
+
+<details><summary>How does MySQL store `TEXT`?</summary>
+
+The [storage requirements](https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html) for string types in MySQL can be represented in the following table with *M* representing the declared column length in characters and *L* representing the actual length in bytes of a given string value.
+
+| Data Type | Storage Required |
+| --------- | ---------------- |
+| TINYTEXT  | *L* + 1 bytes, where *L* < 2^8 |
+| TEXT  | *L* + 2 bytes, where *L* < 2^16 |
+| MEDIUMTEXT  | *L* + 3 bytes, where *L* < 2^24|
+| LONGTEXT  | *L* + 4 bytes, where *L* < 2^32 |
+
+</details>
+
+<details><summary>What is the difference between `TEXT` and `VARCHAR` in MySQL?</summary>
+
+`TEXT` and `VARCHAR` similarly store characters with no fixed size.
+
+`VARCHAR` is different because it cannot be used without specifying the maximum number of characters to store whereas `TEXT` does not require this.
+
+The example definition syntax of a `VARCHAR` would look like this:
+
+```
+VARCHAR(10)
+``` 
+
+</details>
+
+<details><summary>What is the maximum length of `VARCHAR` in MySQL?</summary>
+
+Values in `VARCHAR` columns are variable-length strings. The length can be specified as a value from 0 to 65,535.
+
+The effective maximum length of a `VARCHAR` is subject to the maximum row size among all columns (65,535 bytes).
+
+</details>
+
+<details><summary>How are `ENUM` types stored in MySQL?</summary>
+
+`ENUM` is an advantageous storage type in situations where a column has a limited set of possible values.
+
+It has the same storage requirements as all columns:
+
+| Data Type | Storage Required |
+| --------- | ---------------- |
+| ENUM  | 1 or 2 bytes, depending on the number of enumeration values (65,535 values maximum) |
+
+</details>
