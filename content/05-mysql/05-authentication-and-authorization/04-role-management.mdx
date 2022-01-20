@@ -311,3 +311,79 @@ If the user has been granted a privilege through other means however (either dir
 Using roles to distribute privileges in your MySQL databases can help simplify the management overhead and complexity of your access control system.  It's much easier to ensure that users with the same responsibilities have the same privileges using roles than it is to grant many different privileges directly.
 
 Similarly, roles allow you to be explicit about the intent behind your privilege granting.  Rather than granting large numbers of privileges to accounts without any commentary, carefully chosen role names can help distinguish between different reasons for access.  By taking the time to create and organize roles ahead of time, your ability to manage user access to different parts of your data will be more straightforward in the long run.
+
+## FAQ
+
+<details><summary>How do you flush privileges in MySQL?</summary>
+
+In order to perform a flush-privileges operation, telling the server to reload the grant tables, you can issue a `FLUSH PRIVILEGES` statement.
+
+This can also be done by executing a [mysqladmin flush-privileges](https://dev.mysql.com/doc/refman/8.0/en/mysqladmin.html) or [mysqladmin reload](https://dev.mysql.com/doc/refman/8.0/en/mysqladmin.html) command.
+
+</details>
+
+<details><summary>How do you grant all privileges in MySQL?</summary>
+
+You can assign full privileges to a user at a specific scope using the `ALL` or `ALL PRIVILEGES` shorthand.
+
+The following syntax would grant every privilege that your user is capable of to the `sales` database to the `'salesadmin'@'localhost'` user.
+
+```
+GRANT ALL PRIVILEGES ON sales.* TO 'salesadmin'@'localhost';
+```
+
+</details>
+
+<details><summary>How do you grant read only privilege in MySQL?</summary>
+
+To grant read only privilege globally to a user, you can use wildcards for both the database and database object part of the scope component. 
+
+The basic syntax looks like this:
+
+```
+GRANT SELECT ON *.* TO 'sally'@localhost';
+```
+
+To limit the scope of the read only grant to a single database, replace the wildcard on the left side of the dot with a database name:
+
+```
+GRANT SELECT ON account.* TO 'meredith'@'localhost';
+```
+
+Similarly, to give access only to a particular table in a database use the following:
+
+```
+GRANT SELECT ON account.revenue TO 'meredith'@'localhost';
+```
+
+</details>
+
+<details><summary>How do you add a root user in MySQL?</summary>
+
+To make a new root, or superuser account, in MySQL, you have to provide it with full root access to everything in the database by using the `GRANT ALL PRIVILEGES` statement.
+
+The basic syntax looks like this:
+
+```
+GRANT ALL PRIVILEGES ON *.* TO 'user_name'@'localhost' WITH GRANT OPTION
+```
+
+</details>
+
+<details><summary>How do you show user privileges in MySQL?</summary>
+
+To understand what privileges are available on your account, you can use the `SHOW GRANTS` command.
+
+To check the grants enabled for a user, type:
+
+```
+SHOW GRANTS FOR '<user>'@'<host>';
+```
+
+After learning what roles an account is a member of, you can check what privileges that roles provides the user by typing:
+
+```
+SHOW GRANTS FOR '<user>'@'<host>' USING '<role>'@'<host>';
+```
+
+</details>
