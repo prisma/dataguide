@@ -326,7 +326,7 @@ This can also be done by executing a [mysqladmin flush-privileges](https://dev.m
 
 You can assign full privileges to a user at a specific scope using the `ALL` or `ALL PRIVILEGES` shorthand.
 
-The following syntax would grant every privilege that your user is capable of to the `sales` database to the `'salesadmin'@'localhost'` user.
+The following syntax would grant every privilege that your user is capable of related to the `sales` database to the `'salesadmin'@'localhost'` user.
 
 ```
 GRANT ALL PRIVILEGES ON sales.* TO 'salesadmin'@'localhost';
@@ -365,7 +365,7 @@ To make a new root, or superuser account, in MySQL, you have to provide it with 
 The basic syntax looks like this:
 
 ```
-GRANT ALL PRIVILEGES ON *.* TO 'user_name'@'localhost' WITH GRANT OPTION
+GRANT ALL PRIVILEGES ON *.* TO 'user_name'@'localhost' WITH GRANT OPTION;
 ```
 
 </details>
