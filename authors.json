@@ -1,0 +1,25 @@
+{
+    "nikolasburk": {
+      "name": "Nikolas Burk",
+      "avatar": "https://github.com/nikolasburk.png",
+      "github": "nikolasburk",
+      "twitter": "nikolasburk",
+      "website": "http://nikolasburk.com/",
+      "bio": "Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games."
+    },
+    "schickling": {
+      "name": "Johannes Schickling",
+      "avatar": "https://github.com/schickling.png",
+      "github": "schickling",
+      "twitter": "schickling",
+      "website": "http://schickling.me/",
+      "bio": "Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games."
+    },
+    "sorenbs": {
+      "name": "Søren Bramer Schmidt",
+      "avatar": "https://github.com/sorenbs.png",
+      "github": "sorenbs",
+      "twitter": "sorenbs",
+      "bio": "Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games."
+    }
+}
