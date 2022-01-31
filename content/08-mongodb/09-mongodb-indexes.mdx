@@ -6,13 +6,12 @@ metaImage: '/content/mongodb/header.png'
 ---
 
 ## Introduction
-Much like an encyclopedia, a database is a bountiful store of accessible information. An encyclopedia can have the answers to many questions one might have about history, anthropology, geography and so on. 
 
-To answer a specific question or find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. Unless you are a speed reader, this is an incredibly inefficient task. That is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
+Much like an encyclopedia, a database is a bountiful store of accessible information. To answer a specific question or find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
 
-A database index similarly points you in the right place for the seeked information more efficiently. In MongoDB, a query not using an index that "searches through the whole book" is called a *collection scan*.
+A database index similarly points you in the right place for information more efficiently. In MongoDB, a un-indexed query that "searches through the whole book" is called a *collection scan*.
 
-Indexes can be thought of as shortcuts for your queries so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, when to use them, and how to manage them.
+Indexes can be thought of as shortcuts for your data so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, when to use them, and how to manage them.
 
 <PrismaOutlinks>
 
@@ -22,16 +21,18 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 
 ## When should you use an index
-Keeping with the our encyclopedia analogy, one might thing to have an index line for every word in the book. If it is always faster to use an index, then this seems beneficial. However, as you can imagine, the more lines of words in an index then the larger the book becomes. At some point the size of the book to accomodate indexing every word becomes ineffective. There are many words such as "the" or "because" that are less useful to search for than "hippopotamus".
 
-This is similar to an index in MongoDB and databases in general. While yes, it is faster to have an index for any possible query, there simply are queries that don't need indexing. Like the size of a book, adding too many indexes to a database also takes up space and has a detrimental effect on write operations on the database if not kept in check.
+Keeping with our encyclopedia analogy, one might think to have an index line for every word in the book. If it is always faster to use an index, then this seems beneficial. However, as you can imagine, the more lines of words in an index, the larger the book becomes. At some point the size of the book needed to accommodate indexing every word becomes ineffective. There are many words such as "the" or "because" that are less useful to search for than "hippopotamus".
 
-Indexes are an incredibly useful way to optimize querying your database and are recommended. Knowing when to use them is important, so making sure that you are adding them on database fields that are often being queried will keep your reads efficient without negatively impacting database size and write efficiency.
+This is similar to an index in MongoDB and databases in general. While yes, it is faster to have an index for any data a query might use, there simply is data that doesn't need indexing. Like the size of a book, adding too many indexes to a database also takes up space and has a detrimental effect on write operations on the database if not kept in check.
+
+Indexes are an incredibly useful way to optimize access to specific data that is often used as selection criteria in queries. Knowing when to use them is important, so making sure that you are adding them on database fields that are often being queried will keep your reads efficient without negatively impacting database size and write efficiency.
 
 ## How to create an index
+
 Now that we have an understanding of what indexes are and when to use them, we can get into the method of creating one.
 
-Once you have identified a query that could benefit from indexing, you use the `createIndex()` method of MongoDB. The basic syntax is as follows:
+Once you have identified a field that could benefit from indexing, you use the `createIndex()` method of MongoDB. The basic syntax is as follows:
 
 ```
 db.COLLECTION_NAME.createIndex( { "FIELD_NAME": 1 } )
@@ -45,13 +46,15 @@ An example use of the method would look something like:
 db.mycoll.createIndex( { "country": 1 } )
 ```
 
-You can also pass multiple fields in the `createIndex()` method by creating a comma seperated list like the following:
+You can also create an index on multiple field with the `createIndex()` method by creating a comma seperated list like the following:
 
 ```
 db.COLLECTION_NAME.createIndex( { "FIELD_NAME_1": 1, "FIELD_NAME_2": -1 } )
 ```
+
 ## How to show indexes
-Once you have started creating indexes, you may want to check what indexes insist on your database instances. In MongoDB, you can use the `getIndexes()` method to return descriptions of all the indexes in a collection.
+
+Once you have started creating indexes, you may want to check what indexes exist on your database instances. In MongoDB, you can use the `getIndexes()` method to return descriptions of all the indexes in a collection.
 
 The basic syntax for seeing all of your collection's indexes is:
 
@@ -85,9 +88,10 @@ If you're interested in using full text indexes with MongoDB, Prisma has the [`f
 </PrismaOutlinks>  
 
 ## How to understand index performance
+
 Now with the ability to create and check what indexes exist on your collection, you will want to see if your indexes are performing the way you expect.
 
-To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collecton provided by MongoDB simulating a datastore of movie and tv comments. 
+To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collecton provided by [MongoDB University](https://university.mongodb.com/) simulating a datastore of movie and tv comments. 
 
 To understand the performance of an index, we will want to first run a query that does not have an index. The following query will return all 273 documents in the collection that are comments made by `Ramsay Bolton`:
 
@@ -139,20 +143,19 @@ This results in the following:
   }
 }
 ```
-There are several key results to focus on in this output. First, we can see in the `winningPlan` that the `stage` for this query is a `COLLSCAN`. This means that a collection scan occurred to commplete this query with a `totalDocsExamined` of 50,303 and `executionTimeMillis` of 23 milliseconds. The query had to examine every document in the collection and took 23ms even though `nReturned` was only 273 documents. While 23ms may not sound like much, this can get much longer for a collection housing one million documents.
+There are several key results to focus on in this output. First, we can see in the `winningPlan` that the `stage` for this query is a `COLLSCAN`. This means that a collection scan occurred to complete this query with a `totalDocsExamined` of 50,303 and `executionTimeMillis` of 23 milliseconds. The query had to examine every document in the collection and took 23ms even though `nReturned` was only 273 documents. While 23ms may not sound like much, this can get much longer for a collection housing one million documents.
 
-If querying on `name` is going to be a recurrent query for the application accessing this collection, we may want to create an index on this field. To do so we write the following:
+If querying on `name` is going to be a recurrent pattern for the application accessing this collection, we may want to create an index on this field. To do so we write the following:
 
 ```
 db.comments.createIndex( {"name":1} )
 ```
 
-If we take the same query with the explain planfrom before:
+If we take the same query with the explain plan from before:
 
 ```
 db.comments.find( { "name" : "Ramsay Bolton" } ).explain("executionStats")
 ```
-we get:
 
 ```
 {
@@ -228,14 +231,15 @@ we get:
   }
 }
 ```
-Comparing the same fields as the un-indexed query we see that the `stage` from the `winningPlan` is now `IXSCAN` which indicates an index was used.
+Comparing to the un-indexed query we see that the `winningPlan.inputstage` is now `IXSCAN` which indicates an index was used.
 
 Additionally, we see that `totalDocsExamined` is now just the 273 documents where `name` is `"Ramsay Bolton"` and not the entire 50,303 documents. This increased efficiency can be see especially now with `executionTimeMillis` totaling 0ms. 
 
-Analyzing the explain plan on your most important queries will show you the performance of your index or if one needs to be created to increase the efficiency of your application. 
+Analyzing the explain plan on your most important queries will show you the performance of your index or highlight when one needs to be created to increase the efficiency of your application. 
 
 ## How to drop an index
-While the explain plan may show the need for an index, it can also do the opposite. For example, if an index is no longer needed or not adding that much improved performance, it may be in your best interest to drop that index and reserve the space or preserve some write performance. 
+
+While the explain plan may show the need for an index, it can also do the opposite. For example, if an index is no longer needed or not adding that much improved performance, it may be in your best interest to drop that index to reserve the space or gain some write performance. 
 
 To drop an index on your collection, the basic syntax is as follows using the `dropIndexes()` method:
 
@@ -249,7 +253,8 @@ db.mycoll.dropIndex( { "country":1 } )
 ```
 
 ## Conclusion
-Efficiently querying your database leads to an improved user experience of your application. Additionally those working with the data for analysis or other internal efforts will have faster performance and ease of working with the database. Knowing how to index and how indexes work is key to achieving query efficiency. 
+
+In this guide, we discussed how efficiently querying your database leads to an improved user experience of your application. Additionally those using the data for analytics or other internal efforts will have faster performance and ease of working with the database. Knowing how to index and how indexes work is key to achieving query efficiency. 
 
 We covered the basics of creating, analyzing, and dropping indexes in MongoDB. Knowing these index foundations will provide the right base for continuing on to more advanced indexing with MongoDB.
 
