@@ -7,11 +7,11 @@ metaImage: '/content/mongodb/header.png'
 
 ## Introduction
 
-Much like an encyclopedia, a database is a bountiful store of accessible information. To answer a specific question or find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
+Much like an encyclopedia, a database is a bountiful store of accessible information. To answer find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
 
-A database index similarly points you in the right place for information more efficiently. In MongoDB, a un-indexed query that "searches through the whole book" is called a *collection scan*.
+A database index similarly points you in the right place for information more efficiently. In MongoDB, an un-indexed query that "searches through the whole book" is called a *collection scan*.
 
-Indexes can be thought of as shortcuts for your data so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, when to use them, and how to manage them.
+Indexes can be thought of as shortcuts for accessing your data so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, discuss when to use them, and how to manage them.
 
 <PrismaOutlinks>
 
@@ -231,9 +231,9 @@ db.comments.find( { "name" : "Ramsay Bolton" } ).explain("executionStats")
   }
 }
 ```
-Comparing to the un-indexed query we see that the `winningPlan.inputstage` is now `IXSCAN` which indicates an index was used.
+Comparing to the un-indexed query, we now see that the `winningPlan.inputstage` is now `IXSCAN` which indicates an index was used.
 
-Additionally, we see that `totalDocsExamined` is now just the 273 documents where `name` is `"Ramsay Bolton"` and not the entire 50,303 documents. This increased efficiency can be see especially now with `executionTimeMillis` totaling 0ms. 
+Additionally, we see that `totalDocsExamined` is now just the 273 documents where `name` is `"Ramsay Bolton"` and not the entire 50,303 documents. This increased efficiency can be see especially now with `executionTimeMillis` totaling 0ms. Our new index on `name` communicated to the query exactly where to look to find the data it was looking for.  
 
 Analyzing the explain plan on your most important queries will show you the performance of your index or highlight when one needs to be created to increase the efficiency of your application. 
 
