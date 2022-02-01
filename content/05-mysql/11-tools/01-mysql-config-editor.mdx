@@ -229,7 +229,7 @@ user = "root"
 password = *****
 ```
 
-You can also remove a specific parameter from the login path's connection information.  For instance, if the MySQL server at "dev.example.com" has been reconfigured to now run on the default 3306 port, you can remove the port information.  To do so, you'd provide the `--port` flag to along after the `--login-path=`:
+You can also remove a specific parameter from the login path's connection information.  For instance, if the MySQL server at "dev.example.com" has been reconfigured to now run on the default 3306 port, you can remove the port information.  To do so, you'd provide the `--port` flag along with the `--login-path=`:
 
 ```
 mysql_config_editor remove --login-path=testing --port
