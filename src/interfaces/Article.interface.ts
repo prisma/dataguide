@@ -16,6 +16,7 @@ export interface ArticleFrontmatter {
   toc?: boolean
   hidePage?: boolean
   hnPostId?: string
+  authors?: string[]
 }
 
 export interface ArticleData {

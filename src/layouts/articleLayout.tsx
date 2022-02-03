@@ -10,6 +10,7 @@ import Layout from '../components/layout'
 import PageBottom from '../components/pageBottom'
 import SocialShareSection from '../components/socialShareSection'
 import NextPrevious from '../components/nextPrevious'
+import AuthorDetails from '../components/authorDetails'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps & CreateArticleContext
 
@@ -20,7 +21,7 @@ const ArticleLayout = ({ data, pageContext: { seoTitle, seoDescription }, ...pro
   const {
     mdx: {
       fields: { slug, modSlug },
-      frontmatter: { title, metaImage, toc, hnPostId },
+      frontmatter: { title, metaImage, toc, hnPostId, authors },
       body,
       parent,
       tableOfContents,
@@ -51,6 +52,7 @@ const ArticleLayout = ({ data, pageContext: { seoTitle, seoDescription }, ...pro
       )}
 
       <MDXRenderer>{body}</MDXRenderer>
+      {authors && <section><AuthorDetails authors={authors}/></section>}
       {!slug.includes('index') && <NextPrevious slug={modSlug}/>}
       <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
     </Layout>
@@ -85,6 +87,7 @@ export const query = graphql`
         metaDescription
         toc
         hnPostId
+        authors
       }
     }
   }
