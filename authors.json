@@ -16,12 +16,12 @@
     },
     "ryanchenkie": {
       "name": "Ryan Chenkie",
-      "avatar": "/content/authors/ryanchenkie.jpg",
+      "avatar": "/dataguide/authors/ryanchenkie.jpg",
       "bio": "Ryan is a full stack developer and is particularly interested in databases and APIs. He’s the founder of CourseLift, a course hosting platform that helps authors with marketing and sales. "
     },
     "dianfay": {
       "name": "Dian Fay",
-      "avatar": "/content/authors/dmfay.jpg",
+      "avatar": "/dataguide/authors/dmfay.jpg",
       "bio": "Dian didn't exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she's designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of MassiveJS, an open source data mapper for Node.js focused on using PostgreSQL to the fullest."
     }
 }
