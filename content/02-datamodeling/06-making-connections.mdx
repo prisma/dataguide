@@ -2,6 +2,7 @@
 title: 'Making Connections'
 metaTitle: "Making Connections | Data Modeling | Prisma's Data Guide"
 metaDescription: "Learn about using foreign keys to describe relationships which in turn define the structure of the database"
+authors: ['dianfay']
 ---
 ## Introduction
 
@@ -110,9 +111,3 @@ Many-to-many relationships are only one possible composition of the two primary 
 A single database may (and often does) contain multiple networks of foreign key relationships. The reverse, however, is usually not true. MySQL and MariaDB alone among the popular relational databases conflate schemas and databases, and therefore allow cross-database foreign keys as long as both databases are hosted on the same server. Others do not.
 
 We'll come back to organizing tables in databases and in schemas within databases later, but it's useful to consider a multi-table relationship graph the indivisible unit of database layout in the same way that the combined attributes of a given concept form the basis for a table layout.
-
-<AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
-
-Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of <a href="https://massivejs.org">MassiveJS</a>, an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
-
-</AuthorInfo>

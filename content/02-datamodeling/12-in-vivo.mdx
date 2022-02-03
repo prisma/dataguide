@@ -2,6 +2,7 @@
 title: 'In Vivo: Information Ecosystems'
 metaTitle: "In Vivo: Information Ecosystems and Specialized Solutions"
 metaDescription: "Databases are never alone. Users, applications, scripts, and even other databases feed information into and extract information from them the way living things consume and distribute environmental -- and each other's -- energy."
+authors: ['dianfay']
 ---
 
 ## Introduction
@@ -96,9 +97,3 @@ After first being implemented by IBM's DB2, it would take several years for any 
 The really interesting things are happening in open source RDBMSs. PostgreSQL introduced [foreign data wrappers](https://wiki.postgresql.org/wiki/Foreign_data_wrappers) in version 9.1 and has continued to expand their functionality, and MariaDB's [`CONNECT` storage engine](https://mariadb.com/kb/en/connect/) can wrap a plethora of data sources. Moreover, both Postgres' and MariaDB's implementations are extensible: if you have external data in a format no existing wrapper can handle, you can write your own. The Postgres community has even developed a Python framework called [Multicorn](https://multicorn.org/) to simplify the otherwise C-based process of foreign data wrapper development.
 
 The idea of "federated" architectures derives from the dual form of government where regional and central (federal) governments coexist, and like other systems design techniques, its purpose is the management of complexity. Users of the individual subsystems work in and with those subsystems; those concerned only with the operation of the whole interact with the gestalt. In terms of ecological roles, this is very much an "animal" mode of database operation. A federating database is central to the system it inhabits. It draws flows of information to and through itself, makes connections, encodes expectations of subsidiary schemas. But in information ecosystems where such beasts can thrive, SQL/MED is a powerful tool for corralling disparate data sources.
-
-<AuthorInfo name="Dian Fay" image="/content/modeling/dmfay.jpg">
-
-Dian didn’t exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she’s designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of <a href="https://massivejs.org">MassiveJS</a>, an open source data mapper for Node.js focused on using PostgreSQL to the fullest.
-
-</AuthorInfo>
