@@ -14,6 +14,7 @@ import AuthorInfo from './authorInfo'
 import Footnote from './footnote'
 import Sidenote from './sideNote'
 import PrismaOutlinks from './prismaOutlinks'
+import AnchorItem from './anchor-item'
 import { withPrefix } from 'gatsby'
 
 export default {
@@ -36,6 +37,7 @@ export default {
   DocLink,
   footnote: Footnote,
   Sidenote,
+  AnchorItem,
   img: ({ src, ...props }: any) => {
     return (
       <a href={withPrefix(src)} target="_blank">
