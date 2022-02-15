@@ -97,7 +97,7 @@ db.authors.find()
   }
 ]
 ```
-Now that we have our database, we can show the steps to work with a transaction directly in the shell and demonstrate how a transaction being conducted in one session may not be detectable to an outside source.
+Now that we have our database, we can show the steps to work with a transaction directly in the MongoDB shell. We'll also demonstrate how a transaction being conducted in one session may not be detectable to an outside source.
 
 First, we need to create a session, same as you would when using the API.
 
@@ -130,7 +130,7 @@ It's helpful to represent your collection in a variable within the session to ea
 ```
 var authors = session.getDatabase('literature').getCollection('authors')
 ```
-This newly created variable will work the as `db.authors` would when working outside of the transaction session. You can verify this by opening a second shell window, connecting to your cluster, and running `db.authors.find()`. It will return the same documents.
+This newly created variable will work the as `db.authors` would when working in a shell outside of the transaction session. You can verify this by opening a second shell window, connecting to your cluster, and running `db.authors.find()`. Both statements will return the same documents.
 
 Inside of the session, we now want to simulate what an external application might do and add a record to the database. We can do this in the following way to our `authors` collection:
 
@@ -149,7 +149,7 @@ MongoDB will return a success:
   insertedId: ObjectId("6203a075c374636bc6976baa")
 }
 ```
-If we run `authors.find()` now in the session we'll return the following:
+If we run `authors.find()` now in the session we'll return the previous results with our addition included:
 
 ```
 [
@@ -216,32 +216,33 @@ Since this transaction session has still not been committed, we will not see it 
   }
 ]
 ```
-This difference demonstrates that the transaction is still currently in a state of ambiguity. It can still either succeed and be committed to the database or it could fail. Either way the database will end up in a consistent state. It will include the new record or rollback to the same state as before the transaction session started.
+This difference demonstrates that the transaction is still currently in a state of ambiguity. It can still either succeed and be committed to the database or it could fail and be aborted. Either way, the database will end up in a consistent state. It will include the new record or incur a rollback to the same state as before the transaction session started.
 
-To commit the transaction and bring the database to the new consistent state with the new author, we run the following in the session context:
+We run the `commitTransaction()` method in the session to commit the transaction and bring the database to the new consistent state:
 
 ```
 session.commitTransaction()
 ```  
-Now, the new record will exist in both instances, the MongoDB shell where the transaction session was taking place as well as any MongoDB shell outside of the transaction.
+Now, the new record will exist in both instances, the MongoDB shell where the transaction session was taking place and the MongoDB shell outside of the transaction.
   
 
 ### Aborting a transaction
 
-Now that we have gone through starting a session and working all the way to committing it, we can explore the alternative result for a transaction.
+Now that we have gone from starting a session all the way to committing it, we can explore the alternative result for a transaction.
 
 This path begins the same and changes only at the commit point. If we want to discard the changes the transaction is making, then we use the `abortTransaction()` method as follows in the session shell:
 
 ```
 session.abortTransaction()
 ```
-This method cancels the transaction session and discards any potential changes. The database returns to its original state. Instead of resulting in a new consistent state, the database rolls back the changes and stays the same as when the transaction session first started.  
+This method cancels the transaction session and discards any potential changes. Instead of resulting in a new consistent state, the database rolls back the changes and stays the same as when the transaction session first started.  
 
 ## Conclusion
 
 In this guide, we discussed what transactions are and what use cases transactions suit best in MongoDB. We also walked through the process of a transaction session conceptually in the MongoDB shell, so you can understand how an external application will operate.
 
 Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know the basics of transactions.
+
 <PrismaOutlinks>
 
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
