@@ -115,7 +115,9 @@ session.startTransaction(
 	 } 
 )
 ```
-The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data *if* the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-). When you commit with `w: "majority"` write concern along with a transaction level of `"snapshot"` read concern, this guarantees that operations have a synchronized snapshot of majority-committed data. This configuration of write and read concern can be thought of as good defaults if no specific requirements.
+The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data **if** the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-). 
+
+When you commit with `w: "majority"` write concern along with a read concern level of `"snapshot"`, this guarantees that operations have a synchronized snapshot of majority-committed data. This configuration of write and read concern can be thought of as good defaults if no specific requirements.
 
 The method will not return anything if successful, and if there is any error, then the transaction will need to be aborted which will be discussed shortly.
 
@@ -139,7 +141,7 @@ authors.insertOne( {
 	"title": "Vernon Subutex") }
 )
 ```	
-MongoDB will return a sucess:
+MongoDB will return a success:
 
 ```
 {
@@ -147,7 +149,7 @@ MongoDB will return a sucess:
   insertedId: ObjectId("6203a075c374636bc6976baa")
 }
 ```
-If we run an `authors.find()` now in the session we'll return the following:
+If we run `authors.find()` now in the session we'll return the following:
 
 ```
 [
@@ -184,7 +186,7 @@ If we run an `authors.find()` now in the session we'll return the following:
 ]
 ```
 
-Since this transaction session has still not been committed, we will not see it return the same result in a shell existing outside of the session. To confirm, we run `db.authors.find()` in another shell instance and we return the original documents.
+Since this transaction session has still not been committed, we will not see it return the same result in a MongoDB shell existing outside of the session. To confirm, we run `db.authors.find()` in another MongoDB shell instance and we return the original documents.
 
 ```
 [
@@ -214,14 +216,14 @@ Since this transaction session has still not been committed, we will not see it 
   }
 ]
 ```
-This difference demonstrates how the transaction is still currently in a state of ambiguity. It can still either succeed and be committed to the database or it could fail. Either way the database will come back to a consistent state of either including the new record or remaining the same as before the transaction session started.
+This difference demonstrates that the transaction is still currently in a state of ambiguity. It can still either succeed and be committed to the database or it could fail. Either way the database will end up in a consistent state. It will include the new record or rollback to the same state as before the transaction session started.
 
 To commit the transaction and bring the database to the new consistent state with the new author, we run the following in the session context:
 
 ```
 session.commitTransaction()
 ```  
-Now, the new record will exist in both instances, the shell where the transaction session was taking place as well as any shell outside of the transaction.
+Now, the new record will exist in both instances, the MongoDB shell where the transaction session was taking place as well as any MongoDB shell outside of the transaction.
   
 
 ### Aborting a transaction
@@ -237,9 +239,9 @@ This method cancels the transaction session and discards any potential changes. 
 
 ## Conclusion
 
-In this guide, we discussed what transactions are and what use cases transactions suit best in MongoDB. We also walked through the process of a transaction session conceptually in the MongoDB shell so you can understand how and external application will operate.
+In this guide, we discussed what transactions are and what use cases transactions suit best in MongoDB. We also walked through the process of a transaction session conceptually in the MongoDB shell, so you can understand how an external application will operate.
 
-Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know about transactions.
+Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know the basics of transactions.
 <PrismaOutlinks>
 
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
