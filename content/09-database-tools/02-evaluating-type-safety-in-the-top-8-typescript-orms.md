@@ -7,7 +7,7 @@ metaImage: '/content/database-tools/type-safety-comparison/meta-orms.png'
 
 ## Introduction
 
-Evaluating the level of type safety a TypeScript ORM provides out-of-the-box can be time consuming. This article briefly assesses the type safety of libraries considered in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2021](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries).
+Evaluating the level of type safety a TypeScript ORM provides out-of-the-box can be time consuming. This article briefly assesses the type safety of libraries considered in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries).
 
 While all of the libraries considered in this article have TypeScript bindings for their API, they vary wildly in the level of type safety they _actually_ provide. Some, like [Waterline](https://waterlinejs.org/), compile without errors but then pass around `any` types liberally, skipping over any sort of type checking. Conversely, others, like [Prisma](https://www.prisma.io/), have full type safety for advanced functions like partial queries that change the shape of return data.
 
@@ -37,7 +37,7 @@ Prisma differs from most ORMs in that models are not defined in classes but in t
 
 ### What is Prisma?
 
-Prisma is a newer ORM and has gone through several iterations and redesigns, its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2).
+Prisma is a newer ORM and has gone through several iterations and redesigns. Its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2).
 
 ### Type Definitions: Built-in
 
@@ -99,11 +99,11 @@ Prisma's unique design of generating a local CRUD client that encodes your data 
 
 ### What is Sequelize
 
-Sequelize is an established, mature, promise-based Node.js ORM that supports Postgres, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows a traditional ORM ActiveRecord pattern of defining models by extending a base `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`. It is very popular in the JavaScript community and has been around for a long time. However, the project has stagnated more recently and does not seem to be as active as it once was.
+Sequelize is an established, mature, promise-based Node.js ORM that supports PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows a traditional ORM ActiveRecord pattern of defining models by extending a base `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`. It is very popular in the JavaScript community and has been around for a long time. However, the project has stagnated more recently and does not seem to be as active as it once was.
 
 ### Type Definitions: Built-in
 
-As of v5 (at the time of writing, Sequelize is v6.3.5), Sequelize contains built-in type definitions. Prior to this, type definitions were available via [`@types`](https://github.com/DefinitelyTyped/DefinitelyTyped). Sequelize was originally designed as a JavaScript ORM, and TypeScript support was added in recent years.
+As of v5 (at the time of writing, Sequelize is v6.16.1), Sequelize contains built-in type definitions. Prior to this, type definitions were available via [`@types`](https://github.com/DefinitelyTyped/DefinitelyTyped). Sequelize was originally designed as a JavaScript ORM, and TypeScript support was added in recent years.
 
 ### Record Creation: Not Type-Safe
 
@@ -476,7 +476,7 @@ Typegoose leverages Classes and Decorators to help you build Mongoose models qui
 
 ## Briefly Considered
 
-This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2021](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide/). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
+This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide/). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
 
 ### Knex.js
 
@@ -498,11 +498,11 @@ PgTyped's goal is to allow you to write raw SQL and also guarantee the type-safe
 * [GitHub](https://github.com/mmkal/slonik-tools/tree/master/packages/typegen#sloniktypegen)
 * [npm](https://www.npmjs.com/package/@slonik/typegen)
 
-A similar package to PgTyped is the Slonik typegen library that uses the [Slonik PostgreSQL client](https://github.com/gajus/slonik) to generate TypeScript interfaces from raw SQL queries. To use the typegen library, you import it and use a proxy object that it generates to run queries. After running a query, typegen will inspect the the field types of the query result and generate a TypeScript interface for that query. Subsequent queries can then be executed in a type-safe manner.
+A similar package to PgTyped is the Slonik typegen library that uses the [Slonik PostgreSQL client](https://github.com/gajus/slonik) to generate TypeScript interfaces from raw SQL queries. To use the typegen library, you import it and use a proxy object that it generates to run queries. After running a query, typegen will inspect the field types of the query result and generate a TypeScript interface for that query. Subsequent queries can then be executed in a type-safe manner.
 
 ## Conclusion
 
-This article briefly assesses the type safety of the most popular Node.js ORMs, database toolkits, and query builders. It draws its list of libraries from [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2021](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries), where the health of these libraries is evaluated according to criteria like repository activity and developer support.
+This article briefly assesses the type safety of the most popular Node.js ORMs, database toolkits, and query builders. It draws its list of libraries from [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries), where the health of these libraries is evaluated according to criteria like repository activity and developer support.
 
 Type safety is not the only criteria you should use when choosing a tool to interact with your database. It is also important to consider the package’s programming interface, design, support for your database’s features, and flexibility. Different Node.js projects may require different tools.
 
