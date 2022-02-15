@@ -19,6 +19,8 @@ This article will look at the following:
 
 This article will assume some familiarity with TypeScript and type safety. To learn more, please consult the official [TypeScript documentation](https://www.typescriptlang.org/docs). It will also assume some familiarity with ORMs and query builders. To learn more about these database tools, please see [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms), also from Prisma's [Data Guide](https://www.prisma.io/dataguide/).
 
+**Note:** This article was originally published on October 2, 2020.  It was most recently updated on February 15, 2022.
+
 ## Prisma
 
 ### Evaluation summary
