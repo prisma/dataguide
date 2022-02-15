@@ -28,6 +28,8 @@ These features help databases achieve [ACID compliance](https://www.prisma.io/da
 
 MongoDB has support for [multi-document ACID transactions](https://www.mongodb.com/blog/post/mongodb-multi-document-acid-transactions-general-availability) and [distributed multi-document ACID transactions](https://www.mongodb.com/press/mongodb-42-adds-distributed-transactions-field-level-encryption-updated-kubernetes-operator-and-more-to-the-leading-modern-general-purpose-database). By nature, the document model allows related data to be stored together in a single document. The document model, combined with atomic document updates, takes away the need for transactions in a majority of use cases. However, there are cases where multi-document, multi-collection MongoDB transactions are your best choice.
 
+![Database Transactions](/content/mongodb/mdb-transactions.png)
+
 ## When to use transactions in the document model
 
 The document model inherently solves for a lot of the needs that transactions target. Nonetheless, there are some use cases that stand out for their need to utilize transactions even in the document model.
@@ -60,7 +62,7 @@ Transactions are typically written and executed from external applications via o
 
 For the sake of demonstration, we'll walk through the creation of a transaction via the MongoDB shell. We'll work with an example database and collection to help conceptualize how transactions work in practice.
 
-**Note**: If a transactions session runs for more than 60 seconds, MongoDB will automatically abort the operation. This occurs because transactions are typically conducted in applications that work automatically rather than a person issuing commands in the shell. The following steps are for conceptualizing a transaction session from start to finish.  
+**Note**: If a transactions session runs for more than 60 seconds after the initial `startTransaction()` method, MongoDB will automatically abort the operation. This occurs because transactions are typically conducted in applications that work automatically rather than a person issuing commands in the shell. The following steps are for conceptualizing a transaction session from start to finish.  
 
 To begin, we have a simple database called `literature` with a collection called `authors`. Running a quick `find()` query, we can see the document structure with the author name and a title of theirs.
 
@@ -113,7 +115,7 @@ session.startTransaction(
 	 } 
 )
 ```
-The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data *if* the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-). When you commit with `w: "majority"` write concern, transaction level `"snapshot"` read concern guarantees that operations have a synchronized snapshot of majority-committed data and can be thought of as good defaults if no specific requirements.
+The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data *if* the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-). When you commit with `w: "majority"` write concern along with a transaction level of `"snapshot"` read concern, this guarantees that operations have a synchronized snapshot of majority-committed data. This configuration of write and read concern can be thought of as good defaults if no specific requirements.
 
 The method will not return anything if successful, and if there is any error, then the transaction will need to be aborted which will be discussed shortly.
 
@@ -214,7 +216,7 @@ Since this transaction session has still not been committed, we will not see it 
 ```
 This difference demonstrates how the transaction is still currently in a state of ambiguity. It can still either succeed and be committed to the database or it could fail. Either way the database will come back to a consistent state of either including the new record or remaining the same as before the transaction session started.
 
-To commit the transaction and bring the database to the new consistent state witht the new author, we run the following in the session context:
+To commit the transaction and bring the database to the new consistent state with the new author, we run the following in the session context:
 
 ```
 session.commitTransaction()
@@ -235,10 +237,9 @@ This method cancels the transaction session and discards any potential changes. 
 
 ## Conclusion
 
-Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know about transactions.
-
 In this guide, we discussed what transactions are and what use cases transactions suit best in MongoDB. We also walked through the process of a transaction session conceptually in the MongoDB shell so you can understand how and external application will operate.
 
+Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know about transactions.
 <PrismaOutlinks>
 
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with MongoDB, you can use the [MongoDB connector (currently in preview)](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect and manage your data.
