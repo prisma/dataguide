@@ -13,6 +13,7 @@ const NextPreviousWrapper = styled.div`
   border-top: 1px solid #e2e8f0;
   margin-top: -114px;
   margin-bottom: 20px;
+  align-items: flex-start;
 
   .previous,
   .next {
@@ -65,6 +66,16 @@ const NextPreviousWrapper = styled.div`
     a .title {
       margin-left: 14px;
     }
+  }
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    margin-top: -140px;
+  } 
+
+  @media (max-width: 640px) {
+    //padding: 12px;
+    margin-top: -225px;
   }
 `
 
