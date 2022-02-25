@@ -7,11 +7,11 @@ authors: ['alexemerich']
 ---
 ## Introduction
 
-MongoDB Atlas is MongoDB's cloud database service. It offers data distribution an mobility across major cloud providers AWS, Azure, and Google Gloud. It is popular for its built-in automation for resource and workload optimization. 
+MongoDB Atlas is MongoDB's cloud database service. It offers data distribution and mobility across major cloud providers AWS, Azure, and Google Gloud. It is popular for its built-in automation for resource and workload optimization. 
 
-In this guide, we are going to walk through the steps to provisioning a MongoDB Atlas cluster from the browser. We'll walk through all the sections one must go through to deploy a cluster, configure your IP connection, and then finally connect to your cluster.
+In this guide, we are going to walk through the steps to provision a MongoDB Atlas cluster from the browser. We'll walk through all the options to configuring a cluster up until deploy.
 
-**Note:** Some instructions and images are subject to change since the writing of this guide February 2022. We'll do our best to keep as up to date as possible as changes occur.
+**Note:** Some instructions and images are subject to change since the writing of this guide in February 2022. We'll do our best to keep as up to date as possible as changes occur.
 
 <PrismaOutlinks>
 
@@ -27,13 +27,15 @@ If you already have a MongoDB account registered, you can login from the registr
 
 ![Create Cluster](/content/mdb-atlas-setup/create-cluster-button.png)
 
-The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing MongoDB offers three options: Serverless (Preview), Dedicated, and Shared. 
+The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: Serverless (Preview), Dedicated, and Shared. 
 
 ![Cluster Type](/content/mdb-atlas-setup/cluster-type.png)
 
 The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with cost matching your actual usage.
 
-The dedicated instance is the selection we will continue walking through for the remainder of the guide. It is for production applications with sophisticated workload requirements. There are advanced configuration controls such as network isolation, end-to-end encryption, and fine-grained access controls. The dedicated cluster also has on-deman performance advice around indexes, data schema, and more.
+![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
+
+The dedicated instance is the selection we will continue walking through for the remainder of the guide. It is for production applications with sophisticated workload requirements. There are advanced configuration controls such as network isolation, end-to-end encryption, and fine-grained access controls. The dedicated cluster also has on-demand performance advice around indexes, data schema, and more.
 
 Lastly, is the shared cluster instance. This cluster type is for learning and exploring MongoDB in a sandbox-like environment. It has basic configuration controls and is best for working with sample datasets and familiarizing yourself with MongoDB.
 
@@ -58,7 +60,7 @@ It is up to you which provider is best for you. One consideration is making sure
 
 #### Multi-Cloud, Multi-Region & Workload Isolation
 
-An additional option within the Cloud Provider & Region section is configuring Multi-Cloud, Multi-Region & Workload Isolation(M10+ clusters). Toggling this option from off to on enables you to distribute data across clouds or regions for improved availability and local read performance, or introduce replicas for workload isolation. 
+An additional option within the Cloud Provider & Region section is configuring Multi-Cloud, Multi-Region & Workload Isolation(M10+ clusters). Toggling this option on enables you to distribute data across clouds or regions for improved availability and local read performance, or introduce replicas for workload isolation. 
 
 You can configure 3, 5, or 7 nodes across multiple regions and cloud providers to better withstand data center outages. You can also add replicas in additional regions to optimize for local reads or analytics nodes to isolate queries on read-only nodes to achieve workload isolation.
 
@@ -68,8 +70,8 @@ For the purposes of this guide, we will leave this option toggled off, but you c
 
 After selecting your cloud provider and region, the next step is selecting your cluster tier. MongoDB divides cluster tiers into two categories: 
 
-1) Dedicated Clusters for development environments and low-traffic applications
-2) Dedicated Clusters for high-traffic applications and large datasets
+1. Dedicated Clusters for development environments and low-traffic applications
+2. Dedicated Clusters for high-traffic applications and large datasets
 
 The first category includes M10 and M20 clusters while the second category ranges from M30 to M700. Each tier displays its RAM, Storage, vCPU, and its Base Price per hour.
 
@@ -89,15 +91,27 @@ Now that you have your cluster tier picked out, there are some additional settin
 
 ![Additional Settings](/content/mdb-atlas-setup/additional-settings.png)
 
+#### Version
+
 First will be the MongoDB version. By default, the most up-to-date version will be selected, but you can choose whichever supported version you require.
 
-Next, you will need to decide which backup strategy is best for your organization. There is Cloud Backup where snapshots are taken automatically and stored according to your backup and retention policy. There is also Continuous Cloud Backup that when toggled on records the full [oplog](https://docs.mongodb.com/manual/core/replica-set-oplog/) for a configured window. This permits you to restore to any point in time within that window. Which option is best for you will depend on your organization's [recovery point objective (RPO)](https://www.mongodb.com/backup-and-its-role-disaster-recovery).
+#### Backups
 
-The next option is for configuring sharding to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. 
+Next, you will need to decide which backup strategy is best for your organization. There is Cloud Backup where snapshots are taken automatically and stored according to your backup and retention policy. 
+
+There is also Continuous Cloud Backup that when toggled on records the full [oplog](https://docs.mongodb.com/manual/core/replica-set-oplog/) for a configured window of time. This permits you to restore to any point in time within that window. Which option is best for you will depend on your organization's [recovery point objective (RPO)](https://www.mongodb.com/backup-and-its-role-disaster-recovery).
+
+#### Sharding
+
+The next option is for configuring sharding to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.  
 
 This option is only able to be toggled on if your cluster tier is an M30+ and your auto-scaling minimum tier is at least an M30. Sharding support high throughput and large datasets, and can be increased as data requirements grow.
 
+#### Business Intelligence Connector
+
 The penultimate additional setting is for [MongoDB's Business Intelligence (BI) Connector](https://docs.mongodb.com/bi-connector/current/). This feature requires a Cluster Tier of M10+. The BI Connector enables you to visualize your data on relational BI tools such as Tableau and Qlik.
+
+#### Encryption
 
 Lastly, there is the ability to toggle on the ability to manage your own encryption keys. Once again, this feature is only available if your cluster tier is an M10+. This feature gives you the ability to employ an additional layer of encryption using your own keys of choice. By default MongoDB Atlas storage and backups are encrypted at rest, but if your organization requires more encryption on top of that then this option achieves that.
 
