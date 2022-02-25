@@ -33,15 +33,15 @@ The first decision you will have to make is what kind of cluster you would like 
 
 The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with cost matching your actual usage.
 
-![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
-
 The dedicated instance is the selection we will continue walking through for the remainder of the guide. It is for production applications with sophisticated workload requirements. There are advanced configuration controls such as network isolation, end-to-end encryption, and fine-grained access controls. The dedicated cluster also has on-demand performance advice around indexes, data schema, and more.
 
 Lastly, is the shared cluster instance. This cluster type is for learning and exploring MongoDB in a sandbox-like environment. It has basic configuration controls and is best for working with sample datasets and familiarizing yourself with MongoDB.
 
 ### Global Cluster Configuration
 
-The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map (pictured below) that shows the approximate write latency of every region from high to low. Atlas Global Clusters are for sharded cluzter zones to support location-aware read and write operations for globally distributed applications.
+The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write latency of every region from high to low. Atlas Global Clusters are for sharded cluzter zones to support location-aware read and write operations for globally distributed applications.
+
+![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
 
 They are designed for a minimum cluster tier of M30 or greater sharded cluster. For the purpose of this guide we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
 
