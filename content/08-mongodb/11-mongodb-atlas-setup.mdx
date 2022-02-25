@@ -7,9 +7,9 @@ authors: ['alexemerich']
 ---
 ## Introduction
 
-MongoDB Atlas is MongoDB's cloud database service. It offers data distribution and mobility across major cloud providers AWS, Azure, and Google Gloud. It is popular for its built-in automation for resource and workload optimization. 
+MongoDB Atlas is MongoDB's cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization. 
 
-In this guide, we are going to walk through the steps to provision a MongoDB Atlas cluster from the browser. We'll walk through all the options to configuring a cluster up until deploy.
+In this guide, we are going to walk through the steps to provision a MongoDB Atlas cluster from the browser. We'll walk through all of the options from configuring a cluster up until deploy.
 
 **Note:** Some instructions and images are subject to change since the writing of this guide in February 2022. We'll do our best to keep as up to date as possible as changes occur.
 
@@ -21,7 +21,7 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 ## How to provision a MongoDB Atlas cluster
 
-To begin setting up your new Atlas cluster, you will navigate to the [Atlas registration page](https://www.mongodb.com/cloud/atlas/register) and create a new account. After successful registration, you will be directed to a page where you will create your first cluster.
+If you do not already have a MongoDB account, to begin setting up your new Atlas cluster you will navigate to the [Atlas registration page](https://www.mongodb.com/cloud/atlas/register) and create a new account. After successful registration, you will be directed to a page where you will create your first cluster.
 
 If you already have a MongoDB account registered, you can login from the registration page. Once logged in, you will want to click on the green "+ Create" button pictured below. This will take you to the same page for creating a cluster as if you were creating a cluster for the first time.
 
@@ -31,7 +31,7 @@ The first decision you will have to make is what kind of cluster you would like 
 
 ![Cluster Type](/content/mdb-atlas-setup/cluster-type.png)
 
-The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with cost matching your actual usage.
+The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with the cost matching your actual usage.
 
 The dedicated instance is the selection we will continue walking through for the remainder of the guide. It is for production applications with sophisticated workload requirements. There are advanced configuration controls such as network isolation, end-to-end encryption, and fine-grained access controls. The dedicated cluster also has on-demand performance advice around indexes, data schema, and more.
 
@@ -39,11 +39,11 @@ Lastly, is the shared cluster instance. This cluster type is for learning and ex
 
 ### Global Cluster Configuration
 
-The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write latency of every region from high to low. Atlas Global Clusters are for sharded cluzter zones to support location-aware read and write operations for globally distributed applications.
+The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write latency of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
 
 ![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
 
-They are designed for a minimum cluster tier of M30 or greater sharded cluster. For the purpose of this guide we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
+They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters.  For the purpose of this guide we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
 
 
 ### Cloud Provider & Region
@@ -56,7 +56,7 @@ It is up to you which provider is best for you. One consideration is making sure
 
 **NOTE:** In recommended regions, Atlas replica sets always span 3 availability zone. In other regions only 2 availability zones are used.
 
-3 availability zones is recommended in order to obtain the full benefits of a [3 member replica set](https://docs.mongodb.com/manual/core/replica-set-architecture-three-members/) and maintain high availability of data. To get more information about the region availability of your selected cloud provider, you can click on the 'i' icon at the top of the list of available regions.
+3 availability zones are recommended in order to obtain the full benefits of a [3 member replica set](https://docs.mongodb.com/manual/core/replica-set-architecture-three-members/) and maintain high availability of data. To get more information about the region availability of your selected cloud provider, you can click on the 'i' icon at the top of the list of available regions.
 
 #### Multi-Cloud, Multi-Region & Workload Isolation
 
