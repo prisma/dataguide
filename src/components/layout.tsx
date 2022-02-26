@@ -72,10 +72,16 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
           padding-top: 24px;
         }
       }
-
       &:last-of-type {
         padding-bottom: ${p=> p.noIndex && '164px'};
       }
+
+      @media (max-width: 640px){
+        &:last-of-type {
+        padding-bottom: ${p=> p.noIndex && '250px'};
+        }
+      }
+      
     }
   `
 
