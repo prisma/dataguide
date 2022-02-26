@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import authorsJSON from '../../authors.json'
+import { withPrefix } from 'gatsby'
 
 const SingleAuthor = ({ authInfo }: any) => {
   const author = authorsJSON[authInfo]
   return (
     <div className="author-item">
-      {author.avatar && <img alt={author.name} src={author.avatar} />}
+      {author.avatar && <img alt={author.name} src={withPrefix(author.avatar)} />}
       <div>
         {author.name && <h3 className="name">{author.name}</h3>}
         {author.bio}
