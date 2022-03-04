@@ -1,0 +1,469 @@
+---
+title: 'Identifying slow queries in MySQL'
+metaTitle: "Finding slow and low performance queries"
+metaDescription: "Learn how to find long running or slow queries within MySQL."
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+For websites and applications that incorporate databases into their technology stack, a large part of the user experience can be affected by database performance.  Slow queries can delay data retrieval, page rendering, and any other operations that interact with the data layer.  Because of this potential for heavy impact, it is important know how to identify and fix those issues.
+
+In this article, we'll discuss various way to identify poorly performing queries in MySQL databases.  This will set the groundwork for optimizing these queries and improving their performance.
+
+## Checking active queries and processes
+
+One of the most straightforward places to check first to get an overview of the MySQL's current operational status is in its [process list](https://dev.mysql.com/doc/refman/8.0/en/show-processlist.html)..
+
+### Showing the full process list
+
+To display all current operations that MySQL's processing threads are executing, type:
+
+```sql
+SHOW FULL PROCESSLIST;
+```
+```
+ +----+-----------------+-----------+------+---------+---------+------------------------+-----------------------+
+ | Id | User            | Host      | db   | Command | Time    | State                  | Info                  |
+ +----+-----------------+-----------+------+---------+---------+------------------------+-----------------------+
+ |  5 | event_scheduler | localhost | NULL | Daemon  | 1834441 | Waiting on empty queue | NULL                  |
+ | 50 | root            | localhost | NULL | Query   |       0 | init                   | show full processlist |
+ +----+-----------------+-----------+------+---------+---------+------------------------+-----------------------+
+ 2 rows in set (0.00 sec)
+```
+
+The output above shows an idle server with only our own query as well as a long running event listener.  An active server would show many more processes, some of which might be long running.  Without the `FULL` modifier, this command will only show the first 100 processes, which may or may not truncate your results depending on your server activity.
+
+Some of the important parts to take a look at are the `Time` and `State` columns.  The `Time` column counts the number of seconds that the thread has been in the `State` mentioned.  If you find processes with a `Time` value that doesn't match your expectations for the given operation, it might be time to investigate further.
+
+### Checking storage engine status
+
+Another place to check is the actual storage engine's status.
+
+You can find the storage engine associated with a given table by typing:
+
+```sql
+SHOW CREATE TABLE <database>.<table>\G
+```
+
+For instance, to show the storage engine that the `mysql.time_zone` table uses, type:
+
+```sql
+SHOW CREATE TABLE mysql.time_zone`\G
+```
+```
+*************************** 1. row ***************************
+       Table: time_zone
+Create Table: CREATE TABLE `time_zone` (
+  `Time_zone_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `Use_leap_seconds` enum('Y','N') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`Time_zone_id`)
+) /*!50100 TABLESPACE `mysql` */ ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 STATS_PERSISTENT=0 ROW_FORMAT=DYNAMIC COMMENT='Time zones'
+1 row in set (0.01 sec)
+```
+
+The `ENGINE=InnoDB` indicates that the table is using the InnoDB storage engine.  This is the default storage engine in most configurations, so you will likely want to check it's status.
+
+You can show the InnoDB engine's status by typing:
+
+```sql
+SHOW ENGINE INNODB STATUS\G
+```
+
+<details><summary>Expand to see results</summary>
+
+```
+ *************************** 1. row ***************************
+   Type: InnoDB
+   Name:
+ Status:
+ =====================================
+ 2022-02-26 11:55:52 139992513984256 INNODB MONITOR OUTPUT
+ =====================================
+ Per second averages calculated from the last 16 seconds
+ -----------------
+ BACKGROUND THREAD
+ -----------------
+ srv_master_thread loops: 1 srv_active, 0 srv_shutdown, 1835091 srv_idle
+ srv_master_thread log flush and writes: 0
+ ----------
+ SEMAPHORES
+ ----------
+ OS WAIT ARRAY INFO: reservation count 555
+ OS WAIT ARRAY INFO: signal count 457
+ RW-shared spins 0, rounds 0, OS waits 0
+ RW-excl spins 0, rounds 0, OS waits 0
+ RW-sx spins 0, rounds 0, OS waits 0
+ Spin rounds per wait: 0.00 RW-shared, 0.00 RW-excl, 0.00 RW-sx
+ ------------
+ TRANSACTIONS
+ ------------
+ Trx id counter 8778
+ Purge done for trx's n:o < 8713 undo n:o < 0 state: running but idle
+ History list length 0
+ LIST OF TRANSACTIONS FOR EACH SESSION:
+ ---TRANSACTION 421467955133656, not started
+ 0 lock struct(s), heap size 1128, 0 row lock(s)
+ ---TRANSACTION 421467955132848, not started
+ 0 lock struct(s), heap size 1128, 0 row lock(s)
+ ---TRANSACTION 421467955132040, not started
+ 0 lock struct(s), heap size 1128, 0 row lock(s)
+ --------
+ FILE I/O
+ --------
+ I/O thread 0 state: waiting for completed aio requests (insert buffer thread)
+ I/O thread 1 state: waiting for completed aio requests (log thread)
+ I/O thread 2 state: waiting for completed aio requests (read thread)
+ I/O thread 3 state: waiting for completed aio requests (read thread)
+ I/O thread 4 state: waiting for completed aio requests (read thread)
+ I/O thread 5 state: waiting for completed aio requests (read thread)
+ I/O thread 6 state: waiting for completed aio requests (write thread)
+ I/O thread 7 state: waiting for completed aio requests (write thread)
+ I/O thread 8 state: waiting for completed aio requests (write thread)
+ I/O thread 9 state: waiting for completed aio requests (write thread)
+ Pending normal aio reads: [0, 0, 0, 0] , aio writes: [0, 0, 0, 0] ,
+  ibuf aio reads:, log i/o's:, sync i/o's:
+ Pending flushes (fsync) log: 0; buffer pool: 0
+ 1779 OS file reads, 3384 OS file writes, 1870 OS fsyncs
+ 0.00 reads/s, 0 avg bytes/read, 0.00 writes/s, 0.00 fsyncs/s
+ -------------------------------------
+ INSERT BUFFER AND ADAPTIVE HASH INDEX
+ -------------------------------------
+ Ibuf: size 1, free list len 0, seg size 2, 0 merges
+ merged operations:
+  insert 0, delete mark 0, delete 0
+ discarded operations:
+  insert 0, delete mark 0, delete 0
+ Hash table size 34679, node heap has 2 buffer(s)
+ Hash table size 34679, node heap has 9 buffer(s)
+ Hash table size 34679, node heap has 9 buffer(s)
+ Hash table size 34679, node heap has 15 buffer(s)
+ Hash table size 34679, node heap has 7 buffer(s)
+ Hash table size 34679, node heap has 3 buffer(s)
+ Hash table size 34679, node heap has 4 buffer(s)
+ Hash table size 34679, node heap has 6 buffer(s)
+ 0.00 hash searches/s, 0.00 non-hash searches/s
+ ---
+ LOG
+ ---
+ Log sequence number          38540718
+ Log buffer assigned up to    38540718
+ Log buffer completed up to   38540718
+ Log written up to            38540718
+ Log flushed up to            38540718
+ Added dirty pages up to      38540718
+ Pages flushed up to          38540718
+ Last checkpoint at           38540718
+ 2197 log i/o's done, 0.00 log i/o's/second
+ ----------------------
+ BUFFER POOL AND MEMORY
+ ----------------------
+ Total large memory allocated 0
+ Dictionary memory allocated 473011
+ Buffer pool size   8192
+ Free buffers       6241
+ Database pages     1896
+ Old database pages 719
+ Modified db pages  0
+ Pending reads      0
+ Pending writes: LRU 0, flush list 0, single page 0
+ Pages made young 8, not young 0
+ 0.00 youngs/s, 0.00 non-youngs/s
+ Pages read 1754, created 142, written 926
+ 0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+ No buffer pool page gets since the last printout
+ Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+ LRU len: 1896, unzip_LRU len: 0
+ I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+ --------------
+ ROW OPERATIONS
+ --------------
+ 0 queries inside InnoDB, 0 queries in queue
+ 0 read views open inside InnoDB
+ Process ID=59529, Main thread ID=139992560166656 , state=sleeping
+ Number of rows inserted 0, updated 0, deleted 0, read 0
+ 0.00 inserts/s, 0.00 updates/s, 0.00 deletes/s, 0.00 reads/s
+ Number of system rows inserted 0, updated 317, deleted 0, read 6128
+ 0.00 inserts/s, 0.00 updates/s, 0.00 deletes/s, 0.00 reads/s
+ ----------------------------
+ END OF INNODB MONITOR OUTPUT
+ ============================
+ 
+ 1 row in set (0.00 sec)
+```
+
+</details>
+
+The output will contain a large amount of information about the resources the engine is using, the processes being executed, and more.  You can use this to get an idea of whether there is a bottleneck in execution or whether the number of processes in contention are causing performance issues.
+
+## Enable slow query logging
+
+One way to get more information about long running or slowly executing queries is with slow query logging.  Slow query logging tells MySQL to record whenever a query passes a certain execution threshold.  It can be very useful in pinpointing specific queries that are running poorly without having to catch it in the process list in real time.
+
+### Check if MySQL is logging slow queries
+
+The first thing should do is verify the current state of slow query logging.  If slow query logging is already enabled, you don't have to do anything.
+
+You can check if slow query logging is enabled by typing:
+
+```sql
+SHOW GLOBAL VARIABLES LIKE 'slow_query_log%';
+```
+```
+ +---------------------+------------------------------------+
+ | Variable_name       | Value                              |
+ +---------------------+------------------------------------+
+ | slow_query_log      | OFF                                |
+ | slow_query_log_file | /var/lib/mysql/mysqlutils-slow.log |
+ +---------------------+------------------------------------+
+ 2 rows in set (0.01 sec)
+```
+
+The above output indicates that slow queries are currently not being logged because the functionality is switched off.
+
+If slow query logging is on, your output will look something like this instead:
+
+```
+ +---------------------+-------------------------------+
+ | Variable_name       | Value                         |
+ +---------------------+-------------------------------+
+ | slow_query_log      | ON                            |
+ | slow_query_log_file | /var/log/mysql/mysql-slow.log |
+ +---------------------+-------------------------------+
+ 2 rows in set (0.02 sec)
+```
+
+Now that you know the current state, you can change it as necessary.
+
+### Configure MySQL to log slow queries
+
+Before we move on, it is important to note that while slow query logging is incredibly useful, it can potentially have an additional performance impact.  MySQL must perform additional operations to time each query and to record the results to a log.  This can impact performance and fill up hard drive space unexpectedly.
+
+It may not be a good idea to log slow queries at all times.  Instead, enable the functionality when you are actively investigating an issue and disable it when you are finished.
+
+With that in mind, you can configure slow query logging by modifying the MySQL server's configuration file.  You can also modify these values interactively, but setting good defaults in the configuration will make it easier to tweak interactively later.
+
+Open MySQL's configuration file.  On most Debian Linux-based systems, the configuration file will be located at `/etc/mysql/mysql.conf.d/mysqld.conf`:
+
+```shell
+sudo vim /etc/mysql/mysql.conf.d/mysqld.conf
+```
+
+We will want to modify or potentially add the following settings:
+
+| Variable                        | Setting                         | Description                                                                                                                                                                                                                            |
+|---------------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `slow_query_log`                | `ON`                            | Toggles whether slow querying is enabled.                                                                                                                                                                                              |
+| `slow_query_log_file`           | `/var/log/mysql/mysql-slow.log` | The log file where slow queries will be recorded.                                                                                                                                                                                      |
+| `long_query_time`               | (time in seconds)               | The threshold, in seconds, that a query must pass before being considered a "slow" query.                                                                                                                                              |
+| `min_examined_row_limit`        | (number of rows)                | The number of rows a query must consider before it is a slow query candidate.                                                                                                                                                   |
+| `log_slow_admin_statements`     | `ON`                            | Toggles whether administrative commands are also subject to logging.                                                                                                                                                                   |
+| `log_queries_not_using_indexes` | `ON`                            | Toggles whether queries will be recorded if they are not consulting an index.                                                                                                                                                       |
+| `log_slow_extra`                | `ON`                            | For MySQL servers version 8.0.14 or later, this toggles whether to log additional information about the query.                                                                                                                      |
+| `log_slow_replica_statements`   | `ON`                            | For MySQL servers version 8.0.26 or later, this toggles whether to log slow statements that have been executed on the replica.  This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`.
+| `log_slow_slave_statements`     | `ON`                            | For MySQL servers version 8.0.25 or earlier, this toggles whether to log slow statements that have been executed on the replica.  This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`.
+
+So, for example, if we wanted to turn all of the optional logging on and log any statement that examines at least 100 rows and takes 2 seconds or longer to execute, we could use these settings:
+
+
+```ini
+; enable MySQL to log slow queries
+slow_query_log                  = ON
+; query log location
+slow_query_log_file             = /var/log/mysql/mysql-slow.log
+; amount of seconds that a query must surpass to be logged
+long_query_time                 = 2
+; minimum number of rows affected for a query to be logged
+min_examined_row_limit          = 100
+
+; include administrative commands in the logs
+log_slow_admin_statements       = ON
+; also log queries that are not using indexes
+log_queries_not_using_indexes   = ON
+; for MySQL servers version 8.0.14 or later, we can
+; get extra information by setting this
+log_slow_extra                  = ON
+; Also log slow statements that have executed on
+; the replica
+; This only will log statements if `binlog_format` is
+; set to `STATEMENT` or `MIXED` and the statement is
+; logged in statement format
+; RE: https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#sysvar_log_slow_replica_statements
+; This option name depends on your MySQL version:
+;   versions >= 8.0.26: log_slow_replica_statements
+;   versions < 8.0.26: log_slow_slave_statements
+; log_slow_slave_statements   = ON
+log_slow_replica_statements   = ON
+```
+
+After saving and closing the file, you can validate your configuration changes by typing:
+
+```shell
+sudo mysqld --validate-config
+```
+
+If no errors are returned, your MySQL server configuration file is syntactically valid.  You can restart the MySQL server process by typing:
+
+```shell
+sudo systemctl restart mysql
+```
+
+You can validate that slow querying is enabled now by re-running the original discovery query:
+
+```sql
+SHOW GLOBAL VARIABLES LIKE 'slow_query_log%';
+```
+
+Once you have slow querying configured how you want, you can enable and disable it as needed within MySQL itself.  The syntax for adjusting the values looks like this:
+
+```sql
+SET GLOBAL slow_query_log = 'OFF';
+```
+
+## Using `mysqldumpslow` to analyze the slow query log
+
+Once you have the log that slow query logging produces, you can analyze it in a few different ways to find out where exactly the problems are.
+
+The simplest way to analyze the log is using the `mysqldumpslow` utility because it is included in MySQL server installations.  To use it, you can point it at the slow query log you generated:
+
+```shell
+sudo mysqldumpslow /var/log/mysql/mysql-slow.log
+```
+```
+Reading mysql slow query log from /var/log/mysql/mysql-slow.log
+Count: 4  Time=4.25s (17s)  Lock=0.00s (0s)  Rows=1.0 (4), root[root]@localhost
+  select sleep(N)
+```
+
+The above output shows that we have had four queries that were deemed "slow" according to our criteria.  They're all variations of the `SELECT SLEEP();` query with different numbers (indicated by the `N` placeholder) in the command (if you want to test this, make sure `min_examined_row_limit` is unset).  The real time taken to execute the statements was around 17 seconds.
+
+The `mysqldumpslow` command includes a few options to control the sorting and display of the output.  For example, you can use the `-t` option to limit the results to the top "N" results.  For example, the following shows the top five results:
+
+```shell
+sudo mysqldumpslow -t 5 /var/log/mysql/mysql-slow.log
+```
+
+You can change the sort order using the `-s` options.  You can sort by query time (`t`), lock time (`l`), rows sent (`r`), or by the averages of those metrics (`at`, `al`, and `ar` respectively).  By default, `mysqldumpslow` sorts by average query time (`at`).
+
+To display the top three queries by their amount of lock time, you could type:
+
+```shell
+sudo mysqldumpslow -t 3 -s l /var/log/mysql/mysql-slow.log
+```
+
+## Using `pt-query-digest` to analyze the slow query log
+
+Another popular utility to analyze slow query logs is the `pt-query-digest` tool developed by [Percona](https://www.percona.com/).  The `pt-query-digest` tool is part of the [Percona Toolkit](https://www.percona.com/software/database-tools/percona-toolkit), a set of open-source command line tools created to help database administrators manage databases easier.
+
+The first step is to download the Percona Toolkit to your server.  You can find the appropriate file by selecting the version of the toolkit you'd like and the platform where you'll be using it on the [Percona Toolkit download page](https://www.percona.com/downloads/percona-toolkit/LATEST/).
+
+After downloading and installing the version of the toolkit appropriate for your platform, you should have access to the `pt-query-digest` tool.
+
+Running `pt-query-digest` against your slow query log generates a lot more output than `mysqldumpslow`:
+
+```shell
+sudo pt-query-digest /var/log/mysql/mysql-slow.log
+```
+
+<details><summary>Expand to see results</summary>
+
+```
+# A software update is available:
+
+# 680ms user time, 100ms system time, 44.71M rss, 59.35M vsz
+# Current date: Sat Feb 26 13:06:41 2022
+# Hostname: mysqlutils
+# Files: /var/log/mysql/mysql-slow.log
+# Overall: 4 total, 1 unique, 0.07 QPS, 0.30x concurrency ________________
+# Time range: 2022-02-26T12:44:35 to 2022-02-26T12:45:32
+# Attribute          total     min     max     avg     95%  stddev  median
+# ============     ======= ======= ======= ======= ======= ======= =======
+# Exec time            17s      2s      8s      4s      8s      2s      6s
+# Lock time              0       0       0       0       0       0       0
+# Rows sent              4       1       1       1       1       0       1
+# Rows examine           4       1       1       1       1       0       1
+# Bytes sent           224      56      56      56      56       0      56
+# Query size            60      15      15      15      15       0      15
+# Bytes receiv           0       0       0       0       0       0       0
+# Created tmp            0       0       0       0       0       0       0
+# Created tmp            0       0       0       0       0       0       0
+# Errno                  0       0       0       0       0       0       0
+# Read first             0       0       0       0       0       0       0
+# Read key               0       0       0       0       0       0       0
+# Read last              0       0       0       0       0       0       0
+# Read next              0       0       0       0       0       0       0
+# Read prev              0       0       0       0       0       0       0
+# Read rnd               0       0       0       0       0       0       0
+# Read rnd nex           0       0       0       0       0       0       0
+# Sort merge p           0       0       0       0       0       0       0
+# Sort range c           0       0       0       0       0       0       0
+# Sort rows              0       0       0       0       0       0       0
+# Sort scan co           0       0       0       0       0       0       0
+
+# Profile
+# Rank Query ID                            Response time  Calls R/Call V/M
+# ==== =================================== ============== ===== ====== ===
+#    1 0x59A74D08D407B5EDF9A57DD5A41825CA  17.0039 100.0%     4 4.2510  1.12 SELECT
+
+# Query 1: 0.07 QPS, 0.30x concurrency, ID 0x59A74D08D407B5EDF9A57DD5A41825CA at byte 1266
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 1.12
+# Time range: 2022-02-26T12:44:35 to 2022-02-26T12:45:32
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count        100       4
+# Exec time    100     17s      2s      8s      4s      8s      2s      6s
+# Lock time      0       0       0       0       0       0       0       0
+# Rows sent    100       4       1       1       1       1       0       1
+# Rows examine 100       4       1       1       1       1       0       1
+# Bytes sent   100     224      56      56      56      56       0      56
+# Query size   100      60      15      15      15      15       0      15
+# Bytes receiv   0       0       0       0       0       0       0       0
+# Created tmp    0       0       0       0       0       0       0       0
+# Created tmp    0       0       0       0       0       0       0       0
+# Errno          0       0       0       0       0       0       0       0
+# Read first     0       0       0       0       0       0       0       0
+# Read key       0       0       0       0       0       0       0       0
+# Read last      0       0       0       0       0       0       0       0
+# Read next      0       0       0       0       0       0       0       0
+# Read prev      0       0       0       0       0       0       0       0
+# Read rnd       0       0       0       0       0       0       0       0
+# Read rnd nex   0       0       0       0       0       0       0       0
+# Sort merge p   0       0       0       0       0       0       0       0
+# Sort range c   0       0       0       0       0       0       0       0
+# Sort rows      0       0       0       0       0       0       0       0
+# Sort scan co   0       0       0       0       0       0       0       0
+# String:
+# End          2022-02-26... (1/25%), 2022-02-26... (1/25%)... 2 more
+# Hosts        localhost
+# Start        2022-02-26... (1/25%), 2022-02-26... (1/25%)... 2 more
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms
+#    1s  ################################################################
+#  10s+
+# EXPLAIN /*!50100 PARTITIONS*/
+select sleep(8)\G
+```
+
+</details>
+
+The output shows execution time, query size, lock time, rows examined and sent, and more.  The `pt-query-digest` command has a lot of different options for shaping the output and displaying only the items that you are interested in.  Explore the [manual page](https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html) to get an idea of what is possible.
+
+## Conclusion
+
+Being able to discover the bottlenecks in your query executions is invaluable in being able to maintain your database and applications' performance.  When slowdowns occur, it is important to have strategies to locate these problem areas and find out the extent of their impact.
+
+The MySQL ecosystem has a lot of tooling built to make these tasks easier.  Looking at the active process and storage engine status and enabling and analyzing slow query log information give you the information you need to target the most costly queries.  In our next guide, we'll discuss how to actually [optimize the queries you discover](/mysql/reading-and-querying-data/optimizing-slow-queries) and what things to keep in mind to keep your performance optimal.
+
+<PrismaOutlinks>
+
+If you are using Prisma with your MySQL database, you can about ways to optimize your queries in the [query optimization section of the docs](https://www.prisma.io/docs/guides/performance-and-optimization/query-optimization-performance).  This will help you understand how various query constructions can impact your database performance when using Prisma.
+
+</PrismaOutlinks>
+
