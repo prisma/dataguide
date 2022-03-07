@@ -1,0 +1,446 @@
+---
+title: 'Profiling and optimizing slow queries in MySQL'
+metaTitle: "Evaluating and optimizing slow MySQL queries"
+metaDescription: "Understand what factors affect your querying performance in MySQL and how to fix them."
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Maintaining the performance of your database systems is an essential part of optimizing the responsiveness of your database-backed applications.  This involves managing server's hardware resources and software configuration, but it also pertains to the queries that you are asking it to execute.
+
+In a previous guide, we examined [how to identify low performing and slow queries in MySQL](/mysql/reading-and-querying-data/identifying-slow-queries).  In this guide, we will take the next step by discussing how to evaluate and optimize slow running queries.  This will build off of the discussion in the previous article to give you a full strategy for identifying and fixing issues associated with poorly performing queries.
+
+## Enable query profiling to understand slow query stages
+
+One of the first things you may want to do when trying to optimize a slow query is to profile the query to discover where exactly the query is taking the most time.
+
+First, check if query profiling is enabled by typing:
+
+```sql
+SELECT @@PROFILING;
+```
+```
+ +-------------+
+ | @@profiling |
+ +-------------+
+ |           0 |
+ +-------------+
+ 1 row in set, 1 warning (0.00 sec)
+```
+
+The 0 indicates that profiling is currently disabled.  You can enable profiling by typing:
+
+```sql
+SET PROFILING = 1;
+```
+
+Once profiling is enabled, you can start to list the available profiles by typing:
+
+```sql
+SHOW PROFILES;
+```
+```
+ +----------+------------+--------------------------+
+ | Query_ID | Duration   | Query                    |
+ +----------+------------+--------------------------+
+ |        1 | 3.00368075 | select sleep(3)          |
+ |        2 | 0.00740700 | select * from mysql.user |
+ |        3 | 0.00075875 | select @@profiling       |
+ +----------+------------+--------------------------+
+ 3 rows in set, 1 warning (0.00 sec)
+```
+
+The output will show you the most recent statements that have been executed in the current session since profiling was enabled.  Each query shows the total execution time and has a query number that can be used to dive in deeper.
+
+To show the profiling information for the most recent query, type:
+
+```sql
+SHOW PROFILE;
+```
+```
+ +----------------------+----------+
+ | Status               | Duration |
+ +----------------------+----------+
+ | starting             | 0.000144 |
+ | checking permissions | 0.000020 |
+ | Opening tables       | 0.000024 |
+ | init                 | 0.000013 |
+ | optimizing           | 0.000047 |
+ | executing            | 0.000032 |
+ | end                  | 0.000010 |
+ | query end            | 0.000016 |
+ | closing tables       | 0.000012 |
+ | freeing items        | 0.000367 |
+ | cleaning up          | 0.000074 |
+ +----------------------+----------+
+ 11 rows in set, 1 warning (0.00 sec)
+```
+
+By default, the output will show you exactly how long the statement was in each stage of query processing.  This can help you identify exactly which portion of the query is performing poorly.
+
+To display the results associated with a different query, you can add the `FOR QUERY <N>` clause along with the query ID provided by the `SHOW PROFILES` output.
+
+For instance, to get the default display for query 1, you can type:
+
+```sql
+SHOW PROFILE FOR QUERY 1;
+```
+```
+ +----------------------+----------+
+ | Status               | Duration |
+ +----------------------+----------+
+ | starting             | 0.001419 |
+ | checking permissions | 0.000028 |
+ | Opening tables       | 0.000030 |
+ | init                 | 0.000020 |
+ | optimizing           | 0.000020 |
+ | executing            | 0.000025 |
+ | User sleep           | 3.000165 |
+ | end                  | 0.000043 |
+ | query end            | 0.000019 |
+ | closing tables       | 0.000012 |
+ | freeing items        | 0.000540 |
+ | logging slow query   | 0.001320 |
+ | cleaning up          | 0.000041 |
+ +----------------------+----------+
+ 13 rows in set, 1 warning (0.00 sec)
+```
+
+Here, the output clearly shows a long time spent with the `User sleep` status, which directly manages the function that was executed.
+
+You can also change the output to display different types of information.  This is often helpful once you have viewed the default output in order to check more specific information.
+
+For instance, you can see information about the first query's block input and output by typing:
+
+```sql
+SHOW PROFILE BLOCK IO FOR QUERY 1;
+```
+```
+ +----------------------+----------+--------------+---------------+
+ | Status               | Duration | Block_ops_in | Block_ops_out |
+ +----------------------+----------+--------------+---------------+
+ | starting             | 0.001419 |          184 |             0 |
+ | checking permissions | 0.000028 |            0 |             0 |
+ | Opening tables       | 0.000030 |            0 |             0 |
+ | init                 | 0.000020 |            0 |             0 |
+ | optimizing           | 0.000020 |            0 |             0 |
+ | executing            | 0.000025 |            0 |             0 |
+ | User sleep           | 3.000165 |            0 |             0 |
+ | end                  | 0.000043 |            0 |             0 |
+ | query end            | 0.000019 |            0 |             0 |
+ | closing tables       | 0.000012 |            0 |             0 |
+ | freeing items        | 0.000540 |            0 |             0 |
+ | logging slow query   | 0.001320 |           64 |             8 |
+ | cleaning up          | 0.000041 |            0 |             0 |
+ +----------------------+----------+--------------+---------------+
+ 13 rows in set, 1 warning (0.00 sec)
+```
+
+In addition to the previous information, this shows times where MySQL had to interact with block data on the filesystem.
+
+The available output variations you can specify include:
+
+* `ALL`: Displays all available information
+* `BLOCK IO`: Displays number of blocks of input and output the query generated
+* `CONTEXT SWITCHES`: Shows number of voluntary and involuntary context switches that occurred while executing the query
+* `CPU`: Shows the CPU time in userspace and system categories
+* `IPC`: Displays the number of interprocess messages sent and received
+* `PAGE FAULTS`: Shows the number of page faults, segmented into major and minor faults
+* `SOURCE`: Shows the actual functions being executed within MySQL along with their source file and line number to allow execution mapping
+* `SWAPS`: Shows the number of swaps the query required
+
+To show all possible information associated with a query, type:
+
+```sql
+SHOW PROFILE ALL FOR QUERY 1\G
+```
+
+We trigger the alternate output formatting with the `\G` statement termination sequence to make the results more readable since a lot of additional output is displayed.
+
+Once you have used the profiling information to develop a good idea about what part of the query is slow, you can turn profiling back off to preserve resources:
+
+```sql
+SET PROFILING = 0;
+```
+
+## Using `EXPLAIN` to understand query performance
+
+The querying profile should help you understand the stages of query execution that are taking the longest to execute as well as what resources are associated with the query.  You can then use MySQL's `EXPLAIN` statement to understand the query optimizer's evaluation of the query.
+
+The `EXPLAIN` statement takes a `SELECT`, `DELETE`, `UPDATE`, `INSERT`, or `REPLACE` statement and displays how the query optimizer would evaluate and execute the given query.  The output shows how MySQL would join tables, select fields, sort and filter results, and so on.  It also shows things like how many rows would be evaluated and what indexes would be consulted to speed up the process.
+
+To get an idea of how this statement works, ask MySQL to explain how it would execute the query `SELECT * FROM INFORMATION_SCHEMA.VIEWS;`:
+
+```sql
+EXPLAIN SELECT * FROM information_schema.views\G
+```
+
+<details><summary>Expand to see results</summary>
+
+```
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: cat
+   partitions: NULL
+         type: index
+possible_keys: PRIMARY
+          key: name
+      key_len: 194
+          ref: NULL
+         rows: 1
+     filtered: 100.00
+        Extra: Using index
+*************************** 2. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: vw
+   partitions: NULL
+         type: ref
+possible_keys: schema_id,type,view_client_collation_id,view_connection_collation_id,type_2
+          key: type
+      key_len: 1
+          ref: const
+         rows: 100
+     filtered: 100.00
+        Extra: Using where
+*************************** 3. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: sch
+   partitions: NULL
+         type: eq_ref
+possible_keys: PRIMARY,catalog_id
+          key: PRIMARY
+      key_len: 8
+          ref: mysql.vw.schema_id
+         rows: 1
+     filtered: 100.00
+        Extra: Using where
+*************************** 4. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: conn_coll
+   partitions: NULL
+         type: eq_ref
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 8
+          ref: mysql.vw.view_connection_collation_id
+         rows: 1
+     filtered: 100.00
+        Extra: NULL
+*************************** 5. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: client_coll
+   partitions: NULL
+         type: eq_ref
+possible_keys: PRIMARY,character_set_id
+          key: PRIMARY
+      key_len: 8
+          ref: mysql.vw.view_client_collation_id
+         rows: 1
+     filtered: 100.00
+        Extra: NULL
+*************************** 6. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: cs
+   partitions: NULL
+         type: eq_ref
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 8
+          ref: mysql.client_coll.character_set_id
+         rows: 1
+     filtered: 100.00
+        Extra: NULL
+6 rows in set, 1 warning (0.01 sec)
+```
+
+</details>
+
+The above output shows that that six separate queries are required to pull together the information for that query.  If you look at the table definition, you can see why:
+
+```sql
+SHOW CREATE TABLE information_schema.views\G
+```
+
+Modified for formatting, the resulting table creation command looks like this:
+
+```sql
+CREATE algorithm=undefined definer=`mysql.infoschema`@`localhost` SQL security definer view `views`
+AS
+  SELECT `cat`.`name`                                                                                                             AS `table_catalog`,
+         `sch`.`name`                                                                                                             AS `table_schema`,
+         `vw`.`name`                                                                                                              AS `table_name`,
+         IF((can_access_view(`sch`.`name`,`vw`.`name`,`vw`.`view_definer`,`vw`.`options`) = TRUE),`vw`.`view_definition_utf8`,'') AS `view_definition`,
+         `vw`.`view_check_option`                                                                                                 AS `check_option`,
+         `vw`.`view_is_updatable`                                                                                                 AS `is_updatable`,
+         `vw`.`view_definer`                                                                                                      AS `definer`,
+         IF((`vw`.`view_security_type` = 'DEFAULT'),'DEFINER',`vw`.`view_security_type`)                                          AS `security_type`,
+         `cs`.`name`                                                                                                              AS `character_set_client`,
+         `conn_coll`.`name`                                                                                                       AS `collation_connection`
+  FROM   (((((`mysql`.`tables` `vw`
+  JOIN   `mysql`.`schemata` `sch`
+  ON    ((
+                       `vw`.`schema_id` = `sch`.`id`)))
+  JOIN   `mysql`.`catalogs` `cat`
+  ON    ((
+                       `cat`.`id` = `sch`.`catalog_id`)))
+  JOIN   `mysql`.`collations` `conn_coll`
+  ON    ((
+                       `conn_coll`.`id` = `vw`.`view_connection_collation_id`)))
+  JOIN   `mysql`.`collations` `client_coll`
+  ON    ((
+                       `client_coll`.`id` = `vw`.`view_client_collation_id`)))
+  JOIN   `mysql`.`character_sets` `cs`
+  ON    ((
+                       `cs`.`id` = `client_coll`.`character_set_id`)))
+  WHERE  ((
+                       0 <> can_access_table(`sch`.`name`,`vw`.`name`))
+         AND    (
+                       `vw`.`type` = 'VIEW'))
+```
+
+There are five join statements, meaning that six separate tables will have to be queried to construct the results.  This matches the number of entries returned in the `EXPLAIN` statement we executed — one per table.
+
+To interpret the results of the `EXPLAIN` statement, you need to understand what each of the individual columns stand for.  Of particular interest are the `type`, `key`, `rows`, and `filtered` columns.
+
+### Interpreting the `type` column
+
+The `type` column tells you the way that MySQL implements any join operations within the query.  The MySQL documentation has a good description of the [different join types available](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-join-types) and how they may affect performance.
+
+```
+type: const
+```
+
+For instance, a [type of `const`](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_const) will be very fast because it means that MySQL is comparing a unique column against a constant value, which should return at most a single row.
+
+```
+type: eq_ref
+```
+
+The [`eq_ref` type](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#jointype_eq_ref) is similarly the fastest join operation for combining to two tables as it indicates that the query uses a complete unique, non-null index value for comparison.
+
+```
+type: index
+```
+
+The [`index` type](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#jointype_index) is used when a full table scan is required, but instead of scanning the actual table, the query can scan the index tree instead.  This makes it relatively low performance in the scope of the query, but still somewhat optimized because it can scan the smaller index instead of the actual table.
+
+```
+type: ref
+```
+
+The [`ref` join type](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#jointype_ref) means that MySQL was able to use the leading columns of an index to compare (when the entire index contains multiple columns not used for the comparison).  This means that MySQL is able to use the partial index efficiently even though it doesn't match the entire comparison.
+
+### Interpreting the `key` columns
+
+The `key` column and its related columns (`possible_keys`, `key_length`, and `ref`) help you understand what indexes were available, what indexes were used, and how efficient the index usage was.
+
+```
+. . .
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 8
+          ref: mysql.client_coll.character_set_id
+. . .
+```
+
+The [`possible_keys` column](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_possible_keys) tells us what indexes were available for the tables being joined.  It is helpful because it shows us what MySQL started with when trying to find an index appropriate for satisfying the query.  This might be a place to look if you are joining your tables on non-primary keys to ensure that you have indexes available to accelerate the process.
+
+The [`key` column](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_key) itself tells you which index MySQL decided to use to run the query.  In some cases, this might even include results that were not listed in the `possible_keys` column.  For instance, when an index contains all of the columns the query asks for, it can be scanned more efficiently than the associated table, even though the index was not appropriate for (and is not used for) the actual join.
+
+The [`key_length` column](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_key_len) indicates how much of the actual index was used.  For multi-column indexes, this can help you understand how much of the stored index was used for this particular comparison.  The [`ref` column](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_ref) also plays a part here by telling you what specifically is being compared against the specific index.  This can help you determine whether it is a good idea to create a more optimized index.
+
+### Interpreting the rows evaluated
+
+The `rows` and `filtered` columns are useful because they tell use the scope of the table being examined.
+
+```
+         rows: 1
+     filtered: 100.00
+```
+
+The [`rows` column](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#explain_rows) gives the number of rows MySQL thinks it will have to evaluate to perform each part of the query.  The number here is affected by all of the previous columns we've discussed.  It gives us an indication of how efficiently MySQL can pare down the entire table given the statement provided and indexes available.
+
+The [`filtered` column](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#explain_filtered) estimates the percentage of the rows evaluated that will be returned after any row filtering conditions within the query are applied.  If the value is 100, it indicates that no row filtering will occur.  Values below 100 indicate that some of the rows evaluated won't be returned because of join conditions or other filtering.
+
+## Rewriting slow queries to execute faster
+
+Now that we've discussed some of the ways that MySQL allows you to evaluate the performance of individual statements, we can talk about how to improve that performance.
+
+The exact steps you'll want to consider depend largely on what you found with your query profiling and `EXPLAIN` investigations.  We will cover some of the most common ways to optimize query performance below.
+
+### Create additional indexes
+
+One of the most straightforward ways of increasing the execution speed of your queries is to ensure that there are appropriate indexes available for your tables.  Your indexes should reflect the most common ways you query for data and may change over time as your usage evolves or additional queries are implemented.
+
+To create a new index, you can use the [`CREATE INDEX` statement](https://dev.mysql.com/doc/refman/8.0/en/create-index.html):
+
+```sql
+CREATE INDEX <index_name> ON <table> (<columns_to_index>)
+```
+
+There are many different types of indexes you can create depending on the data type of the columns you're indexing, the maximum length of the values, and the index structure you want to use.  These options may be worth looking into if your query is already using an index and the index is not performing well.  However, to start, you can keep it relatively simple by using mostly default values.
+
+The first considerations you'll need to make are what columns you'd like to index on.  If you regularly join on specific columns, it is important to make sure they are accounted for in your indexes.  Indexes are used primarily in row lookups, so join operations, where various rows in different tables are matched, are very expensive without index.
+
+You can create indexes with a single column if it fully encapsulates how you typically query the table.  You can also index on multiple columns to make the indexing more useful.  If indexing on multiple columns, the ordering is very important.  The first column should be the primary way to seek matches while any additional columns should help you refine those matches.
+
+For example, if you create an index for `first_name` and `last_name` for the table `person`, you'll almost certainly want to define the index with something like this:
+
+```sql
+CREATE INDEX last_and_first_names ON person (last_name, first_name);
+```
+
+Here, the `last_name` column is the first or left-most column in the index, meaning it will be fast looking up either `Alan Smith` or all `Smith` entries.  It won't be effective for looking up all instances of `Alan` as the `first_name` however, which is probably fine unless we anticipate querying only by first name often.
+
+While creating indexes can help you increase the read performance of your datasets, it is important to not over-index your tables.  Indexes come at a cost to write speed, as each time new values are recorded in the table, all of the indexes associated with it must also be updated.  Tables work best if their primary keys are well fitted with the querying patterns that'll be used against them as it allows you to benefit from strong index performance without needing a large number of supplemental indexes to accommodate different access patterns.
+
+### Limiting candidate rows
+
+Another way that you can speed up queries is by limiting the number of candidate and returned rows in your statements when possible.  This is a very context-specific recommendation, so it won't be appropriate in many cases, but if you can pare down the number of rows that MySQL has to evaluate, you can increase performance significantly.
+
+You can do this with the [`LIMIT` clause](https://dev.mysql.com/doc/refman/8.0/en/limit-optimization.html).  For example, to return only five results, you can use a format like this:
+
+```sql
+SELECT * FROM <table> LIMIT 5
+```
+
+In many cases (depending on what other clauses are included in the query), limiting the number of rows returned can help MySQL short circuit the querying process, stopping sooner than it would normally need to.  This helps save time early on instead of executing over the entire dataset and then truncating the results later.
+
+This is especially useful when joining multiple tables.  When at all possible, it is best to limit the results of your query *before* the join occurs.  This allows MySQL to evaluate a small amount of data to the rest of the joins instead of the entirety of the first table.
+
+### Selecting only relevant fields
+
+Another way to increase performance in your queries is to pay attention to what columns you are actually returning.  This can help speed up the results in a number of different ways.
+
+The primary way that limiting the columns you select affects performance is through minimizing network payload.  By returning columns that you don't need, larger queries can substantially increase the network traffic generated by a query.  Selecting only the columns you need to satisfy the logical constraints of a query helps prevent this problem by paring down what is transferred over the network.
+
+Another way that being selective with the columns you return can impact performance is related to indexes.  If MySQL is able to associate all of the columns you're returning with an index, it can potentially operate on that smaller, more organized dataset instead of the full table.  Limiting the columns you are querying allows for this to occur when your indexes match your query patterns well.
+
+### Remove comparisons with leading wildcards
+
+One thing that might negatively affect your query's performance is over-reliance on wildcards.  In SQL, the `%` character is used in comparisons as a wildcard indicating that any value can be substituted.  This is a very powerful way of finding data within your records, but it can have very big impacts on query performance.
+
+This is especially true for leading or prefix wildcards.  Leading wildcards are comparisons that check whether a column value matches a pattern that begins with a wildcard.  For instance, checking whether a column matches `%Main St.`.  This performs especially bad because MySQL is not able to use indexes to discover matching results.  Instead, it must look through the entire table for matches, even if that column has an index.
+
+In this particular example, if you will be regularly querying by a street name to discover all addresses on that street, it might make more sense to split up the street name and street numbers into two separate columns.  This would allow you to query for addresses on "Main St." using an index quickly and then filter those results as necessary if you are looking for a specific address.  Creating a compound index with the street name first and the street number column second would make this even faster.
+
+## Conclusion
+
+In this guide, we walked through some of the basic ways of evaluating individual queries and getting more information about what might be slowing them down.  We discussed profiling queries and using MySQL's `EXPLAIN` statement to get detailed information about how the query planner evaluates the query.  We then took a look at some ways that you can avoid these slow downs by modifying your queries to align better with the way the database retrieves data.
+
+Databases are complex pieces of software that are responsible for operating on large amounts of data that can be in many different formats.  In addition to simply retrieving the necessary data, there's an expectation that the database should be able to return results quickly.  There are countless optimizations built into MySQL's query planner and optimizer mechanisms to help minimize the amount of time it takes to answer queries.
+
+However, the database is only able to automatically optimize in a limited sense.  As the user of the database, you need to also be able to understand the data being accessed, your requirements for a query, and which queries are most important to optimize for.  For this, it is important to understand how to evaluate your criteria and make adjustments when the query performance is not at the expected level.
+
+<PrismaOutlinks>
+
+If you are using Prisma with your MySQL database, you can read about ways to optimize your queries in the [query optimization section of the docs](https://www.prisma.io/docs/guides/performance-and-optimization/query-optimization-performance).  This will help you understand how various query constructions can impact your database performance when using Prisma.
+
+</PrismaOutlinks>
