@@ -113,3 +113,43 @@ If you'd like to learn more about the general patterns covered above, here are s
 * [Data sharding](https://en.wikipedia.org/wiki/Shard_(database_architecture))
 * [Decentralized data management](https://martinfowler.com/articles/microservices.html#DecentralizedDataManagement)
 * [Serverless databases](https://en.wikipedia.org/wiki/Serverless_computing#Serverless_databases)
+
+## FAQ
+
+<details><summary>What is database scaling?</summary>
+
+Database scalability is the ability to expand or contract the capacity of system resources in order to support the changing use of an application. 
+
+There is both vertical and horizontal scaling. Vertical scaling refers to the scaling up of a single server or cluster. Horizontal scaling refers to bringing on additional nodes into the system to share the load from the increased usage.
+
+</details>
+
+<details><summary>What is the CQRS pattern?</summary>
+
+Command query responsibility segregation (CQRS) is a term used to describe adding logic to separate out queries that mutate data (write queries) from those that do not (read queries). 
+
+This allows you to route these different categories of requests to different hosts to help distribute the load. 
+
+</details>
+
+<details><summary>Is CQRS good for microservices?</summary>
+
+CQRS is a common design pattern when working with microservices. The separation of read and write operations for the database avoids complex queries and joins. It aligns with the principles sought in a microservices application architecture.
+
+With a CQRS design pattern, you can separate your concerns and database responsibilities that a single database would undertake in a monolithic architecture.
+
+</details>
+
+<details><summary>What is data sharding?</summary>
+
+Sharding is the process of breaking a logical data set into smaller subsets to distribute their management to different machines.
+
+Each database server only handles a portion of the data and a routing mechanic is introduced that understands which machines are responsible for what pieces of data.
+
+</details>
+
+<details><summary>What is the difference between data sharding and partitioning?</summary>
+
+Sharding and partitioning both separate large datasets into smaller subsets. The difference between the two is that sharding generally implies a separation of the data across multiple servers while partitioning does not. Partitioning usually occurs on a single database.
+
+</details>
