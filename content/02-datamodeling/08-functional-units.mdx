@@ -191,3 +191,57 @@ In Prisma Client, you can achieve similar results with TypeScript at the client 
 Computations in the database aren't just faster and more concisely expressed: they eliminate ambiguity and set standards. The examples above free database users from having to calculate lot numbers themselves, or from worries about accidentally creating more lots than they can handle. Application developers in particular have often been trained to think of databases as "dumb storage", providing structure and persistence only, and can thus find themselves -- or worse, not realize that they are -- clumsily articulating outside the database what they could do more effectively in SQL.
 
 Programmability is an unjustly overlooked feature of relational databases. There exist reasons to avoid it and more to limit its use, but functions, procedures, and triggers are all powerful tools for limiting the complexity your data model imposes on the systems in which it's embedded.
+
+## FAQ
+
+<details><summary>What is a stored procedure in a database?</summary>
+
+A stored procedure is a prepared piece of SQL code that you can save and reference to be used when needed. 
+
+It is particularly useful for SQL queries that you are writing often because you can just call the stored procedure and execute it rather than re-writing the query.
+
+The basic syntax can look something like this:
+
+```sql
+CREATE PROCEDURE procedure_name
+AS
+common_sql_statement;
+```
+
+You can then call the procedure using an execute statement:
+
+```sql
+EXEC procedute_name
+```
+
+</details>
+
+<details><summary>What are database functions?</summary>
+
+Database functions are a set of SQL statements that perform a specific task. They are efficient ways to packages lines of SQL code  that you can reference rather than rewriting the actual SQL. 
+
+Database functions are a good way to promote reusability in your code. [Functions and procedures](https://www.prisma.io/dataguide/datamodeling/functional-units#functions-vs-procedures) both allow for better reusability in code, but they have some differences that are good to know when modelling your database.
+
+</details>
+
+<details><summary>What is database generated column?</summary>
+
+A [generated column](https://www.prisma.io/dataguide/datamodeling/functional-units#defaults-and-generation) is a database column that is computed based on a predefined expression or from other columns.
+
+It is a way of storing data without actually sending it through the `INSERT` or `UPDATE` clause in SQL.
+
+</details>
+
+<details><summary>What are the default databases in SQL?</summary>
+
+Depending on your choice of database provider, you will notice default databases that come with your instance. 
+
+Most RDBMs ship default databases that store required information by the server. These can include metadata tables, other system information, or templates.
+
+</details>
+
+<details><summary>What is a trigger in a database?</summary>
+
+A database trigger is procedural code that is automatically executed in response to certain events or criteria on a table or database.
+
+</details>
