@@ -309,3 +309,85 @@ Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/do
 In this article, we introduced some of the most important commands to control what data is in your PostgreSQL tables.  The `INSERT` command can be used to add new data to tables, while the `DELETE` command specifies which rows should be removed.  Both commands are able to return the rows they affect and can operate on multiple rows at once.
 
 These two commands are the primary mechanisms used to manage increase or decrease the number of records your table contains.  Getting a handle on their basic syntax as well as the ways that they can be combined with other clauses will allow you to populate and clean your tables as necessary.
+
+## FAQ
+
+<details><summary>How do you perform a batch insert in PostgreSQL?</summary>
+
+The basic syntax for multi-record insertion looks like this:
+
+```sql
+INSERT INTO my_table(column_name, column_name_2)
+VALUES
+	('value', 'value2'),
+	('value3', 'value4'),
+	('value5', 'value6');
+
+```
+
+An example using employee data would look something like this:
+
+```sql
+INSERT INTO employee(first_name, last_name)
+VALUES
+    ('Abigail', 'Spencer'),
+    ('Tamal', 'Wayne'),
+    ('Katie', 'Singh'),
+    ('Felipe', 'Espinosa');
+```
+
+</details>
+
+<details><summary>How do you check if a record exists before inserting in PostgreSQL?</summary>
+
+One way to check if a record exists in PostgreSQL before inserting is by using the [`EXISTS` subquery expression](https://www.postgresql.org/docs/8.1/functions-subquery.html). 
+
+The `EXISTS` condition is used in combination with a subquery for the data you are checking for. It is considered to be met if the subquery returns at least one row. If no row is returned, then the record does not yet exist.
+
+The basic syntax looks as follows:
+
+```sql
+WHERE EXISTS ( subquery );
+```
+
+</details>
+
+<details><summary>How do I delete duplicate rows in PostgreSQL?</summary>
+
+There are [several methods for deleting duplicate rows](https://www.postgresqltutorial.com/how-to-delete-duplicate-rows-in-postgresql/) in PostgreSQL. You can use a `DELETE USING` statement to check if two different rows have the same value and then delete the duplicate.
+
+In addition, you can use a subquery to delete duplicates or by using an immediate table with the listed steps:
+
+1. Create a new table with the same structure as the one whose duplicate rows should be removed.
+2. Insert distinct rows from the source table to the immediate table.
+3. Drop the source table.
+4. Rename the immediate table to the name of the source table.
+
+</details>
+
+<details><summary>How do I delete a record if it exists in PostgreSQL?</summary>
+
+You can delete a record in PostgreSQL if it exists by using a `DELETE` statement with a `WHERE` clause including `EXISTS` . The `EXISTS` clause requires a subquery.
+
+The basic syntax looks something like this:
+
+```sql
+DELETE FROM table_name
+	WHERE EXISTS ( subquery );
+```
+
+</details>
+
+<details><summary>How do I delete records with a limit in PostgreSQL?</summary>
+
+PostgreSQL only allows for a `LIMIT` clause in its `SELECT` statements. Therefore, in order to use it in a `DELETE` statement you will have to include a `SELECT`.
+
+The syntax could look something like this:
+
+```sql
+DELETE FROM table_name
+WHERE field_name IN (
+	SELECT field_name FROM table_name LIMIT 1);
+```
+
+</details>
