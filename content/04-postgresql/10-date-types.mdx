@@ -243,3 +243,88 @@ In this guide, we covered the basics of what you can do with the `DATE` data typ
 If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with PostgreSQL, here's some information about how Prisma Client translates [PostgreSQL's date type](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#postgresql-6).
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is the date format in PostgreSQL?</summary>
+
+The date format for the date data type in PostgreSQL is `yyyy-mm-dd`. This is the format used for both storing data and for inserting data.
+
+</details>
+
+<details><summary>What is the `DATE_PART()` function in PostgreSQL?</summary>
+
+The  `DATE_PART()` function in PostgreSQL is used to subquery for subfields from a date or time value.
+
+The basic syntax looks like:
+
+```sql
+SELECT DATE_PART(field, source); 
+```
+
+For example, you can write the following and return the hour, `20`:
+
+```sql
+SELECT DATE_PART('hour', timestamp '2001-02-16 20:38:40');
+```
+
+</details>
+
+<details><summary>How does the `to_date` function work in PostgreSQL?</summary>
+
+The `TO_DATE()` function in PostgreSQL can be used to convert a string of text into a date type.
+
+The basic syntax looks as follows:
+
+```sql
+TO_DATE(text, format); 
+```
+ 
+An example such as:
+
+```sql
+TO_DATE('20220317', 'YYYYMMDD');
+```
+
+Returns an output of `2022-03-17`.
+
+</details>
+
+<details><summary>How do you extract a date from a timestamp in PostgreSQL?</summary>
+
+To extract a part of a date in PostgreSQL, you can use the `EXTRACT()` function. This function can parse out the year, month, or day from a date type as well as specify quarter.
+
+The basic syntax looks as follows:
+
+```sql
+SELECT EXTRACT(field FROM source);
+```
+
+An example would be:
+
+```sql
+SELECT EXTRACT(YEAR FROM TIMESTAMP '2022-03-17 20:38:16');
+```
+
+This statement’s return will be `2022`.
+
+</details>
+
+<details><summary>How do you truncate a date in PostgreSQL?</summary>
+
+You can truncate a timestamp in PostgreSQL by using the `DATE_TRUNC()` function. This function truncates a `TIMESTAMP` or `INTERVAL` based on a specified date part such as year, month, day, etc.
+
+The basic syntax looks as follows:  
+
+```sql
+DATE_TRUNC('datepart' field);
+```
+
+An example would be:
+
+```sql
+DATE_TRUNC('hour', TIMESTAMP '2022-03-17 02:09:30');
+```
+
+The return for this statement would be `2022-03-17 02:00:00`.
+</details>
