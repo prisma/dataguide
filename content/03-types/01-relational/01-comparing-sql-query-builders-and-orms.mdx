@@ -174,3 +174,43 @@ When working with technologies that interface between databases and applications
 In this article, we took a look at a few different options for interfacing with your database from your application. We examined the different levels of abstraction and the flexibility offered by using database-native querying languages like SQL, using a query builder to help safely craft queries, and ORMs to provide a more complete level of abstraction.
 
 Each of these approaches have their uses and some may be well-suited for certain types of applications than others. It is important to understand your application requirements, your organization's database knowledge, and the costs of the abstractions (or lack thereof) that you choose to implement. Overall, understanding each approach will give you the best chance of selecting the option that will be a good fit for your projects.
+
+## FAQ
+
+<details><summary>What is a visual SQL query builder?</summary>
+
+A visual SQL query builder is a graphical user interface for creating SQL queries. 
+
+Typically, query builders are relatively light-weight, focus on easing data access and data representation, and do not attempt to translate the data into a specific programming paradigm.
+
+</details>
+
+<details><summary> What is an online SQL query builder?</summary>
+
+An online SQL query builder is a cloud-based tool that helps quickly build SQL queries without the need to know how to write SQL. 
+
+Typically, query builders are relatively light-weight, focus on easing data access and data representation, and do not attempt to translate the data into a specific programming paradigm.
+
+</details>
+
+<details><summary>What is the active record pattern?</summary>
+
+The [active record pattern](https://en.wikipedia.org/wiki/Active_record_pattern) attempts to encapsulate the database's data within the structure of objects within your code. Objects contain methods to save, update, or delete from the database and changes to your objects are meant to be easily reflected in the database.
+
+Active record implementations allow you to manage your database by creating and connecting classes and instances within your code.
+
+</details>
+
+<details><summary>What is the data mapper pattern?</summary>
+
+The [data mapper pattern](https://en.wikipedia.org/wiki/Data_mapper_pattern) attempts to act as an independent layer between your code and your database that mediates between the two. 
+
+It focuses on trying to decouple and translate between them while letting each exist independently. This can help separate your business logic from database-related details that deal with mappings, representation, serialization, etc.
+
+</details>
+
+<details><summary>What is a native query?</summary>
+
+A native query is a database query made up of SQL statements that can be directly executed in a database using a database client.
+
+</details>
