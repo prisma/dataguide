@@ -134,12 +134,16 @@ For example, in a customer database a row might include a customer’s first nam
 
 <details><summary>What is a foreign key in a database?</summary>
 
-A `FOREIGN KEY` is a field or collection of fields in one table that refers to the `PRIMARY KEY` of another table. 
+A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table. 
+
+However, it can also refer to any unique column that is also not null. 
 
 </details>
 
 <details><summary>Why do relational databases use primary keys and foreign keys?</summary>
 
-Relational databases use primary and foreign keys to establish connections between tables in a database. These keys facilitate access to one table from another within a database. 
+Relational databases use primary and foreign keys to establish connections between tables in a database. These keys facilitate access to one table from another within a database.
+
+Primary keys can also be generally useful for uniquely addressing individual records even without any foreign keys.
 
 </details>
