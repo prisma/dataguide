@@ -275,3 +275,9 @@ Chaining transactions doesn't offer much in terms of new functionality, but it c
 Transactions are not a silver bullet.  There are a lot of trade offs that come with various isolation levels and understanding what types of consistency you need to protect can take thought and planning.  This is especially true with long running transactions where the underlying data may change significantly and the possibility of conflict with other concurrent transactions increases.
 
 That being said, the transaction mechanic offers a lot of flexibility and power.  It goes a long way towards ensuring ACID guarantees are maintained even while performing interrelated, concurrent operations.  Knowing when and how to properly use transactions to perform complex, safe operations is invaluable.
+
+<PrismaOutlinks>
+
+If you are using JavaScript or TypeScript, you can use [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/concepts/database-connectors/postgresql).  Any operations using the [transactions API](https://www.prisma.io/docs/concepts/components/prisma-client/transactions#the-transaction-api) will use the PostgreSQL server's default isolation level.  As an alternative to using transactions interactively, Prisma also provides transaction behavior through [nested writes](https://www.prisma.io/docs/concepts/components/prisma-client/transactions#nested-writes) and with [bulk or batch operations](https://www.prisma.io/docs/concepts/components/prisma-client/transactions#batchbulk-operations).  You can learn more by reading [Prisma's transaction guide](https://www.prisma.io/docs/guides/performance-and-optimization/prisma-client-transactions-guide).
+
+</PrismaOutlinks>
