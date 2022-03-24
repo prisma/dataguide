@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Connecting to your database server is usually one of the first task you need to accomplish when designing and configuring database-backed applications.  While there are many methods of providing the address, listening port, credentials, and other details to applications, connection URIs, sometimes called connection strings or connection URLs, are one of the most powerful and flexible ways of specifying complex configuration in a compact format.
+Connecting to your database server is usually one of the first tasks you need to accomplish when designing and configuring database-backed applications.  While there are many methods of providing the address, listening port, credentials, and other details to applications, connection URIs, sometimes called connection strings or connection URLs, are one of the most powerful and flexible ways of specifying complex configuration in a compact format.
 
 In this guide, we'll talk about how to format a connection URI with your PostgreSQL database information and authentication details.  Connection URIs are divided into sections, so we'll cover each part as we go along.
 
@@ -79,7 +79,7 @@ A quick description of each of the individual components:
     * `port`: An optional port specification to indicate which port PostgreSQL is listening to on the server.  The port begins with a colon (`:`) and continues until the slash (`/`)
 * `database name`: The name of the individual database to connect to.
 * `parameter list`: An optional list of additional parameters that can affect the connection behavior.  The parameter list begins with a question mark (`?`).
-    * `parameter pairs`: The parameter list is composed of key-value pairs.  They key and value within each pair are separated by an equal sign (`=`) and each pair is separated from the next by an ampersand (`&`).
+    * `parameter pairs`: The parameter list is composed of key-value pairs.  The key and value within each pair are separated by an equal sign (`=`) and each pair is separated from the next by an ampersand (`&`).
 
 Here is an example of a PostgreSQL connection URI that incorporates all of these components:
 
@@ -192,10 +192,10 @@ The PostgreSQL documentation has a [full list of parameters](https://www.postgre
 
 ## Conclusion
 
-In this guide, we discussed what a PostgreSQL connection URI is, how to interpret the various components, how to construct your own URIs given a set of connection information.  Connection URIs encode all of the information required to connect to a given database within a single string.  Because of this flexibility and due to their wide adoption, understanding how to parse and construct those strings can be pretty helpful.
+In this guide, we discussed what a PostgreSQL connection URI is, how to interpret the various components, and how to construct your own URIs given a set of connection information.  Connection URIs encode all of the information required to connect to a given database within a single string.  Because of this flexibility and due to their wide adoption, understanding how to parse and construct those strings can be pretty helpful.
 
 <PrismaOutlinks>
 
-If you are using [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/concepts/database-connectors/postgresql), you need to set a connection URI within a `datasource` block in your [Prisma schema file](https://www.prisma.io/docs/concepts/components/prisma-schema).  You must provide a [connection URI for the `url` field](https://www.prisma.io/docs/concepts/database-connectors/postgresql#example) so that Prisma can connect to your database.
+If you are using [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/concepts/database-connectors/postgresql), you need to set a connection URI within a 'datasource' block in your [Prisma schema file](https://www.prisma.io/docs/concepts/components/prisma-schema).  You must provide a [connection URI for the 'url' field](https://www.prisma.io/docs/concepts/database-connectors/postgresql#example) so that Prisma can connect to your database.
 
 </PrismaOutlinks>
