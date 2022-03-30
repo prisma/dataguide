@@ -18,7 +18,7 @@ In this guide, we'll introduce some of the most common patterns for relational d
 
 The simplest way to scale a database system is vertical scaling.  *Scaling vertically*, also called *scaling up*, means adding capacity to the server that manages your database.  By increasing the processing power, memory allocation, or storage capacity, you can increase the performance and volume that a database system can handle without increasing the complexity of the system as a whole.
 
-As a general rule, scaling up your database is a good first step as it increases your database's capabilities without affecting your infrastructure topology.  Scaling up is usually fairly simple as well, since a larger capacity machine can be configured as a replication follower until it is synchronized and then a failover can be triggered to make it the new primary server.
+As a general rule, scaling up your database is a good first step as it increases your database's capabilities without affecting your infrastructure topology.  Scaling up is usually fairly simple as well, since a larger capacity machine can be configured as a [replication](/intro/database-glossary#replication) follower until it is synchronized and then a failover can be triggered to make it the new primary server.
 
 Scaling up has its limitations however because the amount of resources that can be reasonably allocated to one machine is constricted.  It also represents a single point of failure if no replication followers are configured to take over when problems occur.  These concerns are addressed by some of the other scaling options.
 
@@ -28,7 +28,7 @@ The other primary way of scaling your database infrastructure is to scale out.  
 
 ![CQRS with read-only replicas diagram](/content/types/relational/infrastructure-architecture/cqrs.png)
 
-*Command query responsibility segregation* (CQRS) is a term used to describe adding logic to separate out queries that mutate data (write queries) from those that do not (read queries).  This allows you to route these different categories of requests to different hosts to help distribute the load.
+*Command query responsibility segregation* (CQRS) is a term used to describe adding logic to separate out queries that mutate data ([write queries](/intro/database-glossary#write-operation)) from those that do not ([read queries](/intro/database-glossary#read-operation)).  This allows you to route these different categories of requests to different hosts to help distribute the load.
 
 The most basic infrastructure to take advantage of this design is a primary server that can accept read and write queries combined with one or more replica servers following the primary server that can accept read queries.  This design is appropriate for application usage patterns that are read-heavy, as read operations can be handled by any of the database servers.
 
@@ -44,7 +44,7 @@ While using CQRS with read-only replicas helps you address a higher number of re
 
 While this design sounds ideal at the outset, there are some major challenges that prevent this from being a widely adopted pattern.  While multiple servers can handle write requests, they still must coordinate to replicate changes between their servers and to resolve conflicts in data changes.  This can either lead to long response times as conflicts are negotiated or the possibility inconsistent data.
 
-Each system chooses their own approach to handle these challenges.  This is a demonstration of *CAP Theorem* — a statement describing the interplay between consistency, availability, and partition tolerance in distributed systems — in action.  Some systems offer weaker consistency guarantees to maintain availability, while other databases refuse to accept changes if their peers cannot coordinate the transaction at the time of the write.  Choosing the approach that best fits your needs is an important factor when deciding between various implementations.
+Each system chooses their own approach to handle these challenges.  This is a demonstration of [*CAP Theorem*](/intro/database-glossary#cap-theorem) — a statement describing the interplay between consistency, availability, and partition tolerance in distributed systems — in action.  Some systems offer weaker consistency guarantees to maintain availability, while other databases refuse to accept changes if their peers cannot coordinate the transaction at the time of the write.  Choosing the approach that best fits your needs is an important factor when deciding between various implementations.
 
 ## Read query caching
 
@@ -52,7 +52,7 @@ While using read-only replicas is a way to increase the available databases that
 
 ![Adding a read cache diagram](/content/types/relational/infrastructure-architecture/read-cache.png)
 
-To decrease response times, a *read query caching* layer can be introduced.  Adding a cache between your database clients and the databases themselves can reduce query time for common requests significantly.  The application can request read results from the cache and receive them almost immediately if available.  For cases where the results are not found in the cache, they are fetched from the database itself and added to the cache for next time.
+To decrease response times, a *read query caching* layer can be introduced.  Adding a [cache](/intro/database-glossary#cache) between your database clients and the databases themselves can reduce query time for common requests significantly.  The application can request read results from the cache and receive them almost immediately if available.  For cases where the results are not found in the cache, they are fetched from the database itself and added to the cache for next time.
 
 Configuring caching in this way is incredibly efficient for scenarios where data is not likely to change each time the request is made.  It is especially helpful for expensive read queries that consult multiple tables and include complex join operations.  These results can be executed once and then saved for future queries.
 

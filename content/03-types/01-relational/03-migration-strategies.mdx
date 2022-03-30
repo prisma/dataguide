@@ -18,7 +18,7 @@ There are a number of potential issues that can arise when deploying changes to 
 
 When changing the actual structure of the database, existing data frequently needs to be modified to conform to the new schema.  In some scenarios, this is relatively simple.  For instance, if you need to add a new table that isn't related to the existing data, nothing stored in the database will need to be modified.
 
-In other cases, like splitting or combining columns, you must define custom data transformations to specify how the existing data should be altered to populate the new context.  For structures that handle very large amounts of data, this migration process may take a significant amount of time.
+In other cases, like splitting or combining [columns](/intro/database-glossary#column), you must define custom data transformations to specify how the existing data should be altered to populate the new context.  For structures that handle very large amounts of data, this migration process may take a significant amount of time.
 
 ### Making changes reversible
 
@@ -28,13 +28,13 @@ This makes "rolling forward" in case of a problem much more attractive than "rol
 
 ### Testing schema changes
 
-Another challenge involved with database changes is testing.  It can be difficult to understand the best way to test schema changes in a way that captures edge cases and ensures the validity of the new data format.  Real world data often pushes against the boundaries of constraints in unexpected ways, so it is important to have a good handle on the entire range of potential values to write tests that account for them.
+Another challenge involved with database changes is testing.  It can be difficult to understand the best way to test schema changes in a way that captures edge cases and ensures the validity of the new data format.  Real world data often pushes against the boundaries of [constraints](/intro/database-glossary#constraint) in unexpected ways, so it is important to have a good handle on the entire range of potential values to write tests that account for them.
 
 Schema changes can also affect other parts of the database that you'll want to test, like stored procedures, triggers, and other components.  These need to be tested with each schema change to ensure that they still work as intended.
 
 ### Performance and availability impact
 
-Lastly, schema changes can be difficult because they can have huge impacts on performance and availability.  This category of problems can be difficult to emulate in test environments where the dataset, request load, and access patterns may not mirror production values.
+Lastly, schema changes can be difficult because they can have huge impacts on performance and [availability](/intro/database-glossary#availability).  This category of problems can be difficult to emulate in test environments where the [dataset](/intro/database-glossary#dataset), request load, and access patterns may not mirror production values.
 
 Changes that may be technically valid may impose an unacceptable performance cost that might be difficult to deduce in staging environments.  If your deployment process has the chance to affect availability, that is an even larger concern.
 
@@ -71,7 +71,7 @@ When the deployment is complete, the application can be restarted and begin serv
 
 ### Blue / green deployments
 
-Blue / green deployments is another strategy that is often used to deploy new code in application contexts.  It can be used for database schema changes to a certain extent, but does have some notable shortcomings.
+[Blue / green deployments](/intro/database-glossary#blue-green-deployments) is another strategy that is often used to deploy new code in application contexts.  It can be used for database schema changes to a certain extent, but does have some notable shortcomings.
 
 Blue / green deployments is an approach that involves setting up two identical sets of infrastructure for your database clients, together representing double the resources required to run production traffic.
 
@@ -81,11 +81,11 @@ Blue / green deployments are attractive because they allow you to deploy changes
 
 While blue / green deployments are helpful in many scenarios, applying them with schema changes can be challenging.  When changing only application code (without data-related changes), reverting problematic code is as simple as directing traffic back to the original set of infrastructure.  However, when data schemas change, incompatibility is possible.  Reverting to the previous infrastructure may result in data loss as schema structures are removed, etc.
 
-When using blue / green deployments with schema changes, one way to avoid these issues is to structure your deployments using the expand and contract pattern (discussed later).
+When using blue / green deployments with schema changes, one way to avoid these issues is to structure your deployments using the [expand and contract pattern](/intro/database-glossary#expand-and-contract-pattern) (discussed later).
 
 ### Feature flags
 
-Feature flags are design pattern in software development that allow developers to modify the control flow of an application during runtime based on values set outside of the application.  The application checks the current value of a well-known external location when it comes to a certain code path.  The value tells the application whether or not to execute a certain code path or which path to choose among many.
+[Feature flags](/intro/database-glossary#feature-flags) are design pattern in software development that allow developers to modify the control flow of an application during runtime based on values set outside of the application.  The application checks the current value of a well-known external location when it comes to a certain code path.  The value tells the application whether or not to execute a certain code path or which path to choose among many.
 
 Rather than being a deployment strategy itself, feature flags are a technique that can make implementing other strategies easier by allowing you to decouple the deployment of new functionality from the activation of that functionality.  The application can continue to run the same as it originally had until it sees a different value when it checks for the flag.  It can then immediately switch over to use the new functionality.
 
@@ -95,7 +95,7 @@ The disadvantages to using feature flags are often small, but should be consider
 
 ### Canary releases
 
-Another strategy that can be used in combination with other approaches is canary releases.  Canary releasing is a deployment strategy that simply means that changes are introduced on a single or a small number of clients first before deploying to the rest of your infrastructure.
+Another strategy that can be used in combination with other approaches is [canary releases](/intro/database-glossary#canary-releases).  Canary releasing is a deployment strategy that simply means that changes are introduced on a single or a small number of clients first before deploying to the rest of your infrastructure.
 
 This allows you to catch problems early that you did not see during your previous testing.  The subset of clients that are running the new code work as an indicator for how well the code will function on the remaining systems and allow you to gradually roll over additional systems as you gain confidence in the stability and functionality of the changes.
 
@@ -168,7 +168,7 @@ When you are ready to transition the reads from the old structure to the new str
 set DATABASE_NAMES_TABLE_READ new_names
 ```
 
-The next time the client application checks the value before executing a read operation, it will receive the new value and read from the new structure.
+The next time the client application checks the value before executing a [read operation](/intro/database-glossary#read-operation), it will receive the new value and read from the new structure.
 
 Once you've confirmed that everything is working correctly, you can then update the `DATABASE_NAMES_TABLE_WRITE` list to remove the name of the original table:
 
