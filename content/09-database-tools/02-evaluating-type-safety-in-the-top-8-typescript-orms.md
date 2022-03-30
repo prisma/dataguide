@@ -268,7 +268,7 @@ Objection.js provides [built-in TypeScript support](https://github.com/Vincit/ob
 
 ### Record Creation: Type safe
 
-Models are defined in Objection.js by extending the `Model` class. Within a, say, `User` model, the developer defines non-nullable and optional properties like `name!` and `age?`, and provides a required `tableName` property.  The developer can also provide an optional [JSON Schema](http://json-schema.org/) for Model validation. Relations to other models like `HasMany`  are also defined in the model class.
+Models are defined in Objection.js by extending the `Model` class. Within a, say, `User` model, the developer defines non-nullable and optional properties like `name!` and `age?`, and provides a required `tableName` property.  The developer can also provide an optional [JSON Schema](https://json-schema.org) for Model validation. Relations to other models like `HasMany`  are also defined in the model class.
 
 When creating new records, the `User.query().insert()` method is type-safe. Model properties are autocompleted and attempting to add properties not defined in the model class will result in compiler errors. 
 
@@ -483,7 +483,7 @@ This article focuses on the type safety of the most popular ORMs referenced in [
 ### Knex.js
 
 * [GitHub](https://github.com/knex/knex)
-* [Website](http://knexjs.org/)
+* [Website](https://knexjs.org)
 * [npm](https://www.npmjs.com/package/knex)
 
 Knex.js is a Node.js query builder (not ORM) that supports multiple databases and includes features like transaction support, connection pooling, and a streaming interface. It allows you to work at a level above the database driver and avoid writing SQL by hand. However, as it is a lower level library, familiarity with SQL and relational database concepts like joins and indices is expected. Official TypeScript bindings are built-in to the `knex` NPM package. TypeScript support is best-effort and "not all usage patterns can be type-checked." The knex documentation also states that "lack of type errors doesn't currently guarantee that the generated queries will be correct."
