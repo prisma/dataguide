@@ -8,7 +8,7 @@ authors: ['alexemerich']
 
 ## Introduction
 
-The `SELECT` SQL command is the most fitting command for querying and returning information from inside your tables in SQLite. This command achieves what its name implies by *selecting* the matching records based on the criteria specified in the command. This command is not only useful for reading data, but also for targeting updates and other actions within your database.
+The `SELECT` [SQL](/intro/database-glossary#sql) command is the most fitting command for querying and returning information from inside your tables in SQLite. This command achieves what its name implies by *selecting* the matching records based on the criteria specified in the command. This command is not only useful for [reading](/intro/database-glossary#read-operation) data, but also for targeting updates and other actions within your database.
 
 In this article, we will cover the basics of the `SELECT` command and demonstrate how to use it to return data. `SELECT` is capable of handling many more advanced use cases, but we will stick to the simpler forms in our demonstration to highlight the basic command structure.
 
@@ -58,7 +58,7 @@ This will display all of the records from `my_table`, but only show `column2` an
 
 ## Using column aliases with `AS` to modify the resulting table
 
-Compared to other SQL databases such as MySQL and PostgreSQL, SQLite does not show column names in its query output by default. In order to force the display of column names in SQLite, a series of commands can be run.
+Compared to other SQL databases such as [MySQL](/intro/database-glossary#mysql) and [PostgreSQL](/intro/database-glossary#postgresql), SQLite does not show column names in its query output by default. In order to force the display of column names in SQLite, a series of commands can be run.
 
 First you use the `.header` command which is an on|off switch for the display of headers in your output:
 
@@ -88,6 +88,7 @@ Second you use the `.mode` command to set the output mode to column. This makes 
 ```
 </CmdResult>
 </CodeWithResult>
+
 Now when running a query, the output display will include column names above the results. This now allows you to optionally set *column aliases* to modify the name used for columns in the output:
 
 ```sql
