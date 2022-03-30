@@ -9,13 +9,13 @@ metaImage: /content/types/relational/what-are-database-migrations/header-image.p
 
 ![migrations header image](/content/types/relational/what-are-database-migrations/header-image.png)
 
-Database schemas define the structure and interrelations of data managed by relational databases.  While it is important to develop a well-thought out schema at the beginning of your projects, evolving requirements make changes to your initial schema difficult or impossible to avoid.  And since the schema manages the shape and boundaries of your data, changes must be carefully applied to match the expectations of the applications that use it and avoid losing data currently held by the database system.
+Database [schemas](/intro/database-glossary#schema) define the structure and interrelations of data managed by relational databases.  While it is important to develop a well-thought out schema at the beginning of your projects, evolving requirements make changes to your initial schema difficult or impossible to avoid.  And since the schema manages the shape and boundaries of your data, changes must be carefully applied to match the expectations of the applications that use it and avoid losing data currently held by the database system.
 
 In this article, we'll go over what database schema migrations are, what problems they solve, and different implementation strategies.  We'll take a look at the various pain points they address as well as some potential pitfalls they introduce.
 
 ## What are database migrations?
 
-Database migrations, also known as [schema migrations](https://en.wikipedia.org/wiki/Schema_migration), database schema migrations, or simply migrations, are controlled sets of changes developed to modify the structure of the objects within a relational database.  Migrations help transition database schemas from their current state to a new desired state, whether that involves adding tables and columns, removing elements, splitting fields, or changing types and constraints.
+Database migrations, also known as [schema migrations](/intro/database-glossary#migration), database schema migrations, or simply migrations, are controlled sets of changes developed to modify the structure of the objects within a [relational database](/intro/database-glossary#relational-database).  Migrations help transition database schemas from their current state to a new desired state, whether that involves adding tables and [columns](/intro/database-glossary#column), removing elements, splitting fields, or changing types and [constraints](/intro/database-glossary#constraint).
 
 Migrations manage incremental, often reversible, changes to data structures in a programmatic way.  The goals of database migration software are to make database changes repeatable, shareable, and testable without loss of data.  Generally, migration software produces artifacts that describe the exact set of operations required to transform a database from a known state to the new state.  These can be checked into and managed by normal version control software to track changes and share among team members.
 

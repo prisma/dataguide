@@ -9,15 +9,15 @@ metaImage: '/content/types/relational/expand-and-contract-pattern/header-image.p
 
 ![Expand and contract header image](/content/types/relational/expand-and-contract-pattern/header-image.png)
 
-Database schema designs inevitably evolve over time as the software that interacts with the database change.  It is important to be able to transition your schemas to incorporate new requirements as they arise in a safe and reliable manner.
+[Database schema](/intro/database-glossary#schema) designs inevitably evolve over time as the software that interacts with the database change.  It is important to be able to transition your schemas to incorporate new requirements as they arise in a safe and reliable manner.
 
-While database migration software can often be used to update the actual data structures, the data itself must also be converted to new formats, migrated to different tables or columns, and updated to conform to new expectations.  These processes, while not always complicated, are especially sensitive when performed on live systems that are actively being used by clients.
+While [database migration](/intro/database-glossary#migration) software can often be used to update the actual data structures, the data itself must also be converted to new formats, migrated to different tables or columns, and updated to conform to new expectations.  These processes, while not always complicated, are especially sensitive when performed on live systems that are actively being used by clients.
 
 Fortunately, a multi-step process known as the *expand and contract pattern* can be applied to safely migrate clients to use new data structures incrementally without taking the system offline.  In this guide, we will explore what the expand and contract pattern is, how it enables seamless transitions between new and old structures, and how to apply it to various database transformations.
 
 ## What is the expand and contract pattern?
 
-The expand and contract pattern is a process that database administrators and software developers can use to transition data from an old data structure to a new data structure without affecting uptime.  It works by applying changes through a series of discrete steps designed to introduce the new structure in the background, prepare the data for live usage, and then switch over to the new structure seamlessly.
+The expand and contract pattern is a process that [database administrators](/intro/database-glossary#database-administrator) and software developers can use to transition data from an old data structure to a new data structure without affecting uptime.  It works by applying changes through a series of discrete steps designed to introduce the new structure in the background, prepare the data for live usage, and then switch over to the new structure seamlessly.
 
 This process can be used to make changes to many in-use interfaces, but it is especially helpful for database schema changes.  Beyond just migrating data and clients to a new data structure, the expand and contract pattern is also helpful in that it allows you to rollback changes easily at most points in the process if something doesn't go as planned or if your requirements change.
 
@@ -45,7 +45,7 @@ At this point, the database clients should be able to access the original struct
 
 ![expand the interface](/content/types/relational/expand-and-contract-pattern/step-2.png)
 
-After deploying the new database schema alongside the original schema, the next step is to expand the interface of the clients to recognize the new columns and tables.  The client code will still read all of its values from the original data structure.  However, when performing write operations, the client will now add or modify data in both the original structure and in the new structure.
+After deploying the new database schema alongside the original schema, the next step is to expand the interface of the clients to recognize the new columns and tables.  The client code will still read all of its values from the original data structure.  However, when performing [write operations](/intro/database-glossary#write-operation), the client will now add or modify data in both the original structure and in the new structure.
 
 The client is now actively inserting data into the new structure alongside the original structure.  This gives you the opportunity to validate the new interface between the two components and ensures that all data going forward will be persisted in the new data structure.  Because the client continues to write to the old structure and because any read operations still exclusively reference the original structure, the external behavior of the client should remain exactly the same.
 
@@ -156,7 +156,7 @@ The first step the team takes is to create the new `playground` table beside the
  sq_ft INT
 ```
 
-Next, the client application is updated to write any new playground-related data to both the `equipment` table and the `playground` table by configuring the application to write to all tables returned by the feature flag `DATABASE:equipment_location:write` defined as a list on their Redis server.  While they are adding this change, they also implement another feature flag that checks the value of `DATABASE:equipment_location:read` to determine which data source to read from.
+Next, the client application is updated to write any new playground-related data to both the `equipment` table and the `playground` table by configuring the application to write to all tables returned by the feature flag `DATABASE:equipment_location:write` defined as a list on their [Redis](/intro/database-glossary#redis) server.  While they are adding this change, they also implement another feature flag that checks the value of `DATABASE:equipment_location:read` to determine which data source to read from.
 
 After the change to the client code, the most recent two records are recorded in both locations:
 
