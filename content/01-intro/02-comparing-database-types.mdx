@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-**Database types**, sometimes referred to as database models or database families, are the patterns and structures used to organize data within a database management system. Many different database types have been developed over the years. Some are mainly historic predecessors to current databases, while others have stood the test of time. In the last few decades, new types have been developed to address changing requirements and different use patterns.
+**Database types**, sometimes referred to as [database models](/intro/database-glossary#database-model) or database families, are the patterns and structures used to organize data within a database management system. Many different database types have been developed over the years. Some are mainly historic predecessors to current databases, while others have stood the test of time. In the last few decades, new types have been developed to address changing requirements and different use patterns.
 
 Your choice of database type can have a profound impact on what kind of operations your application can easily perform, how you conceptualize your data, and the features that your database management system offers you during development and runtime. In this guide, we'll take a look at how database types have evolved over time and what advantages and trade-offs are present in each design.
 
@@ -21,7 +21,7 @@ This section is dedicated to historic database types that aren't used much in mo
 
 The simplest way to manage data on a computer outside of an application is to store it in a basic file format. The first solutions for data management used this approach and it is still a popular option for storing small amounts of information without heavy requirements.
 
-The first flat file databases represented information in regular, machine parse-able structures within files. Data is stored in plain text, which limits the type of content that can be represented within the database itself. Sometimes, a special character or other indicator is chosen to use as a _delimiter_, or marker for when one field ends and the next begins. For example, a comma is used in CSV (comma-separated values) files, while colons or white-space are used in many data files in [Unix-like](https://en.wikipedia.org/wiki/Unix-like) systems. Other times, no delimiter is used and instead, fields are defined with a fixed length which can be padded for shorter values.
+The first [flat file databases](/intro/database-glossary#flat-file-database) represented information in regular, machine parse-able structures within files. Data is stored in plain text, which limits the type of content that can be represented within the database itself. Sometimes, a special character or other indicator is chosen to use as a _delimiter_, or marker for when one field ends and the next begins. For example, a comma is used in CSV (comma-separated values) files, while colons or white-space are used in many data files in [Unix-like](https://en.wikipedia.org/wiki/Unix-like) systems. Other times, no delimiter is used and instead, fields are defined with a fixed length which can be padded for shorter values.
 
 **`/etc/passwd` on \*nix systems:**
 
@@ -58,7 +58,7 @@ Examples:
 
 **Initial introduction: 1960s**
 
-Hierarchical databases were the next evolution in database management development. They encode a relationship between items where every record has a single parent. This builds a tree-like structure that can be used to categorize records according to their parent record.
+[Hierarchical databases](/intro/database-glossary#hierarchical-database) were the next evolution in database management development. They encode a relationship between items where every record has a single parent. This builds a tree-like structure that can be used to categorize records according to their parent record.
 
 ![Diagram of a hierarchical database](/content/intro/database-type-comparison/hierarchical.png)
 
@@ -95,7 +95,7 @@ Examples:
 
 **Initial introduction: late 1960s**
 
-Network databases built on the foundation provided by hierarchical databases by adding additional flexibility. Instead of always having a single parent, as in hierarchical databases, network database entries can have more than one parent, which effectively allows them to model more complex relationships. When talking about network databases, it is important to realize that _network_ is being used to refer to connections between different data entries, not connections between different computers or software.
+[Network databases](/intro/database-glossary#network-database) built on the foundation provided by hierarchical databases by adding additional flexibility. Instead of always having a single parent, as in hierarchical databases, network database entries can have more than one parent, which effectively allows them to model more complex relationships. When talking about network databases, it is important to realize that _network_ is being used to refer to connections between different data entries, not connections between different computers or software.
 
 ![Diagram of a network database](/content/intro/database-type-comparison/network.png)
 
@@ -117,7 +117,7 @@ Network databases built on the foundation provided by hierarchical databases by 
 [comment]: # ' @enduml '
 [comment]: # ' ``` '
 
-Network databases can be represented by a generic _graph_ instead of a _tree_. The meaning of the graph was defined by a **schema**, which lays out what each data node and each relationship represents. This gave structure to the data in a way that could previously only be reached through inference.
+Network databases can be represented by a generic _graph_ instead of a _tree_. The meaning of the graph was defined by a [**schema**](/intro/database-glossary#schema), which lays out what each data node and each relationship represents. This gave structure to the data in a way that could previously only be reached through inference.
 
 > **Definition: Schema**
 >
@@ -135,9 +135,9 @@ Examples:
 
 **Initial introduction: 1969**
 
-Relational databases are the oldest general purpose database type still widely used today. In fact, [relational databases comprise the majority of databases currently used in production](https://db-engines.com/en/ranking_categories).
+[Relational databases](/intro/database-glossary#relational-database) are the oldest general purpose database type still widely used today. In fact, [relational databases comprise the majority of databases currently used in production](https://db-engines.com/en/ranking_categories).
 
-Relational databases organize data using _tables_. Tables are structures that impose a schema on the records that they hold. Each column within a table has a _name_ and a _data type_. Each row represents an individual record or data item within the table, which contains values for each of the columns. Relational databases get their name from mathematical relationships that use tuples (like the rows in a table) to represent ordered sets of data.
+Relational databases organize data using _tables_. Tables are structures that impose a schema on the records that they hold. Each column within a table has a _name_ and a [_data type_](/intro/database-glossary#data-type). Each row represents an individual record or data item within the table, which contains values for each of the columns. Relational databases get their name from mathematical relationships that use tuples (like the rows in a table) to represent ordered sets of data.
 
 ![Diagram of relational schema used to map entities for a school](/content/intro/database-type-comparison/relational.png)
 
@@ -196,11 +196,11 @@ Relational databases organize data using _tables_. Tables are structures that im
 [comment]: # ' @enduml '
 [comment]: # ' ``` '
 
-Special fields in tables, called _foreign keys_, can contain references to columns in other tables. This allows the database to bridge the two tables on demand to bring different types of data together.
+Special fields in tables, called [_foreign keys_](/intro/database-glossary#foreign-key), can contain references to columns in other tables. This allows the database to bridge the two tables on demand to bring different types of data together.
 
 The highly organized structure imparted by the rigid table structure, combined with the flexibility offered by the relations between tables makes relational databases very powerful and adaptable to many types of data. Conformity can be enforced at the table level, but database operations can combine and manipulate that data in novel ways.
 
-While not inherent to the design of relational databases, a querying language called SQL, or structured query language, was created to access and manipulate data stored with that format. It can query and join data from multiple tables within a single statement. SQL can also filter, aggregate, summarize, and limit the data that it returns. So while SQL is not a part of the relational system, it is often a fundamental part of working with these databases.
+While not inherent to the design of relational databases, a querying language called [SQL](/intro/database-glossary#sql), or structured query language, was created to access and manipulate data stored with that format. It can query and join data from multiple tables within a single statement. SQL can also filter, aggregate, summarize, and limit the data that it returns. So while SQL is not a part of the relational system, it is often a fundamental part of working with these databases.
 
 > **Definition: SQL**
 >
@@ -217,13 +217,13 @@ Examples:
 
 ## NoSQL databases: modern alternatives for data that doesn't fit the relational paradigm
 
-NoSQL is a term for a varied collection of modern database types that offer approaches that differ from the standard relational pattern. The term NoSQL is somewhat of a misnomer since the databases within this category are more of a reaction against the relational archetype rather than the SQL querying language. NoSQL is said to stand for either "non-SQL" or "not only SQL" to sometimes clarify that they sometimes allow for SQL-like querying.
+[NoSQL](/intro/database-glossary#nosql) is a term for a varied collection of modern database types that offer approaches that differ from the standard relational pattern. The term NoSQL is somewhat of a misnomer since the databases within this category are more of a reaction against the relational archetype rather than the SQL querying language. NoSQL is said to stand for either "non-SQL" or "not only SQL" to sometimes clarify that they sometimes allow for SQL-like querying.
 
 ### Key-value databases: simple, dictionary-style lookups for basic storage and retrieval
 
 **Initial introduction: 1970s | Rise in popularity: 2000-2010**
 
-Key-value databases, or key-value stores, are one of the simplest database types. Key-value stores work by storing arbitrary data accessible through a specific _key_. To store data, you provide a key and the blob of data you wish to save, for example a JSON object, an image, or plain text. To retrieve data, you provide the key and will then be given the blob of data back. In most basic implementations, the database does not evaluate the data it is storing and allows limited ways of interacting with it.
+[Key-value databases](/intro/database-glossary#key-value-database), or key-value stores, are one of the simplest database types. Key-value stores work by storing arbitrary data accessible through a specific _key_. To store data, you provide a key and the blob of data you wish to save, for example a JSON object, an image, or plain text. To retrieve data, you provide the key and will then be given the blob of data back. In most basic implementations, the database does not evaluate the data it is storing and allows limited ways of interacting with it.
 
 ![Diagram of key-value data store](/content/intro/database-type-comparison/key-value.png)
 
@@ -260,7 +260,7 @@ Examples:
 
 **Rise in popularity: 2009**
 
-Document databases, also known as document-oriented databases or document stores, share the basic access and retrieval semantics of key-value stores. Document databases also use a key to uniquely identify data within the database. In fact, the line between advanced key-value stores and document databases can be fairly unclear. However, instead of storing arbitrary blobs of data, document databases store data in structured formats called documents, often using formats like JSON, BSON, or XML.
+[Document databases](/intro/database-glossary#document-database), also known as document-oriented databases or document stores, share the basic access and retrieval semantics of key-value stores. Document databases also use a key to uniquely identify data within the database. In fact, the line between advanced key-value stores and document databases can be fairly unclear. However, instead of storing arbitrary blobs of data, document databases store data in structured formats called documents, often using formats like JSON, BSON, or XML.
 
 ![Diagram of document database](/content/intro/database-type-comparison/document.png)
 
@@ -338,7 +338,7 @@ Examples:
 
 **Rise in popularity: 2000s**
 
-Graph databases are a type of NoSQL database that takes a different approach to establishing relationships between data. Rather than mapping relationships with tables and foreign keys, graph databases establish connections using the concepts of _nodes_, _edges_, and _properties_.
+[Graph databases](/intro/database-glossary#graph-database) are a type of NoSQL database that takes a different approach to establishing relationships between data. Rather than mapping relationships with tables and foreign keys, graph databases establish connections using the concepts of _nodes_, _edges_, and _properties_.
 
 ![Diagram of a graph database structure](/content/intro/database-type-comparison/graph.png)
 
@@ -358,11 +358,11 @@ For example, querying for the connection between two users of a social media sit
 
 **Rise in popularity: 2000s**
 
-Column-family databases, also called non-relational column stores, wide-column databases, or simply column databases, are perhaps the NoSQL type that, on the surface, looks most similar to relational databases. Like relational databases, wide-column databases store data using concepts like rows and columns. However, in wide-column databases, the association between these elements is very different from how relational databases use them.
+[Column-family databases](/intro/database-glossary#wide-column-store), also called non-relational column stores, wide-column databases, or simply column databases, are perhaps the NoSQL type that, on the surface, looks most similar to relational databases. Like relational databases, wide-column databases store data using concepts like rows and columns. However, in wide-column databases, the association between these elements is very different from how relational databases use them.
 
 In relational databases, a schema defines the column layout in a table by specifying what columns the table will have, their respective data types, and other criteria. All of the rows in a table must conform to this fixed schema.
 
-Instead of tables, column-family databases have structures called _column families_. Column families contain rows of data, each of which define their own format. A row is composed of a unique row identifier — used to locate the row — followed by sets of column names and values.
+Instead of tables, column-family databases have structures called [_column families_](/intro/database-glossary#column-family). Column families contain rows of data, each of which define their own format. A row is composed of a unique row identifier — used to locate the row — followed by sets of column names and values.
 
 With this design, each row in a column family defines its own schema. That schema can be easily modified because it only affects that single row of data. Each row can have different numbers of columns with different types of data. Sometimes it helps to think of column family databases as key-value databases where each key (row identifier) returns a dictionary of arbitrary attributes and their values (the column names and their values).
 
@@ -480,15 +480,15 @@ Examples:
 
 NoSQL databases are great options for situations where your data does not fit neatly into the relational pattern. Since they were developed more recently, NoSQL systems tend to be designed with scalability and modern performance requirements in mind.
 
-However, until recently, no solution existed to easily _scale_ relational data. To address this need, a new type of relational databases called NewSQL databases were developed.
+However, until recently, no solution existed to easily _scale_ relational data. To address this need, a new type of relational databases called [NewSQL databases](/intro/database-glossary#newsql) were developed.
 
-NewSQL databases follow the relational structure and semantics, but are built using more modern, scalable designs. The goal is to offer greater scalability than relational databases and greater _consistency guarantees_ than NoSQL alternatives. They achieve this by sacrificing certain amounts of availability in the event of a networking partition. The trade offs between consistency and availability is a fundamental problem of distributed databases described by the _CAP theorem_.
+NewSQL databases follow the relational structure and semantics, but are built using more modern, scalable designs. The goal is to offer greater scalability than relational databases and greater _consistency guarantees_ than NoSQL alternatives. They achieve this by sacrificing certain amounts of availability in the event of a networking partition. The trade offs between consistency and availability is a fundamental problem of distributed databases described by the [_CAP theorem_](/intro/database-glossary#cap-theorem).
 
 > **Definition: CAP Theorem**
 >
 > The CAP theorem is a statement about the trade offs that distributed databases must make between availability and consistency. It asserts that in the event of a network partition, a distributed database can choose either to remain available or remain consistent, but it cannot do both. Cluster members in a partitioned network can continue operating, leading to at least temporary inconsistency. Alternatively, at least some of the disconnected members must refuse to alter their data during the partition to ensure data consistency.
 
-To address the availability concern, new architectures were developed to minimize the impact of partitions. For instance, splitting data sets into smaller ranges called _shards_ can minimize the amount of data that is unavailable during partitions. Furthermore, mechanisms to automatically alter the roles of various cluster members based on network conditions allow them to regain availability quickly.
+To address the availability concern, new architectures were developed to minimize the impact of partitions. For instance, splitting data sets into smaller ranges called [_shards_](/intro/database-glossary#shard) can minimize the amount of data that is unavailable during partitions. Furthermore, mechanisms to automatically alter the roles of various cluster members based on network conditions allow them to regain availability quickly.
 
 Because of these qualities, NewSQL databases are best suited for use cases with high volumes of relational data in distributed, cloud-like environments.
 
@@ -526,7 +526,7 @@ It's difficult to talk about the characteristics of multi-model databases as a s
 
 Although this guide doesn't cover these in depth, it is worth at least being familiar with some of the other database types available. The following database types deserve a mention, but they are often used less frequently or in niche environments:
 
-- **Column-oriented databases:** Not to be confused with column-family databases, column-oriented databases are very similar to relational databases, but store data on disk by column instead of by row. This means that all of the data for a single column is together, allowing for faster aggregation on larger data sets. Since the columns are separate from each other, inserting or updating values is a performance intensive task, so column-oriented databases are primarily used for analytical work where entire data sets can be preloaded at one time.
+- **Column-oriented databases:** Not to be confused with column-family databases, [column-oriented databases](/intro/database-glossary#column-database) are very similar to relational databases, but store data on disk by column instead of by row. This means that all of the data for a single column is together, allowing for faster aggregation on larger data sets. Since the columns are separate from each other, inserting or updating values is a performance intensive task, so column-oriented databases are primarily used for analytical work where entire data sets can be preloaded at one time.
 - **Semantic RDF graph databases:** Semantic RDF graph databases are databases that map objects using the Resource Description Framework. This framework a way to describe, in detail, objects and their relationships by categorizing pieces of data and connections. The idea is to map subjects, actions, and objects like you would in a sentence (for example, "Bill calls Sue"). For most use cases, labeled property graphs, usually just called [graph databases](#graph-databases-mapping-relationships-by-focusing-on-how-connections-between-data-are-meaningful), can express relationships more flexibly and concisely.
 - **Object-oriented databases:** Object-oriented databases store data items as objects, seeking to bridge the gap between the representations used by objected-oriented programming languages and databases. Although this solves many problems with translating between different data paradigms, historically, adoption has suffered due to increased complexity, lack of standardization, and difficulty decoupling the data from the original application.
 
