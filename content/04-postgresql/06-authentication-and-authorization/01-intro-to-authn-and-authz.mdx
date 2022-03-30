@@ -18,7 +18,7 @@ Before diving into those specific tools that PostgreSQL provides, it's helpful t
 
 ### What is authentication? 
 
-*Authentication* is a process of validating an identity.  In computing, this generally means verifying that a user or entity is who they say they are.
+[*Authentication*](/intro/database-glossary#authentication) is a process of validating an identity.  In computing, this generally means verifying that a user or entity is who they say they are.
 
 Authentication generally involves challenging a user to provide something secret they know (like passwords), something unique that they have (like the code from a cellphone authentication app), or something that is a feature of their unique identity (like fingerprint authentication).
 
@@ -34,7 +34,7 @@ Authentication is an important requirement of almost all multi-user systems.  Di
 
 ### What is authorization?
 
-While authentication is concerned with validating identity, *authorization* focuses on controlling what capabilities are associated with those identities or accounts.  Once you know who someone is, the authorization functionality determines what they can do.
+While authentication is concerned with validating identity, [*authorization*](/intro/database-glossary#authorization) focuses on controlling what capabilities are associated with those identities or accounts.  Once you know who someone is, the authorization functionality determines what they can do.
 
 Definitions within authorization policies typically are comprised of three components:
 
@@ -48,7 +48,7 @@ Authorization is the mechanism by which a system can lock down capabilities and 
 
 ## How does PostgreSQL configure authentication and authorization?
 
-PostgreSQL has a few interrelated concepts that, together, fulfil its access management requirements to authenticate and authorize user actions.  These concepts work in tandem to establish who a client is an agent for and what they can do within PostgreSQL.
+PostgreSQL has a few interrelated concepts that, together, fulfill its access management requirements to authenticate and authorize user actions.  These concepts work in tandem to establish who a client is an agent for and what they can do within PostgreSQL.
 
 In short, PostgreSQL uses the following framework to authenticate and authorize users to database clusters:
 

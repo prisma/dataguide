@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-The `SELECT` command is the primary way to query and read information about records stored within database tables within PostgreSQL.  Its usefulness, however, is not restricted to read-only operations.  The `SELECT` syntax is combined with many other commands to target specific records or fields within databases for updates, deletions, and more complex operations.
+The `SELECT` command is the primary way to query and read information about records stored within database tables within PostgreSQL.  Its usefulness, however, is not restricted to [read-only operations](/intro/database-glossary#read-operation).  The `SELECT` syntax is combined with many other commands to target specific records or fields within databases for updates, deletions, and more complex operations.
 
 In this guide, we'll show how the basic syntax of `SELECT` supports gathering data from tables.  While we'll leave the vast number of optional clauses to the command for other articles, it will hopefully become evident how even the most basic components provide a strong foundation for querying data.  These fundamentals only require you to learn a few clauses and constructions.
 
@@ -23,8 +23,8 @@ SELECT <column_names> FROM <table_name> <additional_conditions_and_formatting>;
 This statement is composed of a few different pieces:
 
 * `SELECT`: The `SELECT` command itself.  This SQL statement indicates that we want to query tables or views for data they contains.  The arguments and clauses surrounding it determine both the contents and the format of the output by defining criteria.
-* `<column_names>`: The `SELECT` statement can return entire rows (indicated by the `*` wildcard character) or a subset of the available columns.  If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
-* `FROM <table_name>`: The `FROM` keyword is used to indicate the table or view that should be queried.  In most simple queries, this consists of a single table that contains the data you're interested in.
+* `<column_names>`: The `SELECT` statement can return entire rows (indicated by the `*` wildcard character) or a subset of the available [columns](/intro/database-glossary#column).  If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
+* `FROM <table_name>`: The `FROM` keyword is used to indicate the [table](/intro/database-glossary#table) or [view](/intro/database-glossary#view) that should be queried.  In most simple queries, this consists of a single table that contains the data you're interested in.
 * `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command.  You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
 
 ## Specifying columns to display with `SELECT`

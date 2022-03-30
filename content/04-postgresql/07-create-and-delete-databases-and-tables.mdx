@@ -10,14 +10,14 @@ authors: ['justinellingwood']
 
 PostgreSQL and other relational database management systems use *databases* and *tables* to structure and organize their data.  We can review the definition of those two terms quickly:
 
-* **[databases](https://www.postgresql.org/docs/current/manage-ag-overview.html):** separate different sets of structures and data from one another
-* **[tables](https://www.postgresql.org/docs/current/ddl-basics.html):** define the data structure and store the actual data values within databases
+* **[databases](/intro/database-glossary#database):** separate different sets of structures and data from one another
+* **[tables](/intro/database-glossary#table):** define the data structure and store the actual data values within databases
 
 In PostgreSQL, there is also an intermediary object between databases and tables called *schema*:
 
-* **[schema](https://www.postgresql.org/docs/current/ddl-schemas.html):** a namespace within a database that contains tables, [indexes](https://www.postgresql.org/docs/current/indexes-intro.html), [views](https://www.postgresql.org/docs/current/tutorial-views.html), and other items.
+* **[schema](https://www.postgresql.org/docs/current/ddl-schemas.html):** a namespace within a database that contains tables, [indexes](/intro/database-glossary#index), [views](/intro/database-glossary#view), and other items.
 
-![Relationship between Postgres databases, schemas, and tables](/content/postgresql/creating-and-deleting-databases-and-tables/object-hierarchy.png)
+![Relationship between PostgreSQL databases, schemas, and tables](/content/postgresql/creating-and-deleting-databases-and-tables/object-hierarchy.png)
 
 [comment]: # ( ``` )
 [comment]: # ( @startuml )
@@ -82,7 +82,7 @@ This will create a database called `db_name` on the current server with the curr
 You can add additional parameters to alter the way your database is created.  These are some common options:
 
 * **ENCODING:** sets the character encoding for the database.
-* **LC_COLLATE:** sets the *collation*, or sort, order for the database. This is a localization option that determines how items are organized when they are ordered.
+* **LC_COLLATE:** sets the [*collation*](/intro/database-glossary#collation), or sort, order for the database. This is a localization option that determines how items are organized when they are ordered.
 * **LC_CTYPE:** sets the character classification for the new database.  This is a localization option that affects what characters are considered uppercase, lowercase, and digits.
 
 These can help ensure that the database can store data in the formats you plan to support and with your project's localization preferences.
@@ -247,7 +247,7 @@ CREATE TABLE supplies (
 );
 ```
 
-This will create the `supplies` table within the `school` database.  The `PRIMARY KEY` column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  PostgreSQL creates indexes for primary key columns to increase querying speed.
+This will create the `supplies` table within the `school` database.  The [`PRIMARY KEY`](/intro/database-glossary#primary-key) column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  PostgreSQL creates [indexes](/intro/database-glossary#index) for primary key columns to increase querying speed.
 
 Verify that the new table is present by typing:
 
@@ -307,11 +307,11 @@ CREATE TABLE teachers (
 
 ### How to create tables with primary keys and foreign keys
 
-You can find information about creating tables with primary and foreign keys in some of our other PostgreSQL guides.  Primary keys and foreign keys are both types of [database constraint](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints) within PostgreSQL.
+You can find information about creating tables with primary and foreign keys in some of our other PostgreSQL guides.  Primary keys and foreign keys are both types of [database constraint](/intro/database-glossary#constraint) within PostgreSQL.
 
-A [primary key](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints#primary-key-constraints) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in PostgreSQL uses the following format to specify an automatically assigned incrementing primary key: `id SERIAL PRIMARY KEY`.
+A [primary key](/intro/database-glossary#primary-key) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in PostgreSQL uses the following format to specify an automatically assigned incrementing primary key: `id SERIAL PRIMARY KEY`.
 
-[Foreign keys](https://www.prisma.io/dataguide/postgresql/column-and-table-constraints#foreign-key-constraints) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
+[Foreign keys](/intro/database-glossary#foreign-key) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
 
 ## How to view tables in PostgreSQL
 
@@ -385,7 +385,7 @@ ALTER TABLE some_table DROP COLUMN useless_column;
 
 ### Changing the data type of a column
 
-To change the data type that PostgreSQL uses for a specific column, you can use `ALTER COLUMN` change command with the `SET DATA TYPE` column command.  The parameters include the column name, its new type, and an optional `USING` clause to specify how the old type should be converted to the new type.
+To change the [data type](/intro/database-glossary#data-type) that PostgreSQL uses for a specific column, you can use `ALTER COLUMN` change command with the `SET DATA TYPE` column command.  The parameters include the column name, its new type, and an optional `USING` clause to specify how the old type should be converted to the new type.
 
 For example, to set the value of a `id` column in the `resident` table to a `int` using an explicit cast, we can type the following:
 
@@ -582,7 +582,7 @@ CREATE TABLE IF NOT EXISTS table_name (
 
 <details><summary>How do you create a database from a dump in PostgreSQL?</summary>
 
-To create a database from a dump ([pg_dump](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date)), PostgreSQL provides the [utility program `pg_restore`](https://www.postgresql.org/docs/current/app-pgrestore.html).
+To create a database from a dump ([pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html)), PostgreSQL provides the [utility program `pg_restore`](https://www.postgresql.org/docs/current/app-pgrestore.html).
 
 This program recreates the database in the same state as it was at the time of the dump. Example syntax would look like the following:
 
@@ -592,7 +592,7 @@ pg_restore [connection-option...][option...][filename]
 
 </details>
 
-<details><summary>Which command line creates a database in PostrgreSQL?</summary>
+<details><summary>Which command line creates a database in PostgreSQL?</summary>
 
 To create a database in PostgreSQL, use the [`createdb` command](https://www.postgresql.org/docs/current/app-createdb.html). The syntax is as follows:
 
@@ -614,7 +614,7 @@ DROP DATABASE database_name;
 
 <details><summary>How do you change a column's data type in PosgreSQL?</summary>
 
-To change the data type for a specific column, use the `ALTER COLUMN` change command with the `SET DATA TYPE` column command.
+To change the [data type](/intro/database-glossary#data-type) for a specific column, use the `ALTER COLUMN` change command with the `SET DATA TYPE` column command.
 
 The basic syntax includes column name, the new type, and an optional `USING` clause to specify the old type's conversion.
 

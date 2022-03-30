@@ -14,7 +14,7 @@ In relational databases, *joins* offer a way to combine the records in two or mo
 
 ## What are joins?
 
-In short, *joins* are a way of displaying data from multiple tables.  They do this by stitching together records from different sources based on matching values in certain columns.  Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
+In short, [*joins*](/intro/database-glossary#join) are a way of displaying data from multiple tables.  They do this by stitching together records from different sources based on matching values in certain columns.  Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
 
 The basic syntax of a join looks like this:
 
@@ -41,7 +41,7 @@ Various types of joins are available, each of which will potentially produce dif
 
 ### Inner join
 
-The default join is called an *inner join*.  In PostgreSQL, this can be specified using either `INNER JOIN` or just simply `JOIN`.
+The default join is called an [*inner join*](/intro/database-glossary#inner-join).  In PostgreSQL, this can be specified using either `INNER JOIN` or just simply `JOIN`.
 
 Here is a typical example demonstrating the syntax of an inner join:
 
@@ -60,7 +60,7 @@ If you represent the results as a Venn diagram of the component tables, an inner
 
 ### Left join
 
-A left join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the first table.  In PostgreSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
+A [left join](/intro/database-glossary#left-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the first table.  In PostgreSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
 
 The basic syntax of a left join follows this pattern:
 
@@ -79,7 +79,7 @@ If you represent the results as a Venn diagram of the component tables, a left j
 
 ### Right join
 
-A right join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the second table.  In PostgreSQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
+A [right join](/intro/database-glossary#right-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the second table.  In PostgreSQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
 
 The basic syntax of a right join follows this pattern:
 
@@ -98,7 +98,7 @@ If you represent the results as a Venn diagram of the component tables, a right 
 
 ### Full join
 
-A full join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from both component tables.  In PostgreSQL, this can be specified as a `FULL OUTER JOIN` or as just a `FULL JOIN`.
+A [full join](/intro/database-glossary#outer-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from both component tables.  In PostgreSQL, this can be specified as a `FULL OUTER JOIN` or as just a `FULL JOIN`.
 
 The basic syntax of a full join follows this pattern:
 
@@ -110,6 +110,7 @@ FROM
 FULL JOIN table_2
     ON table_1.id = table_2.table_1_id;
 ```
+
 A full join is constructed by first performing an inner join to construct rows from all of the matching records in both tables.  Afterwards, the unmatched records from both tables are also included.  Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the unmatched other table.
 
 If you represent the results as a Venn diagram of the component tables, a full join allows you to represent both of the component circles entirely.  The intersection of the two circles will have values supplied by each of the component tables.  The parts of the circles outside of the overlapping area will have the values from the table they belong to, using `NULL` to fill in the columns found in the other table.
@@ -366,7 +367,7 @@ Prisma allows you to [define relations](https://www.prisma.io/docs/reference/too
 
 <details><summary>Does PostgreSQL support outer joins?</summary>
 
-Yes, PostgreSQL supports outer joins. For example, you can use `LEFT OUTER JOIN` or just `LEFT JOIN` like in the following:  
+Yes, PostgreSQL supports outer joins. For example, you can use `LEFT OUTER JOIN` or just `LEFT JOIN` like in the following:
 
 ```sql
 SELECT

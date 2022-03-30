@@ -115,7 +115,7 @@ In relational databases, cascade is an option for how to handle deletes or updat
 Apache Cassandra is a distributed, wide-column NoSQL database focused on operating on and managing large volumes of data.  Cassandra scales incredibly well and each node in the cluster can accept reads or writes.  Data is stored in rows that are uniquely identifiable and partitioned based on partition key.  Each partition key returns a row of data with both column names and values defined internally, meaning each row in the same column family may contain different columns.
 </AnchorItem>
 
-<AnchorItem id="check constraint" title="Check constraint">
+<AnchorItem id="check-constraint" title="Check constraint">
 A check constraint is perhaps the most flexible table or column constraint that can be added to a relational database.  It is defined as a boolean condition that must be met for the proposed data to be accepted by the system.  Because of the nature of the condition is fairly open-ended, check constraints can be used to model many different types of requirements to ensure that the data coming into the system conforms to expectations.
 </AnchorItem>
 
@@ -363,7 +363,7 @@ In the context of databases, a key is any attribute, column, or group of attribu
 A key-value database, or key-value store, is a database model that allows users to store and retrieve data with an arbitrary structure using keys.  The key is used to identify and access the record, which can consist of a single value or a structure of more complex data.  Each record in a key-value database can define its own structure, so there is not a unified table structure as there is in relational databases.  Key-value databases are useful because they are extremely flexible and use a model that feels familiar to many object-oriented developers.
 </AnchorItem>
 
-<AnchorItem id="lef-join" title="Left join">
+<AnchorItem id="left-join" title="Left join">
 A left join is a join operation for relational databases where all of the rows of the first table specified are returned, regardless of whether a matching row in the second table is found.  Join operations construct virtual rows by matching records that have identical values in specified comparison columns from each table.  The results for a left join will contain the rows from both tables where the column values matched and will additionally contain all of the unmatched rows from the first, or left, table.  For these rows, the columns associated with the second, or right, table will be padded with `NULL` values to indicate that no matching row was found.
 </AnchorItem>
 

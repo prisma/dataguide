@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## What are PostgreSQL column and table constraints?
 
-Constraints are *additional* requirements for acceptable values in addition to those provided by [data types](/postgresql/introduction-to-data-types).  They allow you to define narrower conditions for your data than those found in the general purpose data types.
+[Constraints](/intro/database-glossary#constraint) are *additional* requirements for acceptable values in addition to those provided by [data types](/postgresql/introduction-to-data-types).  They allow you to define narrower conditions for your data than those found in the general purpose data types.
 
 These are often reflections on the specific characteristics of a field based on additional context provided by your applications.  For example, an `age` field might use the `int` data type to store whole numbers.  However, certain ranges of acceptable integers do not make sense as valid ages.  For instance, negative integers would not be reasonable in this scenario.  We can express this logical requirement in PostgreSQL using constraints.
 
 ## Where constraints are defined: column vs table constraints
 
-Postgres allows you to create constraints associated with a specific column or with a table in general.
+PostgreSQL allows you to create constraints associated with a specific column or with a table in general.
 
 Almost all constraints can be used in both forms without modification:
 
@@ -32,7 +32,7 @@ Let's look at how column and table constraints differ.
 
 ### Column constraints
 
-**Column constraints** are constraints attached to a single column.  They are used to determine whether a proposed value for a column is valid or not.  Column constraints are evaluated after the input is validated against basic type requirements (like making sure a value is a whole number for `int` columns).
+**Column constraints** are constraints attached to a single [column](/intro/database-glossary#column).  They are used to determine whether a proposed value for a column is valid or not.  Column constraints are evaluated after the input is validated against basic type requirements (like making sure a value is a whole number for `int` columns).
 
 Column constraints are great for expressing requirements that are limited to a single field.  They attach the constraint condition directly to the column involved.  For instance, we could model the `age` restriction in a `person` table by adding a constraint after the column name and data type:
 
@@ -83,7 +83,7 @@ Now is a good time to mention that although we'll mainly be using the `CREATE TA
 
 ### Default constraint names
 
-When you create constraints using the syntax above, PostgreSQL automatically chooses a reasonable, but vague, name.  In the case of the `qualified_borrowers` table above, Postgres would name the constraint `qualified_borrowers_check`:
+When you create constraints using the syntax above, PostgreSQL automatically chooses a reasonable, but vague, name.  In the case of the `qualified_borrowers` table above, PostgreSQL would name the constraint `qualified_borrowers_check`:
 
 ```sql
 INSERT INTO qualified_borrowers VALUES (123, false);
@@ -143,7 +143,7 @@ Now that we've covered some of the basics of how constraints work, we can take a
 
 ### Check constraints
 
-**Check** constraints are a general purpose constraint that allows you to specify an expression involving column or table values that evaluates to a boolean.
+[**Check** constraints](/intro/database-glossary#check-constraint) are a general purpose constraint that allows you to specify an expression involving column or table values that evaluates to a boolean.
 
 You've already seen a few examples of check constraints earlier.  Check constraints begin with the keyword `CHECK` and then provide an expression enclosed in parentheses.  For column constraints, this is placed after the data type declaration.  For table constraints, these can be placed anywhere after the columns that they interact with are defined.
 
@@ -355,7 +355,7 @@ DETAIL:  Key (country, capital)=(Bolivia, Sucre) already exists.
 
 ### Primary key constraints
 
-The `PRIMARY KEY` constraint serves a special purpose.  It indicates that the column can be used to uniquely identify a record within the table.  This means that it must be reliably unique and that every record must have a value in that column.
+The [`PRIMARY KEY`](/intro/database-glossary#primary-key) constraint serves a special purpose.  It indicates that the column can be used to uniquely identify a record within the table.  This means that it must be reliably unique and that every record must have a value in that column.
 
 Primary keys are recommended for every table not required, and every table may only have one primary key.  Primary keys are mainly used to identify, retrieve, modify, or delete individual records within a table.  They allow users and administrators to target the operation using an identifier that is guaranteed by PostgreSQL to match exactly one record.
 
@@ -408,9 +408,9 @@ CREATE TABLE national_capitals (
 
 ### Foreign key constraints
 
-[**Foreign keys**](https://en.wikipedia.org/wiki/Foreign_key) are columns within one table that reference column values within another table.  This is desirable and often necessary in a variety of scenarios where tables contain related data.  This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
+[**Foreign keys**](/intro/database-glossary#foreign-key) are columns within one table that reference column values within another table.  This is desirable and often necessary in a variety of scenarios where tables contain related data.  This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
 
-For example, you may have a `orders` table to track individual orders and a `customers` table to track contact info and information about your customers.  It makes sense to put this information separately since customers may have many orders.  However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
+For example, you may have an `orders` table to track individual orders and a `customers` table to track contact info and information about your customers.  It makes sense to put this information separately since customers may have many orders.  However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
 
 #### How to create foreign key constraints in PostgreSQL
 
