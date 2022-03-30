@@ -26,9 +26,9 @@ To find the structure of a table called `student`, you can use the SQLite `.sche
 CREATE TABLE student (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, age INTEGER, student_email TEXT NOT NULL, class TEXT);
 ```
 
-The output displays the table's column names, data types, and other information relating to the requirements of the to-be-inserted data.
+The output displays the table's column names, [data types](/intro/database-glossary#data-type), and other information relating to the requirements of the to-be-inserted data.
 
-To get a more easily read result, you can use the `.fullschema --indent` command. This will show you the schema of the connected database with better spacing:
+To get a more easily read result, you can use the `.fullschema --indent` command. This will show you the [schema](/intro/database-glossary#schema) of the connected database with better spacing:
 
 ```sql
 .fullschema --indent
