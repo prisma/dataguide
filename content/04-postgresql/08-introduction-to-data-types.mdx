@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-One of the primary features of relational databases in general is the ability to define [schemas](/intro/intro-to-schemas) or [table structures](/postgresql/create-and-delete-databases-and-tables#create-tables-within-databases) that exactly specify the format of the data they will contain.  This is done by prescribing the columns that these structures contain along with their *data type* and any constraints.
+One of the primary features of relational databases in general is the ability to define [schemas](/intro/database-glossary#schema) or [table structures](/intro/database-glossary#table) that exactly specify the format of the data they will contain.  This is done by prescribing the columns that these structures contain along with their [*data type*](/intro/database-glossary#data-type) and any constraints.
 
 Data types specify a general pattern for the data they accept and store.  Values must adhere to the requirements that they outline in order to be accepted by PostgreSQL.  While it is possible to define custom requirements, data types provide the basic building blocks that allow PostgreSQL to validate input and work with the data using appropriate operations.
 
@@ -83,7 +83,7 @@ The basic list of integer types includes the following:
 
 The types above are limited by their valid range.  Any value outside of the range will result in an error.
 
-In addition to the standard integer types mentioned above, PostgreSQL includes a set of special integer types called *serial* types.  These types are primarily used to create unique identifiers, or *primary keys*, for records.
+In addition to the standard integer types mentioned above, PostgreSQL includes a set of special integer types called *serial* types.  These types are primarily used to create unique identifiers, or [*primary keys*](/intro/database-glossary#primary-key), for records.
 
 By default, serial types will automatically use the next integer in an internally tracked sequence when new records are added.  So if the last integer used in a serial column was 8559, by default, the next record will automatically use 8560.  To guarantee that each value is unique, you can further add a `UNIQUE` constraint on the column.
 

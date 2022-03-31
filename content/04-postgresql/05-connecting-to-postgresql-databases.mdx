@@ -8,11 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-One of the first things you'll need to think about when working with a PostgreSQL database is how to connect and interact with the database instance.  This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual PostgreSQL instance that stores, organizes, and provides access to your data.
+One of the first things you'll need to think about when working with a [PostgreSQL](/intro/database-glossary#postgresql) database is how to connect and interact with the database instance.  This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual PostgreSQL instance that stores, organizes, and provides access to your data.
 
 Because of this, you need to understand how to connect as a client by providing the required information to authenticate.  In this guide, we'll cover how to connect to a PostgreSQL database using the native [`psql` command line client](https://www.postgresql.org/docs/current/app-psql.html) — one of the most common and useful ways of interacting with a database instance.
 
 In a companion guide, you can find out how to [configure PostgreSQL's authentication to meet your project's needs](/postgresql/authentication-and-authorization/configuring-user-authentication).  Consider reading both guides for a more complete picture of how authentication works in PostgreSQL.
+
+If your database client or library requests a connection URI, you may want to look at our guide on [understanding PostgreSQL connection URIs](https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris) instead.
 
 ## Basic information about the `psql` client
 
@@ -100,7 +102,7 @@ Upon pressing enter, you'd be prompted a password where you can authenticate wit
 
 ### Passing connection information to `psql` with a connection string
 
-This same information can also be encoded into a [PostgreSQL *connection string*](https://www.postgresql.org/docs/current/libpq-connect.html#id-1.7.3.8.3.6).  A connection string provides the same information in a single URI string that uses certain characters as delimiters between the different fields.
+This same information can also be encoded into a [PostgreSQL *connection string*](https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris).  A connection string provides the same information in a single URI string that uses certain characters as delimiters between the different fields.
 
 Connection strings have the following general format:
 

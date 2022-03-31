@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-PostgreSQL uses various mechanisms to implement authentication, authorization, and object ownership within database clusters.  Core among these is the concept of roles.
+PostgreSQL uses various mechanisms to implement [authentication](/intro/database-glossary#authentication), [authorization](/intro/database-glossary#authorization), and object ownership within database clusters.  Core among these is the concept of roles.
 
 PostgreSQL roles are a combination of the ideas of users and groups into a single, flexible entity.  They are the persona that user's adopt within the database system, are the entity by which the authentication system accepts or denies connections, and the subject of privilege management rules of all scopes.
 
@@ -500,7 +500,7 @@ SELECT 'Yes' AS "Can I manage roles?" FROM pg_roles WHERE rolname = :'USER' AND 
 
 <details><summary>What is the replication role attribute in PostgreSQL?</summary>
 
-`REPLICATION` is a role attribute in PostgreSQL that allows the role to initiate streaming replication.
+`REPLICATION` is a role attribute in PostgreSQL that allows the role to initiate streaming [replication](/intro/database-glossary#replication).
 
 Roles with this attribute must also have the `LOGIN` attribute.
 

@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-PostgreSQL lets you either add or modify a record within a table depending on whether the record already exists.  This is commonly known as an "upsert" operation (a portmanteau of "insert" and "update").
+PostgreSQL lets you either add or modify a record within a table depending on whether the record already exists.  This is commonly known as an ["upsert" operation](/intro/database-glossary#upsert) (a portmanteau of "insert" and "update").
 
 The actual implementation within PostgreSQL uses the `INSERT` command with a special `ON CONFLICT` clause to specify what to do if the record already exists within the table.  You can specify whether you want the record to be updated if it's found in the table already or silently skipped.
 

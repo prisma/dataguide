@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Controlling what each user is allowed to do within your database is an important part of administrating a database cluster.  PostgreSQL provides a suite of tools to control authentication and authorization.
+Controlling what each user is allowed to do within your database is an important part of administrating a database cluster.  [PostgreSQL](/intro/database-glossary#postgresql) provides a suite of tools to control [authentication](/intro/database-glossary#authentication) and [authorization](/intro/database-glossary#authorization).
 
 On the authentication front, the [`pg_hba.conf` file controls how people can connect to the database](/postgresql/authentication-and-authorization/configuring-user-authentication).  This includes the exact user, database, connection method, and authentication method combinations that are allowed access to the server.  The authorization component starts with PostgreSQL's concept of [roles and role attributes](/postgresql/authentication-and-authorization/role-management) which defines the user entities within the system and controls their global privileges.
 
@@ -36,21 +36,21 @@ Every role on the system is a member of the `PUBLIC` role by default.  This make
 
 PostgreSQL has a number of privileges that can be given to roles to enable specific functionality.
 
-Privileges are applicable only on a subset of database objects where they make sense.  For instance, it would not make sense to be "execute" a database.  For guidance on which privileges are valid with which database objects, refer to the [ACL Privileges Abbreviations table](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGE-ABBREVS-TABLE) and the [Summary of Access Privileges table](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGES-SUMMARY-TABLE) from the PostgreSQL documentation.
+Privileges are applicable only on a subset of database objects where they make sense.  For instance, it would not make sense to "execute" a database.  For guidance on which privileges are valid with which database objects, refer to the [ACL Privileges Abbreviations table](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGE-ABBREVS-TABLE) and the [Summary of Access Privileges table](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGES-SUMMARY-TABLE) from the PostgreSQL documentation.
 
 Below is a list of each privilege name and its function.  You can find a [full explanation of each privilege in the PostgreSQL documentation](https://www.postgresql.org/docs/current/ddl-priv.html).
 
 * `SELECT`: The `SELECT` privilege gives a role the ability to select, or read, from a database object.  This privilege is also necessary for any `UPDATE` and `DELETE` operations that reference existing column values.
-* `INSERT`: Provides the ability to add a new row of data to a table, view, or column.
+* `INSERT`: Provides the ability to add a new row of data to a table, [view](/intro/database-glossary#view), or column.
 * `UPDATE`: Gives the ability to update the values stored for columns in a database object.  The `SELECT` privilege will also be required for most `UPDATE` operations.
 * `DELETE`: Lets a role delete a row from a table or view.  Like `UPDATE`, most `DELETE` operations require the `SELECT` privilege as well in order to target the correct rows.
 * `TRUNCATE`: The `TRUNCATE` privilege allows a role empty a table or view of all data.
-* `REFERENCES`: Provides roles with the ability to create foreign keys referencing a table or table column.
+* `REFERENCES`: Provides roles with the ability to create [foreign keys](/intro/database-glossary#foreign-key) referencing a table or table column.
 * `TRIGGER`: Lets a role define a trigger on a table or view.
 * `CREATE`: Allows roles to create child entities of databases, schemas, or tablespaces.  For example, on databases the `CREATE` privilege allows the role to create new schemas, while on schemas it allows the role to create new databases.
 * `CONNECT`: Lets the role connect to a database.  This is checked at connection time.
 * `TEMPORARY`: Allows the role to create temporary tables within a database.
-* `EXECUTE`: Gives the role permission to call functions or procedures.
+* `EXECUTE`: Gives the role permission to call functions or [procedures](/intro/database-glossary#stored-procedure).
 * `USAGE`: Allows roles basic functionality on objects.  For instance, `USAGE` on schemas allows the role look up objects within it, while `USAGE` on sequences allows the role to call the `currval` and `nextval` functions.
 * `ALL PRIVILEGES`: A shorthand giving the role in question all privileges on the specified object.
 

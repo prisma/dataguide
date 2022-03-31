@@ -9,7 +9,7 @@ toc: false
 
 ## Introduction
 
-There are many ways to acquire a PostgreSQL instance for your projects or organizations to use.  You can learn how to install and configure PostgreSQL yourself or you can pay service providers to manage your PostgreSQL databases for you.
+There are many ways to acquire a [PostgreSQL](/intro/database-glossary#postgresql) instance for your projects or organizations to use.  You can learn how to install and configure PostgreSQL yourself or you can pay service providers to manage your PostgreSQL databases for you.
 
 This guide will cover different ways to run PostgreSQL and their respective benefits and drawbacks.  By comparing the different options, you should come away with a better idea of what type of solution is best for your project or development stage.
 
@@ -52,7 +52,7 @@ Your database will not be easily or reliably available to other users. Your own 
 
 #### Scalability
 
-Hosting on your development machine gives you almost no scalability.  You can change the amount of resources allocated to PostgreSQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
+Hosting on your development machine gives you almost no [scalability](/intro/database-glossary#scaling).  You can change the amount of resources allocated to PostgreSQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
 
 #### Management complexity
 
@@ -113,7 +113,7 @@ In summary, managing your own PostgreSQL can be incredibly efficient, powerful, 
 
 ### PostgreSQL with Docker
 
-Another self-hosting option is to use Docker to run PostgreSQL as a container. Docker allows you run PostgreSQL in an isolated environment on a local or remote machine.
+Another self-hosting option is to use [Docker](https://www.docker.com/) to run PostgreSQL as a container. Docker allows you run PostgreSQL in an isolated environment on a local or remote machine.
 
 | Hosting Option            | Docker containers                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -140,7 +140,7 @@ While Docker simplifies certain aspects of running PostgreSQL, there are a few t
 
 #### Containers and Kubernetes
 
-With Kubernetes, you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the PostgreSQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses PostgreSQL on Kubernetes, which can reduce network latency between the application and PostgreSQL.
+With [Kubernetes](https://kubernetes.io/), you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the PostgreSQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses PostgreSQL on Kubernetes, which can reduce network latency between the application and PostgreSQL.
 
 
 ## Managed services

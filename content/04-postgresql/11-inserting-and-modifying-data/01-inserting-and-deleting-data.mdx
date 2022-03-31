@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Adding and removing records from tables are some of the most common operations that databases perform.  Adding data involves specifying the table and column names you wish to add values to as well as the values you wish to enter into each fields.  Deleting records involves identifying the correct row or rows and removing them from the table.
+Adding and removing records from tables are some of the most common operations that databases perform.  Adding data involves specifying the [table](/intro/database-glossary#table) and [column](/intro/database-glossary#column) names you wish to add values to as well as the values you wish to enter into each fields.  Deleting records involves identifying the correct row or rows and removing them from the table.
 
 In this guide, we will cover how to use the SQL `INSERT` and `DELETE` commands with PostgreSQL.  This includes the basic syntax, how to return data information about the data that was processed, and how to add or remove multiple rows in a single statement.
 
 ## Reviewing the table's structure
 
-Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, data types, and constraints.  There are a few different ways of doing this depending on your database client.
+Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, [data types](/intro/database-glossary#data-type), and [constraints](/intro/database-glossary#constraint).  There are a few different ways of doing this depending on your database client.
 
 If you are using the `psql` command line client, the most straightforward way to find this information is to use the `\d+` meta command built into the tool.
 
