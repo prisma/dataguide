@@ -10,7 +10,7 @@ authors: ['alexemerich']
 
 Much like an encyclopedia, a database is a bountiful store of accessible information. To answer find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
 
-A database index similarly points you in the right place for information more efficiently. In MongoDB, an un-indexed query that "searches through the whole book" is called a *collection scan*.
+A database [index](/intro/database-glossary#index) similarly points you in the right place for information more efficiently. In MongoDB, an un-indexed query that "searches through the whole book" is called a *collection scan*.
 
 Indexes can be thought of as shortcuts for accessing your data so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, discuss when to use them, and how to manage them.
 
@@ -25,9 +25,9 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 ## When should you use an index
 
-Keeping with our encyclopedia analogy, one might think to have an index line for every word in the book. If it is always faster to use an index, then this seems beneficial. However, as you can imagine, the more lines of words in an index, the larger the book becomes. At some point the size of the book needed to accommodate indexing every word becomes ineffective. There are many words such as "the" or "because" that are less useful to search for than "hippopotamus".
+Keeping with our encyclopedia analogy, one might think to have an index line for every word in the book. If it is always faster to use an index, then this seems beneficial. However, as you can imagine, the more lines of words in an index, the larger the book becomes. At some point, the size of the book needed to accommodate indexing every word becomes ineffective. There are many words such as "the" or "because" that are less useful to search for than "hippopotamus".
 
-This is similar to an index in MongoDB and databases in general. While yes, it is faster to have an index for any data a query might use, there simply is data that doesn't need indexing. Like the size of a book, adding too many indexes to a database also takes up space and has a detrimental effect on write operations on the database if not kept in check.
+This is similar to an index in MongoDB and databases in general. While yes, it is faster to have an index for any data a query might use, there simply is data that doesn't need indexing. Like the size of a book, adding too many indexes to a database also takes up space and has a detrimental effect on [write operations](/intro/database-glossary#write-operation) on the database if not kept in check.
 
 Indexes are an incredibly useful way to optimize access to specific data that is often used as selection criteria in queries. Knowing when to use them is important, so making sure that you are adding them on database fields that are often being queried will keep your reads efficient without negatively impacting database size and write efficiency.
 

@@ -8,9 +8,9 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-When using MongoDB, you'll spend most of your time managing documents in some way or other.  Whether you are creating new documents and adding them to collections, retrieving documents, updating data, or pruning stale items, documents are at the center of the MongoDB model.
+When using [MongoDB](/intro/database-glossary#mongodb), you'll spend most of your time managing [documents](/intro/database-glossary#document) in some way or other.  Whether you are creating new documents and adding them to collections, retrieving documents, updating data, or pruning stale items, documents are at the center of the MongoDB model.
 
-In this guide, we'll cover what MongoDB documents are and then cover the common operations you will likely need to know about to manage a document-centered environment.
+In this guide, we'll cover what MongoDB documents are and then cover the common operations you will likely need to know about to manage a [document-centered environment](/intro/database-glossary#document-database).
 
 <PrismaOutlinks>
 
@@ -20,7 +20,7 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 ## What are MongoDB documents?
 
-In MongoDB, all data within databases and collections are stored in documents.  Since collections do not specify a required schema by default, documents within a collection can contain an arbitrarily complex structure and need not match the format used by sibling documents.  This provides incredible flexibility and allows schema to develop organically as application requirements change.
+In MongoDB, all data within databases and collections are stored in documents.  Since collections do not specify a required [schema](/intro/database-glossary#schema) by default, documents within a collection can contain an arbitrarily complex structure and need not match the format used by sibling documents.  This provides incredible flexibility and allows schema to develop organically as application requirements change.
 
 MongoDB documents themselves use the [BSON data serialization format](https://bsonspec.org/), a binary representation of [the JSON JavaScript Object Notation](https://www.json.org/json-en.html).  This provides an organized structure with defined data types that can be queried and operated upon programmatically.
 
@@ -120,7 +120,7 @@ BulkWriteResult({
 })
 ```
 
-Since we performed a bulk write operation, our return value is a `BulkWriteResult` instead of the `WriteResult` object we saw before.
+Since we performed a bulk [write operation](/intro/database-glossary#write-operation), our return value is a `BulkWriteResult` instead of the `WriteResult` object we saw before.
 
 While the `insert()` method is flexible, it has been deprecated in many MongoDB drivers in favor of the following two methods.
 
