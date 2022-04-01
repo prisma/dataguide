@@ -7,9 +7,9 @@ authors: ['alexemerich']
 ---
 ## Introduction
 
-MongoDB Atlas is MongoDB's cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization. 
+MongoDB Atlas is [MongoDB's](/intro/database-glossary#mongodb) cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization. 
 
-In this guide, we are going to walk through the steps to provision a MongoDB Atlas cluster from the browser. We'll walk through all of the options from configuring a cluster up until deploy.
+In this guide, we are going to walk through the steps to provision a MongoDB Atlas [cluster](/intro/database-glossary#cluster) from the browser. We'll walk through all of the options from configuring a cluster up until deploy.
 
 **Note:** Some instructions and images are subject to change since the writing of this guide in February 2022. We'll do our best to keep as up to date as possible as changes occur.
 
@@ -27,7 +27,7 @@ If you already have a MongoDB account registered, you can login from the registr
 
 ![Create Cluster](/content/mdb-atlas-setup/create-cluster-button.png)
 
-The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: Serverless (Preview), Dedicated, and Shared. 
+The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: [Serverless](/serverless/serverless-glossary#serverless-databases) (Preview), Dedicated, and Shared. 
 
 ![Cluster Type](/content/mdb-atlas-setup/cluster-type.png)
 
@@ -39,11 +39,11 @@ Lastly, is the shared cluster instance. This cluster type is for learning and ex
 
 ### Global Cluster Configuration
 
-The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write latency of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
+The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write [latency](/serverless/serverless-glossary#latency) of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
 
 ![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
 
-They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters.  For the purpose of this guide we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
+They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters.  For the purpose of this guide, we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
 
 
 ### Cloud Provider & Region
@@ -103,7 +103,7 @@ There is also Continuous Cloud Backup that when toggled on records the full [opl
 
 #### Sharding
 
-The next option is for configuring sharding to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.  
+The next option is for configuring [sharding](/intro/database-glossary#shard) to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.  
 
 This option is only able to be toggled on if your cluster tier is an M30+ and your auto-scaling minimum tier is at least an M30. Sharding support high throughput and large datasets, and can be increased as data requirements grow.
 

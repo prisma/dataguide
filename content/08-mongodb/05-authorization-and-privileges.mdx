@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Authorization is an essential part of user management and access control that defines the policies for what each user is allowed to do on the system.  Deciding on what policies are appropriate and implementing them in your databases ensures that users can interact with the resources they require while protecting against inappropriate behavior.
+[Authorization](/intro/database-glossary#authorization) is an essential part of user management and access control that defines the policies for what each user is allowed to do on the system.  Deciding on what policies are appropriate and implementing them in your databases ensures that users can interact with the resources they require while protecting against inappropriate behavior.
 
 In this guide, we'll go over how authorization works in MongoDB.  We'll take a look at how MongoDB conceptualizes access management, what types of privileges can be granted to users, and how to attach policies to user accounts.
 
@@ -33,7 +33,7 @@ Additionally, within MongoDB, you'll need an account that has at least the `user
 
 ## How does authorization work in MongoDB?
 
-Authorization and privilege management in MongoDB is implemented using Role-Based Access Control (RBAC).  In this system, different levels of access are associated with individual roles.  To give a user permission to perform an action, you grant them membership to a role that has the appropriate privileges.
+Authorization and privilege management in MongoDB is implemented using [Role-Based Access Control (RBAC)](/intro/database-glossary#role-based-access-control).  In this system, different levels of access are associated with individual roles.  To give a user permission to perform an action, you grant them membership to a role that has the appropriate privileges.
 
 Roles in MongoDB can be nested.  This means that roles can be granted to other roles.  A role that contains another role inherits all of the child role's privileges.  This makes it possible to create new roles that have the desired privileges by combining roles appropriately.
 
@@ -45,13 +45,13 @@ The target or scope of an action is known as a *resource* within MongoDB's acces
 
 We can go over the available resources in order from the narrowest focus to the broadest.
 
-Privileges can be most narrowly defined by scoping them to a specific **collection** within a specific database within the cluster.  Within the same databases, different collections can specify different privileges.  This allows you to implement granular policies for different types of data.
+Privileges can be most narrowly defined by scoping them to a specific [**collection**](/intro/database-glossary#collections) within a specific database within the cluster.  Within the same databases, different collections can specify different privileges.  This allows you to implement granular policies for different types of data.
 
-The next largest resource you can enact policies against is a **database**.  Managing privileges on the database level allows you to provide general policy that will effect the database as a whole and all of the collections within.
+The next largest resource you can enact policies against is a [**database**](/intro/database-glossary#database).  Managing privileges on the database level allows you to provide general policy that will effect the database as a whole and all of the collections within.
 
 You can also set policies that apply to collections of the same name across all databases.  This allows you to use naming conventions to implement access control for specific collections throughout your system.  A broader version of this is to apply policy to all databases and non-system collections on the system.
 
-Finally, you can apply policy against the entire **cluster**.  Actions targeting the cluster affect the general system instead of the data it is managing directly.  Policies on the cluster level tend to be focused on administrative operations.
+Finally, you can apply policy against the entire [**cluster**](/intro/database-glossary#cluster).  Actions targeting the cluster affect the general system instead of the data it is managing directly.  Policies on the cluster level tend to be focused on administrative operations.
 
 ## What actions are available in MongoDB?
 
@@ -531,7 +531,7 @@ Modify the MongoDB server's configuration by opening the `/etc/mongod.conf` file
 sudo ${EDITOR:-vi} /etc/mongod.conf
 ```
 
-The MongoDB configuration file uses [the YAML serialization format](https://en.wikipedia.org/wiki/YAML) to define the configuratio.  Uncomment or add a `security:` section key to the file.  Beneath this key, indent a line using spaces (tabs are not permitted in YAML) and set `authorization` to `enabled`:
+The MongoDB configuration file uses [the YAML serialization format](https://en.wikipedia.org/wiki/YAML) to define the configuration.  Uncomment or add a `security:` section key to the file.  Beneath this key, indent a line using spaces (tabs are not permitted in YAML) and set `authorization` to `enabled`:
 
 ```yaml
 . . .
@@ -698,7 +698,7 @@ db.createRole({
 
 ### Viewing information about custom roles
 
-As before, you can get information about your roles with the `db.getRole` method:
+As before, you can get information about your roles with the `db.getRole()` method:
 
 ```
 db.getRole(

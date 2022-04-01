@@ -8,13 +8,13 @@ authors: ['alexemerich']
 
 ## Introduction
 
-When using MongoDB, you have the ability to be flexible with the structure of your data. You are not locked into maintaining a certain schema that all of your documents must fit into. For any given field in a document, you are able to use any of the available *data types* supported by MongoDB. Despite this default way of working, you are able to impose a [JSON Schema](https://docs.mongodb.com/manual/core/schema-validation/) in MongoDB to add validation on your collections if desired. We won't go into the details of schema design in this guide, but it can have an effect on data typing if implemented.
+When using [MongoDB](/intro/database-glossary#mongodb), you have the ability to be flexible with the structure of your data. You are not locked into maintaining a certain [schema](/intro/database-glossary#schema) that all of your [documents](/intro/database-glossary#document) must fit into. For any given field in a document, you are able to use any of the available [*data types*](/intro/database-glossary#data-type) supported by MongoDB. Despite this default way of working, you are able to impose a [JSON Schema](https://docs.mongodb.com/manual/core/schema-validation/) in MongoDB to add validation on your collections if desired. We won't go into the details of schema design in this guide, but it can have an effect on data typing if implemented.
 
 Data types specify a general pattern for the data they accept and store. It is paramount to understand when to choose a certain data type over another when planning your database. The type chosen is going to dictate how you're able to operate on your data and how it is stored. 
 
 ## JSON and BSON
 
-Before getting into the details of specific data types, it is important to have an understanding of how MongoDB stores data. MongoDB and many other document-based NoSQL databases use [JSON](https://www.mongodb.com/json-and-bson)  (JavaScript Object Notation) to represent data records as [documents](https://www.prisma.io/dataguide/mongodb/managing-documents). 
+Before getting into the details of specific data types, it is important to have an understanding of how MongoDB stores data. MongoDB and many other [document-based NoSQL databases](/intro/database-glossary#document-database) use [JSON](https://www.mongodb.com/json-and-bson)  (JavaScript Object Notation) to represent data records as [documents](https://www.prisma.io/dataguide/mongodb/managing-documents). 
 
 There are many advantages to using JSON to store data. Some of them being:
 
@@ -287,7 +287,7 @@ Warning: NumberDecimal: specifying a number as argument is deprecated and may le
 loss of precision, pass a string instead
 ```
 
-This warning message indicates to you that the number you are trying to pass could be subject to a loss of precision. They suggest to use a `String` using `NumberDecimal()`  so that you do not lose any precision. 
+This warning message indicates that the number you are trying to pass could be subject to a loss of precision. They suggest to use a `String` using `NumberDecimal()`  so that you do not lose any precision. 
 
 If we ignore the warning and insert the document anyways, the loss of precision is seen in the query results from the rounding up of the value:
 

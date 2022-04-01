@@ -7,7 +7,7 @@ authors: ['alexemerich']
 ---
 ## Introduction
 
-Transactions are logical groups of processing in a database that encapsulate one or more operations such as reads and/or writes across multiple documents. Instead of being conducted in individual statements, the database is able to interpret and act on the group of operations as a cohesive unit. This helps ensure the consistency of the dataset over the course of many closely related statements.
+[Transactions](/intro/database-glossary#transaction) are logical groups of processing in a database that encapsulate one or more operations such as [reads](/intro/database-glossary#read-operation) and/or [writes](/intro/database-glossary#write-operation) across multiple documents. Instead of being conducted in individual statements, the database is able to interpret and act on the group of operations as a cohesive unit. This helps ensure the consistency of the dataset over the course of many closely related statements.
 
 In this guide, we'll begin by discussing what transactions are, when to use them in the document model, and how they work conceptually in MongoDB.
 
@@ -22,9 +22,9 @@ If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/
 
 Transactions are a way to group together and isolate multiple statements for processing as a single operation. Instead of executing each command individually as it is sent to the server, in a transaction, commands are bundled together and executed in a separate context than other requests.
 
-Isolation is an important part of transactions. Within a transaction, the executed statements can only affect the environment within the transaction itself. From inside the transaction, statements can modify data and the results are immediately visible. From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
+[Isolation](/intro/database-glossary#isolation) is an important part of transactions. Within a transaction, the executed statements can only affect the environment within the transaction itself. From inside the transaction, statements can modify data and the results are immediately visible. From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
 
-These features help databases achieve [ACID compliance](https://www.prisma.io/dataguide/dataguide/datamodeling/in-vivo) by providing atomicity (actions in a transaction are either all committed or all rolled back) and isolation (outside of the transaction, nothing changes until the commit while inside, the statements have consequences). These together help the database maintain consistency (by guaranteeing that partial data transformations cannot occur). Furthermore, changes in transactions are not returned as successful until they are committed to non-volatile storage, which provides durability.
+These features help databases achieve [ACID compliance](https://www.prisma.io/dataguide/dataguide/datamodeling/in-vivo) by providing [atomicity](/intro/database-glossary#atomicity) and isolation (outside of the transaction, nothing changes until the commit while inside, the statements have consequences). These together help the database maintain [consistency](/intro/database-glossary#consistency) (by guaranteeing that partial data transformations cannot occur). Furthermore, changes in transactions are not returned as successful until they are committed to non-volatile storage, which provides [durability](/intro/database-glossary#durability).
 
 MongoDB has support for [multi-document ACID transactions](https://www.mongodb.com/blog/post/mongodb-multi-document-acid-transactions-general-availability) and [distributed multi-document ACID transactions](https://www.mongodb.com/press/mongodb-42-adds-distributed-transactions-field-level-encryption-updated-kubernetes-operator-and-more-to-the-leading-modern-general-purpose-database). By nature, the document model allows related data to be stored together in a single document. The document model, combined with atomic document updates, takes away the need for transactions in a majority of use cases. However, there are cases where multi-document, multi-collection MongoDB transactions are your best choice.
 
@@ -32,7 +32,7 @@ MongoDB has support for [multi-document ACID transactions](https://www.mongodb.c
 
 ## When to use transactions in the document model
 
-The document model inherently solves for a lot of the needs that transactions target. Nonetheless, there are some use cases that stand out for their need to utilize transactions even in the document model.
+The [document model](/intro/database-glossary#document-database) inherently solves for a lot of the needs that transactions target. Nonetheless, there are some use cases that stand out for their need to utilize transactions even in the document model.
 
 Applications that require transactions are typically those where values are exchanged between different parties. Some examples would be ["System of Record"](https://en.wikipedia.org/wiki/System_of_record) or ["Line of Business"](https://www.techtarget.com/searchcio/definition/LOB#:~:text=Other%20definitions%20for%20line%20of,databases%20and%20database%20management%20systems.) applications.
 
@@ -40,7 +40,7 @@ The benefits of multi-document transactions are tailored for systems that move f
 
 ## How do you use transactions?
 
-MongoDB provides two [APIs](https://docs.mongodb.com/manual/core/transactions/#transactions-api) to use transactions. The first is the core API which has similar syntax to relational databases. The second, the callback API, is the recommended approach to using transactions in MongoDB.
+MongoDB provides two [APIs](https://docs.mongodb.com/manual/core/transactions/#transactions-api) to use transactions. The first is the core API which has similar syntax to [relational databases](/intro/database-glossary#realtional-database). The second, the callback API, is the recommended approach to using transactions in MongoDB.
 
 The comparison of the two APIs is best summarized in the following table:
 
