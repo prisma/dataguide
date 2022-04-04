@@ -8,7 +8,7 @@ authors: ['ryanchenkie']
 
 ## Introduction
 
-If a project has more than one developer working on it, keeping up with changes to development databases can be challenging. Syncing those changes across the whole development team can be tedious and time consuming. When various team members work on a database schema or with data from development databases that isn't reflective of the most recent state, it can cause frustration and lead to bugs that might end up in production.
+If a project has more than one developer working on it, keeping up with changes to development databases can be challenging. Syncing those changes across the whole development team can be tedious and time consuming. When various team members work on a database [schema](/intro/database-glossary#schema) or with data from development databases that isn't reflective of the most recent state, it can cause frustration and lead to bugs that might end up in production.
 
 In particular, these problems can arise in the following scenarios:
 
@@ -56,7 +56,7 @@ The following list contains some approaches that can be combined to build your o
 
 ### Using Migrations
 
-When working with relational databases in a team setting, it's vital to use migrations as a starting point for your database schema change strategy.
+When working with [relational databases](/intro/database-glossary#relational-database) in a team setting, it's vital to use [migrations](/intro/database-glossary#migration) as a starting point for your database schema change strategy.
 
 A database migration is a set of artifacts that, through automation, can change a database's structure. At the simplest, a migration is a SQL file that includes the statements necessary to apply a schema change. For example, the addition of a field to a database model might produce the following SQL file:
 

@@ -10,7 +10,7 @@ authors: ['alexemerich']
 
 ![Article header](/content/database-replication//Data-Replication-V2.png)
 
-For many modern day applications, their backend is configured using a distributed database. Data is stored and processed using an arrangement, or cluster of database servers, instead of relying on a single database server. The distributed model can ensure that data is still accessible even if one of the database servers suffers a failure. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic of this guide: database replication. 
+For many modern day applications, their backend is configured using a [distributed database](/intro/database-glossary#distributed-database). Data is stored and processed using an arrangement, or [cluster](/intro/database-glossary#cluster) of database servers, instead of relying on a single database server. The distributed model can ensure that data is still accessible even if one of the database servers suffers a failure. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic of this guide: database replication. 
 
 In this guide, we will cover what database replication is and discuss the main benefits of having a database replication process in place for your distributed system.
 
@@ -34,7 +34,7 @@ As briefly alluded to in the introduction, there are several reasons why one wou
 
 ### Improve the availability of data
 
-*Replication* improves the availability of data because it prevents relying on a single point of failure and losing database access. If there were some sort of technical glitch, power outage, or any number of different occurrences that affected that single point, then your application would not be able to access the data needed for its proper function. 
+*Replication* improves the [availability](/intro/database-glossary#availability) of data because it prevents relying on a single point of failure and losing database access. If there were some sort of technical glitch, power outage, or any number of different occurrences that affected that single point, then your application would not be able to access the data needed for its proper function. 
 
 Data replication enhances the resiliency and reliability of systems by storing data across multiple nodes. If one node goes down, there is another one to step up with the exact same data on it to keep operations running smoothly.
 
@@ -42,13 +42,13 @@ Data replication enhances the resiliency and reliability of systems by storing d
 
 For organizations both large and small, there may be users located globally. Geographically distributed database replication helps ensure that for any given user in the organization that needs particular data that they can get it in a timely manner and without too much delay.
 
-Replicating data to local servers in the locations near to where it is being accessed provides users with faster data access and queries. If a organization had a single node in the USA, then a user trying to pull data in Europe could experience latency when trying to access it. A organization with a cluster in the USA as well as a replicated cluster in Europe would ensure that this user can work efficiently with the data that they need when they need it.
+Replicating data to local servers in the locations near to where it is being accessed provides users with faster data access and queries. If a organization had a single node in the USA, then a user trying to pull data in Europe could experience [latency](/serverless/serverless-glossary#latency) when trying to access it. A organization with a cluster in the USA as well as a replicated cluster in Europe would ensure that this user can work efficiently with the data that they need when they need it.
 
 ### Enhance server performance
 
 Database replication also reduces the load on the primary server of the database. If data was only able to be accessed on a single server, that server would be handling every request coming to the database. With replication, that load can be dispersed among other nodes in the distributed system. Because all of the nodes have identical replicas of the data, some queries could get handled by secondary nodes and leave the primary to handle only certain reads or only writes.
 
-Saving the primary for handling write operations can prove to be beneficial because if it were handling all reads and writes that may put unwanted strain on the server's resources. Reading from the primary may make sense for a situation where there are not many operations coming in to the database. However, in times of scaling and growth, it is best practice to delegate tasks across a distributed system rather than putting all the load on a single node's plate.
+Saving the primary for handling [write operations](/intro/database-glossary#write-operation) can prove to be beneficial because if it were handling all [reads](/intro/database-glossary#read-operation) and writes that may put unwanted strain on the server's resources. Reading from the primary may make sense for a situation where there are not many operations coming in to the database. However, in times of scaling and growth, it is best practice to delegate tasks across a distributed system rather than putting all the load on a single node's plate.
 
 ### Accomplish preparation for disaster recovery
 

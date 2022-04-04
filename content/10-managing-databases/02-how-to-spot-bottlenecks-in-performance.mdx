@@ -10,9 +10,9 @@ authors: ['ryanchenkie', 'danielnorman']
 
 If your application has slowed down, there’s a very good chance the issue is related — at least in part — to your database.
 
-Knowing that your application's performance problems might involve your database is a good first step to reducing lag. The tricky part is to find out _where_ and _why_ these bottlenecks might exist.
+Knowing that your application's performance problems might involve your database is a good first step to reducing lag. The tricky part is to find out _where_ and _why_ these [bottlenecks](/intro/database-glossary#bottleneck) might exist.
 
-This article covers some of the most common issues that create performance bottlenecks in databases and some steps that can be taken to remediate them.
+This article covers some of the most common issues that create performance [bottlenecks in databases and some steps that can be taken to remediate them.
 
 ## Database Logs and Metrics
 
@@ -55,7 +55,7 @@ For example, DigitalOcean's query statistics surfaces this information in tabula
 
 ## Unindexed Tables
 
-Indexes for a database table are conceptually similar to indexes in a book. Without an index in a book, you're left to look through every page to find the topic you're interested in. If, instead, the book has an index, you can search for a particular topic in the index first and you will be pointed to the correct page or pages. This drastically decreases the time it takes to find the information you're looking for.
+[Indexes](/intro/database-glossary#index) for a database table are conceptually similar to indexes in a book. Without an index in a book, you're left to look through every page to find the topic you're interested in. If, instead, the book has an index, you can search for a particular topic in the index first and you will be pointed to the correct page or pages. This drastically decreases the time it takes to find the information you're looking for.
 
 The same concept is applied to database indexes. Adding indexes to a database table allows for fast lookups.
 
@@ -71,7 +71,7 @@ The best way to identify opportunities for adding indexes is to look for which q
 
 All else being equal, it's best to first focus on the _slowest_ reported queries by adding indexes for the access pattern being used. You can then move down the list, adding indexes where required until the slow queries have been resolved.
 
-Indexes can be created with raw SQL. While the specifics differ depending on the specific database being used, a SQL command to create an index might look like this:
+Indexes can be created with raw [SQL](/intro/database-glossary#sql). While the specifics differ depending on the specific database being used, a SQL command to create an index might look like this:
 
 ```sql
 CREATE INDEX email_index ON users (email);
@@ -85,7 +85,7 @@ In some scenarios, the query statistics dashboard for your cloud database provid
 
 For these cases, you might choose to inspect your queries using the `EXPLAIN` statement. This statement is used in conjunction with your regular queries and is useful for getting detailed information about the query execution plan.
 
-The `EXPLAIN` statement used ahead of a regular query in PostgreSQL, for example, will produce information such as:
+The `EXPLAIN` statement used ahead of a regular query in [PostgreSQL](/intro/database-glossary#postgresql), for example, will produce information such as:
 
 - The estimated start-up cost
 - The estimated total cost
@@ -128,7 +128,7 @@ Query optimization is not a one-size-fits-all endeavor and is very much case-dep
 
 - **Scope queries to prevent overfetching** - Be sure to use the `WHERE` clause when applicable to reduce the total volume of data returned.
 - **Select only the required fields** - In many cases, not all fields from your tables are required to furnish your application. Select only the specific fields your app requires to prevent overfetching.
-- **Audit your schema** - Inspect your database schema to look for opportunities to reduce complexity. Queries that rely on many joins often run slowly and can be improved by adjusting your schema to have fewer relationships.
+- **Audit your schema** - Inspect your database [schema](/intro/database-glossary#schema) to look for opportunities to reduce complexity. Queries that rely on many joins often run slowly and can be improved by adjusting your schema to have fewer relationships.
 - **Use database views** - Views are like tables but are produced ahead of time by running a query to pre-compute values that might otherwise be derived on the fly. Views have their own caveats and aren't right for all applications and use cases.
 
 ## Conclusion
