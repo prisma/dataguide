@@ -10,7 +10,7 @@ authors: ['justinellingwood']
 
 ![Article header](/content/serverless/serverless-comparison/header.png)
 
-Serverless computing is a fairly recent evolution in the cloud computing space.  Serverless providers allow developers to focus on the functionality that their applications require without worrying about the execution environment or any of the other lower level layers.
+[Serverless computing](https://www.prisma.io/dataguide/serverless/what-is-serverless) is a fairly recent evolution in the cloud computing space.  Serverless providers allow developers to focus on the functionality that their applications require without worrying about the execution environment or any of the other lower level layers.
 
 In this article, we'll take a look at some of the most popular serverless providers and break down how they compare across different categories.  After learning about your options, you'll be in a better position to evaluate your choices and choose the service that best matches your needs.
 
@@ -201,7 +201,7 @@ Some places where Azure Functions differ include:
 
 Additionally, Azure Functions offer a tiered pricing model to offer plans for different types of usage:
 
-* Consumption plan: the classic serverless offering with an event driven, automatically scaled execution with a pay-for-use model
+* Consumption plan: the classic serverless offering with an [event driven](/serverless/serverless-glossary#event-driven-architecture), automatically scaled execution with a pay-for-use model
 * Premium plan: adds additional reserved capacity and resource allocation for a higher price to avoid cold starts.
 * Dedicated plan: the functions host does not spin down, so no cold starts are possible.
 
@@ -286,7 +286,7 @@ Google Cloud Functions has the following limits and quotas on actions executing 
 
 ### Summary
 
-Google Cloud Functions is a capable contender in the serverless market that is well-suited for general workloads, especially if you are already leveraging GCP's other offerings.  Like the other large cloud providers, it is heavily integrated with their other services so that configuring functions to respond to other product events or calling out to other services in functions is straightforward.
+Google Cloud Functions is a capable contender in the serverless market that is well-suited for general workloads, especially if you are already leveraging GCP's other offerings.  Like the other large cloud providers, it is heavily integrated with their other services so that configuring functions to respond to other [product events](/serverless/serverless-glossary#event-driven-architecture) or calling out to other services in functions is straightforward.
 
 Like Microsoft, Google seems to still be following Amazon's lead in the serverless space.  At 8 GBs, the quota for memory available to functions is quite a bit lower than the other major clouds we've looked at thus far, which can be a factor for certain workloads.  Overall, however, Google Cloud Functions is a great platform for general serverless deployment.
 
@@ -305,6 +305,12 @@ Like Microsoft, Google seems to still be following Amazon's lead in the serverle
 [Cloudflare Workers](https://workers.cloudflare.com/) is a serverless option provided by Cloudflare that combines the functions-as-a-service model with edge computing.  Released in 2018, Cloudflare Workers decided to approach the problem from a different angle given that they are a more of a web tooling company than a general cloud provider.
 
 Cloudflare Workers are capable of delivering high performance at a lower cost to developers due to their implementation details and some self-imposed limitations.  If your applications fit the Cloudflare Workers paradigm, it is a great choice for delivering low latency responses to your clients.
+
+<PrismaOutlinks>
+
+You can learn how to deploy a Cloudflare Worker that uses Prisma to save every request to a MongoDB database for inspection later in the [Prisma docs](https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-cloudflare-workers).
+
+</PrismaOutlinks>
 
 ### Focus
 
@@ -372,7 +378,7 @@ Another limitation inherent to the V8 runtime is that the Node.js standard libra
 
 ### Summary
 
-Cloudflare Workers is a very attractive solution for many projects due to its low latency delivery and high performance execution environment.  The platform is designed specifically to allow for quick execution of small, focused functions at the edge.
+Cloudflare Workers is a very attractive solution for many projects due to its low latency delivery and high performance execution environment.  The platform is designed specifically to allow for quick execution of small, focused functions at the [edge](/serverless/serverless-glossary#edge-computing).
 
 While Cloudflare Workers are probably not the best solution for every type of serverless, they are an ideal solution for those working primarily in JavaScript or TypeScript who already have experience with Progressive Web App fundamentals.  The familiar developer experience, easy deployment, and scalable high performance execution environment makes it a great choice for many projects.
 
@@ -391,6 +397,12 @@ While Cloudflare Workers are probably not the best solution for every type of se
 [Netlify Functions](https://www.netlify.com/products/functions/) is a serverless offering provided by Netlify, a web application build and deployment platform.  The Functions product, released in 2018, is actually a value added service built on top of AWS Lambda focused on making it easier to integrate serverless functionality into the Netlify ecosystem.
 
 While different from some of the other offerings because of this positioning, Netlify Functions is interesting because of the way that it integrates serverless within a coherent ecosystem focused on application delivery.
+
+<PrismaOutlinks>
+
+You can easily deploy Node.JS applications built with Prisma to Netlify. This [deployment guide](https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-netlify) covers the process in greater detail. 
+
+</PrismaOutlinks>
 
 ### Focus
 
@@ -561,6 +573,12 @@ Google's serverless database offering is [Firestore](https://cloud.google.com/fi
 ### PlanetScale
 
 [PlanetScale](https://planetscale.com/) is a MySQL-compatible serverless database platform built on Vitess, a relational database implementation built for scaling in Kubernetes environments.  PlanetScale is able to provide versioned data branching, non-blocking schema changes, and other advanced features with simple to deploy tooling.
+
+<PrismaOutlinks>
+
+Learn more about how [Prisma and Planetscale work together](https://www.prisma.io/planetscale).
+
+</PrismaOutlinks>
 
 ### MongoDB Atlas Serverless
 
