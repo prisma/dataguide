@@ -25,7 +25,7 @@ SHOW GRANTS\G
 
 ## How do you create a new database?
 
-The first thing we'll demonstrate how to do is create a new database.  In MySQL, databases contain tables, indexes, procedures, and other resources that are typically related to a single project.  Each of those resources must be created within a database, so learning how to create a new database is a good first step.
+The first thing we'll demonstrate how to do is create a new [database](/intro/database-glossary#database).  In MySQL, databases contain [tables](/intro/database-glossary#table), [indexes](/intro/database-glossary#index), [procedures](/intro/database-glossary#stored-procedure), and other resources that are typically related to a single project.  Each of those resources must be created within a database, so learning how to create a new database is a good first step.
 
 The basic syntax used to create a new database looks like this:
 
@@ -35,10 +35,10 @@ CREATE DATABASE <db_name>;
 
 Replace `<db_name>` with the name you wish to give your database before executing the command.  This command will create a database with the given name and set the current user as the new database's owner.
 
-The database will use the system-wide defaults for the character set, collation, and encryption properties:
+The database will use the system-wide defaults for the character set, [collation](/intro/database-glossary#collation), and encryption properties:
 
 * **CHARACTER SET:** sets the character set for the new database.  This is a localization option that affects what characters are considered uppercase, lowercase, and digits.
-* **COLLATE:** sets the *collation*, or sort, order for the database. This is a localization option that determines how items are organized when they are ordered.
+* **COLLATE:** sets the *collation*, or sort order for the database. This is a localization option that determines how items are organized when they are ordered.
 * **ENCRYPTION:** sets encryption for for the new database.  This is a boolean option that can be either 'Y' for yes, or 'N' for no.
 
 You can find the character sets available for your installation by typing:
@@ -131,7 +131,7 @@ USE school;
 
 ## Create tables within databases
 
-Once you have created a database, you can define tables and other objects inside to store and manage you data.  In MySQL, tables consist of a table name, the column definitions (these in turn include names, data types, and constraints among others), and table options.
+Once you have created a database, you can define tables and other objects inside to store and manage you data.  In MySQL, tables consist of a table name, the [column](/intro/database-glossary#column) definitions (these in turn include names, [data types](/intro/database-glossary#data-type), and constraints among others), and table options.
 
 ### What is the syntax of MySQL's `CREATE TABLE` command?
 
@@ -217,7 +217,7 @@ CREATE TABLE supplies (
 );
 ```
 
-This will create the `supplies` table within the `school` database.  The `PRIMARY KEY` column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  MySQL creates indexes for primary key columns to increase querying speed.
+This will create the `supplies` table within the `school` database.  The [`PRIMARY KEY`](/intro/database-glossary#primary-key) column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  MySQL creates indexes for primary key columns to increase querying speed.
 
 Verify that the new table is present by typing:
 
@@ -233,7 +233,7 @@ SHOW TABLES;
 1 row in set (0.01 sec)
 ```
 
-You can verify that the schema reflects your definition by typing:
+You can verify that the [schema](/intro/database-glossary#schema) reflects your definition by typing:
 
 ```sql
 SHOW CREATE TABLE supplies\G
@@ -280,9 +280,9 @@ CREATE TABLE teachers (
 
 You can find information about creating tables with primary and foreign keys in some of our other MySQL guides.  Primary keys and foreign keys are both types of [database constraint](/mysql/column-and-table-constraints) within MySQL.
 
-A [primary key](https://en.wikipedia.org/wiki/Primary_key) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in MySQL uses the following format to specify an automatically assigned incrementing primary key: `id INT AUTO_INCREMENT PRIMARY KEY`.
+A [primary key](/intro/database-glossary#primary-key) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in MySQL uses the following format to specify an automatically assigned incrementing primary key: `id INT AUTO_INCREMENT PRIMARY KEY`.
 
-[Foreign keys](https://en.wikipedia.org/wiki/Foreign_key) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
+[Foreign keys](/intro/database-glossary#foreign-key) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
 
 ## How to view tables in MySQL
 
@@ -471,7 +471,7 @@ Once you have a model you'll be able to add a new schema which in MySQL is equiv
 
 The basic syntax for altering a table in MySQL uses `ALTER TABLE` and looks like the following:
 
-```
+```sql
 ALTER TABLE <table_name> <change_command> <change_parameters>;
 ```
 
@@ -481,7 +481,7 @@ The `<change_parameters>` part of the command contains any additional informatio
 
 To add a table you can use the `ADD` change command. It looks like:
 
-```
+```sql
 ALTER TABLE some_table ADD missing_column text;
 ```
 
@@ -495,7 +495,7 @@ The basic syntax for dropping a table uses the `DROP TABLE` SQL statement with `
 
 The basic syntax is:
 
-```
+```sql
 DROP TABLE IF EXISTS <table_name>;
 ```
 
@@ -507,7 +507,7 @@ To drop an index in MySQL, you can use the `DROP INDEX` command. The basic synta
 
 It looks like:
 
-```
+```sql
 DROP INDEX <index_name> ON <table_name>;
 ```
 
@@ -519,7 +519,7 @@ You can use the [`TEMPORARY` keyword](https://dev.mysql.com/doc/refman/8.0/en/cr
 
 The basic syntax looks the same as when creating a table except for the inclusion of `TEMPORARY`. It looks as follows:
 
-```
+```sql
 CREATE TEMPORARY TABLE table_name(
    column_1_definition,
    column_2_definition,

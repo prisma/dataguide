@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Privilege management is an important part of system and database administration.  Deciding who should have what access to which components and powers and then designing an implementation that enables those policies requires a good deal of thought and care.
+Privilege management is an important part of system and [database administration](/intro/database-glossary#database-administrator)#.  Deciding who should have what access to which components and powers and then designing an implementation that enables those policies requires a good deal of thought and care.
 
 MySQL has a robust privilege assignment system that allows you to implement access policies throughout your database system.  In this guide, we will talk about how to use the `GRANT` and `REVOKE` commands to add and remove privileges from MySQL user accounts and implement access policies that match your requirements.
 
@@ -38,7 +38,7 @@ In MySQL, the privilege system determines whether a user can execute a given com
 
 Each time a client attempts to perform an action, MySQL consults its information on the user's privileges to determine whether it should be allowed or not.  If the user has been granted all of the privileges required to perform the action, MySQL executes the statements.  If the user is missing any of the required privileges, an error will occur.
 
-MySQL stores the information about which users have what privileges in a number of different tables in the `mysql` system database.  Here is a review the where MySQL keeps different types of privilege information as was covered in the [introduction to MySQL authentication and authorization article](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/intro-to-authn-and-authz):
+MySQL stores the information about which users have what privileges in a number of different tables in the `mysql` system database.  Here is a review the where MySQL keeps different types of privilege information as was covered in the [introduction to MySQL authentication and authorization article](/mysql/authentication-and-authorization/intro-to-authn-and-authz):
 
 * `user`: The `user` table defines each user's static global privileges.  These privileges apply to the whole MySQL server and are not affected by the availability of any plugins or components.
 * `global_grants`: The `global_grants` table defines each user's dynamic global privileges.  Any privileges defined by a plugin or component are registered in this table.
@@ -50,7 +50,7 @@ MySQL stores the information about which users have what privileges in a number 
 
 ### What privileges are available in MySQL?
 
-MySQL defines many privileges appropriate for various system scopes.  Some of these are useful for everyday use and management of databases, tables, and functions, while others are designed for administrative tasks like replication, backups, and connection management.
+MySQL defines many privileges appropriate for various system scopes.  Some of these are useful for everyday use and management of databases, tables, and functions, while others are designed for administrative tasks like [replication](/intro/database-glossary#replication), backups, and connection management.
 
 You can find a comprehensive list of static privileges (core privileges built into MySQL itself) and their respective scopes in the [Permissible Static Privileges for `GRANT` and `REVOKE` table](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#idm45933608939712) in the MySQL documentation.  The related [Static Privilege Descriptions section](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#privileges-provided-static) of the MySQL documentation provides a detailed overview of what each privilege allows and in many cases, guidance on what scenarios they would be most useful.
 
@@ -207,7 +207,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'fulladmin'@'localhost' WITH GRANT OPTION;
 
 Often, at the database or table level, you'll have some accounts that need to be able to access information but should not have the ability to alter the database or object in any way.  These may include reporting tools or any scenario where data needs to be accessible but not modifiable, like with many non-interactive webpages.
 
-The `SELECT` privilege is adequate to give the user read-only privileges on the database or object.  To give the `'salesreport'@'localhost'` user read-only access to the `sales` database, type:
+The `SELECT` privilege is adequate to give the user [read-only privileges](/intro/database-glossary#read-operation) on the database or object.  To give the `'salesreport'@'localhost'` user read-only access to the `sales` database, type:
 
 ```sql
 GRANT SELECT ON sales.* TO 'salesreport'@'localhost';
@@ -223,7 +223,7 @@ GRANT SELECT ON *.* TO 'globalread'@'localhost';
 
 ### How do you grant users read and write access?
 
-The typical companion to the read-only use case is the user who needs read and write access.  This type of access is appropriate for any processes that need to manage the data within the database or the object.  For instance, a process that creates or edits website user profiles would need both read and write privileges.
+The typical companion to the read-only use case is the user who needs read and write access.  This type of access is appropriate for any processes that need to manage the data within the database or the object.  For instance, a process that creates or edits website user profiles would need both read and [write privileges](/intro/database-glossary#write-operation).
 
 To assign read and write access to a user, grant them `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges on the object.  For example:
 

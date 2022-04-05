@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Many database tables manage data that will need to be changed or updated from time to time.  The SQL `UPDATE` command can help in these situations by allowing you to change the values stored in records within a table.
+Many database tables manage data that will need to be changed or updated from time to time.  The SQL `UPDATE` command can help in these situations by allowing you to change the values stored in [records](/intro/database-glossary#record) within a table.
 
 To update records, you must provide the columns where changes will occur and their new values.  To tell MySQL which records to target, you need to also give match criteria so it can determine which row or rows to change.  In this article, we'll discuss how to use `UPDATE` to change the values of your table data one at a time or in bulk.
 
@@ -30,7 +30,7 @@ As shown above, the basic structure involves three separate clauses:
 * providing the columns you wish to update as well as their new values, and
 * defining criteria to determine which records to match
 
-When successfully committed, MySQl confirms the action by outputting the number of rows matched and altered:
+When successfully committed, MySQL confirms the action by outputting the number of rows matched and altered:
 
 ```
 Query OK, 1 row affected (0.01 sec)
@@ -47,7 +47,7 @@ To update data with Prisma Client, issue an [update query](https://www.prisma.io
 
 Updates based on providing new external data are relatively straightforward.  You just need to provide the table, the columns, the new values, and the targeting criteria.
 
-However, you can also use `UPDATE` to conditionally update table values based on information stored in a joined table.  The basic syntax looks like this:
+However, you can also use `UPDATE` to conditionally update table values based on information stored in a [joined table](/intro/database-glossary#join).  The basic syntax looks like this:
 
 ```sql
 UPDATE <table1>, <table2>

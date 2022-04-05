@@ -7,13 +7,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Adding and deleting data are fairly foundational operations that allow you to control what data is maintained by the database.  To insert, you specify items that fulfill each of the column requirements of the table for each new row.  To remove, you provide the match criteria for rows in the table you wish to delete.
+Adding and deleting data are fairly foundational operations that allow you to control what data is maintained by the database.  To insert, you specify items that fulfill each of the [column](/intro/database-glossary#column) requirements of the table for each new [row](/intro/database-glossary#row).  To remove, you provide the match criteria for rows in the table you wish to delete.
 
-In this article, we'll take a look at how to use the `INSERT` and `DELETE` commands to add or remove data from MySQL tables.  We will cover the syntax as well as slightly more advanced variations like operating on multiple rows in a single statement.
+In this article, we'll take a look at how to use the `INSERT` and `DELETE` commands to add or remove data from MySQL [tables](/intro/database-glossary#table).  We will cover the syntax as well as slightly more advanced variations like operating on multiple rows in a single statement.
 
 ## Reviewing the table's structure
 
-Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, data types, and constraints.
+Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, [data types](/intro/database-glossary#data-type), and [constraints](/intro/database-glossary#constraint).
 
 To find the structure of a table called `employee`, you can use the MySQL `DESCRIBE` command:
 

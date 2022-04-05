@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Access control and user management are two areas that can quickly become complex as the number of users and different database entities within your system increases.  Managing many different privileges on various database objects, ensuring users that have the same responsibilities have the same level of access, and auditing and narrowing access all become more difficult with time.
+[Access control](/intro/database-glossary#access-control-list) and user management are two areas that can quickly become complex as the number of users and different database entities within your system increases.  Managing many different privileges on various database objects, ensuring users that have the same responsibilities have the same level of access, and auditing and narrowing access all become more difficult with time.
 
 To help address this, MySQL has a concept called "roles" which allows you to group bundles of privileges under a given name, allowing you to assign and modify settings en masse.  In this guide, we'll go over how roles work within MySQL and how to use them to make it easier to manage data access for your users.
 
@@ -39,7 +39,7 @@ The `GRANT OPTION` privilege is required to assign privileges to a role.  You mu
 
 ## What are roles?
 
-In MySQL, a role is an entity that functions as a container or collection of privileges.  Administrators can assign privileges to roles in the same way that they assign privileges to user accounts.  You can then add user accounts as members of the role, allowing those accounts access to the privileges associated with the role.
+In MySQL, a [role](/intro/database-glossary#role-based-access-control) is an entity that functions as a container or collection of privileges.  Administrators can assign privileges to roles in the same way that they assign privileges to user accounts.  You can then add user accounts as members of the role, allowing those accounts access to the privileges associated with the role.
 
 Basically, roles work as a way to bundle different related privileges together to make privilege management easier.  Instead of making sure that each user has the exact level of access they require by assigning individual privileges, using named groupings of privileges allows you to manage fewer, easier to understand assignments.
 
@@ -101,7 +101,7 @@ CREATE ROLE '<role>';
 
 After creating new roles, your next priority is typically to make them meaningful by granting them privileges.
 
-You grant privileges to roles the same way you [grant privileges to user accounts](https://www.prisma.io/dataguide/mysql/authentication-and-authorization/privilege-management#how-do-you-use-the-grant-command).  You provide the exact privileges you wish to grant, specify a scope by providing the database and database object where the privilege is valid, and the entity that should be granted the privileges — in this case, a role:
+You grant privileges to roles the same way you [grant privileges to user accounts](/mysql/authentication-and-authorization/privilege-management#how-do-you-use-the-grant-command).  You provide the exact privileges you wish to grant, specify a scope by providing the database and database object where the privilege is valid, and the entity that should be granted the privileges — in this case, a role:
 
 ```sql
 GRANT <privileges> ON <database>.<object> TO '<role>'@'<host>';
@@ -159,7 +159,7 @@ SET PERSIST mandatory_roles = '`<role_1>`@`<host>`, `<role_2>`@`<host>`, `<role_
 
 Here, we give each user on the system three roles automatically.  When setting the system variable, the value of `mandatory_roles` must be a string, so we encapsulate the entire role list in single quotes and use backticks to quote individual role components.
 
-You cannot add a role that to `mandatory_roles` list that has the `SYSTEM_USER` privilege.  This is a security measure to ensure that not all of the sessions on the system are system sessions automatically.
+You cannot add a role to the `mandatory_roles` list that has the `SYSTEM_USER` privilege.  This is a security measure to ensure that not all of the sessions on the system are system sessions automatically.
 
 ## How do you use privileges from roles?
 

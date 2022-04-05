@@ -13,13 +13,13 @@ In this article, we'll talk about what transactions are and how they can be usef
 
 ## What are transactions?
 
-Transactions are a way to group together and isolate multiple statements for processing as a single operation.  Instead of executing each command individually as it is sent to the server, in a transaction, commands are bundled together and executed in a separate context than other requests.
+[Transactions](/intro/database-glossary#transaction) are a way to group together and isolate multiple statements for processing as a single operation.  Instead of executing each command individually as it is sent to the server, in a transaction, commands are bundled together and executed in a separate context than other requests.
 
-Isolation is an important part of transactions.  Within a transaction, the executed statements can only affect the environment within the transaction itself.  From inside the transaction, statements can modify data and the results are immediately visible.  From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
+[Isolation](/intro/database-glossary#isolation) is an important part of transactions.  Within a transaction, the executed statements can only affect the environment within the transaction itself.  From inside the transaction, statements can modify data and the results are immediately visible.  From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
 
-These features help databases achieve [ACID compliance](/datamodeling/in-vivo) by providing atomicity (actions in a transaction are either all committed or all rolled back) and isolation (outside of the transaction, nothing changes until the commit, while inside, each statement has immediate consequences).  These together help the database maintain consistency (by guaranteeing that partial data transformations cannot occur).  Furthermore, changes in transactions are not returned as successful until they are committed to non-volatile storage, which provides durability.
+These features help databases achieve [ACID compliance](/intro/database-glossary#acid) by providing [atomicity](/intro/database-glossary#atomicity) (actions in a transaction are either all committed or all rolled back) and isolation (outside of the transaction, nothing changes until the commit, while inside, each statement has immediate consequences).  These together help the database maintain consistency (by guaranteeing that partial data transformations cannot occur).  Furthermore, changes in transactions are not returned as successful until they are committed to non-volatile storage, which provides [durability](/intro/database-glossary#durability).
 
-To achieve these goals, transactions employ a number of different strategies and different database systems use different methods.  MySQL uses a system called [Multiversion Concurrency Control (MVCC)](https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html), which allows the database to perform these actions using data snapshots.  All together, these systems comprise one of the fundamental building blocks of modern relational databases, allowing them to safely process complex data in a crash-resistant manner.
+To achieve these goals, transactions employ a number of different strategies and different database systems use different methods.  MySQL uses a system called [Multiversion Concurrency Control (MVCC)](/intro/database-glossary#multiversion-concurrency-control), which allows the database to perform these actions using data snapshots.  All together, these systems comprise one of the fundamental building blocks of modern relational databases, allowing them to safely process complex data in a crash-resistant manner.
 
 ## Types of consistency failures
 
@@ -29,7 +29,7 @@ There are four primary ways that inconsistency can arise depending on the transa
 
 ### Dirty reads
 
-Dirty reads occur when the statements within a transaction are able to read data written by other in-progress transactions.  This means that even though the statements of a transaction have *not* been committed yet, they can be read and thus influence other transactions.
+[Dirty reads](/intro/database-glossary#dirty-read) occur when the statements within a transaction are able to read data written by other in-progress transactions.  This means that even though the statements of a transaction have *not* been committed yet, they can be read and thus influence other transactions.
 
 This is often considered a severe breach of consistency, as transactions are not properly isolated form one another.  Statements that may never be committed to the database can affect the execution of other transactions, modifying their behavior.
 
@@ -37,19 +37,19 @@ Transactions that allow dirty reads cannot make any reasonable claims about the 
 
 ### Non-repeatable reads
 
-Non-repeatable reads occur when a commit outside of the transaction alters the data seen within the transaction.  You can recognize this type of problem if, within a transaction, the same data is read twice but different values are retrieved in each instance.
+[Non-repeatable reads](/intro/database-glossary#nonrepeatable-read) occur when a commit outside of the transaction alters the data seen within the transaction.  You can recognize this type of problem if, within a transaction, the same data is read twice but different values are retrieved in each instance.
 
 As with dirty reads, transactions that allow non-repeatable reads don't offer full isolation between transactions.  The difference is that with non-repeatable reads, the statements affecting the transaction have actually been committed outside of the transaction.
 
 ### Phantom read
 
-A phantom read is a specific type of non-repeatable read that occurs when the rows returned by a query are different the second time it is executed within a transaction.
+A [phantom read](/intro/database-glossary#phantom-read) is a specific type of non-repeatable read that occurs when the rows returned by a query are different the second time it is executed within a transaction.
 
 For instance, if a query within the transaction returns four rows the first time it is executed, but five rows the second time, this is a phantom read.  Phantom reads are caused by commits outside of the transaction altering the number of rows that satisfy the query.
 
 ### Serialization anomalies
 
-Serialization anomalies occur when the results of multiple transactions committed concurrently will result in different outcomes than if they were committed one after another.  This can occur any time that a transaction allows two commits to occur that each modify the same table or data without resolving conflicts.
+[Serialization anomalies](/intro/database-glossary#serialization-anomaly) occur when the results of multiple transactions committed concurrently will result in different outcomes than if they were committed one after another.  This can occur any time that a transaction allows two commits to occur that each modify the same table or data without resolving conflicts.
 
 ## Transaction isolation levels
 
@@ -59,7 +59,7 @@ The isolation levels offered by most database systems include the following:
 
 ### Read uncommitted
 
-**Read uncommitted** is the isolation level that offers the fewest guarantees about maintaining data consistency and isolation.  While transactions using `read uncommitted` have certain features frequently associated with transactions, like the ability to commit multiple statements at once or to roll back statements if a mistake occurs, they *do* allow numerous situations where consistency can be broken.
+[**Read uncommitted**](/intro/database-glossary#read-uncommitted-isolation-level) is the isolation level that offers the fewest guarantees about maintaining data consistency and isolation.  While transactions using `read uncommitted` have certain features frequently associated with transactions, like the ability to commit multiple statements at once or to roll back statements if a mistake occurs, they *do* allow numerous situations where consistency can be broken.
 
 Transactions configured with the `read uncommitted` isolation level allow:
 
@@ -72,7 +72,7 @@ This level of isolation is not generally recommended as it provides almost no gu
 
 ### Read committed
 
-**Read committed** is an isolation level that specifically protects against dirty reads.  When transactions use the `read committed` level of consistency, uncommitted data can never affect the internal context of a transaction.  This provides a basic level of consistency by ensuring that uncommitted data never influences a transaction.
+[**Read committed**](/intro/database-glossary#read-committed-isolation-level) is an isolation level that specifically protects against dirty reads.  When transactions use the `read committed` level of consistency, uncommitted data can never affect the internal context of a transaction.  This provides a basic level of consistency by ensuring that uncommitted data never influences a transaction.
 
 Although `read committed` offers greater protection than `read uncommitted`, it does not protect against all types of inconsistency.  These problems can still arise:
 
@@ -82,7 +82,7 @@ Although `read committed` offers greater protection than `read uncommitted`, it 
 
 ### Repeatable read
 
-The **repeatable read** isolation level builds off of the guarantee provided by `read committed`.  It avoids dirty reads as before, but prevents non-repeatable reads as well.
+The [**repeatable read**](/intro/database-glossary#repeatable-read-isolation-level) isolation level builds off of the guarantee provided by `read committed`.  It avoids dirty reads as before, but prevents non-repeatable reads as well.
 
 Although `repeatable read` can prevent non-repeatable reads and dirty reads, it still can suffer from these isolation issues:
 
@@ -95,7 +95,7 @@ For MySQL's InnoDB engine (the normal engine for most cases), the repeatable rea
 
 ### Serializable
 
-The **serializable** isolation level offers the highest level of isolation and consistency.  It prevents all of the scenarios that the `repeatable read` level does while also removing the possibility of serialization anomalies.
+The [**serializable**](/intro/database-glossary#serializable-isolation-level) isolation level offers the highest level of isolation and consistency.  It prevents all of the scenarios that the `repeatable read` level does while also removing the possibility of serialization anomalies.
 
 Serializable isolation guarantees that concurrent transactions are committed as if they were executed one after another.  If a scenario occurs where a serialization anomaly could be introduced, one of the transactions will have a serialization failure instead of introducing inconsistency to the data set.
 
