@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-In many situations, you may want to ensure that a record exists in a table without a conflicting entry.  Essentially, you want to find and modify the current record if it exists or add a new record with the values you want if one is not already present.  This is typically referred to as an "upsert" operation (a combination of "insert" and "update").
+In many situations, you may want to ensure that a record exists in a table without a conflicting entry.  Essentially, you want to find and modify the current record if it exists or add a new record with the values you want if one is not already present.  This is typically referred to as an ["upsert" operation](/intro/database-glossary#upsert) (a combination of "insert" and "update").
 
 MySQL allows you to perform this action using the `ON DUPLICATE KEY UPDATE` clause to modify the `INSERT` command.  In this guide, we'll cover how to use this construct to update the values of an entry if it exists or else add it as a new row in the table.
 
@@ -70,7 +70,7 @@ INSERT INTO director (id, name) VALUES (3, 'susan');
 ERROR 1062 (23000): Duplicate entry '3' for key 'director.PRIMARY'
 ```
 
-If we want anticipate this possibility and want to update the existing row with the new information, we can avoid this error.  The `ON DUPLICATE KEY UPDATE` clause allows us to do this:
+If we anticipate this possibility and want to update the existing row with the new information, we can avoid this error.  The `ON DUPLICATE KEY UPDATE` clause allows us to do this:
 
 ```sql
 INSERT INTO director (id, name) VALUES (3, 'susan')

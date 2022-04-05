@@ -13,7 +13,7 @@ There are a few different types of joins, which offer various ways of combining 
 
 ## What are joins?
 
-In short, *joins* are a way of displaying data from multiple tables.  They do this by stitching together records from different sources based on matching values in certain columns.  Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
+In short, [*joins*](/intro/database-glossary#join) are a way of displaying data from multiple tables.  They do this by stitching together records from different sources based on matching values in certain columns.  Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
 
 The basic syntax of a join looks like this:
 
@@ -40,7 +40,7 @@ Various types of joins are available, each of which will potentially produce dif
 
 ### Inner and Cross joins
 
-The default join is called an *inner join*.  In MySQL, this can be specified using either `INNER JOIN`, just `JOIN`, or `CROSS JOIN`.  For other database systems, `INNER JOIN` and `CROSS JOIN` are often two separate concepts, but MySQL implements them in the same construct.
+The default join is called an [*inner join*](/intro/database-glossary#inner-join).  In MySQL, this can be specified using either `INNER JOIN`, just `JOIN`, or `CROSS JOIN`.  For other database systems, `INNER JOIN` and `CROSS JOIN` are often two separate concepts, but MySQL implements them in the same construct.
 
 Here is a typical example demonstrating the syntax of an inner join:
 
@@ -77,7 +77,7 @@ t1.r3 + t2.r3
 
 ### Left join
 
-A left join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the first table.  In MYSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
+A [left join](/intro/database-glossary#left-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the first table.  In MYSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
 
 The basic syntax of a left join follows this pattern:
 
@@ -96,7 +96,7 @@ If you represent the results as a Venn diagram of the component tables, a left j
 
 ### Right join
 
-A right join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the second table.  In MySQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
+A [right join](/intro/database-glossary#right-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the second table.  In MySQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
 
 The basic syntax of a right join follows this pattern:
 
@@ -117,7 +117,7 @@ For portability reasons, MySQL recommends you use left joins instead of right jo
 
 ### Full join
 
-A full join is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from both component tables.  MySQL does not natively implement full joins, but we can emulate the behavior using a few tricks.
+A [full join](/intro/database-glossary#outer-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from both component tables.  MySQL does not natively implement full joins, but we can emulate the behavior using a few tricks.
 
 To replicate the results of a full outer join, we will perform a left join to all of the results that are shared by both tables and all of the unmatched rows from the left table.  Then we will use the [`UNION ALL` set operator](https://dev.mysql.com/doc/refman/8.0/en/union.html#union-distinct-all) to combine those results with an "anti-join" for the right table.  An "anti-join" is a join operation that exclusively finds the results *not* in common between tables.
 

@@ -9,7 +9,7 @@ authors: ['justinellingwood']
 
 Maintaining credentials for different users and databases across a variety of hosts can be challenging from a usability perspective.  If you regularly log into multiple MySQL servers or if you have projects that have separate user accounts with unique privileges for security reasons, you can easily lose track of how to connect to the accounts you need.
 
-Fortunately, [MySQL provides a small utility called `mysql_config_editor`](https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html) specifically designed to store and manage MySQL credentials so that you can authenticate easily with MySQL clients and tools.  In this guide, we'll cover how `mysql_config_editor` works, how to manage multiple credentials securely, and how to tell your other MySQL tools to leverage the configuration to authenticate to your servers.
+Fortunately, [MySQL provides a small utility called `mysql_config_editor`](https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html) specifically designed to store and manage MySQL credentials so that you can [authenticate](/intro/database-glossary#authentication) easily with MySQL clients and tools.  In this guide, we'll cover how `mysql_config_editor` works, how to manage multiple credentials securely, and how to tell your other MySQL tools to leverage the configuration to authenticate to your servers.
 
 ## How does `mysql_config_editor` work?
 
@@ -68,7 +68,7 @@ The entry for the `testing` login path will have all of the information required
 
 ### Setting the default connection information
 
-MySQL tools are designed to use reasonable defaults when called explicit connection information.  For instance, on Unix-like systems, they will try to connect using the following details if not overwritten:
+MySQL tools are designed to use reasonable defaults when called without explicit connection information.  For instance, on Unix-like systems, they will try to connect using the following details if not overwritten:
 
 * **User**: Your operating system username
 * **Password**: No password

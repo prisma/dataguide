@@ -7,7 +7,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Authentication and authorization are essential considerations for managing and securing your MySQL servers.  **Authentication** (sometimes abbreviated as "authn") refers to the class of policies and mechanisms that verify that clients are allowed to connect as a certain user.  **Authorization** (sometimes abbreviated as "authz") is a process that occurs after authentication to determine what actions an account is permitted to perform.
+Authentication and authorization are essential considerations for managing and securing your MySQL servers.  [**Authentication**](/intro/database-glossary#authentication) (sometimes abbreviated as "authn") refers to the class of policies and mechanisms that verify that clients are allowed to connect as a certain user.  [**Authorization**](/intro/database-glossary#authorization) (sometimes abbreviated as "authz") is a process that occurs after authentication to determine what actions an account is permitted to perform.
 
 In this guide, we'll take a look at the concepts and components that MySQL provides to manage this [access control system](https://dev.mysql.com/doc/refman/8.0/en/access-control.html).  We'll talk about the interplay between users, roles, authentication methods, and privileges that, together, solve the problem of how to control who can do what on MySQL database servers.
 
@@ -144,7 +144,7 @@ SHOW CREATE USER '<user>'@'<host>';
 
 ### Roles
 
-Roles are a related component that also fit into the authorization process.  Roles are named bundles of privileges that can be created by administrators to make managing privileges easier.  Once a group of privileges is granted to a role, you can grant those privileges to a user by adding them as a member of the role.
+Roles are a related component that also fit into the authorization process.  [Roles](/intro/database-glossary#role-based-access-control) are named bundles of privileges that can be created by administrators to make managing privileges easier.  Once a group of privileges is granted to a role, you can grant those privileges to a user by adding them as a member of the role.
 
 So if you want give multiple users the ability to insert and update values within a specific table, you can create a role with those privileges.  Then, you can control who can insert and update on that table by adding or removing users from that role.  This creates specific defined levels of access for different types of users and helps to ensure that access levels are consistently applied across accounts.
 

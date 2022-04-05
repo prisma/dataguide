@@ -15,7 +15,7 @@ By familiarizing yourself with these optional clauses, you can learn to construc
 
 ## Using the `WHERE` clause to define match criteria
 
-One of the most flexible and most common ways of specifying your data requirements is with the `WHERE` clause.  The `WHERE` clause provides a way of specifying the requirements that a record must meet to match the query.  If a record does not satisfy all of the conditions specified by the `WHERE` clause, it is not included in the query results.
+One of the most flexible and most common ways of specifying your data requirements is with the `WHERE` clause.  The `WHERE` clause provides a way of specifying the requirements that a [record](/intro/database-glossary#record) must meet to match the query.  If a record does not satisfy all of the conditions specified by the `WHERE` clause, it is not included in the query results.
 
 The `WHERE` clause works by specifying boolean expressions that are checked against each candidate row of data.  If the result of the expression is false, the row will be removed from the results and will not be returned or continue to the next stage of processing.  If the result of the expression is true, it satisfies the criteria of the search and will continue on for any further processing as a candidate row.
 
@@ -112,7 +112,7 @@ SELECT * FROM customer WHERE LENGTH(SSN) <> 9;
 The `GROUP BY` clause is another very common way to filter results by representing multiple results with a single row.  The basic syntax of the `GROUP BY` clause looks like this:
 
 ```sql
-SELECT <columns> FROM <table> GROUP BY <columns_to_group>
+SELECT <columns> FROM <table> GROUP BY <columns_to_group>;
 ```
 
 When a `GROUP BY` clause is added to a statement, it tells MySQL to display a single row for each unique value for the given column or columns.  This has some important implications.
