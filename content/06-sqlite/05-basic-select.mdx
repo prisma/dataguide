@@ -56,6 +56,12 @@ SELECT column2, column1 FROM my_table;
 
 This will display all of the records from `my_table`, but only show `column2` and `column1`, in that exact order.
 
+<PrismaOutlinks>
+
+When using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can control the columns that are returned with the [select fields](https://www.prisma.io/docs/concepts/components/prisma-client/select-fields) functionality.
+
+</PrismaOutlinks>
+
 ## Using column aliases with `AS` to modify the resulting table
 
 Compared to other SQL databases such as [MySQL](/intro/database-glossary#mysql) and [PostgreSQL](/intro/database-glossary#postgresql), SQLite does not show column names in its query output by default. In order to force the display of column names in SQLite, a series of commands can be run.
