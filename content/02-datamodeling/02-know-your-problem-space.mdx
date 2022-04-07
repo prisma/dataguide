@@ -77,3 +77,11 @@ Another variety of sensitive information allows you to act on behalf of someone 
 Data models are not static. Requirements evolve; businesses pivot; external sources of information appear, change, and disappear. This doesn't happen at the same spirited pace set by application development, but happen it does, big changes, little tweaks, and everything in between. Careful design will help keep the balance towards slower and more minor changes, but there's never any guarantee against needing to perform major surgery on a data model at some point, and even some seemingly-minor changes can present unforeseen difficulties in deployment. Until PostgreSQL 11, for example, adding a new column with a non-null default value required a rewrite of every record in the table -- not much fun with millions of rows!
 
 The present is more important than the future. If your model is not useful now, you likely won't get the chance to see it become useful later. Forces of [natural or unnatural selection](in-vivo) are always at work, though, and databases which cannot adapt to these pressures perish. We'll address planning for future possibilities in more detail later on, but even knowing that corners exist into which you can paint yourself can help you avoid that fate.
+
+<PrismaOutlinks>
+
+If you want to learn more about what data modeling means in the context of Prisma, visit our conceptual page on [data modeling](https://www.prisma.io/docs/concepts/overview/what-is-prisma/data-modeling).
+
+You can also learn about the specific data model component of a Prisma schema in the [data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) section of the Prisma documentation.
+
+</PrismaOutlinks>

@@ -97,3 +97,11 @@ After first being implemented by IBM's DB2, it would take several years for any 
 The really interesting things are happening in open source RDBMSs. PostgreSQL introduced [foreign data wrappers](https://wiki.postgresql.org/wiki/Foreign_data_wrappers) in version 9.1 and has continued to expand their functionality, and MariaDB's [`CONNECT` storage engine](https://mariadb.com/kb/en/connect/) can wrap a plethora of data sources. Moreover, both Postgres' and MariaDB's implementations are extensible: if you have external data in a format no existing wrapper can handle, you can write your own. The Postgres community has even developed a Python framework called [Multicorn](https://multicorn.org/) to simplify the otherwise C-based process of foreign data wrapper development.
 
 The idea of "federated" architectures derives from the dual form of government where regional and central (federal) governments coexist, and like other systems design techniques, its purpose is the management of complexity. Users of the individual subsystems work in and with those subsystems; those concerned only with the operation of the whole interact with the gestalt. In terms of ecological roles, this is very much an "animal" mode of database operation. A federating database is central to the system it inhabits. It draws flows of information to and through itself, makes connections, encodes expectations of subsidiary schemas. But in information ecosystems where such beasts can thrive, SQL/MED is a powerful tool for corralling disparate data sources.
+
+<PrismaOutlinks>
+
+If you want to learn more about what data modeling means in the context of Prisma, visit our conceptual page on [data modeling](https://www.prisma.io/docs/concepts/overview/what-is-prisma/data-modeling).
+
+You can also learn about the specific data model component of a Prisma schema in the [data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) section of the Prisma documentation.
+
+</PrismaOutlinks>
