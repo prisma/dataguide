@@ -129,7 +129,7 @@ First, you have the opportunity to name your database instance by setting the *D
 
 Next, configure the credentials for your database instance.  Start by setting the *master username* for your PostgreSQL database.  By default, most PostgreSQL client tools assume that the master user is called `postgres`, so you can keep that username if appropriate.
 
-> **Note:** The master username is the main administrative account within the PostgreSQL database instance.  You should always create and configure additional application-specific usernames with limited privileges after provisioning your database instance.  Configure your database clients and applications to use those less privileged identities to for their daily operations.  Only use the master username for your initial configuration and to create more limited and narrowly scoped avenues of access.
+> **Note:** The master username is the main administrative account within the PostgreSQL database instance.  You should always create and configure additional application-specific usernames with limited privileges after provisioning your database instance.  Configure your database clients and applications to use those less privileged identities for their daily operations.  Only use the master username for your initial configuration and to create more limited and narrowly scoped avenues of access.
 
 You then have the option to set and confirm a password for the master username.  You can either choose a strong, preferably machine-generated, password for the account or you can check the *Auto generate a password* box to have AWS automatically generate a secure password for you.
 
