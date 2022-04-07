@@ -27,6 +27,12 @@ This statement is composed of a few different pieces:
 * `FROM <table_name>`: The `FROM` keyword is used to indicate the [table](/intro/database-glossary#table) or [view](/intro/database-glossary#view) that should be queried.  In most simple queries, this consists of a single table that contains the data you're interested in.
 * `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command.  You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
 
+<PrismaOutlinks>
+
+You can learn about how to query with Prisma Client in our guide on [CRUD operations](https://www.prisma.io/docs/concepts/components/prisma-client/crud).
+
+</PrismaOutlinks>
+
 ## Specifying columns to display with `SELECT`
 
 The column specification portion of the `SELECT` command requires you to name the columns you want to display for the data you are querying.
@@ -46,6 +52,12 @@ SELECT column2, column1 FROM my_table;
 ```
 
 This will display all of the records from `my_table`, but only show the columns named `column2` and `column1`, in that order.
+
+<PrismaOutlinks>
+
+If using Prisma Client, you can achieve the same results using [select fields](https://www.prisma.io/docs/concepts/components/prisma-client/select-fields).
+
+</PrismaOutlinks>
 
 ## Using column aliases with `AS` to modify the resulting table
 
@@ -264,3 +276,9 @@ You can filter duplicate rows from your query with Prisma Client by using the [d
 In this guide, we covered some of the basic ways you can use the `SELECT` command to identify and display records from your tables and views.  The `SELECT` command is one of the most flexible and powerful operations within SQL-oriented databases, with many different ways to add clauses, conditions, and filtering.
 
 While we only covered basic usage in this guide, the general format you learned here will serve as the foundation for all other read and many write queries.  Learning ways to filter and target the results more accurately extend the capabilities that we covered today.
+
+<PrismaOutlinks>
+
+You can learn more about sorting and filtering queries with Prisma Client in our [filtering and sorting documentation](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting).
+
+</PrismaOutlinks>
