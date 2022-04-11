@@ -121,6 +121,12 @@ const postsByUser = await prisma.user.findOne({ where: { email: 'alice@prisma.io
 
 Although Prisma is a newer database tool and has gone through several iterations and redesigns, its unique, schema-centric architecture stands in contrast to typical ORMs which use JavaScript Classes to define models. It benefits from the backing of a funded company and paid developers, as well as an active support community and quick development cycle. It is a popular, fast-growing choice, and is here to stay.
 
+<PrismaOutlinks>
+
+If you want to learn more about why we think Prisma is a great option, check out our [Why Prisma? page](https://www.prisma.io/docs/concepts/overview/why-prisma).
+
+</PrismaOutlinks>
+
 ## Sequelize
 
 ### Evaluation Summary
@@ -197,6 +203,12 @@ const user = await User.findOne({
 
 Sequelize is an established, stable ActiveRecord ORM and due to its popularity and heavy use over the years, you can expect to find support from places like StackOverflow, Reddit, and GitHub Issues. The project currently has significantly more activity than in recent years past, which is a good sign.
 
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and Sequelize, you can look at our [Sequelize comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-sequelize).
+
+</PrismaOutlinks>
+
 ## TypeORM
 
 ### Evaluation Summary
@@ -270,6 +282,12 @@ const user = await userRepository.findOne(id, {
 
 TypeORM and Sequelize are the two most popular relational database ORMs. TypeORM differs from Sequelize in that it offers a little more flexibility, allowing you to choose between different usage patterns and also includes a powerful query builder. TypeORM supports many popular databases, and the project is still active, although entirely dependent on its open source contributors.
 
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and TypeORM, you can look at our [TypeORM comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm).
+
+</PrismaOutlinks>
+
 ## Mongoose
 
 ### Evaluation Summary
@@ -336,6 +354,12 @@ const userWithPosts = await User.findOne({ email: 'alice@mongoose.com' }).popula
 ### Summary
 
 If you're using a MongoDB database with Node and want to use an ODM, Mongoose is a safe bet. It is a popular, mature project that continues to be actively maintained. It allows you to define a schema to model your data and provides features like validation, type casting, population, middleware, custom methods and query helpers.
+
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and Mongoose, you can look at our [Mongoose comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-mongoose).
+
+</PrismaOutlinks>
 
 ## Bookshelf.js
 

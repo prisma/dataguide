@@ -41,6 +41,12 @@ Prisma differs from most ORMs in that models are not defined in classes but in t
 
 Prisma is a newer ORM and has gone through several iterations and redesigns. Its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2).
 
+<PrismaOutlinks>
+
+If you want to learn more about why we think Prisma is a great option, check out our [Why Prisma? page](https://www.prisma.io/docs/concepts/overview/why-prisma).
+
+</PrismaOutlinks>
+
 ### Type Definitions: Built-in
 
 Prisma client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
@@ -103,6 +109,12 @@ Prisma's unique design of generating a local CRUD client that encodes your data 
 
 Sequelize is an established, mature, promise-based Node.js ORM that supports PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows a traditional ORM ActiveRecord pattern of defining models by extending a base `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`. It is very popular in the JavaScript community and has been around for a long time. However, the project has stagnated more recently and does not seem to be as active as it once was.
 
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and Sequelize, you can look at our [Sequelize comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-sequelize).
+
+</PrismaOutlinks>
+
 ### Type Definitions: Built-in
 
 As of v5 (at the time of writing, Sequelize is v6.16.1), Sequelize contains built-in type definitions. Prior to this, type definitions were available via [`@types`](https://github.com/DefinitelyTyped/DefinitelyTyped). Sequelize was originally designed as a JavaScript ORM, and TypeScript support was added in recent years.
@@ -138,6 +150,12 @@ As of v5, Sequelize provides built-in type definitions, but to have any sort of 
 ### What is TypeORM?
 
 TypeORM is a Hibernate-influenced JavaScript and TypeScript ORM that can run on multiple platforms like Node.js, web browsers, and Cordova. It was built with TypeScript and type safety in mind and supports both main ORM architecture patterns, Data Mapper and Active Record, offering the developer flexibility to choose between the two. It also includes a query builder and supports many popular databases.
+
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and TypeORM, you can look at our [TypeORM comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm).
+
+</PrismaOutlinks>
 
 ### Type Definitions: Built-in
 
@@ -453,6 +471,12 @@ Waterline's models are not type-safe and data manipulation and creation operatio
 Mongoose is a popular and well maintained Node.js data modeling tool for MongoDB. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks. If you're using a MongoDB database with Node.js and want to use an ORM-like tool to map objects to database documents (or ODM), Mongoose is a safe bet: it is a popular, mature project that continues to be actively maintained. 
 
 There are two main ways to use strong TypeScript typing with Mongoose. One way is to use types from the `@types` repository and write custom interfaces for your models. The other is to use [Typegoose](https://github.com/typegoose/typegoose) along with typings from `@types`. Typegoose allows you to define Mongoose models using classes. In this article we'll consider Typegoose.
+
+<PrismaOutlinks>
+
+For a more focused comparison of Prisma and Mongoose, you can look at our [Mongoose comparison page](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-mongoose).
+
+</PrismaOutlinks>
 
 ### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mongoose)
 
