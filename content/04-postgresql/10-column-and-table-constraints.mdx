@@ -195,6 +195,12 @@ DETAIL:  Failing row contains (A poor film, Misguided director, 2019-07-16, 128,
 
 In this case, the film has satisfied every condition except for the number of votes required.  PostgreSQL rejects the submission since it does not pass the final table check constraint.
 
+<PrismaOutlinks>
+
+If you are using Prisma, you can learn how to use check constraints with our [PostgreSQL data validation guide](https://www.prisma.io/docs/guides/database/advanced-database-tasks/data-validation/postgresql).
+
+</PrismaOutlinks>
+
 ### Not null constraints
 
 The `NOT NULL` constraint is much more focused.  It guarantees that values within a column are not null.  While this is a simple constraint, it is used very frequently.
@@ -353,6 +359,12 @@ ERROR:  duplicate key value violates unique constraint "national_capitals_countr
 DETAIL:  Key (country, capital)=(Bolivia, Sucre) already exists.
 ```
 
+<PrismaOutlinks>
+
+If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-a-unique-field) in your Prisma schema.
+
+</PrismaOutlinks>
+
 ### Primary key constraints
 
 The [`PRIMARY KEY`](/intro/database-glossary#primary-key) constraint serves a special purpose.  It indicates that the column can be used to uniquely identify a record within the table.  This means that it must be reliably unique and that every record must have a value in that column.
@@ -406,11 +418,23 @@ CREATE TABLE national_capitals (
 );
 ```
 
+<PrismaOutlinks>
+
+When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-an-id-field).
+
+</PrismaOutlinks>
+
 ### Foreign key constraints
 
 [**Foreign keys**](/intro/database-glossary#foreign-key) are columns within one table that reference column values within another table.  This is desirable and often necessary in a variety of scenarios where tables contain related data.  This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
 
 For example, you may have an `orders` table to track individual orders and a `customers` table to track contact info and information about your customers.  It makes sense to put this information separately since customers may have many orders.  However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
+
+<PrismaOutlinks>
+
+When using Prisma, you can define foreign keys by creating [relations](https://www.prisma.io/docs/concepts/components/prisma-schema/relations) between different models.
+
+</PrismaOutlinks>
 
 #### How to create foreign key constraints in PostgreSQL
 
