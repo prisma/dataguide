@@ -1,0 +1,109 @@
+---
+title: 'What is MongoDB?'
+metaTitle: "What is MongoDB? | Prisma's Data Guide"
+metaDescription: 'Learn about what MongoDB is and how it works.'
+metaImage: '/social/generic-mongodb.png'
+toc: false
+authors: ['alexemerich']
+---
+
+## What is MongoDB?
+
+MongoDB is an [open-source](https://github.com/mongodb/mongo) document-oriented [NoSQL](/intro/database-glossary#nosql) database system. Data is stored using JavaScript Object Notation(JSON)-like structures that can be specified at the time of data storage. 
+
+Each document can have its own structure with as much or as little complexity as needed. MongoDB provides non-SQL methods and commands to manage and query data programmatically or interactively. MongoDB is known for its fast performance, scalability, and for enabling a rapid development pace.
+
+<PrismaOutlinks>
+
+Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
+
+</PrismaOutlinks>
+
+## Origin story
+
+MongoDB was founded in 2007 by Dwight Merriman, Eliot Horowitz, and Kevin Ryan. They previously worked at an internet advertising company that was serving  400,000 ads per second. 
+
+The team was developing many custom data stores to accommodate this traffic. They regularly ran into struggles around scalability and agility, which led to the inspiration to create a database that solved for these issues. And voila, MongoDB. 
+
+## How it works
+To achieve better scalability and agility, MongoDB works with the JSON variant, Binary JSON, or [BSON](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes).  BSON accommodates more data types than JSON giving more flexibility to the types of data that can be stored in MongoDB.
+
+<PrismaOutlinks>
+
+If you are looking to get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+
+</PrismaOutlinks>
+
+### MongoDB data Structure
+Rather than tables made up of rows and columns, MongoDB has collections made up of documents. Documents are comprised of field and value pairs. In relation to relational databases, the pieces that make up a MongoDB database can loosely be thought of as follows:
+
+| Relational |   | Document |
+|----------- |---|--------- |
+|Table       | = |Collection|
+|Row | = | Document |
+|Column | =| Field|
+
+The basic structure looks as follows:
+
+```
+{
+   field1: value1,
+   field2: value2,
+   field3: value3,
+   ...
+   fieldN: valueN
+}
+```
+
+Documents look very similar to a JSON object. Documents can hold any of the available BSON data types as well as other documents, arrays, and arrays of documents. This JSON-style format directly maps to native objects in most modern programming languages, making it a natural choice for developers.
+
+ An example would look like:
+
+```
+var mydoc = {
+               _id: ObjectId("5099803df3f4948bd2f98391"),
+               name: { first: "James", last: "Joyce" },
+               birth: new Date('Feb 02, 1882'),
+               death: new Date('Jan 14, 1941'),
+               books: [ "Ulysses", "Dubliners","Finnegan's Wake" ],
+               sales : NumberLong(1250000)
+            }
+```
+
+- `_id` holds an [*ObjectId*].
+- `name` holds an *embedded document* that contains the fields `first` and `last`.
+- `birth` and `death` hold values of the [*Date*] type.
+- `books` holds an array of [*strings*].
+- `sales` holds a value of the [*NumberLong*] type.
+
+### MongoDB query language
+Since MongoDB databases are document oriented, the data is typically unstructured. This makes accessing data different then when querying a relational database with structured query language (SQL). MongoDB has its own query language simply called MongoDB Query Language (MQL). 
+
+Similar to SQL, MQL also allows a user to access data under certain specifications. You can control for returning documents that match criteria relevant to the need. We won’t go into the finer details of querying in MongoDB in this guide, but you can read more about it in our [querying in MongoDB guide](https://www.prisma.io/dataguide/mongodb/querying-documents).
+
+The basic syntax of a query in MongoDB will look something like this:
+
+```
+db.<collection_name>.find()
+```
+
+To produce a nicer format for query results, you can use `.pretty()`.
+
+```
+db.<collection_name>.find().pretty()
+```
+
+## Conclusion
+MongoDB has become the most popular NoSQL database on the market. Developers enjoy working with MongoDB because of its ability to keep them working flexibly and with agility. 
+
+MongoDB provides an alternative to the rigidity of relational databases and  is better suited for applications with evolving schemas. Checkout out some of our other MongoDB content for in depth guides on [getting started with MongoDB, indexes, transactions, and more](https://www.prisma.io/dataguide/mongodb).
+
+<PrismaOutlinks>
+
+Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
+
+</PrismaOutlinks>
