@@ -40,7 +40,7 @@
     "lodash": "^4.17.15",
     "polished": "^3.5.1",
     "prism-react-renderer": "^1.0.2",
-    "prismjs": "^1.15.0",
+    "prismjs": "^1.27.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-copy-to-clipboard": "^5.0.2",
