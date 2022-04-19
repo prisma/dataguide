@@ -28,7 +28,7 @@ MongoDB was founded in 2007 by Dwight Merriman, Eliot Horowitz, and Kevin Ryan. 
 The team was developing many custom data stores to accommodate this traffic. They regularly ran into struggles around scalability and agility, which led to the inspiration to create a database that solved for these issues. And voila, MongoDB. 
 
 ## How it works
-To achieve better scalability and agility, MongoDB works with the JSON variant, Binary JSON, or [BSON](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes).  BSON accommodates more data types than JSON giving more flexibility to the types of data that can be stored in MongoDB.
+To achieve better scalability and agility, MongoDB works with the JSON variant, Binary JSON, or [BSON](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes).  BSON accommodates more data types than JSON, giving more flexibility to the types of data that can be stored in MongoDB.
 
 <PrismaOutlinks>
 
@@ -36,8 +36,8 @@ If you are looking to get started working with MongoDB and Prisma, checkout our 
 
 </PrismaOutlinks>
 
-### MongoDB data Structure
-Rather than tables made up of rows and columns, MongoDB has collections made up of documents. Documents are comprised of field and value pairs. In relation to relational databases, the pieces that make up a MongoDB database can loosely be thought of as follows:
+### MongoDB data structure
+Rather than tables made up of [rows](/intro/database-glossary#row) and [columns](/intro/database-glossary#column), MongoDB has [collections](/intro/database-glossary#collection) made up of [documents](/intro/database-glossary#document). Documents are comprised of [field](/intro/database-glossary#field) and [value](/intro/database-glossary#value) pairs. In comparison to [relational databases](/intro/database-glossary#relational-database), the pieces that make up a MongoDB database can loosely be thought of as follows:
 
 | Relational |   | Document |
 |----------- |---|--------- |
@@ -77,6 +77,51 @@ var mydoc = {
 - `birth` and `death` hold values of the [*Date*] type.
 - `books` holds an array of [*strings*].
 - `sales` holds a value of the [*NumberLong*] type.
+
+Depending on the data model, rather than a single document housing all of the information on James Joyce and his work, a relational database could potentially have an `author` table and a `book` table that is joined with something like `author_id`. In this particular simple use case, the document model simplifies data access and keeps data that is accessed together, stored together. 
+
+### MongoDB document vs SQL table record 
+Expanding on the previous example, let's look at how a document in MongoDB looks compared to the same record in a relational database. In a relational database, a table storing records might look something like this:
+
+```
+| primary_key | first_name | last_name | age | email                | phone_number |
+| ----------- | ---------- | --------- | --- | -------------------- | ------------ |
+|           1 |        Tom |     Brown |  38 |      tom.b@email.com |     555-3802 |
+|           2 |      Sarah |     Green |  84 |               (NULL) |     555-8088 |
+|           3 |        Sam |     White |  22 |        sammi@123.org |     555-1234 |
+```
+Whereas, as we saw with our author document previously, a collection of similar documents in MongoDB might be modeled in JSON like this:
+
+```
+{
+    primary_key: 1,
+    first_name: "Tom",
+    last_name: "Brown",
+    age: 38,
+    email_address: "tom.b@email.com",
+    phone_number: "555-3802"
+},
+{
+    primary_key: 2,
+    first_name: "Sarah",
+    last_name: "Green",
+    age: 84,
+    phone_number: "555-8088"
+},
+{
+    primary_key: 3,
+    first_name: "Sam",
+    last_name: "White",
+    age: 22,
+    email_address: "sammi@123.org",
+    phone_number: "555-1234",
+    notes: [
+        "High value customer",
+        "Has a dog named Fido"
+    ]
+}
+```
+Both data structures have their advantages when it comes to storage and access. What it all comes down to is developer preference and use case. 
 
 ### MongoDB query language
 Since MongoDB databases are document oriented, the data is typically unstructured. This makes accessing data different then when querying a relational database with structured query language (SQL). MongoDB has its own query language simply called MongoDB Query Language (MQL). 
