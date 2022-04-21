@@ -61,6 +61,12 @@ It is essential to think carefully about this step to ensure that the changes yo
 
 Other times, however, it might be less clear.  For example, if you have a `name` column that you hope to split into `first_name` and `last_name`, it may be unclear where the division between those two components lies.  For example, while you could probably confidently guess how to split "John Smith", your data migration script may not do the right thing with "Juan Carlos Ferdinand Garcia".  Take extra time to think about the new fields relate to the original fields and whether your system requires new information to correctly migrate some records.
 
+<PrismaOutlinks>
+
+To perform migrations with [Prisma](https://github.com/prisma/prisma), you can use the [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). [Developing with Prisma Migrate](https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate) generates migration files based on the declarative [Prisma schema](https://www.prisma.io/docs/concepts/components/prisma-schema) and applies them to your database.
+
+</PrismaOutlinks>
+
 ### Step 4: Test the new interface
 
 ![test the new interface](/content/types/relational/expand-and-contract-pattern/step-4.png)

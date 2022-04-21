@@ -20,6 +20,12 @@ When changing the actual structure of the database, existing data frequently nee
 
 In other cases, like splitting or combining [columns](/intro/database-glossary#column), you must define custom data transformations to specify how the existing data should be altered to populate the new context.  For structures that handle very large amounts of data, this migration process may take a significant amount of time.
 
+<PrismaOutlinks>
+
+To perform migrations with [Prisma](https://github.com/prisma/prisma), you can use the [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). [Developing with Prisma Migrate](https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate) generates migration files based on the declarative [Prisma schema](https://www.prisma.io/docs/concepts/components/prisma-schema) and applies them to your database.
+
+</PrismaOutlinks>
+
 ### Making changes reversible
 
 Depending on your deployment strategy, making changes reversible can be difficult as well.  Once data structures are updated and being populated by live code, reverting to a previous version can potentially lead to data loss.
