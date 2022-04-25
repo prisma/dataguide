@@ -12,9 +12,9 @@ The storage and organization of data are critical to the success of applications
 As application design has continued developing, new databases have become increasingly popular for their different strengths. In this guide, we will cover one of the popular [NoSQL](/intro/database-glossary#nosql) database types, document-oriented databases. We will discuss what they are and where they came from, how [documents](/intro/database-glossary#document) work, their features, and their advantages and disadvantages. 
 
 ## What are document databases?
-[Document databases](/intro/database-glossary#document-database) are a NoSQL database that stores data as JSON documents instead of columns and rows like in a SQL relational database. They are a subclass of the key-value store NoSQL database concept. Document databases deliver a better developer experience because of their closeness to modern programming techniques. It is easy to read JSON, and it is translatable to the languages developers are most often writing today.
+[Document databases](/intro/database-glossary#document-database) are a category of NoSQL database that stores data as JSON and other data serialization format documents instead of columns and rows like in a SQL relational database. They are a subclass of the key-value store NoSQL database concept. Document databases deliver a better developer experience because of their closeness to modern programming techniques. It is easy to read JSON, and it is translatable to the languages developers are most often writing today.
 
-Document databases offer a distinctly different structure and experience than traditional relational databases. Relational databases store data in programmer-defined separate tables that may see a single object spread across several tables. This separation requires [join statements](/intro/database-glossary#join) to get to a desired return from the database. The document model stores all of an object’s information in a single instance in the database, and every object in the database can be starkly different than the next. This capability, in theory, removes the need for an [object-relational mapper (ORM)](/intro/database-glossary#orm) depending on the use case.
+Document databases offer starkly different structure and experience from traditional relational databases. Relational databases store data in separate programmer-defined tables that may see a single object spread across several tables. This separation requires [join statements](/intro/database-glossary#join) to get to a desired return from the database. The document model stores all of an object’s information in a single instance in the database, and every object in the database can be starkly different than the next. This capability, in theory, removes the need for an [object-relational mapper (ORM)](/intro/database-glossary#orm) depending on the use case.
 
 <PrismaOutlinks>
 
@@ -51,7 +51,7 @@ Expanding on the basic syntax, a single document within a collection of authors 
 	}
 ```    
 
-What is critical to notice is the ability to store multiple books within the `Books` field. In a relational database, this would not be possible. There would need to be an `Author` table and a `Book` table joined by a [key](/intro/database-glossary#foreign-key). This foreign key would most likely be something like `author.id` where every record in the `Book` table. We can visualize the difference in the following tables:
+What is critical to notice is the ability to store multiple books within the `Books` field. In a relational database, this would not be possible. There would need to be an `Author` table and a `Book` table joined by a [key](/intro/database-glossary#foreign-key). This foreign key in the `Book` table would most likely be something like `author.id` where every record is assigned to an author. We can visualize the difference in the following tables:
 
 | author.id | name  |
 |----------- |---|
@@ -68,12 +68,11 @@ With an idea of the structure and capabilities of documents, we can take a step 
 There are clear strengths and weaknesses with a document database, and it depends from application to application whether the document model is the right fit. The document model's flexibility, ease of scale, and quick-start agility are advantages of the document model with considerable trade-offs.
 
 ### Flexibility
-Document databases offer flexibility unmatched by relational databases. 
-Document databases define the structure of each document separately. The form is a characteristic that the document itself defines rather than an external structure the record must conform to. This is contrary to the rigidity of a relational database. 
+Document databases offer flexibility unmatched by relational databases. Document databases define the structure of each document separately. The form is a characteristic that the document itself defines rather than an external structure the record must conform to. This is contrary to the rigidity of a relational database. 
 
 The document model does not make structural changes as expensive as relational databases. A change does not require altering all existing records to match the new structure. You can change the data you want to record for individual records on the fly, hold off on, or skip other documents that do not have the same structure without any requirement.
 
-Your database structure can evolve quickly alongside your application logic as you develop. This makes changes less burdensome as there is less required synchronization and [migration](/intro/database-glossary#migration) process associated with each structural change. The database system will allow any new document structure you want to apply to exist alongside all previous structures. 
+Your database structure can evolve quickly alongside your application logic as you develop. This makes changes less burdensome as there is less of a required synchronization and [migration](/intro/database-glossary#migration) process associated with each structural change. The database system will allow any new document structure you want to apply to exist alongside all previous structures. 
 
 The flexibility provided by the document model encourages the iteration and evolution of your storage logic. However, it is essential to keep in mind that the software itself is unlikely to be able to provide you with as many guarantees about your data as you make changes. Suppose there is no agreed-upon standard for the data collections' shape. In that case, it is up to you as a developer to enforce consistency and modify documents where appropriate to keep your data in a well-understood state.
 
@@ -96,7 +95,7 @@ However, with this lack of schema comes the trade-off. The consistency of your d
 ## Conclusion
 This article covered document databases and why they are one of the most popular NoSQL offerings. We covered the structure and capabilities of documents and the document model advantages, and their associated trade-offs.
 
-Document databases offer a different approach than relational databases to organizing and accessing data. This evolution from only the traditional models is exciting for the decision it now gives to developers. Based on your application, you can decide which features and advantages best align with your philosophies and goals. 
+Document databases offer a different approach than relational databases to organizing and accessing data. This evolution from only the traditional models is exciting for the choice it now gives to developers. Based on your application, you can decide which features and advantages best align with your philosophies and goals. 
 
 <PrismaOutlinks>
 
