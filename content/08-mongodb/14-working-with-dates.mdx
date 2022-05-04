@@ -1,0 +1,437 @@
+---
+title: 'Working with dates and times in MongoDB'
+metaTitle: "Using dates and times in MongoDB"
+metaDescription: "Learn how to store and manage date information in MongoDB."
+metaImage: '/social/generic-mongodb.png'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Date and time data is commonly managed by database systems and is incredibly important, but can often be trickier to handle correctly than it initially appears.  Databases must be able to store date and time data in clear, unambiguous formats, transform that data into user-friendly formats to interact with client applications, and perform time-based operations taking into account complexities like different timezones and changes in daylight savings time.
+
+In this guide, we'll discuss some of the tools that MongoDB provides to work effectively with date and time data.  We'll explore relevant data types, take a look at the operators and methods, and go over how to best use these tools to keep your date and time data in good order.
+
+<PrismaOutlinks>
+
+If you are using [MongoDB with Prisma](https://www.prisma.io/mongodb), you can use the [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) to connect to and manage your database.  Prisma's `date` type [maps directly](https://www.prisma.io/docs/concepts/database-connectors/mongodb#mapping-from-prisma-to-mongodb-types-on-migration) to MongoDB's `Date` type.
+
+</PrismaOutlinks>
+
+## The MongoDB `Date` and `Timestamp` types
+
+The [`DATE` type in MongoDB](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#date) can store date and time values as a combined unit.
+
+Here, the left column represents the [BSON (binary JSON)](https://bsonspec.org/spec.html) name for the data type and the second column represents the ID number associated with that type.  The final "Alias" column represents the string that MongoDB uses to represent the type:
+
+```
+|       Type         | Number |     Alias    |
+| ------------------ | ------ | ------------ |
+|       Date         |    9   |     "date"   |
+```
+
+The BSON Date type is a *signed* 64-bit integer representing the number of milliseconds since the [Unix epoch (Jan 1, 1970)](https://en.wikipedia.org/wiki/Unix_time).  Positive numbers represent the time elapsed since the epoch while negative numbers represent time moving backwards from the epoch.
+
+Storing the date and time data as a large integer is beneficial because it:
+
+* allows MongoDB to store dates with millisecond precision
+* provides flexibility in how the date and time can be displayed
+
+Because the date type does not store additional information like timezones, that context must be stored separately if it is relevant.  MongoDB will store date and time information using [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) internally, but can easily convert to other timezones at time of retrieval as needed.
+
+MongoDB also provides a [`Timestamp` type](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#timestamp) that is mainly used internally:
+
+```
+|       Type         | Number |     Alias    |
+| ------------------ | ------ | ------------ |
+|     Timestamp      |   17   |  "timestamp" |
+```
+
+Because this is mainly implemented to help coordinate internal processes like replication and sharding, you should probably not use this in your own applications logic.  The date type can usually satisfy any requirements for times that you might have.
+
+<PrismaOutlinks>
+
+When managing a MongoDB database with Prisma, the MongoDB `Date` type [maps directly](https://www.prisma.io/docs/concepts/database-connectors/mongodb#mapping-from-prisma-to-mongodb-types-on-migration) to the `date` type within Prisma.
+
+</PrismaOutlinks>
+
+## How to create new dates
+
+You can create a new `Date` object in two different ways:
+
+* `new Date()`: Returns a date and time as a `Date` object.
+* `ISODate()`: Returns a date and time as a `Date` object.
+
+Both the `new Date()` and `ISODate()` methods produce a `Date` object that is wrapped in an `ISODate()` helper function.
+
+Additionally, calling `Date()` function without the `new` constructor returns a date and time as as string instead of a `Date` object:
+
+* `Date()`: Returns a date and time as a string.
+
+It is important to keep in mind this distinction between these two types as it affects what operations are available, the way the information is stored, and how much flexibility it will give you.  In general, it's almost always best to store date information using the `Date` type and then format it for output as needed.
+
+Let's take a look at how this works in a MongoDB shell session.
+
+First, we can switch to a new temporary database and create three documents that each have a `date` field.  We use a different method for populating the `date` field for each object:
+
+```javascript
+use temp_db
+
+db.dates.insertMany([
+    {
+        name: "Created with `Date()`",
+        date: Date(),
+    },
+    {
+        name: "Created with `new Date()`",
+        date: new Date(),
+    },
+    {
+        name: "Created with `ISODate()`",
+        date: ISODate(),
+    },
+])
+```
+```javascript
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("62726af5a3dc7398b97e6e93"),
+		ObjectId("62726af5a3dc7398b97e6e94"),
+		ObjectId("62726af5a3dc7398b97e6e95")
+	]
+}
+```
+
+By default, each of these mechanisms will store the current date and time.  You can store a different date and time by adding an [ISO 8601 formatted date string](https://en.wikipedia.org/wiki/ISO_8601) as an argument:
+
+```javascript
+db.dates.insertMany([
+    {
+        name: "Future date",
+        date: ISODate("2040-10-28T23:58:18Z"),
+    },
+    {
+        name: "Past date",
+        date: new Date("1852-01-15T11:25"),
+    },
+])
+```
+
+These will create a `Date` object at the appropriate date and time.
+
+One thing to note is the inclusion of the trailing `Z` in the first new document above.  This indicates that the date and time is being provided as UTC.  Specifying the date in without the `Z` will make MongoDB interpret the input in relation to the current local time (though it will always convert and store it as a UTC date internally).
+
+## Validating the type of date objects
+
+Next, we can display the resulting documents to see how MongoDB stored the date data:
+
+```javascript
+db.dates.find().pretty()
+```
+```javascript
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e93"),
+	"name" : "Created with `Date()`",
+	"date" : "Wed May 04 2022 12:00:53 GMT+0000 (UTC)"
+}
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e94"),
+	"name" : "Created with `new Date()`",
+	"date" : ISODate("2022-05-04T12:00:53.307Z")
+}
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e95"),
+	"name" : "Created with `ISODate()`",
+	"date" : ISODate("2022-05-04T12:00:53.307Z")
+}
+{
+	"_id" : ObjectId("62728b57a3dc7398b97e6e96"),
+	"name" : "Future date",
+	"date" : ISODate("2040-10-28T23:58:18Z")
+}
+{
+	"_id" : ObjectId("62728c5ca3dc7398b97e6e97"),
+	"name" : "Past date",
+	"date" : ISODate("1852-01-15T11:25:00Z")
+}
+```
+
+As expected, the `date` fields that were populated with `ISODate()` and `new Date()` contain `Date` objects (wrapped in the `ISODate` helper).  In contrast, the field populated by the bare `Date()` function call is stored as a string.
+
+You can verify that which of the `date` fields contain an actual `Date` object by calling a `map` function over the collection.  The map checks each `date` field to see if the object it stores is an instance of the `Date` type and displays the result in a new field called `is_a_Date_object`.  Additionally, we will use the `valueOf()` method to show how each `date` field is actually stored by MongoDB:
+
+```javascript
+db.dates.find().map(
+    function(date_doc) {
+        date_doc["is_a_Date_object"] = date_doc.date instanceof Date;
+        date_doc["date_storage_value"] = date_doc.date.valueOf();
+        return date_doc;
+    }
+)
+```
+```javascript
+[
+	{
+		"_id" : ObjectId("62726af5a3dc7398b97e6e93"),
+		"name" : "Created with `Date()`",
+		"date" : "Wed May 04 2022 12:00:53 GMT+0000 (UTC)",
+		"is_a_Date_object" : false,
+		"date_storage_value" : "Wed May 04 2022 12:00:53 GMT+0000 (UTC)"
+	},
+	{
+		"_id" : ObjectId("62726af5a3dc7398b97e6e94"),
+		"name" : "Created with `new Date()`",
+		"date" : ISODate("2022-05-04T12:00:53.307Z"),
+		"is_a_Date_object" : true,
+		"date_storage_value" : 1651665653307
+	},
+	{
+		"_id" : ObjectId("62726af5a3dc7398b97e6e95"),
+		"name" : "Created with `ISODate()`",
+		"date" : ISODate("2022-05-04T12:00:53.307Z"),
+		"is_a_Date_object" : true,
+		"date_storage_value" : 1651665653307
+	},
+	{
+		"_id" : ObjectId("62728b57a3dc7398b97e6e96"),
+		"name" : "Future date",
+		"date" : ISODate("2040-10-28T23:58:18Z"),
+		"is_a_Date_object" : true,
+		"date_storage_value" : 2235081498000
+	},
+	{
+		"_id" : ObjectId("62728c5ca3dc7398b97e6e97"),
+		"name" : "Past date",
+		"date" : ISODate("1852-01-15T11:25:00Z"),
+		"is_a_Date_object" : true,
+		"date_storage_value" : -3722502900000
+	}
+]
+```
+
+This confirms that the fields displayed as `ISODATE(...)` are instances of the `Date` type while the `date` created with the bare `Date()` function is not.
+
+Additionally, the above output shows that objects stored with the `Date` type are recorded as signed integers.  As expected date object associated with the date from 1852 is negative because it is counting backwards from January 1970.
+
+## Querying for date objects
+
+If you have a collection with mixed representations of dates like this, you can query for fields that have a matching type using the `$type` operator.
+
+For instance, to query for all of the documents where `date` is a `Date` object, you could type:
+
+```javascript
+db.dates.find({
+    date: { $type: "date" },
+}).pretty()
+```
+```javascript
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e94"),
+	"name" : "Created with `new Date()`",
+	"date" : ISODate("2022-05-04T12:00:53.307Z")
+}
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e95"),
+	"name" : "Created with `ISODate()`",
+	"date" : ISODate("2022-05-04T12:00:53.307Z")
+}
+{
+	"_id" : ObjectId("62728b57a3dc7398b97e6e96"),
+	"name" : "Future date",
+	"date" : ISODate("2040-10-28T23:58:18Z")
+}
+{
+	"_id" : ObjectId("62728c5ca3dc7398b97e6e97"),
+	"name" : "Past date",
+	"date" : ISODate("1852-01-15T11:25:00Z")
+}
+```
+
+To find instances where the `date` field is stored as a string instead, type:
+
+```javascript
+db.dates.find({
+    date: { $type: "string" },
+}).pretty()
+```
+```javascript
+{
+	"_id" : ObjectId("62726af5a3dc7398b97e6e93"),
+	"name" : "Created with `Date()`",
+	"date" : "Wed May 04 2022 12:00:53 GMT+0000 (UTC)"
+}
+```
+
+The `Date` type allows you to perform queries that understand the relationship between time units.
+
+For instance, you can compare `Date` objects ordinally as you would with other types.  To check for future dates, you could type:
+
+```javascript
+db.dates.find({
+    date: {
+        $gt: new Date()
+    }
+}).pretty()
+```
+```javascript
+{
+	"_id" : ObjectId("62728b57a3dc7398b97e6e96"),
+	"name" : "Future date",
+	"date" : ISODate("2040-10-28T23:58:18Z")
+}
+```
+
+## How to use `Date` type methods 
+
+You can operate on `Date` objects with a variety of included methods and operators.  For instance, you can extract different date and time components from a date and print in many different formats.
+
+A demonstration is probably the quickest way to showcase this functionality.
+
+First, let's select the date from a document with a date object:
+
+```javascript
+date_obj = db.dates.findOne({"name": "Future date"}).date
+```
+
+Now, we can select the `date` field and extract different components from it by calling various methods on the object:
+
+```javascript
+date_obj.getUTCFullYear()
+date_obj.getUTCMonth()
+date_obj.getUTCDate()
+date_obj.getUTCHours()
+date_obj.getUTCMinutes()
+date_obj.getUTCSeconds()
+```
+```javascript
+2040    // year
+9       // month
+28      // date
+23      // hour
+58      // minutes
+18      // seconds
+```
+
+There are also companion methods that can be used to set the time by providing different time and date components.  For example, you can change the year by calling the `.setUTCFullYear()` method:
+
+```javascript
+date_obj.toString()
+date_obj.setUTCFullYear(2028)
+date_obj.toString()
+date_obj.setUTCFullYear(2040)
+```
+```javascript
+Sun Oct 28 2040 23:58:18 GMT+0000 (UTC)
+1856390298000  // integer stored for the new date value
+Sat Oct 28 2028 23:58:18 GMT+0000 (UTC)
+2235081498000  // integer stored for the restored date value
+```
+
+We can also cast the date into different formats for display:
+
+```javascript
+date_obj.toDateString()
+date_obj.toUTCString()
+date_obj.toISOString()
+date_obj.toLocaleDateString()
+date_obj.toLocaleTimeString()
+date_obj.toString()
+date_obj.toTimeString()
+```
+```javascript
+Sun Oct 28 2040                          // .toDateString()
+Sun, 28 Oct 2040 23:58:18 GMT            // .toUTCString()
+2040-10-28T23:58:18.000Z                 // .toISOString()
+10/28/2040                               // .toLocaleDateString()
+23:58:18                                 // .toLocaleTimeString()
+Sun Oct 28 2040 23:58:18 GMT+0000 (UTC)  // .toString()
+23:58:18 GMT+0000 (UTC)                  // .toTimeString()
+```
+
+These are all mainly methods associated with JavaScript's `Date` type.
+
+## How to use MongoDB `Date` aggregation functions
+
+MongoDB offers some other functions that can manipulate dates as well.  One useful example of this is the [`$dateToString()` aggregation function](https://www.mongodb.com/docs/manual/reference/operator/aggregation/dateToString/).  You can pass call `$dateToString()` with a `Date` object, a format string specifier, and a timezone indicator.  MongoDB will use the format string as a template to figure out how to output the given `Date` object with the timezone being used to offset the output from UTC correctly.
+
+Here, we will format the dates in our `dates` collection using an arbitrary string.  We'll also cast the dates to the New York timezone.
+
+First, we need to remove any stray documents that might have saved the `date` field as a string:
+
+```javascript
+db.dates.deleteMany({"date": {$type: "string"}})
+```
+
+Now we can run an aggregation with the `$dateToString` function:
+
+```javascript
+db.dates.aggregate(
+    [
+        {
+            $project: {
+                "_id": 0,
+                "date": "$date",
+                "my_date": {
+                    $dateToString: {
+                        date: "$date",
+                        format: "Day %d of Month %m (Day %j of year %Y) at %H hours, %M minutes, and %S seconds (timezone offset: %z)",
+                        timezone: "America/New_York",
+                    }
+                }
+            }
+        }
+    ]
+).pretty()
+```
+```javascript
+{
+	"date" : ISODate("2022-05-04T12:00:53.307Z"),
+	"my_date" : "Day 04 of Month 05 (Day 124 of year 2022) at 08 hours, 00 minutes, and 53 seconds (timezone offset: -0400)"
+}
+{
+	"date" : ISODate("2022-05-04T12:00:53.307Z"),
+	"my_date" : "Day 04 of Month 05 (Day 124 of year 2022) at 08 hours, 00 minutes, and 53 seconds (timezone offset: -0400)"
+}
+{
+	"date" : ISODate("2040-10-28T23:58:18Z"),
+	"my_date" : "Day 28 of Month 10 (Day 302 of year 2040) at 19 hours, 58 minutes, and 18 seconds (timezone offset: -0400)"
+}
+{
+	"date" : ISODate("1852-01-15T11:25:00Z"),
+	"my_date" : "Day 15 of Month 01 (Day 015 of year 1852) at 06 hours, 28 minutes, and 58 seconds (timezone offset: -0456)"
+}
+```
+
+The `$dateToParts()` function is similarly useful.  It can be used to decompose a `Date` field into its constituent parts.
+
+For example, we can type:
+
+```javascript
+db.dates.aggregate(
+    [
+        {
+            $project: {
+                _id: 0,
+                date: {
+                    $dateToParts: { date: "$date" }
+                }
+            }
+        }
+    ]
+)
+```
+```javascript
+{ "date" : { "year" : 2022, "month" : 5, "day" : 4, "hour" : 12, "minute" : 0, "second" : 53, "millisecond" : 307 } }
+{ "date" : { "year" : 2022, "month" : 5, "day" : 4, "hour" : 12, "minute" : 0, "second" : 53, "millisecond" : 307 } }
+{ "date" : { "year" : 2040, "month" : 10, "day" : 28, "hour" : 23, "minute" : 58, "second" : 18, "millisecond" : 0 } }
+{ "date" : { "year" : 1852, "month" : 1, "day" : 15, "hour" : 11, "minute" : 25, "second" : 0, "millisecond" : 0 } }
+```
+
+The [MongoDB documentation on aggregation functions](https://www.mongodb.com/docs/manual/reference/operator/aggregation/#date-expression-operators) has information on additional functions you can use to manipulate `Date` objects for display or comparison.
+
+## Conclusion
+
+In this guide, we covered some of the different ways that you can work with date and time data within MongoDB.  Most temporal data should probably be stored in MongoDB's `Date` data type as this provides a good deal of flexibility when operating on the data or displaying it.
+
+Getting familiar with how date and time data is stored internally, how to coerce it into desirable formats on output, and how to compare, modify, and decompose the data into useful chunks can help you solve many different problems.  While date information can be challenging to work with, taking advantage of the available methods and operators can help mitigate some of the heavy lifting.
