@@ -47,7 +47,7 @@ MongoDB also provides a [`Timestamp` type](https://www.prisma.io/dataguide/mongo
 |     Timestamp      |   17   |  "timestamp" |
 ```
 
-Because this is mainly implemented to help coordinate internal processes like replication and sharding, you should probably not use this in your own applications logic.  The date type can usually satisfy any requirements for times that you might have.
+Because this is mainly implemented to help coordinate internal processes like replication and sharding, you should probably not use this in your own application's logic.  The date type can usually satisfy any requirements for times that you might have.
 
 <PrismaOutlinks>
 
@@ -120,7 +120,7 @@ db.dates.insertMany([
 
 These will create a `Date` object at the appropriate date and time.
 
-One thing to note is the inclusion of the trailing `Z` in the first new document above.  This indicates that the date and time is being provided as UTC.  Specifying the date in without the `Z` will make MongoDB interpret the input in relation to the current local time (though it will always convert and store it as a UTC date internally).
+One thing to note is the inclusion of the trailing `Z` in the first new document above.  This indicates that the date and time is being provided as UTC.  Specifying the date without the `Z` will cause MongoDB interpret the input in relation to the current local time (though it will always convert and store it as a UTC date internally).
 
 ## Validating the type of date objects
 
@@ -212,7 +212,7 @@ db.dates.find().map(
 
 This confirms that the fields displayed as `ISODATE(...)` are instances of the `Date` type while the `date` created with the bare `Date()` function is not.
 
-Additionally, the above output shows that objects stored with the `Date` type are recorded as signed integers.  As expected date object associated with the date from 1852 is negative because it is counting backwards from January 1970.
+Additionally, the above output shows that objects stored with the `Date` type are recorded as signed integers.  As expected, the date object associated with the date from 1852 is negative because it is counting backwards from January 1970.
 
 ## Querying for date objects
 
