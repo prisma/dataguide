@@ -45,6 +45,8 @@ With the inclusion of a public key, we see that MongoDB utilizes asymmetric encr
 
 By encrypting with a public key, the sender’s message can only be decrypted by the intended recipient with their private key. Public key cryptography is advantageous in transit because there is no need to ever share private keys and the use of signatures ensures a recipient can verify that a message comes from a trusted sender. 
 
+![Asymmetric Encryption](/content/mongodb/mongodb-encryption-assets-asymmetric-encryption.png)
+
 The downside to asymmetric encryption is that is does take longer than symmetric encryption and requires more resource consumption to achieve. If your data is not actively moving from device to device or network-to-network, then these tradeoffs are not necessary to undertake and symmetric encryption provides ample security.
 
 A potential risk of asymmetric encryption is that if your private key falls into the wrong hands, then all of your messages can be read. MongoDB provides additional security through [Forward Secrecy cipher suites](https://www.mongodb.com/docs/manual/core/security-transport-encryption/#forward-secrecy). These create an [ephemeral](/intro/database-glossary#ephemerality) session key that is protected by the server’s private key. This session key is never transmitted, and it ensures that even if a server’s private key is compromised, past sessions cannot be decrypted by the compromised private key. MongoDB supports both [Ephemeral Diffie-Hellman (DHE)](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) and [Ephemeral Elliptic Curve Diffie-Hellman (ECDHE)](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman) algorithms.
@@ -53,6 +55,8 @@ MongoDB Atlas uses [Let’s Encrypt](https://letsencrypt.org/) known certificate
 
 ### Encryption at rest
 Encryption at rest secures data that is not in a state of transit but idle. You can best visualize encrypted data at rest like secured money in a vault in a bank branch. It is no longer in transit to another branch but stationary in a single place. This static state avoids the transmission insecurity that asymmetric encryption solves, so symmetric encryption is a strong method. 
+
+![Symmetric Encryption](/content/mongodb/mongodb-encryption-assets-symmetric-encryption.png)
 
 Encrypted data on disk remains encrypted unless an attacker has access to the encryption key(s). Encryption at rest protects sensitive data in the case of lost or stolen physical drives or an exposed database file.
 
