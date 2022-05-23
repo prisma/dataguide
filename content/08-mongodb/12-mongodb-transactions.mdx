@@ -252,3 +252,43 @@ Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connec
 Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary> Can you use MongoDB transactions in Node.js? </summary>
+
+Yes, MongoDB transactions can be used in Node.js. 
+
+MongoDB provides a helpful getting started guide for [“How to Use MongoDB Transaction in Node.js”](https://www.mongodb.com/blog/post/quick-start-nodejs--mongodb--how-to-implement-transactions).
+
+</details>
+
+<details><summary> What are MongoDB ACID transactions? </summary>
+
+ACID is an acronym for atomicity, consistency, isolation, and durability. All of these properties have to do with keeping the database in a valid state. 
+
+Because a transaction is a group of database operation being conducted together, ensuring database validity in the event of unexpected errors is critical. ACID compliant transactions secure against invalid database states.
+
+</details>
+
+<details><summary> How do you rollback transactions in MongoDB? </summary>
+
+[Read and write concern settings](https://www.mongodb.com/docs/manual/core/transactions/#transactions-and-write-concern) dictate whether you will be able to rollback a transaction in MongoDB. 
+
+For example, when you commit a transaction with a write concern of `w:1` , your transaction can be rolled back in the [case of a failover](https://www.mongodb.com/docs/manual/core/replica-set-rollbacks/).
+
+</details>
+
+<details><summary> What are some MongoDB transaction performance best practices? </summary>
+
+There are several transactions best practices to consider when using MongoDB. You will want make sure that you are optimizing to keep transaction runtime within 60 seconds of starting because MongoDB will automatically abort anything longer.
+
+The number of operations in a transaction should be no more than 1,000 documents modified within a transaction. Additionally, since several operations are happening within a transaction, it’s important to choose the appropriate read and write concerns. MongoDB provides a thorough [best practices guide](https://www.mongodb.com/blog/post/performance-best-practices-transactions-and-read--write-concerns) that covers this and much more.
+
+</details>
+
+<details><summary> Does MongoDB support multi-document transactions? </summary>
+
+Yes, MongoDB supports [multi document ACID transactions](https://www.mongodb.com/blog/post/mongodb-multi-document-acid-transactions-general-availability) in MongoDB 4.0 versions and later.
+
+</details>

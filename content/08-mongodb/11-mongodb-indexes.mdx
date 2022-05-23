@@ -271,3 +271,69 @@ Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connec
 Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is a 2d index in MongoDB?</summary>
+
+Use a [`2d` index](https://www.mongodb.com/docs/manual/core/2d/#2d-indexes) for data stored as points on a two-dimensional plane. It is intended for legacy coordinate pairs on older MongoDB versions.
+
+A `2d` index can reference two fields. The first must be the location field. A `2d` compound index constructs queries that select first on the location field, and then filters those results by the additional criteria.
+
+</details>
+
+<details><summary> How do you create an index on a large collection in MongoDB? </summary>
+
+Whether a small or large collection, you will still use the `createIndex()` method. 
+
+If you are running into issues building an index on a larger collection, then you may want to consider horizontal scaling so that it is more manageable. 
+
+MongoDB also recommends a [rolling index build](https://www.mongodb.com/docs/manual/tutorial/build-indexes-on-replica-sets/#rolling-index-builds-on-replica-sets) approach.
+
+</details>
+
+<details><summary> How do you index embedded object fields in MongoDB? </summary>
+
+In order to index and embedded object field in MongoDB, you can use dot notation.
+
+For example, if you have an app for tracking books read, then there might be a collection for each user structured like the following:
+
+	db.users.insertOne({
+		"first_name": "Alex",
+		"last_name": "Emerich",
+		"books": {
+			"first_book": {
+				"title": "Flights",
+				"author": "Olga Tokarczuk"
+			},
+			"second book": {
+				"title": "The Master and Margarita",
+				"author": "Mikhail Bulgakov"
+			},
+			"total": 2
+		}
+	})
+
+In order to create an index on the embedded `total` field, write the following statement:
+
+	db.users.createIndex( {"books.total": 1 } )
+
+</details>
+
+<details><summary> What is a compound index in MongoDB? </summary>
+
+A compound index is a single index structure that holds reference to multiple fields within a collection’s documents. 
+
+The basic syntax to create a compound index is as follows:
+
+	db.collection.createIndex( { <field1>: <type>, <field2>: <type2>, ... } )
+
+</details>
+
+<details><summary> What is a non unique index in MongoDB? </summary>
+
+A unique index ensures that no two rows of a table have duplicate values in the indexed column or columns. In the case of MongoDB, it is a duplicate value in a document’s field or fields.
+
+A non-unique index does not impose this restriction.
+
+</details>

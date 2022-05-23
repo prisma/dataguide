@@ -821,3 +821,50 @@ Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connec
 Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>Can you create Read Only users in MongoDB?</summary>
+
+There are two built-in roles for Read Only users in MongoDB. A user can either be assigned to the `read` role or `readAnyDatabase` role.
+
+`read` provides the ability to read data on all non-system collections.
+
+`readAnyDatabase` provides the same capabilities as `read` except it also provides the ability to use the `listDatabases` action on a cluster as a whole.
+
+</details>
+
+<details><summary>What is a cluster monitor role in MongoDB?</summary>
+
+The [`clusterMonitor`](https://www.mongodb.com/docs/manual/reference/built-in-roles/#mongodb-authrole-clusterMonitor) role provides read-only access to monitoring tools, such as the MongoDB Cloud Manager and Ops Manager monitoring agent.
+
+</details>
+
+<details><summary>What is a backup role in MongoDB?</summary>
+
+The `backup` role provides minimal privileges needed for backing up data. This role provides sufficient privileges to use the MongoDB Cloud and Ops Manager backup agents.
+
+It also has permissions to run `insert` and `update` actions on backup collections in the `admin` , `settings`, and `config` databases.
+
+</details>
+
+<details><summary>What is root in MongoDB?</summary>
+
+The `root` role in MongoDB provides access to all of the operations and resources of the following roles combined:
+
+- `readWriteAnyDatabase`
+- `dbAdminAnyDatabase`
+- `userAdminAnyDatabase`
+- `clusterAdmin`
+- `restore`
+- `backup`
+
+</details>
+
+<details><summary>What is Role-Based Access Control (RBAC) in MongoDB?</summary>
+
+MongoDB employs [RBAC](https://www.mongodb.com/docs/manual/core/authorization/#role-based-access-control) to govern access to a MongoDB system. A user is granted one or more roles that determine the user’s access to database resources and operations.
+
+Outside of role assignments, the user has no access to the system.
+
+</details>
