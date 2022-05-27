@@ -556,3 +556,57 @@ Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connec
 Join us in celebrating this milestone on April 25-29 with our [virtual MongoDB Launch week](https://www.prisma.io/mongodblaunch).  There will be exclusive workshops, opportunities for Atlas credits, great swag, and much more!
 
 </PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is the query for finding dates greater than ‘x’ in MongoDB?</summary>
+
+You can use the `$gt` operator within a find statement to find documents with a date field greater than a specific date.
+
+The basic syntax looks like the following:
+
+	db.collection.find( { <Field Name>: { $gt:ISODate('Date here') } } )
+
+</details>
+
+<details><summary>What is the MongoDB query profiler?</summary>
+
+[The MongoDB Database query profiler](https://www.mongodb.com/docs/manual/tutorial/manage-the-database-profiler/) is a tool that collects detailed information about database commands executed against a running `mongod` instance. 
+
+This includes CRUD operations as well as configuration and administrative commands. This can be particularly useful when trying to sort for slow operations.
+
+</details>
+
+<details><summary>What is the MongoDB query for string length?</summary>
+ 
+To query for how long the length of a string is, you can use the `$strLenCP` operator. This operator returns the number of UTF-8 code points for a specified string.
+
+The basic syntax looks as follows:
+
+	{ $strLenCP: "Hello World!" }
+
+This particular string will return a value of `12`.
+
+</details>
+
+<details><summary> What is the MongoDB query to find distinct values? </summary>
+
+To query for only unique values of a field within a greater collection, you can use the `distinct()` method. 
+
+The basic syntax looks like:
+
+	db.collection.distinct("<Field_Name>")
+
+This returns all of the unique values within the collection for a particular field with no repetition.
+
+</details>
+
+<details><summary> What is the export to JSON query in MongoDB? </summary>
+
+You can export your database contents to JSON with the `mongoexport` command line tool. It is important to note that this should not be run within the `mongo` shell but the command line instead.
+
+The basic syntax looks as follows where we specify the output of the collection export to be `json`:
+
+	mongoexport --collection=events --db=reporting --out=events.json
+
+</details>
