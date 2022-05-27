@@ -273,9 +273,9 @@ Because a transaction is a group of database operation being conducted together,
 
 <details><summary> How do you rollback transactions in MongoDB? </summary>
 
-[Read and write concern settings](https://www.mongodb.com/docs/manual/core/transactions/#transactions-and-write-concern) dictate whether you will be able to rollback a transaction in MongoDB. 
+MongoDB transactions exist within sessions. You create a session using `startSession()` and follow with `session.startTransaction()` to stage your transaction operations to be committed. 
 
-For example, when you commit a transaction with a write concern of `w:1` , your transaction can be rolled back in the [case of a failover](https://www.mongodb.com/docs/manual/core/replica-set-rollbacks/).
+To intentionally rollback those changes, you can use the `session.abortTransaction()` method to discard the operations initiated in the session. This must take place prior to the `session.commitTransaction()` method.
 
 </details>
 
