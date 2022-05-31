@@ -11,7 +11,7 @@ authors: ['alexemerich']
 
 No matter the database you are working with, there are likely database tools available to help you work with your database. **Database tools** is a collective term for tools, utilities, and assistants that can make life easier when performing database administration tasks.
 
-While not necessary to use, database tools and utilities can save you time and effort. MongoDB has a collection of extremely helpful, good to know command-line utilities that you can use in your deployment. In this article we are going to briefly mention installation and then cover the most useful utilities to know. 
+While not necessary to use, database tools and utilities can save you time and effort. MongoDB has a first party collection of extremely helpful, good to know command-line utilities that you can use in your deployment. In this article we are going to briefly mention installation and then cover the most useful utilities to know. 
 
 MongoDB separates its tools and utilities into four categories: Binary Import / Export, Data Import / Export, Diagnostic Tools, and GridFS so we'll cover them accordingly.
 
@@ -20,7 +20,7 @@ MongoDB separates its tools and utilities into four categories: Binary Import / 
 
 Starting in MongoDB version 4.4, the MongoDB Database Tools are released separately from the download of the MongoDB Server. They are also maintained on their own versioning compared to previous instances when these tools were released alongside a respective MongoDB Server version.
 
-We won’t cover the steps to installation, but if you are working with MongoDB 4.4 or later, then the following will walk you through each OS installation process.
+We won’t cover the steps for installation, but if you are working with MongoDB 4.4 or later, then the following will walk you through each OS installation process.
  
 - [Linux](https://www.mongodb.com/docs/database-tools/installation/installation-linux/)
 - [macOS](https://www.mongodb.com/docs/database-tools/installation/installation-macos/)
@@ -36,11 +36,11 @@ Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connec
 
 ### mongodump
 
-`mongodump` is a utility for creating a binary export of the contents of a database. This utility can export data from standalone, replica set, and sharded cluster deployments. The exports can be executed from either`mongod` or `mongos` instances. It is important to note that `mongodump` needs to be run from the system command line, not the `mongo` shell.
+`mongodump` is a utility for creating a binary export of the contents of a database. This utility can export data from standalone, replica set, and sharded cluster deployments. The exports can be executed from either `mongod` or `mongos` instances. It is important to note that `mongodump` needs to be run from the system command line, not the `mongo` shell.
 
-`mongodump` can be a partner with `mongorestore` (more upcoming) to form a complete backup and recovery strategy. `mongodump` can also generate partial backups based on a collection, query, or syncing from production to development environment. 
+`mongodump` can be a partner with `mongorestore` (more upcoming) to form part of a complete backup and recovery strategy. `mongodump` can also generate partial backups based on a collection, query, or syncing from production to development environment. 
 
-While a viable strategy for smaller deployments, `mongodump` should be set aside for another backup strategy for larger MongoDB deployments. Because `mongodump` operates by interacting with a running `mongod` instance, it can impact the performance of your running database. On top of creating traffic, the tool also forces the database to read all data through memory. When MongoDB needs to read infrequently accessed data, this can day away from more frequently accessed data, diminishing the regular workload’s performance. 
+While a viable strategy for smaller deployments, `mongodump` should be set aside for another backup strategy for larger MongoDB deployments. Because `mongodump` operates by interacting with a running `mongod` instance, it can impact the performance of your running database. On top of creating traffic, the tool also forces the database to read all data through memory. When MongoDB needs to read infrequently accessed data, this can take away from more frequently accessed data, diminishing the regular workload’s performance. 
 
 The basic syntax for `mongodump` looks as follows in the system command line:
 
@@ -52,7 +52,7 @@ The basic syntax for `mongodump` looks as follows in the system command line:
 
 `mongorestore` is the partner tool to `mongodump` for creating a sufficient backup strategy for small deployments. The `mongorestore` program loads data from either a binary database dump (`mongodump` file) or the standard input into a `mongod` or `mongos` instance.
 
-Like `mongodump`, `mongorestore` needs to be run in the system command-line rather than the `mongo` shell. It works against the running `mongod` instance as well making it inefficient as a backup strategy for anything more than a small deployment. 
+Like `mongodump`, `mongorestore` needs to be run in the system command-line rather than the `mongo` shell. It works against the running `mongod` instance as well making it inefficient as a restoration strategy for anything more than a small deployment. 
 
 The basic syntax for `mongorestore` looks like the following:
 
@@ -79,14 +79,15 @@ The additional [options](https://www.mongodb.com/docs/database-tools/mongorestor
 ## Data Import / Export
 
 ### mongoexport
-The `mongoexport` tool can also export data from a MongoDB instance. This command-line tool, however, produces a JSON or CSV export of the data rather than a binary dump like `mongodump`. 
+The `mongoexport` tool can also export data from a MongoDB instance. This command-line tool, however, produces a JSON or CSV export of the data rather than a binary dump like `mongodump` making it a slower operation. 
 
 In order to use `mongoexport`, a user requires at least read access on the target database. They can either be connected to a `mongod` or `mongos` instance. The basic syntax for `mongoexport` looks as follows:
 
 	mongoexport --collection=<coll> <options> <connection-string>
 
 There are many [additional options](https://www.mongodb.com/docs/database-tools/mongoexport/#options) you can incorporate depending on your connection needs and use case. Because `mongoexport` produces a JSON or CSV export, in order to preserve all rich [BSON data types](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes) for a full instance backup you will need to specify [Extended JSON v2.0 (Canonical mode)](https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/). 
-This is an important option to know because JSON can only directly represent some of the types support by BSON. Therefore, you must append the `--jsonFormat` option and set to `canonical`. An example would something like the following:
+
+This is an important option to know because JSON can only directly represent some of the types supported by BSON. Therefore, you must append the `--jsonFormat` option and set to `canonical`. An example would something like the following:
 
 	mongoexport --jsonFormat=canonical --collection=<coll> <connection-string> 
 
@@ -106,9 +107,9 @@ The `mongoimport` tool can only be used from the system command-line and not the
 ## Diagnostic Tools
 
 ### mongostat
-MongoDB also has helpful tools for gathering insights on any of your database instances. One such tool is `mongostat`. `mongostat` is a diagnostic tool that provides a quick overview of the status of a currently running `mongod` or `mongos` instance. If you are familiar to UNIX/Linux, this will sound familiar to `vmstat` except in a MongoDB context.
+MongoDB also has helpful tools for gathering insights on any of your database instances. One such tool is `mongostat`. `mongostat` is a diagnostic tool that provides a quick overview of the status of a currently running `mongod` or `mongos` instance. If you are familiar with UNIX/Linux, this will sound familiar to `vmstat` except in a MongoDB context.
 
-The `mongostat` utility can only be ran from the system command line and not the `mongo` shell. In order to connect to a `mongod` instance and use the `mongostat` tool, a user must have the `serverStatus` privilege action on the cluster. MongoDB has a built-in role called `clusterMonitor` that provides this. It is also possible to [customize other roles](https://www.mongodb.com/docs/manual/tutorial/manage-users-and-roles/#std-label-create-role-for-mongostat) to take advantage of `mongostat.`
+The `mongostat` utility can only be run from the system command line and not the `mongo` shell. In order to connect to a `mongod` instance and use the `mongostat` tool, a user must have the `serverStatus` privilege action on the cluster. MongoDB has a built-in role called `clusterMonitor` that provides this. It is also possible to [customize other roles](https://www.mongodb.com/docs/manual/tutorial/manage-users-and-roles/#std-label-create-role-for-mongostat) to take advantage of `mongostat.`
 
 The basic syntax for `mongostat` is as follows:
 
@@ -146,7 +147,7 @@ While `mongostat` is a useful tool for monitoring on a database level, `mongotop
 [GridFS](https://www.mongodb.com/docs/manual/core/gridfs/) is a convention for storing large files in a MongoDB database. All of the official MongoDB drivers support this convention, as does the following `mongofiles` program. It acts as an abstraction layer for storage and recovery of large files such as videos, audios, and images. 
 
 ### mongofiles
-The `mongofiles` tool makes it possible to manipulate files stored in a MongoDB instance in GridFS objects from the system’s command line. This is particularly useful because it provides an interface between the objects stored in your file system and GridFS.
+The `mongofiles` tool makes it possible to manipulate files stored in a MongoDB instance as GridFS objects from the system’s command line. This is particularly useful because it provides an interface between the objects stored in your file system and GridFS.
 
 The basic syntax of `mongofiles` is the following:
 
