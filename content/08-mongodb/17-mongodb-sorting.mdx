@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Sorting data on display or retrieval is a key operation for most database systems that helps differentiate them from other data storage mechanisms.  Being able to manipulate the ordering, prioritization, and interpretation of various fields the independently of their stored ordinality is one of the most useful features of both the database itself and its associated querying system.
+Sorting data on display or retrieval is a key operation for most database systems that helps differentiate them from other data storage mechanisms.  Being able to manipulate the ordering, prioritization, and interpretation of various fields independently of their stored ordinality is one of the most useful features of both the database itself and its associated querying system.
 
 MongoDB provides many ways of controlling the way data is sorted when returned from queries.  In this guide, we'll cover how to sort data in a variety of ways depending on your use case.  We'll go over simple and compound sorts, how to change sort ordering, and how sorting is applied in combination with other operators.
 
@@ -216,7 +216,7 @@ db.students.find({}, {
 
 ## How to sort on additional fields
 
-MongoDB can use additional fields to control sorting for cases where the primary sort field contains duplicates.  To do so, specify additional fields and their sort order in the document provided to the `sort()` function.
+MongoDB can use additional fields to control sorting for cases where the primary sort field contains duplicates.  To do so, you can pass the extra fields and their sort order within the document that you pass to the `sort()` function.
 
 For example, if we sort the `student` documents by `last_name`, we can get an alphabetical list of students based on that one field:
 
