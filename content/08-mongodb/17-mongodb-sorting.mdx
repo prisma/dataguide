@@ -1,0 +1,467 @@
+---
+title: 'How to sort query results in MongoDB'
+metaTitle: "Sorting data in MongoDB"
+metaDescription: "Learn how to sort data in ascending and descending order, with single or multiple fields."
+metaImage: '/social/generic-mongodb.png'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Sorting data on display or retrieval is a key operation for most database systems that helps differentiate them from other data storage mechanisms.  Being able to manipulate the ordering, prioritization, and interpretation of various fields independently of their stored ordinality is one of the most useful features of both the database itself and its associated querying system.
+
+MongoDB provides many ways of controlling the way data is sorted when returned from queries.  In this guide, we'll cover how to sort data in a variety of ways depending on your use case.  We'll go over simple and compound sorts, how to change sort ordering, and how sorting is applied in combination with other operators.
+
+<PrismaOutlinks>
+
+When using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with the [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb), you can sort your results using the [`orderBy` API](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#orderby).
+
+The documentation includes an overview of how to use this feature to [sort results in many flexible ways](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting#sorting).
+
+</PrismaOutlinks>
+
+## Setting up example data
+
+In order to demonstrate how sorting works, we'll query a number of documents contained within a `students` [collection](/intro/database-glossary#collections).  You can create the `students` collection and insert the documents we'll be querying by copying and pasting the following:
+
+<details><summary>View the data insertion command</summary>
+
+```javascript
+db.students.insertMany(
+    [
+        {
+            "first_name": "Carol",
+            "last_name": "Apple",
+            dob: ISODate("2010-10-30"),
+            address: {
+                street: {
+                    name: "Flint Rd.",
+                    number: "803",
+                },
+                city: "Camden",
+                zip: "10832",
+            },
+        },
+        {
+            "first_name": "Spencer",
+            "last_name": "Burton",
+            dob: ISODate("2008-12-04"),
+            address: {
+                street: {
+                    name: "Edgecombe St.",
+                    number: "2083b",
+                },
+                city: "Zoofreid",
+                zip: "80828",
+            },
+        },
+        {
+            "first_name": "Nixie",
+            "last_name": "Languin",
+            dob: ISODate("2011-02-11"),
+            address: {
+                street: {
+                    name: "Kensington Ln.",
+                    number: "33",
+                },
+                city: "Zoofreid",
+                zip: "80829",
+            },
+        },
+        {
+            "first_name": "Anthony",
+            "last_name": "Apple",
+            dob: ISODate("2009-08-16"),
+            address: {
+                street: {
+                    name: "Flint Rd.",
+                    number: "803",
+                },
+                city: "Camden",
+                zip: "10832",
+            },
+        },
+        {
+            "first_name": "Rose",
+            "last_name": "Southby",
+            dob: ISODate("2011-03-03"),
+            address: {
+                street: {
+                    name: "Plainfield Dr.",
+                    number: "4c",
+                },
+                city: "Nambles",
+                zip: "38008",
+            },
+        },
+        {
+            "first_name": "Lain",
+            "last_name": "Singh",
+            dob: ISODate("2013-06-22"),
+            address: {
+                street: {
+                    name: "Plainfield Dr.",
+                    number: "308",
+                },
+                city: "Brighton",
+                zip: "18002",
+            },
+        },
+    ]
+)
+```
+
+</details>
+
+Once you've inserted the above documents, continue to the next section to learn about simple sorts.
+
+## How to sort a single field
+
+The basic approach to sorting results in MongoDB is to append the `.sort()` method onto a query.  The `.sort()` method takes a document as an argument specifying the fields to sort as well as the sort direction.
+
+The most basic way to sort results it to provide a document specifying a single field indicating the column name with a value of `1` indicating an ascending sort:
+
+> Note that we're providing a [MongoDB projection](https://www.mongodb.com/docs/manual/tutorial/project-fields-from-query-results/) as the second argument to `.find()` to only display certain fields.  We're also appending the `.pretty()` method to make the output more readable.
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+    dob: 1
+}).sort({
+    dob: 1
+}).pretty()
+```
+
+The above query will return the students organized by their date of birth in the default ascending order:
+
+```javascript
+{
+	"first_name" : "Spencer",
+	"last_name" : "Burton",
+	"dob" : ISODate("2008-12-04T00:00:00Z")
+}
+{
+	"first_name" : "Anthony",
+	"last_name" : "Apple",
+	"dob" : ISODate("2009-08-16T00:00:00Z")
+}
+{
+	"first_name" : "Carol",
+	"last_name" : "Apple",
+	"dob" : ISODate("2010-10-30T00:00:00Z")
+}
+{
+	"first_name" : "Nixie",
+	"last_name" : "Languin",
+	"dob" : ISODate("2011-02-11T00:00:00Z")
+}
+{
+	"first_name" : "Rose",
+	"last_name" : "Southby",
+	"dob" : ISODate("2011-03-03T00:00:00Z")
+}
+{
+	"first_name" : "Lain",
+	"last_name" : "Singh",
+	"dob" : ISODate("2013-06-22T00:00:00Z")
+}
+```
+
+To reverse the ordering, set the sort column to `-1` instead of `1`:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+    dob: 1
+}).sort({
+    dob: -1
+}).pretty()
+```
+```javascript
+{
+	"first_name" : "Lain",
+	"last_name" : "Singh",
+	"dob" : ISODate("2013-06-22T00:00:00Z")
+}
+{
+	"first_name" : "Rose",
+	"last_name" : "Southby",
+	"dob" : ISODate("2011-03-03T00:00:00Z")
+}
+{
+	"first_name" : "Nixie",
+	"last_name" : "Languin",
+	"dob" : ISODate("2011-02-11T00:00:00Z")
+}
+{
+	"first_name" : "Carol",
+	"last_name" : "Apple",
+	"dob" : ISODate("2010-10-30T00:00:00Z")
+}
+{
+	"first_name" : "Anthony",
+	"last_name" : "Apple",
+	"dob" : ISODate("2009-08-16T00:00:00Z")
+}
+{
+	"first_name" : "Spencer",
+	"last_name" : "Burton",
+	"dob" : ISODate("2008-12-04T00:00:00Z")
+}
+```
+
+## How to sort on additional fields
+
+MongoDB can use additional fields to control sorting for cases where the primary sort field contains duplicates.  To do so, you can pass the extra fields and their sort order within the document that you pass to the `sort()` function.
+
+For example, if we sort the `student` documents by `last_name`, we can get an alphabetical list of students based on that one field:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+}).sort({
+    last_name: 1
+}).pretty()
+```
+```javascript
+{ "first_name" : "Carol", "last_name" : "Apple" }
+{ "first_name" : "Anthony", "last_name" : "Apple" }
+{ "first_name" : "Spencer", "last_name" : "Burton" }
+{ "first_name" : "Nixie", "last_name" : "Languin" }
+{ "first_name" : "Lain", "last_name" : "Singh" }
+{ "first_name" : "Rose", "last_name" : "Southby" }
+```
+
+However, there are two students with the last name of "Apple" and the returned ordering isn't alphabetical when considering their first name as well.
+
+To fix this, we can use `first_name` as a secondary sort field:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+}).sort({
+    last_name: 1,
+    first_name: 1
+}).pretty()
+```
+```javascript
+{ "first_name" : "Anthony", "last_name" : "Apple" }
+{ "first_name" : "Carol", "last_name" : "Apple" }
+{ "first_name" : "Spencer", "last_name" : "Burton" }
+{ "first_name" : "Nixie", "last_name" : "Languin" }
+{ "first_name" : "Lain", "last_name" : "Singh" }
+{ "first_name" : "Rose", "last_name" : "Southby" }
+```
+
+After that further specification, the results match the conventional alphabetical ordering that we would expect for names.
+
+## How to sort using embedded document fields
+
+MongoDB can also sort results based on the values included in embedded documents.  To do so, use [dot notation](https://www.mongodb.com/docs/v5.0/core/document/#dot-notation) to drill down to the appropriate field in the embedded document.
+
+For example, you can sort the `student` data based on the `city` where they live, which is a component of the `address` within each document.  Keep in mind that when using dot notation, you need to quote the field names to ensure that they are interpreted correctly:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+    "address.city": 1
+}).sort({
+    "address.city": 1
+}).pretty()
+```
+```javascript
+{
+	"first_name" : "Lain",
+	"last_name" : "Singh",
+	"address" : {
+		"city" : "Brighton"
+	}
+}
+{
+	"first_name" : "Carol",
+	"last_name" : "Apple",
+	"address" : {
+		"city" : "Camden"
+	}
+}
+{
+	"first_name" : "Anthony",
+	"last_name" : "Apple",
+	"address" : {
+		"city" : "Camden"
+	}
+}
+{
+	"first_name" : "Rose",
+	"last_name" : "Southby",
+	"address" : {
+		"city" : "Nambles"
+	}
+}
+{
+	"first_name" : "Spencer",
+	"last_name" : "Burton",
+	"address" : {
+		"city" : "Zoofreid"
+	}
+}
+{
+	"first_name" : "Nixie",
+	"last_name" : "Languin",
+	"address" : {
+		"city" : "Zoofreid"
+	}
+}
+```
+
+You can couple this with additional sort fields to ensure that the results are ordered exactly as you'd like them to be:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+    "address.city": 1,
+    "address.street": 1
+}).sort({
+    "address.city": 1,
+    "address.street.name": 1,
+    "address.street.number": 1,
+    last_name: 1,
+    first_name: 1,
+}).pretty()
+```
+
+In this example, we sorted by the following fields in order:
+
+* City
+* Street name
+* Street number
+* Last name
+* First name
+
+The results of the query look like this:
+
+```javascript
+{
+	"first_name" : "Lain",
+	"last_name" : "Singh",
+	"address" : {
+		"street" : {
+			"name" : "Plainfield Dr.",
+			"number" : "308"
+		},
+		"city" : "Brighton"
+	}
+}
+{
+	"first_name" : "Anthony",
+	"last_name" : "Apple",
+	"address" : {
+		"street" : {
+			"name" : "Flint Rd.",
+			"number" : "803"
+		},
+		"city" : "Camden"
+	}
+}
+{
+	"first_name" : "Carol",
+	"last_name" : "Apple",
+	"address" : {
+		"street" : {
+			"name" : "Flint Rd.",
+			"number" : "803"
+		},
+		"city" : "Camden"
+	}
+}
+{
+	"first_name" : "Rose",
+	"last_name" : "Southby",
+	"address" : {
+		"street" : {
+			"name" : "Plainfield Dr.",
+			"number" : "4c"
+		},
+		"city" : "Nambles"
+	}
+}
+{
+	"first_name" : "Spencer",
+	"last_name" : "Burton",
+	"address" : {
+		"street" : {
+			"name" : "Edgecombe St.",
+			"number" : "2083b"
+		},
+		"city" : "Zoofreid"
+	}
+}
+{
+	"first_name" : "Nixie",
+	"last_name" : "Languin",
+	"address" : {
+		"street" : {
+			"name" : "Kensington Ln.",
+			"number" : "33"
+		},
+		"city" : "Zoofreid"
+	}
+}
+```
+
+Now is also a good time to mention that the fields that you sort with do *not* have to be a subset of those you provide for the projection.
+
+For example, we can achieve the same exact ordering but only return the student names by typing:
+
+```javascript
+db.students.find({}, {
+    _id: 0,
+    first_name: 1,
+    last_name: 1,
+}).sort({
+    "address.city": 1,
+    "address.street.name": 1,
+    "address.street.number": 1,
+    last_name: 1,
+    first_name: 1,
+}).pretty()
+```
+
+The query returns the following data:
+
+```javascript
+{ "first_name" : "Lain", "last_name" : "Singh" }
+{ "first_name" : "Anthony", "last_name" : "Apple" }
+{ "first_name" : "Carol", "last_name" : "Apple" }
+{ "first_name" : "Rose", "last_name" : "Southby" }
+{ "first_name" : "Spencer", "last_name" : "Burton" }
+{ "first_name" : "Nixie", "last_name" : "Languin" }
+```
+
+If you compare the results to that of the previous query, you can verify that the documents have been returned in the same order.
+
+## Conclusion
+
+In this article, we took a look at how to use the `sort()` method to control how MongoDB orders the results of its queries.  We covered single field sorting, sorting multiple fields by priority, changing the sort ordinality, and sorting based on embedded document fields.
+
+Combined with features like [document collation](https://www.mongodb.com/docs/manual/reference/method/cursor.collation/) and [result limiting](https://www.mongodb.com/docs/manual/reference/method/cursor.limit/), sorting enables you to control exactly how documents and fields are compared against one another and how they are returned.  Getting familiar with these features can help you write better queries and return data in a state closer to how you'll use it.
+
+<PrismaOutlinks>
+
+When using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with the [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb), you can sort your results using the [`orderBy` API](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#orderby).
+
+The documentation includes an overview of how to use this feature to [sort results in many flexible ways](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting#sorting).
+
+</PrismaOutlinks>
