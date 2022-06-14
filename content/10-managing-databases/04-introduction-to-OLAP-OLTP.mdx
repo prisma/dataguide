@@ -1,0 +1,67 @@
+---
+title: 'Introduction to OLAP and OLTP'
+metaTitle: 'Introduction to OLAP and OLTP'
+metaDescription: 'Introduction to OLAP and OLTP'
+metaImage: '/social/syncing-databases.png'
+authors: ['alexemerich']
+---
+
+## Introduction
+
+Data-intensive applications empower organizations of all sizes to make smarter decisions and to respond faster to user needs. Those that do this best, make the best user experiences and develop the best solutions. 
+
+A key component to designing a robust data-driven organization is the data processing system of databases. There are two types of data processing that are optimized for different situations. These two types are Online Analytical Processing (OLAP) and Online Transaction Processing (OLTP). In this guide, we will introduce OLAP and OLTP, discuss their differences, and analyze the situations where each are appropriate.
+
+## What is OLAP and OLTP?
+
+Upon first glance, you may notice the difference in each data processing type. One includes “Analytical” and the other “Transaction”, all else the same. This is in fact where the primary difference lies. An OLAP database is a database system primarily designed to be used for analytics and insight generation. Whereas an OLTP database will require performance characteristics that will be discussed in the proceeding section, OLAP databases are generally designed for ingesting and working on large datasets. The key operations are executing complex and long-running queries and generating reports, graphs and insights for business decisions.
+
+### What is OLAP?
+The most important characteristic of a successful OLAP database implementation is its response time to complex queries. While slow queries will not affect application transaction processing, delay in query results can impact the accuracy of data analysts and other decision makers relying on these intelligence insights. 
+
+OLAP databases are traditionally implemented as data warehouses, storing large amounts of current and historical data. Because the data may change its structure over the course of the warehouses existence, OLAP databases typically have a multi-dimensional schema. In computing, this multi-dimensional array of data abstraction is referred to as the [OLAP cube](https://en.wikipedia.org/wiki/OLAP_cube). 
+
+The processing time of OLAP databases is traditionally slower because of the read-intensive, complex queries on large datasets. Current data modification is not done on OLAP databases, making the need for backing up data infrequent. 
+
+### What is OLTP?
+
+OLTP is a database system primarily designed to facilitate fast, near real-time database tasks. Typically, OLTP databases are used with applications where multiple clients may be accessing the data at a single time and where quick response times are required. OLTP databases are optimized for reliability and processing speed. For example, OLTP databases will usually handle actions such as password resets, in-app purchases, and operations of that nature. OLTP databases are better suited for these insert, update, and delete operations rather than the storage of enormous data sets like OLAP. 
+
+Unlike OLAP, OLTP queries should only last a few milliseconds as they are less complex, require fast processing, and usually only touch a relatively small number of records. Applications running on OLTP database systems are usually critical to an organization and any downtime affecting transaction processing is detrimental to reputation. 
+
+Due to the importance of downtime, OLTP databases also require a more aggressive backup strategy to maintain high availability. OLTP systems are modifying data constantly simply due to their nature. To ensure data integrity in the case of disruption, OLTP systems need to take frequent backup snapshots or concurrent backups.
+
+## When to use OLAP vs OLTP processing?
+
+In practice, choosing OLAP versus OLTP is a simple decision.  If you are working with large amounts of data that require analysis, OLAP is going to be the more efficient processing system. If you are processing many small transactions in real-time and need speedy processing, then OLTP is best suited. 
+
+Most organizations will use a combination of both types. It is also typical for OLTP databases to be used to populate OLAP databases. This practice demonstrates a good sense of database workload isolation. OLTP databases can continue making changes and processing new data and updating existing data quickly. The OLAP data warehouse is then isolated for analytics and business intelligence teams to run their complex queries on the entire dataset. 
+
+Rather than a data warehouse, organizations can alternatively spin up read-only replicas of their database instance or load a dump of their production database into an instance to get the benefits of OLAP processing. They can then run queries off these instances to isolate their long-running, complex queries. 
+
+Overall, the characteristics mentioned about OLAP and OLTP can be broken down into the following table:
+
+| | OLTP | OLAP |
+|--|--|--|
+| Characteristics | Handles a large number of small transactions | Handles large volumes of data |
+| Queries | Simple standardized queries, basic inserts, updates, deletes | Complex queries involving many records |
+| Operations | `INSERT`, `UPDATE`, `DELETE` | `SELECT` to aggregate or report data |
+| Response time | Milliseconds | Depending on the amount of data: seconds, minutes, hours, days | 
+| Data source | Transactions | Aggregated from OLTP sources | 
+| Space requirements | Typically small assuming historical data archive | Typically large from storage of all historical and current data | 
+|Backup Frequency | Regular backups required for availability and data integrity | Less frequent because there are not modifications being done. Lost data can come from OLTP database |
+
+## Extract, Transform, Load
+
+For most use cases, it is likely that there is an OLTP database handling the transactional data and an OLAP database acting as a warehouse for all data that has been transacted. In order to populate an OLAP database from an OLTP database, there is a process of extraction, transfer, and load (ETL) that occurs. ETL is specifically designed for extracting data from sources that are not optimized analytics (i.e an OLTP database) to a central warehouse.
+
+Before today’s powerful analytics warehouses where staging is not required, data would be extracted from a transactions database and staged for cleansing and optimizing in a staging area for the analytics database. The teams using this database can then present the data to end users or decision makers, use for machine learning algorithms, or building dashboards. 
+
+Much more can be said on the ETL process, but what is important to know in this context is its ability to coordinate a successful joining of OLTP and OLAP databases for a use case. It completes the whole picture of a modern application utilizing transaction and analytics databases for their optimized purposes.
+
+## Conclusion
+
+In this article, we discussed the two different types of database system processing, OLAP and OLTP, and how they can both be used with ETL. We covered their main differences which can be broken down simply to their optimized use case, analytics or transactions. When it comes to query types, response time, backup frequency and other characteristics, each type performs better in the areas most critical to its specialty.
+
+Understanding OLAP and OLTP positions you to make the right decisions when designing a data-intensive application. Depending on what it is that you want to do with data, one of the types is going to be optimized for the task. 
+
