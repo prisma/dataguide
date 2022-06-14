@@ -37,7 +37,7 @@ In practice, choosing OLAP versus OLTP is a simple decision.  If you are working
 
 Most organizations will use a combination of both types. It is also typical for OLTP databases to be used to populate OLAP databases. This practice demonstrates a good sense of database workload isolation. OLTP databases can continue making changes and processing new data and updating existing data quickly. The OLAP data warehouse is then isolated for analytics and business intelligence teams to run their complex queries on the entire dataset. 
 
-Rather than a datawarehouse, organizations can alternatively spin up read-only replicas of their database instance or load a dump of their production database into an instance to get the benefits of OLAP processing. They can then run queries off these instances to isolate their long-running, complex queries. 
+Rather than a data warehouse, organizations can alternatively spin up read-only replicas of their database instance or load a dump of their production database into an instance to get the benefits of OLAP processing. They can then run queries off these instances to isolate their long-running, complex queries. 
 
 Overall, the characteristics mentioned about OLAP and OLTP can be broken down into the following table:
 
