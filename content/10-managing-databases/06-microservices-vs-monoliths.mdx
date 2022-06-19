@@ -1,0 +1,71 @@
+---
+title: 'How microservices and monoliths impact the database'
+metaTitle: 'How microservices and monoliths impact the database'
+metaDescription: 'How microservices and monoliths impact the database'
+metaImage: '/social/syncing-databases.png'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Two of the most common approaches to application architecture are monolithic applications, where functionality is provided by a single, large application, and the microservices architecture, where functionality is split into small units that coordinate with one another.  These design choices can have far reaching consequences in terms of development experience, ease of deployment, and operational footprint.
+
+One of the most important ways that application architecture can affect your environment is how it influences how you work with databases.  Application structure often influences data structure and also impacts where data might be stored and how it is operated on.  In this guide, we'll talk about the differences between monolithic and microservices and specifically about how those decisions impact your databases.
+
+<PrismaOutlinks>
+
+Checkout the [Prisma Data Platform](https://www.prisma.io/dataplatform) to manage all of your application data in a single place.
+
+</PrismaOutlinks>
+
+## What are monoliths and microservices?
+
+In software development, monoliths and microservices both describe application architectures.
+
+### Monolithic applications
+
+**Monolithic applications** are the conventional style of application development and deployment.  In monolithic design, most of the processing, communication, and coordination required to perform useful work happens internally within a single application.  The application interfaces with the outside world to receive input and commands from users (many times exposed via a web server endpoint) and to interact with other services like databases.
+
+Monoliths are popular because they follow well-understood development patterns and have large suites of tooling that can help with debugging and troubleshooting.  The consolidated nature of monolithic applications also makes it relatively simple to deploy and manage in an operational context.  While care must be taken to coordinate changes when various teams work on the same application, the number of moving parts is relatively small.
+
+With that being said, working with a single all-encompassing application can also have many drawbacks.  Application development must be tightly coordinated to ensure all of the code related to certain functionality remains in step with one another.  Scaling can also be incredibly challenging when the entire application must be scaled to meet different demands, especially since the application might not have the interfaces or logic required for coordination if multiple copies must be run.
+
+### Microservices
+
+Microservices are an alternative approach to architecting applications that involve splitting the functionality of an application into many discrete "services".  These services each have narrowly defined responsibilities and coordinate with each other over the network to complete useful work.  In a sense, microservices is a style of development that decomposes applications and reimplements internal communication as network communication.
+
+There are many reasons that people choose microservices over monolithic applications.  Microservices allow you to scale services independently according to individual performance and load characteristics.  On top of the benefits of scalability itself, running multiple copies of small components across various hosts lets you increase the resiliency of your application to help ensure that hardware failures don't cause downtime.
+
+This flexibility allows you to decouple not only the scaling of various components, but also the development itself.  Different services can be built using completely different languages so long as they provide an interface that other components can communicate with.  This can have profound implications on the experienced "ownership" teams can have over components and allows for benefits like fast iteration or even the ability to completely rewrite services without affecting other areas.
+
+Microservices also introduce their own challenges.  For instance, the operations complexity of deploying and managing a large number of services can be overwhelming, especially if your team doesn't have a strong operational background.  The importance of inter-service communication increases both the complexity of the demands and volume of traffic placed on the networking layer.  At the same time, debugging and testing becomes more difficult as traditional tooling often isn't applicable in distributed environments.
+
+## How do microservices affect database architecture?
+
+The architecture options discussed above have a profound impact on what the development process looks like and what it's like to operate the application in a production environment.  One component that can be particularly impacted is the database.
+
+Monolithic applications are often deployed with a centralized database.  The application may pass read operations to replicas to distribute the load more evenly, but in general, the data is all located in one place.  The centralized database in this case is responsible for managing the information associated with many different application contexts and functionality.
+
+Microservices, however, are frequently coupled with a more complex data environment.  Individual microservices are often deployed alongside their own database instance that are responsible for managing the data for that specific service and nothing more.
+
+## Benefits and drawbacks of using service-specific databases
+
+This pattern is popular because it allows developers to iterate on and deploy each microservice independently.  One of the biggest coordination points in development is code that modifies the database because changes can impact many different parts of the application.  If one team changes a database schema, it could break functionality that was written to expect the previous schema.
+
+Giving each microservice its own database decouples this cascade effect so that developers can make the changes they need with less coordination and increased confidence.  It furthers the goal of managing services as discrete, focused components that only interact with each other through well-defined interfaces.
+
+The database-per-microservice pattern is not without its own challenges however.  As the number of microservices increases, so too do the number of individual data stores.  The operational requirements multiply since teams must now manage database deployments, backup, failover, and other concerns for each new service.  Without well-developed tooling and expertise, this can become unmanageable fairly quickly.
+
+Developers must also figure out how to coordinate queries and updates that might touch multiple microservices.  For instance, if an order is being placed, the customer's data, the inventory data, and the order information itself might be managed by different microservices.
+
+## Conclusion
+
+The microservices pattern can help you scale applications and can make certain development and deployment tasks easier to coordinate as an organization.  It can help you iterate and release changes more quickly while limiting the impact of new code on other parts of your application.
+
+It's important to understand how your choice of architecture will impact different parts of your development process, infrastructure, and operational requirements.  In the case of microservices, the database environment often looks very different from monolithic deployments.  It is important to understand what changes to anticipate and how to manage challenges to maintain productivity.
+
+<PrismaOutlinks>
+
+Checkout the [Prisma Data Platform](https://www.prisma.io/dataplatform) to manage all of your application data in a single place.
+
+</PrismaOutlinks>
