@@ -2,6 +2,7 @@
 title: 'Setting up a local SQLite database'
 metaTitle: "Setup and Connect Local Database | SQLite | Prisma's Data Guide"
 metaDescription: 'Learn how to set up a SQLite database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
+metaImage: '/social/generic-sqlite.png'
 authors: ['justinellingwood']
 toc: false
 ---
@@ -20,9 +21,15 @@ This guide will cover the following platforms:
 
 Navigate to the sections that match the platforms you will be working with.
 
+<PrismaOutlinks>
+
+If you are using SQLite with Prisma, you can follow our [quick start guide](https://www.prisma.io/docs/getting-started/quickstart), which comes with a ready-to-go database.
+
+</PrismaOutlinks>
+
 ## Setting up SQLite on Windows
 
-The SQLite project provides a zipped bundle of tools that include the `sqlite.exe` file that you need to create and interact with SQLite databases from the command line.
+The [SQLite](/intro/database-glossary#sqlite) project provides a zipped bundle of tools that include the `sqlite.exe` file that you need to create and interact with SQLite databases from the command line.
 
 Visit the [SQLite download page](https://www.sqlite.org/download.html) to find a link to the zip file. The archive file you need is under the **Precompiled Binaries for Windows** section and begins with **sqlite-tools**:
 
@@ -52,7 +59,7 @@ If you click the `sqlite3.exe` application, a new window will appear with an int
 
 ![new SQLite session](/content/sqlite/setting-up-a-local-database/windows/sqlite_no_db.png)
 
-Notice that SQLite is currently using an in-memory database. This means that it is not reading from or writing to a file currently.
+Notice that SQLite is currently using an [in-memory database](/intro/database-glossary#in-memory-database). This means that it is not [reading](/intro/database-glossary#read-operation) from or [writing](/intro/database-glossary#write-operation) to a file currently.
 
 To make SQLite write to a new database file, type `.open --new` followed by the database file name you wish to use:
 

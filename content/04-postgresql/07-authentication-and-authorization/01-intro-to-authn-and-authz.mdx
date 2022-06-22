@@ -1,0 +1,132 @@
+---
+title: 'An introduction to authorization and authentication in PostgreSQL'
+metaTitle: 'Intro to Authentication and Authorization with PostgreSQL | Prisma'
+metaDescription: "PostgreSQL's authentication and authorization features help you maintain the security and integrity of your data. Learn more about how they work"
+metaImage: '/social/generic-postgresql.png'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Controlling access to your systems and data is essential for maintaining the security and integrity of your data.  PostgreSQL provides a number of features to help you manage these concerns and learning how they work is an important part of managing your databases.
+
+Controlling access to resources and defining who can do what to what entities is an area known as authentication and authorization.  This guide explores the tools PostgreSQL furnishes to control access to and within the system with the goal giving an overview of each component and the overall functions they support.
+
+## What are authentication and authorization?
+
+Before diving into those specific tools that PostgreSQL provides, it's helpful to review what exactly authentication and authorization are and why they're important.
+
+### What is authentication? 
+
+[*Authentication*](/intro/database-glossary#authentication) is a process of validating an identity.  In computing, this generally means verifying that a user or entity is who they say they are.
+
+Authentication generally involves challenging a user to provide something secret they know (like passwords), something unique that they have (like the code from a cellphone authentication app), or something that is a feature of their unique identity (like fingerprint authentication).
+
+Familiar ways of proving a user's identity include:
+
+* Passwords
+* Secret keys
+* Security Certificates
+* Software or hardware tokens
+* Fingerprint reading
+
+Authentication is an important requirement of almost all multi-user systems.  Different people or entities (like automated tools) require different capabilities and access to data, and establishing identity is the first step in providing individualized experiences for clients.  Authentication is a way of confirming that the accounts within your system are usable only by the real world people or entities they are supposed to represent.
+
+### What is authorization?
+
+While authentication is concerned with validating identity, [*authorization*](/intro/database-glossary#authorization) focuses on controlling what capabilities are associated with those identities or accounts.  Once you know who someone is, the authorization functionality determines what they can do.
+
+Definitions within authorization policies typically are comprised of three components:
+
+* The subject: the user, account, or identity performing the action
+* The action: the specific function or activity to be performed
+* The object: the resource, entity, or scope targeted by the action
+
+Authorization policies can define broad, general rules as well as specific, granular exceptions depending on the level of control the system provides.  Some policies map capabilities to user "classes" or "roles" instead of to individual users to establish set authorization levels.
+
+Authorization is the mechanism by which a system can lock down capabilities and access to resources based on who you are.  As such, it has important relationships with user management, resource management, and security.
+
+## How does PostgreSQL configure authentication and authorization?
+
+PostgreSQL has a few interrelated concepts that, together, fulfill its access management requirements to authenticate and authorize user actions.  These concepts work in tandem to establish who a client is an agent for and what they can do within PostgreSQL.
+
+In short, PostgreSQL uses the following framework to authenticate and authorize users to database clusters:
+
+* Users and user classes are defined within the system as *roles*.
+* The methods of authenticating to a role are defined in the *`pg_hba.conf` file* (the host-based authentication file).
+* The role's capabilities and level of access is defined by the *privileges* granted to them directly, through role membership, or through object ownership.
+
+Exploring these three interrelated areas more in-depth can help you learn how each of them contributes to PostgreSQL's access management functionality.
+
+## Roles
+
+PostgreSQL does not have separate entities to represent users and groups.  Instead, both user accounts and user groups are implemented as a single, unified concept called roles.  **Roles** are a flexible identity used to represent individual users as well as groups of users.
+
+Roles are the anchor point within PostgreSQL that determine who authentication and authorization policies apply to.  Any policy that does not apply universally requires a notion of identity to define who to restrict and who to allow.  Each connection to a PostgreSQL database is associated with a specific role that determines its initial level of access.
+
+Authorization policies determine what powers each role has within the database cluster, including what commands it can execute, what resources it can access, and what features it can use.  Users authenticate to roles to gain access to those privileges.
+
+Administrators can make roles as *members* of other roles to give the member access to the "container" role's privileges.  This flexibility lets you treat some roles as analogs for user accounts and other roles as analogs for user groups, classes, or duties.
+
+A single role can operate as both a container and a member to implement more complex policy.  In general, roles intended to be used as user agents have defined authentication policies, with their level of authorization determined by their own privileges, the privileges of roles they are members of, and the objects they own.  In contrast, roles that are meant to work as groups typically do not have associated authorization.
+
+The article dedicated to roles covers [how to define and configure roles within PostgreSQL](/postgresql/authentication-and-authorization/role-management).
+
+## The `pg_hba.conf` file
+
+The `pg_hba.conf` file is the main component that defines authentication policies within PostgreSQL.  In this context, "HBA" stands for host-based authentication in reference to the policies that determine whether connections to the PostgreSQL host are accepted.
+
+The `pg_hba.conf` file allows administrators to define granular authentication requirements including through a matching system.  Connections are tested against the matching criteria to determine if an authentication policy should be used.
+
+The policies are defined, one per line, with fields separated by white space.  Each policy defines matching criteria and authentication requirements.
+
+The matching criteria can check against criteria like:
+
+* the way clients connect
+* the role they are attempting to authenticate to
+* the database they are attempting to access
+* the client's IP address and network properties
+
+The first authentication policy that matches the connection is used to authenticate.  PostgreSQL offers a wide variety of authentication methods of varying levels of sophistication ranging from passwords and certificates to coordinating with external systems like [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) and [RADIUS](https://en.wikipedia.org/wiki/RADIUS) servers.
+
+Since only a single policy (the first matching one) is consulted for each connection, controlling the specificity and ordering of policies is very important.  Improper ordering can lead to client connections matching the incorrect policy, which can either prevent users from accessing the system or allow access to connections inadvertently.
+
+Follow our guide on [configuring authentication in PostgreSQL](/postgresql/authentication-and-authorization/configuring-user-authentication) to learn how to configure effective `pg_hba.conf` policies.
+
+## The PostgreSQL privilege and role attribute system
+
+The last part of PostgreSQL's authorization story are the features that define what each role can do.  There are a number of mechanisms that change the level of access or control that various roles have.
+
+### Role attributes
+
+The first way that PostgreSQL allows you to alter a role's capabilities is with [role attributes](https://www.postgresql.org/docs/current/role-attributes.html).  *Role attributes* define privileges that a role has across the entire database cluster.  These are mostly special administrator-level capabilities or an expression of the degree of limitations on the account.
+
+The most powerful attribute is the `superuser` attribute that gives a role the ability to bypass any authorization checks within PostgreSQL, in effect, allowing it total control over the system.  Other attributes allow more narrowly defined privileges, like the ability to create roles and databases with the `createrole` and `createdb` attributes, respectively.
+
+Attributes can also affect how the role is allowed to access the system.  For instance, the `login` attribute is required to be able to authenticate in an initial connection.  Likewise, a `connection limit` can be set to control the number of simultaneous connections a role can make.
+
+Role attributes serve as the primary means of defining a role's global capabilities.
+
+PostgreSQL uses another system to determine a role's privileges in regard to specific database objects like databases, tables, and columns.  A role's relationship with database objects is a function of its ownership status and the privileges granted to it.
+
+### Object ownership
+
+Object ownership is the first determining factor.  By default, roles own any objects that they create themselves.  Ownership gives you full access to the object including special privileges like the ability to delete or modify the object itself.  Only `superuser` roles can delete or modify objects that they do not own.
+
+Each database object has exactly one owner.  If you want multiple roles to have owner privileges of a database object, you will need to make them both members of a single role and give that role ownership.
+
+### Granted object privileges
+
+Roles that are not the object owner can be given different levels of access using PostgreSQL's privilege granting system.
+
+[Privileges](https://www.postgresql.org/docs/current/ddl-priv.html) on database objects are managed with the `GRANT` and `REVOKE` commands.  The `GRANT` command, when used in this context, adds privileges to roles on specific database objects.  On the opposite side, the `REVOKE` command removes those same privileges from roles.
+
+As mentioned earlier, only the object owner and `superuser` roles can delete or modify the object itself.  However, granular privileges can be assigned for data or other objects within the object.  With tables, for example, the `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges control whether roles can view, add, modify, and remove data, respectively.
+
+The types of privileges available depend on the database object in question.  For instance, the `REFERENCES` privilege, which allows the role to create foreign key constraints related to the object, is limited to use on table or table column objects.  That's because defining foreign constraint privileges on a sequence, for example, doesn't make sense.  For a summary of which privileges and database objects can be used together, [take a look at Table 5.1 and Table 5.2 in PostgreSQL's documentation on privileges](https://www.postgresql.org/docs/current/ddl-priv.html#PRIVILEGE-ABBREVS-TABLE).
+
+Check out our guide on [managing privileges within PostgreSQL](/postgresql/authentication-and-authorization/managing-privileges) to learn more about how to use PostgreSQL's grant system.
+
+## Conclusion
+
+PostgreSQL's authentication and authorization systems may initially seem complex when viewed all together.  However, the individual components to the system are all well-defined and mostly associated with a single concern.  Understanding how these systems fit together to implement powerful and flexible access management is essential for keeping your databases and the data they hold safe.

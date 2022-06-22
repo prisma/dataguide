@@ -1,7 +1,7 @@
 ---
 title: 'Troubleshooting Database Outages and Connection Issues'
-metaTitle: 'Troubleshooting Database Outages and Connection Issues'
-metaDescription: 'When your database goes down in the middle of the night, the most stressful part is not knowing why. This article guides you through the possible reasons your database might be down and what you can do to fix it.'
+metaTitle: 'Database Connection Errors and Outage Issue Troubleshooting'
+metaDescription: 'Learn about the possible reasons your database might be down or not connected and what you can do to fix it.'
 metaImage: '/social/database-troubleshooting.png'
 authors: ['ryanchenkie', 'danielnorman']
 ---
@@ -114,7 +114,7 @@ Network-related issues can cause your database to be unavailable or seem to be d
 Networking related issues include:
 
 - VPC and firewall policy issues
-- Latency and timeouts between the application and database
+- [Latency](/serverless/serverless-glossary#latency) and timeouts between the application and database
 
 When your database appears to be down or unresponsive, and you suspect that this might be related to network problems, it's best first to determine whether traffic is blocked to firewall policies or there are actual network problems.
 
@@ -138,7 +138,7 @@ It's generally better to deploy the application and database in the same VPC and
 
 The first approach would be to use a dedicated IP for your application and add a firewall rule allowing access from the IP. This approach ensures that you don't need to update the firewall rules because the IP remains the same.
 
-If using a dedicated IP is not feasible due to cloud platform limitations or the deployment approach, e.g., serverless, consider enabling access to the database via public networks. While this approach decreases the database's security, it ensures that your application won't experience any sudden downtime until you update firewall rules when your application's IP changes. Moreover, your database's authentication mechanism remains the main line of defense.
+If using a dedicated IP is not feasible due to cloud platform limitations or the deployment approach, e.g., [serverless](/serverless/serverless-glossary#serverless-databases), consider enabling access to the database via public networks. While this approach decreases the database's security, it ensures that your application won't experience any sudden downtime until you update firewall rules when your application's IP changes. Moreover, your database's [authentication](/intro/database-glossary#authentication) mechanism remains the main line of defense.
 
 Please note that opening up connections to your database from the public internet is not recommended. Where possible, we recommend limiting connections to a specific IP address or using techniques such as VPC peering.
 
@@ -146,25 +146,25 @@ Please note that opening up connections to your database from the public interne
 
 When the geographical and network distance between the application and database is substantial, increased request latency and timeout errors can be a problem. In such scenarios, increasing the database connection timeout in your application might be necessary to avoid timeout errors.
 
-ORMs and query builders hold a pool of connections to the database. These connections usually have a connection timeout configuration that controls how long to wait before timing out when establishing a connection.
+[ORMs](/intro/database-glossary#orm) and [query builders](/intro/database-glossary#query-builder) hold a pool of connections to the database. These connections usually have a connection timeout configuration that controls how long to wait before timing out when establishing a connection.
 
 It's recommended to set an initial baseline timeout value and load test the application to see how it performs. Based on the number of failed requests from the load test, you might want to adjust the timeout and try again until you're confident that timeouts are not the cause of the problem. If your connection timeout configuration is too low, you run the risk of these timeouts leading to failed requests.
 
 ### Exhausted Connection Limit
 
-Another common challenge with connection-based databases like MySQL and PostgreSQL is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
+Another common challenge with connection-based databases like [MySQL](/intro/database-glossary#mysql) and [PostgreSQL](/intro/database-glossary#postgresql) is that you can quickly exhaust the database's connection limit. Connection-oriented databases impose a limit on the number of open connections to the database.
 
 When you deploy your application using the traditional long-running process model, you can multiplex many incoming requests on fewer DB connections in a pool. For example, a single server instance might handle 100 concurrent HTTP requests with a pool of 20 DB connections.
 
-On serverless functions, however, each function instance can only handle 1 HTTP request at a time. Because each incoming request requires at least one connection to the database, there is no way for you to multiplex database connections.
+On [serverless](/serverless/serverless-glossary#serverless-computing) functions, however, each function instance can only handle 1 HTTP request at a time. Because each incoming request requires at least one connection to the database, there is no way for you to multiplex database connections.
 
 Given this, it's recommended to use the database connection limit and then distribute those between the server instances that connect to it in a way that doesn't exhaust the database's connection limit. For example, suppose your database has a connection limit of 20. If you have two instances of your application server, you would want to set each server instance's connection pool to a maximum of 10 connections.
 
-For serverless deployments, consider running an external connection pooler like PgBouncer – an additional infrastructure component that holds connections to the database and multiplexes incoming database queries from the serverless functions.
+For serverless deployments, consider running an external [connection pooler](/serverless/serverless-glossary#connection-pooling) like PgBouncer – an additional infrastructure component that holds connections to the database and multiplexes incoming database queries from the serverless functions.
 
 ## Data Volume Issues
 
-As an application grows, the data volume for that app will most likely grow as well. A key consideration for both performance and database uptime is the volume of data being processed to furnish a given request. Inefficient queries written for the app when the total data volume is small can turn into bottlenecks that can tank performance and cause outages when that data grows.
+As an application grows, the data volume for that app will most likely grow as well. A key consideration for both performance and database uptime is the volume of data being processed to furnish a given request. Inefficient queries written for the app when the total data volume is small can turn into [bottlenecks](/intro/database-glossary#bottleneck) that can tank performance and cause outages when that data grows.
 
 Large data volumes can have an impact at three locations:
 
@@ -252,7 +252,7 @@ In addition to manually calling the `EXPLAIN` command, many cloud database provi
 
 ### Adding Indexes
 
-Problems associated with large data volumes can often be remediated using indexes.
+Problems associated with large data volumes can often be remediated using [indexes](/intro/database-glossary#index).
 
 Indexes for a database table can be conceptualized in the same way as an index in a book. If you were looking for information on a specific topic in a book, it would take a long time to read through the entire book to find it. Instead, you can consult the index to look up the specific topic of interest. If it exists, it will point you to the specific pages that the topic is discussed in the book.
 
@@ -274,7 +274,7 @@ Code changes that might cause interruptions generally fall into three categories
 
 ### Database Queries
 
-Changes to database queries, even if they are small, can impact an application. If using raw SQL, a query statement might have become invalid in a recent code change. If the query itself is still valid, it might have been changed to return results that are no longer processable by other parts of the application.
+Changes to database queries, even if they are small, can impact an application. If using raw [SQL](/intro/database-glossary#sql), a query statement might have become invalid in a recent code change. If the query itself is still valid, it might have been changed to return results that are no longer processable by other parts of the application.
 
 Inspect source control changes to look for recent changes to database access (SQL statements or ORM usage). Try to isolate queries that are related to specific areas of the application that are impacted.
 

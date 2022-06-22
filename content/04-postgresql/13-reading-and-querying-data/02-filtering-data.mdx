@@ -1,0 +1,433 @@
+---
+title: 'How to filter query results in PostgreSQL'
+metaTitle: 'Filter PostgreSQL Data: WHERE, GROUP BY, HAVING, and LIMIT'
+metaDescription: "PostgreSQL provides many ways to constrain the results that your queries return. Discover how to filter queries to return only the data you're interested in."
+metaImage: '/social/generic-postgresql.png'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+To work with data in a database, you need to be able to retrieve and target specific [records](/intro/database-glossary#record) effectively.  By using filtering clauses within your queries, you can add specific criteria in order to return only the most relevant records.
+
+In this guide, we will take a look at some of the most common filtering operations available within PostgreSQL and demonstrate how to use them to narrow the focus of your statements.  We will show how to test against characteristics within individual records with `WHERE` clauses, how to group records together to summarize information with `GROUP BY`, how to filter groups of records with the `HAVING` subclause, and how to set the maximum number of returned rows with the `LIMIT` clause.
+
+## Using the `WHERE` clause to define match criteria
+
+One of the most common and broadly useful ways to indicate your query requirements is the `WHERE` clause.  The `WHERE` clause lets you define actual search criteria for query statements by specifying conditions that must be true for all matching records.
+
+`WHERE` clauses work by defining boolean expressions that are checked against each candidate row of data.  If the result of the expression is false, the row will be removed from the results and will not be returned or continue to the next stage of processing.  If the result of the expression is true, it satisfies the criteria of the search and will continue on for any further processing as a candidate row.
+
+The basic syntax of the `WHERE` clause looks like this:
+
+```sql
+SELECT * FROM my_table WHERE <condition>;
+```
+
+The `<condition>` can be anything that results in a boolean value.  In PostgreSQL, a boolean value is any of `TRUE`, `FALSE`, or `NULL`.
+
+Conditions are often formed using one or more of the following operators:
+
+* `=`: equal to
+* `>`: greater than
+* `<`: less than
+* `>=`: greater than or equal to
+* `<=`: less than or equal to
+* `<>` or `!=`: not equal
+* `AND`: the logical "and" operator — joins two conditions and returns `TRUE` if both of the conditions are `TRUE`
+* `OR`: logical "or" operator — joins two conditions and returns `TRUE` if at least one of the conditions are `TRUE`
+* `IN`: value is contained in the list, series, or range that follows
+* `BETWEEN`: value is contained within the range the minimum and maximum values that follow, inclusive
+* `IS NULL`: matches if value is `NULL`
+* `NOT`: negates the boolean value that follows
+* `EXISTS`: the query that follows contains results
+* `LIKE`: matches against a pattern (using the wildcards `%` to match 0 or more characters and `_` to match a single character)
+* `ILIKE`: matches against a pattern (using the wildcards `%` to match 0 or more characters and `_` to match a single character), case insensitive
+* `SIMILAR TO`: matches against a pattern using [SQL's regular expression dialect](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-SIMILARTO-REGEXP)
+* `~`: matches against a pattern using [POSIX regular expressions](https://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended), case sensitive
+* `~*`: matches against a pattern using [POSIX regular expressions](https://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended), case insensitive
+* `!~`: does not match against a pattern using [POSIX regular expressions](https://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended), case sensitive
+* `!~*`: does not match against a pattern using [POSIX regular expressions](https://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended), case insensitive
+
+While the above list represents some of the most common test constructs, there are many other [operators that yield boolean results](https://www.postgresql.org/docs/current/functions.html) that can be used in conjunction with a `WHERE` clause.
+
+<PrismaOutlinks>
+
+Prisma Client supports filtering by multiple criteria.  Check out our [documentation on filtering](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/filtering) to learn more.
+
+</PrismaOutlinks>
+
+### Examples using `WHERE`
+
+One of the most common and straightforward checks is for equality, using the `=` operator.  Here, we check whether each row in the `customer` table has a `last_name` value equal to `Smith`:
+
+```sql
+SELECT * FROM customer WHERE last_name = 'Smith';
+```
+
+We can add additional conditions to this to create compound expressions using logical operators.  This example uses the `AND` clause to add an additional test against the `first_name` column.  Valid rows must satisfy both of the given conditions:
+
+```sql
+SELECT * FROM customer WHERE first_name = 'John' AND last_name = 'Smith';
+```
+
+Similarly, we can check whether any of a series of conditions are met.  Here, we check rows from the `address` table to see whether the `zip_code` value is equal to 60626 or the `neighborhood` column is equal to the string "Roger's Park".  We use two single quotation marks to indicate that a literal single quote should be searched for:
+
+```sql
+SELECT * FROM address WHERE zip_code = '60626' OR neighborhood = 'Roger''s Park';
+```
+
+The `IN` operator can work like an comparison between a number of values, wrapped in parentheses.  If there is a match with any of the given values, the expression is `TRUE`:
+
+```sql
+SELECT * FROM customer WHERE last_name IN ('Smith', 'Johnson', 'Fredrich');
+```
+
+Here, we check against a string pattern using `LIKE`.  The `%` works as a wildcard matching zero or more characters, so "Pete", "Peter", and any other string that begins with "Pete" would match:
+
+```sql
+SELECT * FROM customer WHERE last_name LIKE 'Pete%';
+```
+
+We could do a similar search using the `~*` operator to check for matches using POSIX regular expressions without regard to case.  In this case, we check whether the value of `last_name` begins with a "d" and contains the substring "on", which would match names like "Dickson", "Donald", and "Devon":
+
+```sql
+SELECT * FROM customer WHERE last_name ~* '^D.*on.*';
+```
+
+We can check whether a street number is within the 4000 block of addresses using the `BETWEEN` and `AND` operators to define an inclusive range:
+
+```sql
+SELECT * FROM address WHERE street_number BETWEEN 4000 AND 4999;
+```
+
+Here, we can display any `customer` entries that have social security numbers that are not 9 digits long.  We use the `LENGTH()` operator to get the number of digits in the field and the `<>` to check for inequality:
+
+```sql
+SELECT * FROM customer WHERE LENGTH(SSN) <> 9;
+```
+
+## Using the `GROUP BY` clause to summarize multiple records
+
+The `GROUP BY` clause is another very common way to filter results by representing multiple results with a single row.  The basic syntax of the `GROUP BY` clause looks like this:
+
+```sql
+SELECT <columns> FROM some_table GROUP BY <columns_to_group>
+```
+
+When a `GROUP BY` clause is added to a statement, it tells PostgreSQL to display a single row for each unique value for the given column or columns.  This has some important implications.
+
+Since the `GROUP BY` clause is a way of representing multiple rows as a single row, PostgreSQL can only execute the query if it can calculate a value for each of the columns it is tasked with displaying.  This means that each column identified by the `SELECT` portion of the statement has to either be:
+
+* included in the `GROUP BY` clause to guarantee that each row has a unique value
+* abstracted to summarize all of the rows within each group
+
+Practically speaking, this means that any columns in the `SELECT` list not included in the `GROUP BY` clause must use an aggregate function to produce a single result for the column for each group.
+
+<PrismaOutlinks>
+
+If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [aggregations](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/aggregations) to compute over and summarize values.
+
+</PrismaOutlinks>
+
+### Examples using `GROUP BY`
+
+For the examples in this section, suppose that we have a table called `pet` that we've defined and populated like so:
+
+```sql
+CREATE TABLE pet (
+    id SERIAL PRIMARY KEY,
+    type TEXT,
+    name TEXT,
+    color TEXT,
+    age INT
+);
+
+INSERT INTO pet (type, name, color, age) VALUES
+('dog', 'Spot', 'brown', 3),
+('dog', 'Rover', 'black', 7),
+('dog', 'Sally', 'brown', 1),
+('cat', 'Sabrina', 'black', 8),
+('cat', 'Felix', 'white', 4),
+('cat', 'Simon', 'orange', 8),
+('rabbit', 'Buttons', 'grey', 4),
+('rabbit', 'Bunny', 'brown', 8),
+('rabbit', 'Briony', 'brown', 6);
+```
+
+The simplest use of `GROUP BY` is to display the range of unique values for a single column.  To do so, use the same column in `SELECT` and `GROUP BY`.  Here, we see all of the colors used in the table:
+
+```sql
+SELECT color FROM pet GROUP BY color;
+```
+```
+ color
+--------
+ black
+ grey
+ brown
+ white
+ orange
+(5 rows)
+```
+
+As you move beyond a single column in the `SELECT` column list, you must either add the columns to the `GROUP BY` clause or use an aggregate function to produce a single value for the group of rows being represented.
+
+Here, we add `type` to the `GROUP BY` clause, meaning that each row will represent a unique combination of `type` and `color` values.  We also add the `age` column, summarized by the `avg()` function to find the average age of each of the groups:
+
+```sql
+SELECT type, color, avg(age) AS average_age FROM pet GROUP BY type, color;
+```
+```
+  type  | color  |     average_age
+--------+--------+--------------------
+ rabbit | brown  | 7.0000000000000000
+ cat    | black  | 8.0000000000000000
+ rabbit | grey   | 4.0000000000000000
+ dog    | black  | 7.0000000000000000
+ dog    | brown  | 2.0000000000000000
+ cat    | orange | 8.0000000000000000
+ cat    | white  | 4.0000000000000000
+(7 rows)
+```
+
+Aggregate functions work just as well with a single column in the `GROUP BY` clause.  Here, we find the average age of each type of animal:
+
+```sql
+SELECT type, avg(age) AS average_age FROM PET GROUP BY type;
+```
+```
+  type  |     average_age
+--------+--------------------
+ rabbit | 6.0000000000000000
+ dog    | 3.6666666666666667
+ cat    | 6.6666666666666667
+(3 rows)
+```
+
+If we want to display the oldest of each type of animal, we could instead use the `max()` function on the `age` column.  The `GROUP BY` clause collapses the results into the same rows as before, but the new function alters the result in the other column:
+
+```sql
+SELECT type, max(age) AS oldest FROM pet GROUP BY type;
+```
+```
+  type  | oldest
+--------+-------
+ rabbit |     8
+ dog    |     7
+ cat    |     8
+(3 rows)
+```
+
+## Using the `HAVING` clause to filter groups of records
+
+The `GROUP BY` clause is a way to summarize data by collapsing multiple records into a single representative row.  But what if you want to narrow these groups based on additional factors?
+
+The `HAVING` clause is a modifier for the `GROUP BY` clause that lets you specify conditions that each group must satisfy to be included in the results.
+
+The general syntax looks like this:
+
+```sql
+SELECT <columns> FROM some_table GROUP BY <columns_to_group> HAVING <condition>
+```
+
+The operation is very similar to the `WHERE` clause, with the difference being that `WHERE` filters single records and `HAVING` filters groups of records.
+
+### Examples using `HAVING`
+
+Using the same table we introduced in the last section, we can demonstrate how the `HAVING` clause works.
+
+Here, we group the rows of the `pet` table by unique values in the `type` column, finding the minimum value of `age` as well.  The `HAVING` clause then filters the results to remove any groups where the age is not greater than 1:
+
+```sql
+SELECT type, min(age) AS youngest FROM pet GROUP BY type HAVING min(age) > 1;
+```
+```
+  type  | youngest
+--------+----------
+ rabbit |        4
+ cat    |        4
+(2 rows)
+```
+
+In this example, we group the rows in `pet` by their color.  We then filter the groups that only represent a single row.  The result shows us every color that appears more than once:
+
+
+```sql
+SELECT color FROM pet GROUP BY color HAVING count(color) > 1;
+```
+```
+ color
+-------
+ black
+ brown
+(2 rows)
+```
+
+We can perform a similar query to get the combinations of `type` and `color` that only a single animal has:
+
+```sql
+SELECT type, color FROM pet GROUP BY type, color HAVING count(color) = 1;
+```
+```
+  type  | color
+--------+--------
+ cat    | black
+ rabbit | grey
+ dog    | black
+ cat    | orange
+ cat    | white
+(5 rows)
+```
+
+## Using the `LIMIT` clause to set the maximum number of records
+
+The `LIMIT` clause offers a different approach to paring down the records your query returns.  Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned by a query.
+
+The basic syntax of `LIMIT` looks like this:
+
+```sql
+SELECT * FROM my_table LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
+```
+
+Here, the `<num_rows>` indicates the maximum number of rows to display from the executed query.  This is often used in conjunction with `ORDER BY` clauses to get the rows with the most extreme values in a certain column.  For example, to get the five best scores on an exam, a user could `ORDER BY` a `score` column and then `LIMIT` the results to 5.
+
+While `LIMIT` counts from the top of the results by default, the optional `OFFSET` keyword can be used to offset the starting position it uses.  In effect, this allows you to paginate through results by displaying the number of results defined by `LIMIT` and then adding the `LIMIT` number to the `OFFSET` to retrieve the following page.
+
+<PrismaOutlinks>
+
+If you are connecting to your database with [Prisma client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client), you can use [pagination](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/pagination) to iterate through results.
+
+</PrismaOutlinks>
+
+### Examples using `LIMIT`
+
+We will use the `pet` table from earlier for the examples in this section.
+
+As mentioned above, `LIMIT` is often combined with an `ORDER BY` clause to explicitly define the ordering of the rows before slicing the appropriate number.  Here, we sort the `pet` entries according to their `age`, from oldest to youngest.  We then use `LIMIT` to display the top 5 oldest animals:
+
+```sql
+SELECT * FROM pet ORDER BY age DESC LIMIT 5;
+```
+```
+  type  |  name   | color  | age | id
+--------+---------+--------+-----+----
+ cat    | Simon   | orange |   8 |  6
+ cat    | Sabrina | black  |   8 |  4
+ rabbit | Bunny   | brown  |   8 |  8
+ dog    | Rover   | black  |   7 |  2
+ rabbit | Briany  | brown  |   6 |  9
+(5 rows)
+```
+
+Without an `ORDER BY` clause, `LIMIT` will make selections in an entirely predictable way.  The results returned may be effected by the order of the entries within the table or by indexes.  This is not always a bad thing.
+
+If we need a record for any single `dog` within the table, we could construct a query like this.  Keep in mind that while the result might be difficult to predict, this is not a random selection and should not be used as such:
+
+```sql
+SELECT * FROM pet WHERE type = 'dog' LIMIT 1;
+```
+```
+ type | name | color | age | id
+------+------+-------+-----+----
+ dog  | Spot | brown |   3 |  1
+(1 row)
+```
+
+We can use the `OFFSET` clause to paginate through results.  We include an `ORDER BY` clause to define a specific order for the results.
+
+For the first query, we limit the results without specifying an `OFFSET` to get the first 3 youngest entries:
+
+```sql
+SELECT * FROM pet ORDER BY age LIMIT 3;
+```
+```
+ type | name  | color | age | id
+------+-------+-------+-----+----
+ dog  | Sally | brown |   1 |  3
+ dog  | Spot  | brown |   3 |  1
+ cat  | Felix | white |   4 |  5
+(3 rows)
+```
+
+To get the next 3 youngest, we can add the number defined in `LIMIT` to the `OFFSET` to skip the results we've already retrieved:
+
+```sql
+SELECT * FROM pet ORDER BY age LIMIT 3 OFFSET 3;
+```
+```
+  type  |  name   | color | age | id 
+--------+---------+-------+-----+----
+ rabbit | Buttons | grey  |   4 |  7
+ rabbit | Briany  | brown |   6 |  9
+ dog    | Rover   | black |   7 |  2
+(3 rows)
+```
+
+If we add the `LIMIT` to the `OFFSET` again, we'll get the next 3 results:
+
+```sql
+SELECT * FROM pet ORDER BY age LIMIT 3 OFFSET 6;
+```
+```
+  type  |  name   | color  | age | id
+--------+---------+--------+-----+----
+ cat    | Simon   | orange |   8 |  6
+ rabbit | Bunny   | brown  |   8 |  8
+ cat    | Sabrina | black  |   8 |  4
+(3 rows)
+```
+
+This lets us retrieve rows of data from a query in manageable chunks.
+
+## Conclusion
+
+There are many ways to filter and otherwise constrain the results you get from queries.  Clauses like `WHERE` and `HAVING` evaluate potential rows or groups of rows to see if they satisfy certain criteria.  The `GROUP BY` clause helps you summarize data by grouping together records that have one or more column values in common.  The `LIMIT` clause offers users the ability to set a hard maximum on the number of records to retrieve.
+
+Learning how these clauses can be applied, individually or in combination, will allow you to extract specific data from large datasets.  Query modifiers and filters are essential for turning the data that lives within PostgreSQL into useful answers.
+
+## FAQ
+
+<details><summary>How do you filter multiple columns in PostgreSQL?</summary>
+
+You can filter multiple columns in PostgreSQL by adding additional conditions to create compound expressions using [operators](https://www.postgresql.org/docs/current/functions.html).
+
+An example of an additional condition is the logical operator `AND`. An example of the syntax would look like the following:
+
+```sql
+SELECT * FROM customer WHERE first_name = 'John' AND last_name = 'Smith';
+``` 
+
+</details>
+
+<details><summary>How do I limit row results in PostgreSQL?</summary>
+
+You can limit the number of records a query returns by using the `LIMIT` clause. Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned.
+
+The basic syntax looks like this:
+
+```sql
+SELECT * FROM my_table LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
+```
+
+</details>
+
+<details><summary>What is an aggregate function in PostgreSQL?</summary>
+
+[Aggregate functions](https://www.postgresql.org/docs/current/functions-aggregate.html) in PostgreSQL are functions that compute a single result from a set of input values. 
+
+</details>
+
+<details><summary>What is `array_agg()` in PostgreSQL?</summary>
+
+PostgreSQL's `array_agg()` is a [user-defined aggregate function](https://www.postgresql.org/docs/current/xaggr.html) that accepts a set of values and returns an array where each value in the input set is assigned to an element of the array.
+
+</details>
+
+<details><summary>Can you `GROUP BY` timestamp values in PostgreSQL?</summary>
+
+Yes, you can `GROUP BY` a timestamp value in PostgreSQL. However, this value includes a time element that would need timestamps to be identical to the millisecond to get grouped together.
+
+Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PosgreSQL's `DATE` data type](https://www.prisma.io/dataguide/postgresql/date-types#postgresql-date-data-type) which has no associated time value.
+
+</details>

@@ -2,6 +2,7 @@
 title: 'How check your MySQL configuration for syntax errors'
 metaTitle: "Validating MySQL server configuration"
 metaDescription: "Learn how to check your MySQL server configuration file for syntax errors."
+metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
@@ -9,7 +10,7 @@ authors: ['justinellingwood']
 
 When configuring services, it's important to try to validate your changes before applying them to the environments that they will impact.  This is especially true for changes made to essential services like MySQL databases.
 
-While many changes need to be checked manually for semantic correctness (making sure the configuration means what you intend it to mean), often you can automate checks for syntactic correctness (making sure the changes are in an expected format).  This provides a limited, but extremely helpful, check that can catch spelling mistakes, incorrect punctuation, and malformed configuration options that would otherwise prevent the server from starting correctly when attempting to incorporate new changes.
+While many changes need to be checked manually for semantic correctness (making sure the configuration means what you intend it to mean), often you can automate checks for syntactic correctness (making sure the changes are in an expected format).  This provides a limited, but extremely helpful check that can catch spelling mistakes, incorrect punctuation, and malformed configuration options that would otherwise prevent the server from starting correctly when attempting to incorporate new changes.
 
 In this short guide, we'll cover how to validate MySQL server configuration files using the built-in options.  This can help you validate that the edits you perform won't interfere with MySQL when you restart the service.
 

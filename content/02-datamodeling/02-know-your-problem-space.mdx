@@ -38,7 +38,7 @@ Every additional node or edge complicates the graph, which in turn means maintai
 
 Any element of your model -- be it an entity, a relationship, or a subgraph comprising multiple entities and relationships -- may represent a part of the organization you're designing for or a locus of interaction between such units. Inventories connect manufacturing with logistics, or logistics with sales. Expense records link finance and HR, and HR to departments throughout a company. Some actors may interact with a model chiefly through a handful of entities at the edge; this can present challenges if they have little insight into the deeper workings of the system, or opportunities to improve the overall functioning of your organization by giving them more visibility and contact with the rest.
 
-Few observations have held up like [Conway's Law](http://melconway.com/Home/Conways_Law.html): organizations are condemned to reproduce their communication structures in their system designs, and databases are no exception. Some data modeling problems are, in whole or in part, really communications issues for which databases may be scant help.
+Few observations have held up like [Conway's Law](https://www.melconway.com/Home/Conways_Law.html): organizations are condemned to reproduce their communication structures in their system designs, and databases are no exception. Some data modeling problems are, in whole or in part, really communications issues for which databases may be scant help.
 
 ## How much detail?
 
@@ -77,3 +77,11 @@ Another variety of sensitive information allows you to act on behalf of someone 
 Data models are not static. Requirements evolve; businesses pivot; external sources of information appear, change, and disappear. This doesn't happen at the same spirited pace set by application development, but happen it does, big changes, little tweaks, and everything in between. Careful design will help keep the balance towards slower and more minor changes, but there's never any guarantee against needing to perform major surgery on a data model at some point, and even some seemingly-minor changes can present unforeseen difficulties in deployment. Until PostgreSQL 11, for example, adding a new column with a non-null default value required a rewrite of every record in the table -- not much fun with millions of rows!
 
 The present is more important than the future. If your model is not useful now, you likely won't get the chance to see it become useful later. Forces of [natural or unnatural selection](in-vivo) are always at work, though, and databases which cannot adapt to these pressures perish. We'll address planning for future possibilities in more detail later on, but even knowing that corners exist into which you can paint yourself can help you avoid that fate.
+
+<PrismaOutlinks>
+
+If you want to learn more about what data modeling means in the context of Prisma, visit our conceptual page on [data modeling](https://www.prisma.io/docs/concepts/overview/what-is-prisma/data-modeling).
+
+You can also learn about the specific data model component of a Prisma schema in the [data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) section of the Prisma documentation.
+
+</PrismaOutlinks>

@@ -1,19 +1,26 @@
 ---
 title: 'Traditional databases vs serverless databases'
-metaTitle: 'Comparing conventional and serverless databases'
-metaDescription: 'Learn about the advantages and disadvantages of self-managed databases, managed databases, and serverless databases.'
+metaTitle: 'Traditional vs Serverless Database Architecture Comparisons'
+metaDescription: 'Learn about the advantages, disadvantages, and comparisons of self-managed databases, managed databases, and serverless databases.'
+metaImage: '/social/generic-serverless.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-The role of databases within many organizations has evolved over time.  While reliance on data to build applications, make business decisions, and provide value in larger ecosystems has increased, the management of the database software and infrastructure itself has, in many cases, shifted.
+The role of [databases](https://www.prisma.io/dataguide/intro/what-are-databases) within many organizations has evolved over time.  While reliance on data to build applications, make business decisions, and provide value in larger ecosystems has increased, the management of the database software and infrastructure itself has, in many cases, shifted.
 
 While these assets have traditionally been operated by the organization itself, their management has increasingly been outsourced to external providers.  The first iteration of this idea was to move to *managed databases*, where a provider manages the infrastructure and software while allowing the user to adjust settings and set scaling policies.
 
 More recently, this idea has evolved to *serverless databases*, where the entire infrastructure, data storage, and underlying architecture is entirely managed by the provider and the user only accesses the data they manage through API-like interactions.
 
 In this guide, we'll talk about the differences between traditionally deployed databases and their serverless counterparts.  We will discuss managed database offerings where appropriate to help distinguish between the different options providers offer.  Learning about these different concepts can help you understand the trade-offs between different offerings and make an informed decision about what type of database management would make sense for your own projects.
+
+<PrismaOutlinks>
+
+Checkout the [Prisma Data Platform](https://www.prisma.io/dataplatform) to manage all of your application data in a single place.
+
+</PrismaOutlinks>
 
 ## Traditional databases vs managed databases vs serverless databases
 
@@ -54,7 +61,7 @@ Many organizations adopt this style of management because it allows their develo
 
 ### Serverless databases
 
-*Serverless databases* are a relatively new approach offered by cloud providers that takes on an even larger part of the management responsibility from users.  Serverless databases decouple the part of a database management system that deals with storage from the part that executes queries.  This means both can be scaled independently.  In serverless databases, these components are both managed exclusively by the provider.
+*Serverless databases* are a relatively new approach offered by cloud providers that takes on an even larger part of the management responsibility from users.  Serverless databases decouple the part of a database management system that deals with storage from the part that executes queries.  This means both can be scaled independently.  In serverless databases, these components are both managed exclusively by the [provider](https://www.prisma.io/dataguide/serverless/serverless-comparison).
 
 ![Serverless databases](/content/serverless/traditional-vs-serverless-dbs/serverless-databases.png)
 

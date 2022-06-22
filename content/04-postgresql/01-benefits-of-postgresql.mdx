@@ -1,13 +1,14 @@
 ---
 title: 'The benefits of PostgreSQL'
-metaTitle: "Benefits of PostgreSQL | Prisma's Data Guide"
-metaDescription: 'With so many relational databases to choose from, why is PostgreSQL a good option?  This article will explore why PostgreSQL is one of the most popular RDBMSs among developers.'
+metaTitle: "PostgreSQL Advantages: Benefits of Using PostgreSQL"
+metaDescription: 'Learn why PostgreSQL is one of the most popular RDBMSs among developers, and the benefits it offers to engineers.'
+metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
 ## Overview
 
-There are many relational database management systems (RDBMSs) to choose from if the relational model best represents your data.  PostgreSQL is one of the most popular and well-regarded open-source relational databases in the world.
+There are many [relational database management systems (RDBMSs)](/intro/database-glossary#relational-database-management-system) to choose from if the [relational model](/intro/database-glossary#relational-database) best represents your data.  PostgreSQL is one of the most popular and well-regarded open-source relational databases in the world.
 
 This article will cover some of the primary reasons so many developers choose PostgreSQL for their data management needs.  These range from feature availability and standards compliance to community support and project governance.
 
@@ -27,7 +28,7 @@ Some of the features that PostgreSQL offers include:
     * [R](https://github.com/postgres-plr/plr)
     * [shell](https://github.com/petere/plsh)
     * [Javascript](https://github.com/plv8/plv8)
-* Support for a huge number of data types including:
+* Support for a huge number of [data types](/intro/database-glossary#data-type) including:
     * common database primitives like numeric, string, boolean, and datetime types: These are found in most databases and have great support in PostgreSQL.
     * [network addresses](https://www.postgresql.org/docs/current/datatype-net-types.html): PostgreSQL supports various network-related types like [CIDR](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) addresses, addresses with subnet masks, and [MAC addresses](https://en.wikipedia.org/wiki/MAC_address), both for IPv4 and IPv6.
     * [geometric types](https://www.postgresql.org/docs/current/datatype-geometric.html): A variety of types are available to help you define two dimensional objects.  These include points, lines, and, segments, as well as complete shapes like boxes, polygons, and circles.
@@ -115,3 +116,48 @@ This focus on community-driven development has resulted in great participation f
 PostgreSQL has gained a great reputation as a powerful, feature-rich choice for relational data.  Valuing stability, functionality, and standards conformance, PostgreSQL checks all of the right boxes for many projects.  Similarly, if you require flexibility in how you can represent data and want to be able to use a variety of tools and languages, PostgreSQL is also a good choice.
 
 PostgreSQL is notable for offering excellent implementation of core relational features while not limiting itself to the boundaries of traditional RDBMSs.  While no database can serve every need, PostgreSQL is an excellent option that is versatile enough to suit many use cases.
+
+<PrismaOutlinks>
+
+You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications.  Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgres) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
+
+</PrismaOutlinks>
+
+## FAQ
+
+<details><summary>Is PostgreSQL open-source?</summary>
+
+[PostgreSQL](https://www.postgresql.org/) is an open-source database. It is an object relational database that has been in development for more than 30 years. 
+
+You can get more acquainted with PostgreSQL in our [Getting to know PostgreSQL feature](https://www.prisma.io/dataguide/postgresql/getting-to-know-postgresql). 
+
+</details>
+
+<details><summary>What is PostgreSQL’s feature matrix?</summary>
+
+[PostgreSQL’s Feature Matrix](https://www.postgresql.org/about/featurematrix/) is a table maintained by PostgreSQL outlining all of its features and which version those features were added in. 
+
+You can access each feature’s detailed information by clicking on that feature and getting directed to the appropriate PostgreSQL documentation.
+
+</details>
+
+<details><summary>Where can you find PostgreSQL’s feature list?</summary>
+
+You can find PostgreSQL’s feature list in its [Feature Matrix](https://www.postgresql.org/about/featurematrix/).
+
+</details>
+
+<details><summary>Is PostgreSQL free to use?</summary>
+
+PostgreSQL is free to use and is released under the OSI-approved [PostgreSQL License](https://www.postgresql.org/about/licence/). 
+
+There is no fee, even for using commercial software products. 
+
+</details>
+
+<details><summary>Is PostgreSQL a NoSQL database?</summary>
+
+PostgreSQL is an object relational database and is not a NoSQL database. However, they have added some NoSQL type capabilities such as [JSON Types](https://www.postgresql.org/docs/10/datatype-json.html).
+
+</details>
+

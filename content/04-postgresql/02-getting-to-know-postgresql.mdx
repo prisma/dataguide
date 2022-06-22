@@ -2,12 +2,13 @@
 title: 'Getting to know PostgreSQL'
 metaTitle: 'Understanding PostgreSQL architecture and attributes'
 metaDescription: "Like any database system, PostgreSQL comes with its share of complexity.  This article will break down some of PostgreSQL's conceptual foundations to give you a better understanding of how all of the pieces fit together."
+metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
 ## Overview
 
-PostgreSQL is a powerful relational database, capable of serving many different use cases.  Before using it for your projects, it's a good idea to get an overview of how PostgreSQL works, how it may differ from other relational databases, what features are available to help you model and manage your data.
+[PostgreSQL](/intro/database-glossary#postgresql) is a powerful relational database, capable of serving many different use cases.  Before using it for your projects, it's a good idea to get an overview of how PostgreSQL works, how it may differ from other relational databases, what features are available to help you model and manage your data.
 
 This guide will go over PostgreSQL's architecture and attributes to give you a general understanding of how your database system works.  This overview will help you understand the application architecture, the way users typically interact with it, and how it supports data integrity and growth through scaling and safety features.
 
@@ -15,7 +16,7 @@ This guide will go over PostgreSQL's architecture and attributes to give you a g
 
 Like many relational database systems, PostgreSQL's basic architecture follows the client-server model.
 
-The main PostgreSQL program runs as a service that is responsible for defining data structures, storing data, and responding to queries.  This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server.  The server responds with messages indicating success, failure, query results, or other appropriate information.
+The main PostgreSQL program runs as a [service](https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database) that is responsible for defining data structures, storing data, and responding to queries.  This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server.  The server responds with messages indicating success, failure, query results, or other appropriate information.
 
 This architecture allows a PostgreSQL system to serve many different clients who can connect locally or over the network.  The master PostgreSQL process forks a new process for each client connection it receives.  Because of this, each fork is dedicated to a single client connection, so the number of connections, forks, and database sessions align with one another.
 
@@ -26,11 +27,11 @@ Concepts:
 * **fork**: A fork is a clone of a running process, often used to help control resource usage, privilege level, and create a new execution environment.
 * **database session**: A database session is a single, continuous connection between a database server and client.  Sessions have their own context that persists for the life of the session, allowing for some level of state and configuration on a per-session basis.
 
-## PostgreSQL's default client: psql
+## PostgreSQL's default client: `psql`
 
 Users can connect to PostgreSQL servers using a variety of clients.  The default command line client that is implemented as part of the PostgreSQL distribution is called `psql`.
 
-The `psql` client operates can connect to local or remote databases and either process queries as a batch or interactively.  For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
+The [`psql` client](https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases) operates can connect to local or remote databases and either process queries as a batch or interactively.  For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
 
 Interactive `psql` sessions drop the user at a PostgreSQL command prompt upon authenticating.  From there, you can send SQL to the client and either view the results in your terminal window or pipe them to an output file.
 
@@ -46,17 +47,17 @@ Concepts:
 
 <PrismaOutlinks>
 
-[Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client) is another powerful way to work with your PostgreSQL databases.
+[Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/concepts/database-connectors/postgresql).  You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres)
 
 </PrismaOutlinks>
 
 ## Authentication and authorization with PostgreSQL roles and privileges
 
-PostgreSQL uses roles and privileges to validate who is connecting to the system and to determine what actions they are allowed to perform.
+PostgreSQL uses [roles and privileges](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management) to validate who is connecting to the system and to determine what actions they are allowed to perform.
 
 In PostgreSQL, a role is a grouping of a specific set of capabilities, permissions, and "owned" entities.  Instead of having distinct concepts of "users" and "groups", PostgreSQL uses roles to represent both of these ideas.  A role can correspond to an individual person in the real world, or it can operate as a group with certain access that other roles can become members of.
 
-This system provides a great deal of flexibility in organizing levels of access.  Authentication methods can be defined according to role and authorization to specific database entities can be given to specific roles.  Roles that are members of other roles will inherit access privileges from those roles.
+This system provides a great deal of flexibility in organizing levels of access.  [Authentication methods](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/configuring-user-authentication) can be defined according to role and authorization to specific database entities can be given to specific roles.  Roles that are members of other roles will inherit access privileges from those roles.
 
 PostgreSQL has some important defaults that affect the out-of-the-box behavior with regard to user logins and privileges.  New installations are typically configured with [peer authentication](https://www.postgresql.org/docs/current/auth-peer.html), which allows users to automatically authenticate to any PostgreSQL role that matches their operating system user.  Basically, this offloads user authentication to the operating system.  Any operating system user with a matching PostgreSQL role name is assumed to be trusted with that identity.  Authorization to do useful work on a database must be granted separately.
 
@@ -97,9 +98,9 @@ When working with Prisma Client, [data models](https://www.prisma.io/docs/refere
 
 Database concurrency and isolation control help systems manage instances where more than one user tries to access the same data concurrently.  It is important for databases to have a strategy for dealing with this to avoid inconsistent reads, committing conflicting changes, and race conditions.
 
-PostgreSQL uses a strategy called multiversion concurrency control (MVCC) to handle these scenarios.  MVCC works by performing SQL statements on a snapshot of the associated data.  This data snapshot provides *transaction isolation*, which ensures that each transaction can be applied or rolled back independently and that they operate on a consistent set of data.
+PostgreSQL uses a strategy called [multiversion concurrency control (MVCC)](/intro/database-glossary#multiversion-concurrency-control) to handle these scenarios.  MVCC works by performing SQL statements on a snapshot of the associated data.  This data snapshot provides [*transaction isolation*](/intro/database-glossary#isolation), which ensures that each transaction can be applied or rolled back independently and that they operate on a consistent set of data.
 
-This concurrency management lets PostgreSQL avoid locking, a technique that gives exclusive access to data for the duration of an operation to one process.  While helping with isolation control, locking prevents concurrent access and affects performance as queries wait for the lock to be freed to access data.
+This concurrency management lets PostgreSQL avoid [locking](/intro/database-glossary#lock), a technique that gives exclusive access to data for the duration of an operation to one process.  While helping with isolation control, locking prevents concurrent access and affects performance as queries wait for the lock to be freed to access data.
 
 PostgreSQL's MVCC implementation allows read and write statements to never block one another, which can have a profound performance impact.  [Multiple levels of transaction isolation are available](https://www.postgresql.org/docs/current/transaction-iso.html) depending on your tolerance for different types of isolation problems.  Table and row level locking are also available if you want to manage a more fine-tuned scope for concurrency with your own system.
 

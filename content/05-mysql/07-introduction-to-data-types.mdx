@@ -2,6 +2,7 @@
 title: 'An introduction to MySQL data types'
 metaTitle: "MySQL data types | Introduction | Prisma's Data Guide"
 metaDescription: "MySQL supports a variety of data types to help you define what types of values different fields support..  In this guide, we'll introduce some of the most common MySQL data types and show you how to work with them."
+metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
@@ -9,7 +10,7 @@ authors: ['justinellingwood']
 
 One of the primary features of relational databases in general is the ability to define [schemas](/intro/intro-to-schemas) or [table structures](/mysql/create-and-delete-databases-and-tables#create-tables-within-databases) that exactly specify the format of the data they will contain.  This is done by prescribing the columns that these structures contain along with their *data type* and any constraints.
 
-Data types specify a general pattern for the data they accept and store.  Values must adhere to the requirements that they outline in order to be accepted by MySQL.  While it is possible to define custom requirements, data types provide the basic building blocks that allow MySQL to validate input and work with the data using appropriate operations.
+[Data types](/intro/database-glossary#data-type) specify a general pattern for the data they accept and store.  Values must adhere to the requirements that they outline in order to be accepted by MySQL.  While it is possible to define custom requirements, data types provide the basic building blocks that allow MySQL to validate input and work with the data using appropriate operations.
 
 MySQL includes [a wide range of data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) that are used to label and validate that values conform to appropriate types.  In this guide, we will discuss the most common data types available in MySQL, the different input and output formats they use, and how to configure various fields to meet your applications' needs.
 
@@ -56,7 +57,7 @@ We'll cover the most common of these in more depth throughout this guide.
 
 ### Getting started with MySQL data types
 
-As you get started with types, it's important to remember that types alone are not always a complete solution to data validation, but a component.  Other database tools, like [constraints](/mysql/column-and-table-constraints) also have a role to play in defining correctness.  Still, data types are often the first line of defense against invalid data.
+As you get started with types, it's important to remember that types alone are not always a complete solution to data validation, but a component.  Other database tools, like [constraints](/intro/database-glossary#constraint) also have a role to play in defining correctness.  Still, data types are often the first line of defense against invalid data.
 
 For many cases, the general types provided by MySQL are appropriate for the kinds of data you'll be storing.  For example, while you could store the coordinates of a geometric point in two different number columns, the provided [`point` type](https://dev.mysql.com/doc/refman/8.0/en/gis-class-point.html) is purpose built to store and validate exactly this type of information.  When choosing types, check to see that you are using the most specific type applicable to your use case.
 
@@ -308,7 +309,7 @@ In the data model used by Prisma schema, data types are represented by [field ty
 
 <details><summary>What is the range of the `DECIMAL` data type in MySQL?</summary>
 
-The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D). The ranges of values for the argumments are as follows:
+The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D)`. The ranges of values for the arguments are as follows:
 
 * *M* is the maximum number of digits (the precision). It has a range of 1 to 65.
 * *D* is the number of digits to the right of the decimal point (the scale). It has a range of 0 to 30 and must be no larger than *M*. 

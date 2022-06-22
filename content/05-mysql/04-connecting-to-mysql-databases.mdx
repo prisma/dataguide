@@ -2,12 +2,13 @@
 title: 'Connecting to MySQL databases'
 metaTitle: "Connecting to MySQL databases | Prisma's Data Guide"
 metaDescription: "Learn how to connect to local and remote MySQL databases using the `mysql` client"
+metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-One of the first things you'll need to think about when working with a MySQL database is how to connect and interact with the database instance.  This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual MySQL instance that stores, organizes, and provides access to your data.
+One of the first things you'll need to think about when working with a [MySQL](/intro/database-glossary#mysql) database is how to connect and interact with the database instance.  This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual MySQL instance that stores, organizes, and provides access to your data.
 
 Because of this, you need to understand how to connect as a client by providing the required information to authenticate.  In this guide, we'll cover how to connect to a MySQL database using the native [`mysql` command line client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html) — one of the most common and useful ways of interacting with a database instance.
 
@@ -15,9 +16,9 @@ In a companion guide, you can find out how to [configure MySQL's authentication 
 
 ## Basic information about the `mysql` client
 
-The `mysql` client is the default command line client and SQL shell for MySQL.  You can use it interactively to spawn a shell session with your server or you can feed it SQL files to run without user interaction.  It is especially useful when implementing configuration options and setting up your environment.  Interactive exploration and ad-hoc queries are also a strong suit while developing the access patterns your programs will use.
+The `mysql` client is the default command line client and SQL shell for MySQL.  You can use it interactively to spawn a shell session with your server or you can feed it [SQL](/intro/database-glossary#sql) files to run without user interaction.  It is especially useful when implementing configuration options and setting up your environment.  Interactive exploration and ad-hoc queries are also a strong suit while developing the access patterns your programs will use.
 
-The way that to connect to and authenticate with a MySQL server depends on your server's configuration.  In the following sections, we'll go over some of the basic connection options.  For clarity's sake, we'll differentiate between local and remote connections:
+The way that to connect to and [authenticate](/intro/database-glossary#authentication) with a MySQL server depends on your server's configuration.  In the following sections, we'll go over some of the basic connection options.  For clarity's sake, we'll differentiate between local and remote connections:
 
 * **local connection**: a connection where the client and the MySQL instance are located on the same server 
 * **remote connection**: where the client is connecting to a network-accessible MySQL instance running on a different computer
@@ -82,7 +83,7 @@ The available authentication methods vary based on the MySQL instance's configur
 | **`--port=`** or **`-P`**| The network port that the MySQL server is running on.  If the server is using port 3306, the default MySQL port, this parameter may be omitted. |
 | **`--user=`** or **`-u`** | The database username you wish to connect as.  If not specified, your operating system username will be used. |
 | **`--password`** or **`-p`** | Indicate that you want to provide a password for the specified account.  The `mysql` client will prompt you for the password once you press <kbd>Enter</kbd>. |
-| **MySQL database** | The MySQL database name that you want to access.  If not specified, `mysql` will connect to the server without connecting to a specific database. |
+| **MySQL database** | The MySQL [database](/intro/database-glossary#database) name that you want to access.  If not specified, `mysql` will connect to the server without connecting to a specific database. |
 
 The basic format for connecting to a remote database typically looks something like this:
 

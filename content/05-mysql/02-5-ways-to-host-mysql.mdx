@@ -3,12 +3,13 @@ title: '5 ways to host MySQL databases'
 metaTitle: "5 Ways to Host MySQL Databases: Self-Managed to Managed Services"
 metaDescription: "There are many ways of getting a MySQL server up and running for your projects.  This article explores some of the most popular options."
 authors: ['justinellingwood']
+metaImage: '/social/generic-mysql.png'
 toc: false
 ---
 
 ## Introduction
 
-There are a number of ways of getting a MySQL server up and running for your projects.  You can install and manage a server instance yourself or you can take advantage of one of the many providers who offer managed MySQL access.
+There are a number of ways of getting a [MySQL](/intro/database-glossary#mysql) server up and running for your projects.  You can install and manage a server instance yourself or you can take advantage of one of the many providers who offer managed MySQL access.
 
 This article will go over some of the most common options for MySQL servers and compare their advantages and challenges.  By figuring out what your project and team's priorities are, you can find a solution that suits your needs.
 
@@ -24,7 +25,7 @@ This article will go over some of the most common options for MySQL servers and 
 
 The most flexible and simplest to describe option is self-hosting your MySQL server.  Self-hosting MySQL means that you install and configure your databases on computers that you control, just like any other piece of software.
 
-Self-hosting gives you a lot of choice as to where you will install and run your databases.  If you choose one of the options in this section, you can use this guide to learn [how to install MySQL on your systems](https://www.prisma.io/dataguide/mysql/setting-up-a-local-mysql-database).
+Self-hosting gives you a lot of choice as to where you will install and run your databases.  If you choose one of the options in this section, you can use this guide to learn [how to install MySQL on your systems](/mysql/setting-up-a-local-mysql-database).
 
 ### Installing MySQL on your local development computer
 
@@ -47,11 +48,11 @@ Setting up MySQL on your development machine is free of cost.  You are running t
 
 Installing MySQL on your development machine is a low performance option.
 
-Your database will not be easily or reliably available to other users. Your own usage of the database will be limited by your hardware and the amount of resources you can spare for MySQL.  These concerns are not typically an issue when testing or developing locally, but are entirely inadequate for anything more complex.
+Your database will not be easily or reliably [available](/intro/database-glossary#availability) to other users. Your own usage of the database will be limited by your hardware and the amount of resources you can spare for MySQL.  These concerns are not typically an issue when testing or developing locally, but are entirely inadequate for anything more complex.
 
 #### Scalability
 
-Hosting on your development machine gives you almost no scalability.  You can change the amount of resources allocated to MySQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
+Hosting on your development machine gives you almost no [scalability](/intro/database-glossary#scaling).  You can change the amount of resources allocated to MySQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
 
 #### Management complexity
 
@@ -112,7 +113,7 @@ In summary, managing your own MySQL can be incredibly efficient, powerful, and f
 
 ### MySQL with Docker
 
-Another self-hosting option is to use Docker to run MySQL as a container. Docker allows you run MySQL in an isolated environment on a local or remote machine.
+Another self-hosting option is to use [Docker](https://www.docker.com/) to run MySQL as a container. Docker allows you run MySQL in an isolated environment on a local or remote machine.
 
 | Hosting Option            | Docker containers                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -139,7 +140,7 @@ While Docker simplifies certain aspects of running MySQL, there are a few trade-
 
 #### Containers and Kubernetes
 
-With Kubernetes, you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the MySQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses MySQL on Kubernetes, which can reduce network latency between the application and MySQL.
+With [Kubernetes](https://kubernetes.io/), you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the MySQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses MySQL on Kubernetes, which can reduce network latency between the application and MySQL.
 
 ## Managed services
 
@@ -220,7 +221,7 @@ The following third-party providers offer managed MySQL databases that you can p
 * [ScaleGrid](https://scalegrid.io/mysql.html)
 * [Cloudways](https://www.cloudways.com/en/mysql-hosting.php)
 
-The server and majority of MySQL will be managed by the provider, while you will be able to set up which cloud platform it the database runs on, scaling options, tweak settings, and manage access. You can configure your databases to be connectable from the internet or connect them directly to your applications that are managed by the same provider.
+The server and majority of MySQL will be managed by the provider, while you will be able to set up which cloud platform the database runs on, scaling options, tweak settings, and manage access. You can configure your databases to be connectable from the internet or connect them directly to your applications that are managed by the same provider.
 
 #### Cost
 

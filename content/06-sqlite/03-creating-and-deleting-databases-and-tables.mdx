@@ -1,8 +1,9 @@
 ---
 title: 'Creating and deleting databases and tables with SQLite'
-metaTitle: "Managing databases and tables | SQLite | Prisma's Data Guide"
-metaDescription: 'Learn how to create and destroy databases and tables using SQLite.'
-authors: ['justinellingwood']
+metaTitle: "SQLite: How to Create, Delete and Manage Databases"
+metaDescription: 'Learn how to create, destroy, manage, and use databases and tables using SQLite.'
+metaImage: '/social/generic-sqlite.png'
+authors: ['alexemerich']
 ---
 
 ## Introduction
@@ -29,9 +30,9 @@ Use ".open FILENAME" to reopen on a persistent database.
 sqlite>
 ```
 
-By default, a SQLite session begins using an in-memory database. This means that it is not currently reading from a file.
+By default, a SQLite session begins using an [in-memory database](/intro/database-glossary#in-memory-database). This means that it is not currently reading from a file.
 
-If you already have a persistent database, you can open its existing file by using the `.open <FILENAME>` command. For example, in the following command, the pre-existing `test.db` database is opened.
+If you already have a [persistent](/intro/database-glossary#persistence) database, you can open its existing file by using the `.open <FILENAME>` command. For example, in the following command, the pre-existing `test.db` database is opened.
 
 ```sql
 .open test.db
@@ -111,7 +112,7 @@ We can break down the above statement into the following pieces:
 
 * `CREATE TABLE <table name>`: This is the basic command statement. In the example, the `<table name>` is `student` and should be whatever you intend to name your table.
 * `<column name> <data type>`: This syntax defines a basic column within the table. In the example, a column name would be `first_name` and its corresponding data type defined by [SQLite Data Types](https://www.sqlite.org/datatypes.html) is `TEXT`. 
-* `<column constraint>`: Column constraints are optional restraints adding additional requirements for the data entering your table. In the example, the column constraint `Not Null` is added to the `student_email` column. This ensures no entry is made without this column being populated.
+* `<column constraint>`: Column [constraints](/intro/database-glossary#constraint) are optional restraints adding additional requirements for the data entering your table. In the example, the column constraint `Not Null` is added to the `student_email` column. This ensures no entry is made without this column being populated.
 * `<table constraint>`: Like a column constraint, table constraints are optional to add additional requirements to your data. There is an exception if the constraint affects the interaction of multiple columns instead of a singular column. In our example, the addition of `PRIMARY KEY` to the `id` field is an example of a table constraint.
 
 
@@ -203,7 +204,7 @@ The `IF EXISTS` statement is optional when dropping a table. The behavior it add
 
 ## Dropping a database
 
-Because SQLite does not have a separate server process like other relational databases such as MySQL or PostgreSQL, there is not a need for a `DROP DATABASE` statement. SQLite is an embedded database engine, so in order to drop a database you have to delete the file from the machine. This action will make the database no longer accessible.
+Because SQLite does not have a separate server process like other [relational databases](/intro/database-glossary#relational-database) such as [MySQL](/intro/database-glossary#mysql) or [PostgreSQL](/intro/database-glossary#postgresql), there is not a need for a `DROP DATABASE` statement. SQLite is an embedded [database engine](/intro/database-glossary#database-engine), so in order to drop a database you have to delete the file from the machine. This action will make the database no longer accessible.
 
 
 
@@ -213,4 +214,8 @@ This article covers the basics of creating and dropping databases and tables in 
 
 Within the statements mentioned, like `CREATE TABLE` and `DROP TABLE`, many additional parameters that can be considered depending on the use case. You can read into more detail on statements like these in the [official SQLite documentation](https://www.sqlite.org/docs.html). 
 
+<PrismaOutlinks>
 
+When using [Prisma](https://github.com/prisma/prisma), you can use the [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate) to create your databases and tables. [Developing with Prisma Migrate](https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate) generates migration files based on the declarative [Prisma schema](https://www.prisma.io/docs/concepts/components/prisma-schema) and applies them to your database.
+
+</PrismaOutlinks>

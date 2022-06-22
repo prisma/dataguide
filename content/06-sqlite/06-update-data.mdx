@@ -2,6 +2,7 @@
 title: 'How to update existing data with SQLite'
 metaTitle: "Updating existing data | SQLite | Prisma's Data Guide"
 metaDescription: "Learn how to update existing data using SQLite."
+metaImage: '/social/generic-sqlite.png'
 authors: ['alexemerich']
 ---
 
@@ -42,9 +43,15 @@ WHERE
 		id = 1;
 ```
 
+<PrismaOutlinks>
+
+To update data with Prisma Client, issue an [update query](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud#update).
+
+</PrismaOutlinks>
+
 ## Returning records modified by the `UPDATE` command
 
-By default, SQLite does not show the number of rows impacted by an `UPDATE` statement. However, SQLite added the `RETURNING` clause modelled after PostgreSQL in version `3.35.0`. This clause causes the commands to return all or part of the records that were modified.
+By default, SQLite does not show the number of rows impacted by an `UPDATE` statement. However, SQLite added the `RETURNING` clause modelled after [PostgreSQL](/intro/database-glossary#postgresql) in version `3.35.0`. This clause causes the commands to return all or part of the records that were modified.
 
 You can use the asterisk `*` symbol to return all of the columns of the modified rows much like a `SELECT` statement:
 

@@ -2,14 +2,14 @@
 title: '5 ways to host PostgreSQL databases'
 metaTitle: "5 Ways to Host PostgreSQL Databases | PostgreSQL Hosting Guide"
 metaDescription: "From self-managed to managed services, there are many ways to get PostgreSQL servers for your projects. Find out the pros and cons of various hosting options with our guide."
-metaImage: /content/postgresql/ways-to-host-postgresql-databases/header.png
 authors: ['justinellingwood', 'danielnorman']
+metaImage: '/social/generic-postgresql.png'
 toc: false
 ---
 
 ## Introduction
 
-There are many ways to acquire a PostgreSQL instance for your projects or organizations to use.  You can learn how to install and configure PostgreSQL yourself or you can pay service providers to manage your PostgreSQL databases for you.
+There are many ways to acquire a [PostgreSQL](/intro/database-glossary#postgresql) instance for your projects or organizations to use.  You can learn how to install and configure PostgreSQL yourself or you can pay service providers to manage your PostgreSQL databases for you.
 
 This guide will cover different ways to run PostgreSQL and their respective benefits and drawbacks.  By comparing the different options, you should come away with a better idea of what type of solution is best for your project or development stage.
 
@@ -52,7 +52,7 @@ Your database will not be easily or reliably available to other users. Your own 
 
 #### Scalability
 
-Hosting on your development machine gives you almost no scalability.  You can change the amount of resources allocated to PostgreSQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
+Hosting on your development machine gives you almost no [scalability](/intro/database-glossary#scaling).  You can change the amount of resources allocated to PostgreSQL, but not much more.  You can upgrade your development machine, but that is neither practical or particularly useful in the long term.
 
 #### Management complexity
 
@@ -113,7 +113,7 @@ In summary, managing your own PostgreSQL can be incredibly efficient, powerful, 
 
 ### PostgreSQL with Docker
 
-Another self-hosting option is to use Docker to run PostgreSQL as a container. Docker allows you run PostgreSQL in an isolated environment on a local or remote machine.
+Another self-hosting option is to use [Docker](https://www.docker.com/) to run PostgreSQL as a container. Docker allows you run PostgreSQL in an isolated environment on a local or remote machine.
 
 | Hosting Option            | Docker containers                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -140,7 +140,7 @@ While Docker simplifies certain aspects of running PostgreSQL, there are a few t
 
 #### Containers and Kubernetes
 
-With Kubernetes, you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the PostgreSQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses PostgreSQL on Kubernetes, which can reduce network latency between the application and PostgreSQL.
+With [Kubernetes](https://kubernetes.io/), you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the PostgreSQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses PostgreSQL on Kubernetes, which can reduce network latency between the application and PostgreSQL.
 
 
 ## Managed services
@@ -262,3 +262,9 @@ Here is an overview of how the various options discussed here compare to one ano
 ![Chart comparing PostgreSQL hosting options](/content/postgresql/ways-to-host-postgresql-databases/comparison-chart.png)
 
 The right choice for hosting your database depends significantly on your applications' requirements, the stage of your development, and your ability to manage PostgreSQL on your own.  Different choices offer trade-offs between these factors that make them more appropriate at certain times or for certain organizations.
+
+<PrismaOutlinks>
+
+Once you have a PostgreSQL database, you can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage it from within your JavaScript or TypeScript applications.  Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgres) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
+
+</PrismaOutlinks>

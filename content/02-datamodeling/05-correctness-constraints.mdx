@@ -105,3 +105,53 @@ This has caused no end of confusion and will likely continue to do so in perpetu
 There are many more ways in which data may be incorrect than addressed here. Constraints help, but even they are only so flexible; many common intra-table specifications, like a limit of two or higher on the number of times a value is allowed to appear in a column, can only be enforced with [triggers](functional-units#triggers-and-consequences).
 
 But there are also ways in which the very structure of a table can lead to inconsistencies. To prevent these, we'll need to marshal both primary and foreign keys not just to define and validate but to *normalize* the relationships between tables. First, though, we've barely scratched the surface of how [the relationships between tables define the structure of the database itself](making-connections).
+
+<PrismaOutlinks>
+
+If you want to learn more about what data modeling means in the context of Prisma, visit our conceptual page on [data modeling](https://www.prisma.io/docs/concepts/overview/what-is-prisma/data-modeling).
+
+You can also learn about the specific data model component of a Prisma schema in the [data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) section of the Prisma documentation.
+
+</PrismaOutlinks>
+
+## FAQ
+
+<details><summary>What is the definition of a tuple?</summary>
+
+A tuple is a data structure that stores a specific number of elements. These elements may include integers, characters, strings, or other data types.
+
+Tuples are static and cannot be modified, typically resulting in lower memory requirements than arrays.
+
+</details>
+
+<details><summary>What is a named tuple?</summary>
+
+A typical tuple uses numerical indexes to access its members. 
+
+A named tuple differs in that its members are assigned names in addition to the numerical index. This can be beneficial in instances where a tuple has a lot of fields and is constructed far from where it is being used.
+
+</details>
+
+<details><summary>What is a tuple in a database?</summary>
+
+In the context of a relational database, a tuple can be thought of as a single record or row of that database. 
+
+For example, in a customer database a row might include a customer’s first name, last name, phone number, email, and shipping address. All of this information together can be thought of as a tuple.
+
+</details>
+
+<details><summary>What is a foreign key in a database?</summary>
+
+A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table. 
+
+However, it can also refer to any unique column that is also not null. 
+
+</details>
+
+<details><summary>Why do relational databases use primary keys and foreign keys?</summary>
+
+Relational databases use primary and foreign keys to establish connections between tables in a database. These keys facilitate access to one table from another within a database.
+
+Primary keys can also be generally useful for uniquely addressing individual records even without any foreign keys.
+
+</details>

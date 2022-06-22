@@ -2,6 +2,7 @@
 title: 'Importing and exporting data in MySQL'
 metaTitle: 'Import and export data with a MySQL database'
 metaDescription: 'Exporting data from MySQL to recreate your data structures and populate databases is a good way to migrate data, back up and recover, or prepare for replication. Learn more!'
+metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
@@ -74,7 +75,7 @@ Note that **this command will trigger a prompt where you need to specify the pas
 
 There might be cases where you don't want to dump the _entire_ database, for example you might want to:
 
-* dump only the actual data but exclude the [DDL](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_ddl) (i.e. the SQL statements that define your database schema like `CREATE TABLE`,...)
+* dump only the actual data but exclude the [DDL](/intro/database-glossary#data-definition-language) (i.e. the SQL statements that define your database schema like `CREATE TABLE`,...)
 * dump only the DDL but exclude the actual data
 * exclude specific tables
 
@@ -89,7 +90,7 @@ Here's an overview of a few command line options you can use in these scenarios:
 
 ## Importing data from SQL files
 
-After having used `mysqldump` to export your MySQL database as a SQL file, you can restore the state of the database by feeding the SQL file into [`mysql`](https://dev.mysql.com/doc/refman/8.0/en/mysql.html):
+After having used `mysqldump` to export your MySQL database as an [SQL](/intro/database-glossary#sql) file, you can restore the state of the database by feeding the SQL file into [`mysql`](https://dev.mysql.com/doc/refman/9.0/en/mysql.html):
 
 ```shell
 mysql DB_NAME < INPUT_FILE

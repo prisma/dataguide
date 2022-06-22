@@ -9,7 +9,7 @@ authors: ['justinellingwood']
 
 One of the primary advantages of databases over other, more simple data storage options is their ability to store information in an orderly, easily queryable structure.  These features are derived from the fact that databases implement *schemas* to describe the data they store.
 
-A database schema serves as a blueprint for the shape and format of data within a database.  For relational databases, this includes describing categories of data and their connections through tables, primary keys, data types, indexes, and other objects.  With NoSQL schemas, this often involves organizing data according to the most important anticipated query patterns.
+A [database schema](/intro/database-glossary#schema) serves as a blueprint for the shape and format of data within a database.  For relational databases, this includes describing categories of data and their connections through tables, primary keys, data types, indexes, and other objects.  With NoSQL schemas, this often involves organizing data according to the most important anticipated query patterns.
 
 In either case, understanding the value of your database's schema and how best to design and optimize it for your needs is crucial.  This guide will focus on what database schemas are, the different types of schema you might encounter, why they're important, and what to keep in mind when designing your own schemas.
 
@@ -123,15 +123,15 @@ ER models are frequently used in early stage schema designs because they are ver
 
 Once you have a logical schema, your next step is to figure out specific implementation details by creating a physical schema (as discussed in a [previous section](#when-designing-database-schemas)).  The physical schema will determine exactly how you want to commit your plan using the database structures and features available to you.
 
-The first step is often to go through each of your database entities and determine your primary key field.  The primary key is used to uniquely identify each record within a table as well to bind records together from different tables.  When a relationship exists between two entities in the logical schema, you will will have to connect the two tables in the physical schema by referencing the primary key in one table as a foreign key in the other.  The direction of this relationship will impact the performance and ease in which you can join different entities together when using your database.
+The first step is often to go through each of your database entities and determine your primary key field.  The [primary key](/intro/database-glossary#primary-key) is used to uniquely identify each record within a table as well to bind records together from different tables.  When a relationship exists between two entities in the logical schema, you will will have to connect the two tables in the physical schema by referencing the primary key in one table as a foreign key in the other.  The direction of this relationship will impact the performance and ease in which you can join different entities together when using your database.
 
-Another consideration you will want to think through during this stage are the predicted query patterns.  Certain tables and fields within these tables will be accessed much more frequently than others.  These "hot spots" are good candidates for database indexes.  Database indexes significantly speed up retrieval of commonly accessed items at the cost of worse performance during data updates.  Determining which columns to index initially will help you balance these concerns and define the most critical places for indexes in your system.
+Another consideration you will want to think through during this stage are the predicted query patterns.  Certain tables and fields within these tables will be accessed much more frequently than others.  These "hot spots" are good candidates for database indexes.  [Database indexes](/intro/database-glossary#index) significantly speed up retrieval of commonly accessed items at the cost of worse performance during data updates.  Determining which columns to index initially will help you balance these concerns and define the most critical places for indexes in your system.
 
 #### Normalizing your data structures
 
 During this process, you might find that it's easier to extract certain elements from logical entities into their own independent tables.  For instance, you may wish to extract shipping address from a customer so that multiple shipping addresses can be associated with a single customer and so that product orders can reference a specific address.  These changes can be thought of as part of a process is called [normalization](https://en.wikipedia.org/wiki/Database_normalization).
 
-**Database normalization** is a process that ensures that your database represents each piece of data once and doesn't allow updates that would result in inconsistencies.  Normalization is a huge topic that, for the most part, is outside of the scope of this guide, but you part of the physical schema design process involves figuring out the level of normalization to seek and transforming data entities as necessary to achieve that goal.
+[**Database normalization**](/intro/database-glossary#normalization) is a process that ensures that your database represents each piece of data once and doesn't allow updates that would result in inconsistencies.  Normalization is a huge topic that, for the most part, is outside of the scope of this guide, but you part of the physical schema design process involves figuring out the level of normalization to seek and transforming data entities as necessary to achieve that goal.
 
 ### Designing schemas for non-relational and NoSQL databases
 
@@ -196,5 +196,7 @@ Schema design, like any other type of design, is an iterative process.  Expect t
 <PrismaOutlinks>
 
 Prisma defines the characteristics of its data in the [data model](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model) section of the [Prisma schema](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema) file.  Check out the linked documentation to learn more about how these concepts apply to Prisma.
+
+You might also want to take a look at the [Prisma schema API reference page](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference) to get an overview of how to use the various features.
 
 </PrismaOutlinks>

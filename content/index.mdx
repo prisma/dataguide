@@ -8,7 +8,7 @@ toc: true
 
 ## [Introduction to databases](/intro)
 
-Learn the basics of what databases are, why they are so important for most software, and how they work. Start from the fundamentals to give yourself a solid foundation.
+Learn the basics of what databases are, why they are so important for most software, and which types of databases are best for different use cases. Start from the fundamentals to give yourself a solid foundation.
 
 <DocLink icon='file' text="What are databases?" href={'/intro/what-are-databases'}/>
 <DocLink icon='file' text="Comparing database types: how database types evolved to meet different needs" href={'/intro/comparing-database-types'}/>
@@ -17,7 +17,7 @@ Learn the basics of what databases are, why they are so important for most softw
 
 ## [Data Modeling](/datamodeling)
 
-A crash course in (relational, although not ignoring others) designing data models. Parts are published as they're written, and concentrating first on situating databases and data modeling problems in an organization and systems design context, as well as covering some of the less-prominent areas of database functionality. Published in partnership with [Dian Fay](https://twitter.com/dianmfay?lang=en).
+A crash course in (relational, although not ignoring others) designing data models. Concentrating first on situating databases and data modeling problems in an organization and systems design context before moving on to some of the less-prominent areas of database functionality. Published in partnership with [Dian Fay](https://twitter.com/dianmfay?lang=en).
 
 <DocLink icon='file' text="Intro (Don't Panic)" href={'/datamodeling/intro-dont-panic'}/>
 <DocLink icon='file' text="Know Your Problem Space" href={'/datamodeling/know-your-problem-space'}/>
@@ -31,15 +31,23 @@ A crash course in (relational, although not ignoring others) designing data mode
 
 Each style of database has its own strengths and weaknesses. Learn more about common database types to help choose which one is best for you.
 
+<DocLink icon='file' text="Comparing relational and document databases" href={'/types/relational-vs-document-databases'}/>
+
 ### [Relational databases](/types/relational)
 
-Relational databases are great at handling highly structured data and making it accessible with flexible querying. Discover why the relational paradigm has stood the test of time.
+Relational databases are great at handling highly structured data and making it accessible through flexible querying. Discover why the relational paradigm has stood the test of time.
 
 <DocLink icon='file' text="Comparing SQL, query builders, and ORMs" href={'/types/relational/comparing-sql-query-builders-and-orms'}/>
 <DocLink icon='file' text="What are database migrations?" href={'/types/relational/what-are-database-migrations'}/>
 <DocLink icon='file' text="Strategies for deploying database migrations" href={'/types/relational/migration-strategies'}/>
 <DocLink icon='file' text="Using the expand and contract pattern for schema changes" href={'/types/relational/expand-and-contract-pattern'}/>
 <DocLink icon='file' text="Comparing common database infrastructure patterns" href={'/types/relational/infrastructure-architecture'}/>
+
+### [Document databases](/types/document)
+
+Document databases are a great way for working flexibily with data with high scalability and agility. Discover why document databases continue to gain in popularity.
+
+<DocLink icon='file' text="What are document databases?" href={'/types/document/what-are-document-dbs'}/>
 
 ## [PostgreSQL](/postgresql)
 
@@ -49,6 +57,7 @@ PostgreSQL is a feature rich object-relational database that offers incredible p
 <DocLink icon='file' text="Getting to know PostgreSQL" href={'/postgresql/getting-to-know-postgresql'}/>
 <DocLink icon='file' text="5 ways to host PostgreSQL databases" href={'/postgresql/5-ways-to-host-postgresql'}/>
 <DocLink icon='file' text="Setting up a local PostgreSQL database" href={'/postgresql/setting-up-a-local-postgresql-database'}/>
+<DocLink icon='file' text="How to configure a PostgreSQL database on RDS" href={'/postgresql/setting-up-postgresql-on-rds'}/>
 <DocLink icon='file' text="Connecting to PostgreSQL databases" href={'/postgresql/connecting-to-postgresql-databases'}/>
 <DocLink icon='file' text="Authentication and authorization" href={'/postgresql/authentication-and-authorization'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; An introduction to authorization and authentication in PostgreSQL" href={'/postgresql/authentication-and-authorization/intro-to-authn-and-authz'}/>
@@ -71,6 +80,7 @@ PostgreSQL is a feature rich object-relational database that offers incredible p
 <DocLink icon='file' text="Short guides" href={'/postgresql/short-guides'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to use single and double quotes in PostgreSQL" href={'/postgresql/short-guides/quoting-rules'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to create and delete users in PostgreSQL" href={'/postgresql/short-guides/creating-deleting-users'}/>
+<DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; Introduction to PostgreSQL connection URIs" href={'/postgresql/short-guides/connection-uris'}/>
 <DocLink icon='file' text="Working with dates in PostgreSQL" href={'/postgresql/date-types'}/>
 
 ## [MySQL](/mysql)
@@ -80,7 +90,7 @@ MySQL is one of the most popular relational databases in the world, offering fas
 <DocLink icon='file' text="5 ways to host MySQL databases" href={'/mysql/5-ways-to-host-mysql'}/>
 <DocLink icon='file' text="Setting up a local MySQL database" href={'/mysql/setting-up-a-local-mysql-database'}/>
 <DocLink icon='file' text="Connecting to MySQL databases" href={'/mysql/connecting-to-mysql-databases'}/>
-<DocLink icon='file' text="Authentication and authorization" href={'/postgresql/authentication-and-authorization'}/>
+<DocLink icon='file' text="Authentication and authorization" href={'/mysql/authentication-and-authorization'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; An introduction to authorization and authentication in MySQL" href={'/mysql/authentication-and-authorization/intro-to-authn-and-authz'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to manage users and authentication in MySQL" href={'/mysql/authentication-and-authorization/user-management-and-authentication'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to use `GRANT` and `REVOKE` to manage privileges in MySQL" href={'/mysql/authentication-and-authorization/privilege-management'}/>
@@ -98,6 +108,8 @@ MySQL is one of the most popular relational databases in the world, offering fas
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to perform basic queries with `SELECT` in MySQL" href={'/mysql/reading-and-querying-data/basic-select'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; How to filter query results in MySQL" href={'/mysql/reading-and-querying-data/filtering-data'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; Using joins to combine data from different tables in MySQL" href={'/mysql/reading-and-querying-data/joining-tables'}/>
+<DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; Identifying slow queries in MySQL" href={'/mysql/reading-and-querying-data/identifying-slow-queries'}/>
+<DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; Profiling and optimizing slow queries in MySQL" href={'/mysql/reading-and-querying-data/optimizing-slow-queries'}/>
 <DocLink icon='file' text="Tools and utilties" href={'/mysql/tools'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; Using `mysql_config_editor` to manage MySQL credentials" href={'/mysql/tools/mysql-config-editor'}/>
 <DocLink icon='file' text="Short guides" href={'/mysql/short-guides'}/>
@@ -129,6 +141,11 @@ Microsoft SQL Server is a powerful and mature relational database system that in
 
 MongoDB is a popular document database that is often praised for its practicality and its ability to allow for rapid prototyping and development.  Learn how to use MongoDB to its fullest to take advantage of the performance and features that developers have grown to rely on.
 
+<DocLink
+  icon="file"
+  text="What is MongoDB?"
+  href={'/mongodb/what-is-mongodb'}
+/> 
 <DocLink
   icon="file"
   text="Setting up a local MongoDB database"
@@ -184,6 +201,32 @@ MongoDB is a popular document database that is often praised for its practicalit
   text="Introduction to MongoDB transactions"
   href={'/mongodb/mongodb-transactions'}
 />
+<DocLink
+  icon="file"
+  text="Introduction to MongoDB connection URIs"
+  href={'/mongodb/connection-uris'}
+/>
+<DocLink
+  icon="file"
+  text="Working with dates and times in MongoDB"
+  href={'/mongodb/working-with-dates'}
+/>
+<DocLink
+  icon="file"
+  text="How MongoDB encrypts data"
+  href={'/mongodb/mongodb-encryption'}
+/>
+<DocLink
+  icon="file"
+  text="Introduction to MongoDB database tools & utilities"
+  href={'/mongodb/mongodb-database-tools'}
+/>
+<DocLink
+  icon="file"
+  text="How to sort query results in MongoDB"
+  href={'/mongodb/mongodb-sorting'}
+/>
+
 
 ## [Database tools](/database-tools)
 
@@ -201,10 +244,13 @@ Strategies and techniques for maintaining and managing databases in your environ
 <DocLink icon='file' text="Syncing Development Databases Between Team Members" href={'/managing-databases/syncing-development-databases-between-team-members'}/>
 <DocLink icon='file' text="Database Replication" href={'/managing-databases/database-replication'}/>
 <DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; An introduction to Database replication and its benefits" href={'/managing-databases/database-replication/database-replication-introduction'}/>
+<DocLink icon='file' text="Introduction to OLAP and OLTP" href={'/managing-databases/introduction-to-OLAP-OLTP'}/>
+<DocLink icon='file' text="How microservices and monoliths impact the database" href={'/managing-databases/microservices-vs-monoliths'}/>
+
 
 ## [Serverless architecture](/serverless)
 
-The serverless model represents a new way of designing applications by abstracting the infrastructure and focusing only on code execution.
+The serverless model represents a new way of designing applications by abstracting the infrastructure and focusing only on code execution. Learn more about about serverless concepts, providers, and terms to evaluate serverless for your next project.
 
 <DocLink icon='file' text="What is serverless?" href={'/serverless/what-is-serverless'}/>
 <DocLink icon='file' text="Top 13 serverless computing and database providers" href={'/serverless/serverless-comparison'}/>
