@@ -71,7 +71,17 @@ Once it has this information, it looks at its pool of available connections to s
 
 The client executes its query using the connection as usual.  When the query is complete, instead of terminating the connection, the pooler places the connection back in the pool so that it can potentially be reused by a subsequent query.  The pooler can garbage collect connections within its pool asynchronously using whatever algorithm it chooses (time since establishment, time since last use, etc.).
 
-## What are some common connection poolers?
+## What is the difference between internal and external pooling?
+
+Broadly speaking, connection pooling refers to the algorithm that maintains connections over the course of multiple requests.  This can be implemented either internally in a client application or externally, using an external tool or service.
+
+Internal implementations of connection pooling are often a function of a database driver, ORM (object relational mapper), or other database client that might be incorporated into a client application.  These solutions provide some of the benefits of connection pooling by maintaining long running connections to the database server and reusing them for multiple queries within the codebase.
+
+While internal connection pooling is useful, it does have some practical limitations.  Each instance of the application that is being executed must generally maintain its own pool.  This impacts how broadly the connections can be shared and reused between queries since each pool only serves a single application instance.
+
+The alternative solution is to implement external connection pooling.  This approach deploys a separate piece of software that can communicate with and pool connections for multiple client instances.  While this deployment scenario does introduce an additional network hop, it generally provides additional scalability and flexibility.  The connection pooler can be deployed alongside the database server to serve many different clients or deployed alongside the client applications to serve whatever application instances are running on a single server.
+
+## What are some common external connection poolers?
 
 There are a number of connection poolers available for different database systems.  We can look at a few implementations available for PostgreSQL to get a better understanding of how different solutions approach the problem.
 
