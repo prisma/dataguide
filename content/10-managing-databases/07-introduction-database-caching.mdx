@@ -8,7 +8,7 @@ authors: ['alexemerich']
 
 ## Introduction
 
-The database is a critical component to application performance. The difference between a well-performing and poor-performing database can be the most impactful factor on overall application performance. Database challenges like query processing speed, cost to scale, and ease of data access make optimization a game of “would you rather”. It is difficult to accommodate for all three among many other considerations.
+The database is a critical component to application performance. The difference between a well-performing and poor-performing database can be the most impactful factor on overall application performance. Database challenges like query processing speed, cost to scale, and ease of data access makes finding an optimized balance difficult. It is difficult to accommodate for all three among many other considerations.
 
 In this article, we discuss database caching, a technique implemented on databases to ease some of these aforementioned challenges. We introduce what database caching is, the benefits of database caching implementation on your data store, and different database caching strategies.
 
@@ -18,7 +18,7 @@ TBA
 
 ## What is database caching?
 
-Database caching is a buffering technique that stores frequently-queried data in a temporary memory. A cache is a high-speed data storage layer which stores a subset of data that is often read requested. This transient storage layer results in future requests for this data to be served up faster than is possible by accessing the primary database.
+Database caching is a buffering technique that stores frequently-queried data in temporary memory. A cache is a high-speed data storage layer which stores a subset of data that is often read requested. This transient storage layer results in future requests for this data to be served up faster than is possible by accessing the primary database.
 
 A database caching strategy assists your primary database by easing the burden it might carry. This is most commonly seen by the rerouting of queries for frequently read data to the cache itself, rather than the primary database. The cache itself, resides in either the database, application, or even as a standalone access layer. 
 
@@ -41,16 +41,17 @@ While database performance is generally the primary reason for adopting a cachin
 ### Scalability
 Similarly to added high availability, database caching has a positive effect on scalability. While it shouldn’t be your main consideration for a database scaling strategy, implementing caching to improve database performance reduces your database workload, therefore distributing backend queries across entities. 
 
-This distribution lightens the load on a primary database and can reduce costs and provide more flexibility in the processing of your data. This results in a more scalable environment as you continue for take more frequently requested data off the plate of the primary database.
+This distribution lightens the load on a primary database and can reduce costs and provide more flexibility in the processing of your data. This result alleviates the need to scale and does more with the resources you already have on hand, potentially pushing the need to scale into the future.
 
 ## What are the different database caching strategies?
 
 Before adopting database caching into your data access flow, it is important to consider which caching strategy is best suited for the job. For any scenario, the relationship between the database and the cache can have a different impact on performance and system structure. Planning ahead and considering all options will lead to less headaches down the road. 
 
-The four most popular strategies to consider are cache aside, read through, write through, and write back. We’ll cover the data source to cache relationship and process of each strategy.
+The five most popular strategies to consider are cache-aside, read-through, write-through, write-back, and write-around. We’ll cover the data source to cache relationship and process of each strategy.
 
 ### Cache-aside
-In a cache-aside arrangement, the database cache sits next to the database. When the application requests data, it will check the cache first. If the cache has the data (a cache hit), then it will return it. If the cache does not have the data (a cache miss), then the application will query the database. The database then stores that data in the cache for any subsequent application queries.
+
+In a cache-aside arrangement, the database cache sits next to the database. When the application requests data, it will check the cache first. If the cache has the data (a cache hit), then it will return it. If the cache does not have the data (a cache miss), then the application will query the database. The application then stores that data in the cache for any subsequent queries.
 
 A cache-aside design is a good general purpose caching strategy. This strategy is particularly useful for applications with read-heavy workloads. This keeps frequently read data close at hand for the many incoming read requests. Two additional benefits stem from the cache being separated from the database. In the instance of a cache failure, the system relying on cache data can still go directly to the database. This provides some resiliency. Secondly, with the cache being separated, it can employ a different data model than that of the database. 
 
@@ -68,7 +69,7 @@ A read-through caching strategy also has the disadvantage of needing to go to th
 
 A write-through caching strategy differs from the previously two mentioned because instead of writing data to the database, it will write to the cache first and the cache immediately writes to the database. The arrangement can still be visualized like the read-through strategy, in a straight line with the application in the middle.
 
-The benefit to a write-through strategy is that the cache is ensured to have any written data and no new read will experience delay while the cache requests it from the main database. If solely making this arrangement, there is the big disadvantage of extra write latency because the action must go to the cache and then to the database. 
+The benefit to a write-through strategy is that the cache is ensured to have any written data and no new read will experience delay while the cache requests it from the main database. If solely making this arrangement, there is the big disadvantage of extra write latency because the action must go to the cache and then to the database. This should happen immediately, but there is still two writes occuring in succession. 
 
 The real benefit comes from pairing a write-through with a read-through cache. This strategy will adopt all the aforementioned benefits of the read-through caching strategy with the added benefit of removing the potential for data inconsistency. 
 
