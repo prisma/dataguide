@@ -10,7 +10,7 @@ authors: ['alexemerich']
 
 The database is a critical component to application performance. The difference between a well-performing and poor-performing database can be the most impactful factor on overall application performance. Database challenges like query processing speed, cost to scale, and ease of data access make finding an optimized balance difficult. It is difficult to accommodate for all three among many other considerations.
 
-In this article, we discuss database caching, a technique implemented on databases to ease some of these aforementioned challenges. We introduce what database caching is, the benefits of database caching implementation on your data store, and different database caching strategies.
+In this article, we discuss database caching, a technique implemented for databases to ease some of these aforementioned challenges. We introduce what database caching is, the benefits of database caching implementation on your data store, and different database caching strategies.
 
 <PrismaOutlinks>
 
@@ -24,14 +24,14 @@ Database caching is a buffering technique that stores frequently-queried data in
 
 A database caching strategy assists your primary database by easing the burden it might carry. This is most commonly seen by the rerouting of queries for frequently read data to the cache itself, rather than the primary database. The cache itself, resides in either the database, application, or even as a standalone access layer. 
 
-For example, your application requests user information from the database for the first time, this request goes from server to server and returns back the requested information. With caching, this user profile is stored closer to the requester after initial read, and there is a significant reduction in query processing time and database workload for all subsequent read requests for that data.
+For example, your application requests user information from the database for the first time, this request goes from application server to database server and returns back the requested information. With caching, this user profile is stored closer to the requester after initial read, and there is a significant reduction in query processing time and database workload for all subsequent read requests for that data.
 
 ## What are the benefits of database caching?
 
 Data retrieval speed greatly affects the user experience of an application. Implementing a caching strategy on your database can result in improved database performance, availability, and scalability for minimal cost depending on the strategy, all factors contributing to an overall positive application experience.
 
 ### Performance
-As touched on briefly, database caching improves the performance of a database by making data more easily accessed. The cache acts has a sort of “keyboard short-cut” or “hot-key” for the application to reference data that it frequently is calling upon. 
+As touched on briefly, database caching improves the performance of a database by making data more easily accessed. The cache acts as a sort of “keyboard short-cut” or “hot-key” for the application to reference data that it frequently is calling upon. 
 
 This speedier request can minimize the workload of the database, keeping it from spending inefficient amounts of time doing repetitive tasks. Instead making these tasks more efficient and simplifying data access. 
 
@@ -59,7 +59,7 @@ In a cache-aside arrangement, the database cache sits next to the database. When
 
 A cache-aside design is a good general purpose caching strategy. This strategy is particularly useful for applications with read-heavy workloads. This keeps frequently read data close at hand for the many incoming read requests. Two additional benefits stem from the cache being separated from the database. In the instance of a cache failure, the system relying on cache data can still go directly to the database. This provides some resiliency. Secondly, with the cache being separated, it can employ a different data model than that of the database. 
 
-Alternatively, the main drawback of a cache-aside strategy is the window being open for inconsistency from the database. Generally, any data being written will go to the database directly. Therefore, the cache may have a period of inconsistency with the primary database. There are different cache strategies to combat this depending on your needs.
+On the other hand, the main drawback of a cache-aside strategy is the window being open for inconsistency from the database. Generally, any data being written will go to the database directly. Therefore, the cache may have a period of inconsistency with the primary database. There are different cache strategies to combat this depending on your needs.
 
 ### Read-through
 
