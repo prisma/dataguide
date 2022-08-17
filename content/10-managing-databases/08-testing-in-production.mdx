@@ -1,0 +1,111 @@
+---
+title: 'Introduction to testing in production'
+metaTitle: 'An introduction to testing in production'
+metaDescription: 'An introduction to testing in production, its advantages, challenges, and more.'
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+Testing in software development traditionally is relegated to development and staging environments that are separate from the production deployment.  The reasoning behind this distancing is both to minimize the performance impact of running the tests alongside production traffic and to reduce the chance of a breaking change impacting the production environment.
+
+Despite these concerns, there has been a growing movement towards completing partial testing within the production environment.  This strategy, known simply as testing in production or TIP, can help teams have a better understanding of how new code will interact with the actual systems and data it will need to be compatible with.
+
+In this guide, we'll explore the idea of testing software changes in production.  We'll cover some of the historical reasons for reluctance towards production testing, changes that have made adoption more attractive, and discuss some of the benefits that it can have on development velocity and error reduction.
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
+
+## What is testing in production?
+
+Testing in production is a philosophy that encourages developers to defer some or all of their software testing until the code is deployed in a production environment.  But why would a team want to move towards testing in production?
+
+At first glance, the idea may seem counter-intuitive and even dangerous.  Perhaps unsurprisingly, it is not without its risks.  However, many of the hazards can be eliminated by introducing a deployment and testing strategy that not only tests your software more thoroughly, but enables you to build a more resilient production environment.
+
+Testing in production is valuable because it eliminates a category of problems that occur because of environmental drift between your production and testing environments.  Rather than testing in a dedicated environment and then deploying code that passes to your production environment in the hopes that its behavior remains consistent, you instead test where the code will need to run.
+
+The focus for those who adopt a testing-in-production philosophy can be summarized like this:
+
+* **Deploy code to production as soon as possible:** This allows your team to test code early *within* the environment where it has to run
+* **Decouple deploying code from releasing code:** Separating the deployment process from act of releasing changes gives you more flexibility in testing and activating new features
+* **Test with real data:** Database mocks or stubs and databases filled with dummy records cannot accurately replicate the data that your code will have to accommodate
+* **Minimize the area of impact for changes:** Changes can be tested more safely and effectively if you can limit and adjust the scope during testing and release
+
+## What risks are associated with testing in production?
+
+Many people are skeptical that the benefits of testing in production can outweigh the costs.  Before we continue on, let's talk about some of the risks of this strategy and how it's possible to mitigate them.
+
+### Risk of defects
+
+The primary concern with testing code in a production environment is the possibility of introducing software defects that may impact your users and services.  The idea behind traditional software testing pipelines is to thoroughly vet code and check for known weaknesses before it is promoted to production responsibilities.
+
+This perspective has its merits, but the situation is frequently not as clear cut in practice.  The tests that organizations run in staging environments are often not a good approximation of what the code will deal with in production.  Replicating environments, including infrastructure and workloads, is not an easy task and often falls out of sync with the actual production system.
+
+The upshot of this is that what you test in your staging environment may not actually be applicable to how your code will perform once released.  Furthermore, a significant amount of effort, time, and infrastructure is required in the attempt regardless of whether its successful or not.
+
+### Impact on the live system
+
+A closely related worry is the impact that new changes and the testing process itself could have on the production environment.  System stability is a priority for most organizations as it can affect the usability and availability of services and harm user trust.
+
+While its true that any code deployed to production has the possibility of impacting operations, there are ways to minimize the potential impact.  Implementing controls to limit the amount of traffic new code receives, setting up active standby infrastructure, and implementing monitoring based scaling are some of the ways that this process can be made safer.  The great thing about these types of mitigations is that these investments directly improve your production system's resilience to system failures of all kinds.
+
+## How to test in production
+
+How does testing in production actually work?  In this section, we'll talk about some of the most common techniques and strategies organizations implement in order to test code reliably in production.  While it's not necessary to adopt each of these ideas, many of these approaches complement one another and can be integrated as part of a more comprehensive system.
+
+### Implement a feature flag system
+
+[Feature flags](/intro/database-glossary#feature-flags) are a programming and release technique that involves making features easy to activate or deactivate externally.  The basic idea is to wrap new functionality in conditional logic that checks the value of a configuration variable before running.  The "flag" or "toggle" variable is often configured in an external store like Redis, where the organization can easily change the value as needed.
+
+Feature flags are a valuable tool in production testing because they allow you to safely deploy code without affecting the current logic of the production system.  The new code path can be deactivated to start and then activated at a later time when ready to test the new code.  Many implementations of the feature flag concept include more fine-grained controls than "enabled" or "disabled" with options to enable it for a percentage of traffic, A/B test different logic, or only select paths in specific cases.
+
+By using feature flags, you can deploy your code to production in a deactivated state.  You can test the new code path with your testing suite while production traffic continues to use the older logic.  You can then slowly release the code by slowly increasing the amount of production traffic the new code path receives as a [canary release](/intro/database-glossary#canary-releases) while monitoring the impact.
+
+### Use CI/CD to deploy and test on production infrastructure
+
+One misconception about testing in production is the assumption that testing must be completed in production.  While proponents recognize the value of testing in the environment where the code will eventually run, not all testing requires this degree of fidelity and many fast, focused tests can be automated and run as part of the lead up towards deploying the code.
+
+The simplest and most effective way of implementing this is through a well-tuned CI/CD pipeline.  CI/CD, which stands for continuous integration and continuous delivery or deployment, is a system that automatically tests new code as it is added to a repository.  Once the test suites pass successfully, the pipeline, continuous delivery allows developers to deploy the changes with a click of the button, while continuous deployment automatically deploys all successfully tested code.
+
+CI/CD has many benefits outside of the context of testing in production.  For the systems we're describing, the pipeline acts as an automated part of the deployment process and the goal is to deploy and test in the production environment.  While simple tests like unit testing can be done in isolation, more complex stages like integration testing should ideally be done by deploying the code to production infrastructure and testing there.  This allows your code to be tested against the actual services it will interact with on the final infrastructure it will run on with the same running context.
+
+A CI/CD pipeline helps to build confidence in new changes and relieve anxiety over deploying code so quickly to production.  Combined with feature flags, development teams can trust that some aspects of the code have been vetted and then can control how the heavier testing is conducted.
+
+### Configure your services to allow dark launches
+
+**Dark launching** is a way to deploy software changes and test them using real traffic without user-facing consequences.  The idea is to mirror production traffic and send duplicate requests to your newly deployed code so that you can ensure that it both performs correctly and can handle an actual production load.
+
+Dark launching can be quite complex as it requires you to replay existing traffic on multiple instances of your application without incurring slowdowns that would affect the legitimacy of your tests.  An alternative to duplicating requests in real time is to play back previous requests from event logs or other sources.  This strategy requires you to capture all of the relevant context from the initial request.
+
+The benefit of dark launching is that it allows you to see how your code functions as if it were already released to users.  The results of running the traffic through your new code are never displayed for users, but they can provide insight into how your code behaves and what types of conditions it will need to account for.  Once you've tested a dark launched version of your application, you can be fairly confident with how it will perform in production given that it's already faced those pressures.
+
+### Implement robust monitoring and metrics collection
+
+In addition to the core tests performed during deployment and release, it is important to have systems in place that will allow you to continue to monitor its behavior once it is in production.  A variety of related techniques can be implemented to help you gain insight into your service health over the long term, allowing you to spot anomalies more quickly if new code causes behavioral shifts.
+
+Monitoring and metrics tracking are basic tools you can use to understand how your services perform over time and in different conditions.  New changes can have side effects that might be difficult to spot on a short timeline, but may become obvious over time.  Monitoring and metrics can help associate these changes in behavior with specific releases.
+
+## How does testing in production affect the database?
+
+One of the most complex aspects of testing in production is figuring out an effective way to perform tests that interact with the database.  While it is possible to have your new code read from and write to a different data source, this once again introduces the possibility of testing against a poorly replicated environment.
+
+The better, but more difficult to achieve, option is to test with your production database.  This can be challenging to implement, especially if your database schema and tooling isn't configured for this possibility from the start, but it provides the best opportunity for understanding how your code will act upon release.
+
+Allowing your new code to read data from the production database is fairly straightforward.  So long as the testing does not lead to heavy read contention, it should not significantly affect the database's production responsibilities and there is no danger to your production data.
+
+Testing how your code performs write operations, however, is a bit trickier.  The most straightforward method of testing involves creating dedicated testing users within the production database so that your new code can operate on data without touching real user data.  This can still be quite a scary proposition as the test operations will be performed alongside real data coming from your active code.
+
+## Conclusion
+
+Testing in production can be challenging to implement and may require many changes for existing projects.  However, the benefits of adopting a system where you can test the real behavior of your code in the environment that matters are hard to overstate.  Testing is meant to identify bugs and build confidence in your software, two goals that are difficult to wholly achieve in a non-representative environment.
+
+By getting to know the challenges involved with this approach, you can evaluate how well it might fit with your organization's work style.  Testing in production is an exercise in trade-offs and your success may largely depend on how much effort you are willing and able to devote to the process.  While it isn't necessarily an easy adjustment, its advantages can serve you well over the longer term.
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
