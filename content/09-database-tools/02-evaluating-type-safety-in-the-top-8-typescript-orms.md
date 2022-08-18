@@ -532,4 +532,4 @@ This article briefly assesses the type safety of the most popular Node.js ORMs, 
 
 Type safety is not the only criteria you should use when choosing a tool to interact with your database. It is also important to consider the package’s programming interface, design, support for your database’s features, and flexibility. Different Node.js projects may require different tools.
 
-To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://dataguide.prisma.io/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://dataguide.prisma.io/), a free helpful knowledge base for learning about databases, data modeling, and much more.
+To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide/), a free helpful knowledge base for learning about databases, data modeling, and much more.
