@@ -1,0 +1,155 @@
+---
+title: 'Introduction to database backup considerations'
+metaTitle: 'Introduction to database backup considerations'
+metaDescription: 'Learn about the choices you will need to make when developing a database backup strategy.'
+authors: ['justinellingwood']
+---
+
+
+## Introduction
+
+Backing up databases is one of the most important routines involved in managing data.  Data is often one of the most important assets an organization manages, so being able to recover from accidental deletion, corruption, hardware failures, and other disasters is a high priority.
+
+While it is not difficult to recognize the value of reliable backups, it is not always straightforward to figure out the details.  Deciding on the backup mechanism, medium, schedule, level of fidelity, and security are all considerations you need to account for and the right mix will often differ from project to project.
+
+In this guide, we'll go over the key decisions you'll have to make when deciding on a backup strategy for your databases.  We'll cover different backup methods, where to store data at various points in its life cycle, and discuss how security intersects with backup design in various ways.
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
+
+## Why are database backups important?
+
+Before continuing, it may be helpful to underline what value proper backups can deliver for your team.  Some of the key benefits include:
+
+* Rebuilding after hardware failures: Hardware failure can affect any system and is often unpredictable.  Having comprehensive backups allows you to restore your data after replacing failed components.
+* Restoring files following corruption: Data corruption is another occurrence that can result from software errors, hardware problems, or environmental factors.  Multiple layers of backups may allow you to replace corrupt data with good versions within your backup sets.
+* Recovery from accidental deletion: User error can also remove valuable data from your databases.  With backups, you can recover that data to avoid permanent loss.
+* Auditing and compliance: Many industries have certain standards of backups and auditing trails for compliance reasons.  You may be compelled to implement a robust backup routine as part of your agreement to handle user data in various capacities.
+* Reassurance when making changes: Having reliable backups make changing your software, environment, or operations less dangerous.  You can make changes with confidence knowing that you are not risking your organization's data if something goes wrong.
+
+## Types of backups
+
+There are many different *types* of backups that you may want to consider.  In this section, we'll cover some of the different backups you can perform and how they may fit together into a more comprehensive system.
+
+### Full backups
+
+**Full backups** are backups that duplicate the entire dataset from the original location.  They have the largest scope of any backups because, by definition, they read and write all data from the source to the target.
+
+Full backups are important because they give you a complete copy of your dataset that can be used to partially or fully restore missing data.  Every strategy should contain full backups as the core component of their routine.
+
+While full backups are necessary and provide the foundation of most backup strategies, they have some major drawbacks as well.  Because they must read and write the entire dataset, they can take a long time to complete and may tax the system for the entirety of that time.  Additionally, maintaining many complete copies of your databases over time can consume a great deal of storage space.
+
+### Differential backups
+
+Differential backups copy all data that has changed since the most recent full backup.  This allows you to perform expensive, full backups once per backup cycle and then record further changes in smaller backups that use the full backup as a starting point.
+
+Differential backups solve some of the core problems that come with taking frequent full backups.  They are smaller than a full backup and thus take up less storage space and are faster to perform.
+
+While differential backups are an improvement over full backups, they still have some shortcomings.  The more time that's passed since the most recent full backup, the larger the differential backups get.  Additionally, having multiple differential backups lets you construct different points in time, but at the cost of essentially backing up the same changes more than once.
+
+### Incremental backups
+
+Incremental backups are a modification of the strategy used by differential backups.  While differential backups always record the differences since the last full backup, incremental backups record the differences since the last full backup *or* incremental backup.  This means that instead of always layering on a full backup, incremental backups can restore data by starting with a full backup and then restoring multiple incremental backups.
+
+This system allows you to back up frequently while only recording each change in the system once.  Each backup will only contain changes that have occurred since the last time any backup was run.  This helps keep the size of each incremental backup manageable and allows you to construct different points in time by combining the most recent full backup with various numbers of incremental backups.
+
+One downside of incremental backups is that restoring data can be a bit more complicated.  The longer it's been since a full backup, the more incremental backups you'll have to apply to get to recent changes.  This can take longer that restoring a single full backup and (at most) a single differential backup.
+
+### Write ahead or transaction log backups
+
+Databases frequently implement safety mechanisms to help recover from system crashes and unsafe shutdowns.  Depending on the system, these may be called write-ahead logs (WAL) or transaction logs.  While these are primarily used for crash recovery purposes, they can be used as a component of a back up strategy to allow for more flexible archiving.
+
+The basic idea behind WAL-based backups is to take a regular backup of the database's file system and then use the WAL to restore a consistent state to the database and replay any changes that occurred following the backup.  This sounds similar to incremental backups, but there are some key differences.
+
+The first important difference is that the two components use different mediums.  The full backup in this instance is a backup of database files without regard to having the records locked in a coherent state.  The WAL then is responsible for fixing the state of the data and catching it up to the point where you want to restore.
+
+This system is also more flexible than traditional incremental backups because a single WAL can be replayed to various points in time.  This gives you choices in how much data you want to restore.  One disadvantage to this style of backup is that it affects the database system as a whole.  You cannot only restore parts of the database while leaving the other parts intact.  Because of this, it's not suitable for restoring individual tables or other database objects.
+
+## Online vs offline backups
+
+One thing to keep in mind when deciding on a backup strategy is that certain backup mechanisms cannot be performed on a live system.
+
+Backup methods that require the system to be offline typically have that restriction to ensure that the tool can capture a consistent view of the database at a certain point in time.  If the system is being updated and records are changing as the backup is executing, the data from the beginning might not be valid by the time the process completes.
+
+Offline backups do have a few advantages, however.  Taking the database down means that it won't have to share resources with active users, which can make it faster to complete.  The backup process itself can also be much less sophisticated since there won't be any processes actively changing the data.
+
+With that being said, taking the primary database down for every backup is not acceptable in many scenarios.  Fortunately, there are backup methods that are designed to be used on live systems.  Generally, this involves using a utility to query the database system directly so that the database structure and data can be copied to the filesystem.  Aside from the permissions required, this is not much different from a regular client asking for table structure information and the data contained within.
+
+One of the  main benefits of these "logical" backup tools (as opposed to the physical tools that work with raw files) is that they can rely on the database's own ability to present a unified consistent snapshot of the data at a specific point-in-time.  The backup process in this context operates as a database user, so the cost of this capability is that it will be in contention for the limited database resources with other clients.
+
+## Is replication a backup?
+
+One point of confusion for some users is why backups are required for databases at all if replication is configured.
+
+[Database replication](/intro/database-glossary#replication) is a method of streaming a log of changes from one server to another server to mirror changes on a different system.  Like backups, this also creates a duplicate of the system's data.  However, replication should not be considered a safe backup strategy for a few important reasons.
+
+Replication won't safeguard your data as well as a backup would in a large number of failure scenarios.  The same mechanism that ensures that all changes are copied to a secondary server will also duplicate any problems with your primary database.  For instance, if a record is unintentionally deleted on the primary database, that change will also be executed on any downstream replicas.  This same process means that corrupt data will also be disseminated.
+
+Another reason replication is not a backup is that it doesn't have any obvious ability to restore data.  While you can replicate changes back and forth between servers, replication isn't concerned with keeping previous versions of data and any historic view of your data will likely be lost when the logs are rotated.  This "deficiency" is a reminder that replication is primarily designed to help organizations increase availability and performance rather than as a data preservation tool.
+
+With that being said, replication can be an important component of a backup and disaster recovery plan.  For instance, replication can be useful in the event of a hardware failure on the primary database.  In this case, administrators can quickly promote a replication follower to the leader role and continue to serve client requests to avoid a lengthy restoration procedure.  Some organizations also set up a "delayed" replica which only applies changes after a period of time has elapsed, allowing them to quickly "roll back" the database state by switching to the replica if necessary.
+
+Another case where replication is often involved in backup processes is as the target of backup operations.  Many times, it's easiest to back up a replica than the primary server.  For instance, to get a consistent file-level backup, you could configure a secondary database as a replica of your production database.  Once the database is synchronized, you can turn off replication temporarily and perform a backup of the replica without affecting your production traffic.  When the backup is complete, you can turn replication back on to resynchronize the server with the changes that occurred during the backup window.
+
+## How do backups affect security?
+
+Backup strategy intersects with security considerations in a few different ways.
+
+Backups can help protect against certain security incidents by providing secondary sources of data in scenarios like ransomware attacks.  For instance, if an intruder is able to access and encrypt the contents of your primary database, having access to historical snapshots may give you more options for addressing the situation.  For this to be an option, your backup destination be in a separate security context than your source data to prevent an attacker from impacting your backups as well.
+
+It's important to understand that your security policies need to be reflected in your backup strategy or else you could be inadvertently exposing sensitive information when you back up your data.  For example, f your production systems implement security surrounding personally identifiable information (PII), your backups should be structured in a way to maintain that level of security.  This might mean using separate encryption for different types of data or using separate backup locations for different types of data.  Your specific situation will dictate what types of protections you need to incorporate within your backup strategy.
+
+In some cases of sensitive data that won't be valuable long after collection, it is worthwhile to consider *not* backing up that data.  Certain types of data collected or generated by systems can be useful in the moment but may represent an increased risk if stored long term.  If the value you gain from the data is closely tied to its recency, you may be better off excluding it from your backup sets.
+
+## Where to store backups
+
+One decision that you'll have to make as you design your backup strategy is where you wish to store the actual backup data.  Many different factors may influence what type of backup destination is best for you.
+
+In many cases, choosing a backup destination is a balancing act between ease of access, cost, security, and convenience.  Having on-site backups allows for quick backups, but managing physical disks may be more than you're willing to manage.  Furthermore, on-site backups don't protect against site-specific disasters like fire, flood, or theft.  On the other hand, cloud-based backups can be convenient, but may tie you into a specific provider, cost more, and potentially take longer to recover.
+
+Most of the time, it is a good idea to use multiple storage locations and mediums to help balance between the risks and benefits and to gain additional protection against data loss.  As an example, you may use an object storage provider like Amazon S3 as the target for your primary backup rotation.  Every month or so, you might move some of those backups for longer storage to an archival storage like Amazon S3 Glacier.  You might also wish to back up your data to a different provider than you use for your production infrastructure.
+
+## Backup tips
+
+Now that we've covered many of the components of a robust backup strategy, we can take a look at some general advice you may wish to consider.
+
+### Establish a backup rotation strategy
+
+One of the first things you'll want to figure out is how frequently you want to perform backups and what combination backup types is most helpful.  To do this, you need to establish a backup rotation so that you can back up as often as you need to without using unnecessary amounts of storage.
+
+A backup rotation is basically a schedule that determines what type of backups to take at what interval.  Generally, organizations implement a rotation so that they can have many recent backups while still keeping a useful amount of historical backups as an archive.  Schedules are often created based on the performance impact of your backup mechanisms, what types of backups you need to take, your backup storage capacity, and cost.
+
+As an example of a fairly conventional backup strategy, you may start with taking one full backup of your database once a week.  On the other days of the week, you may schedule an incremental backup so that you can restore to any specific day.  You may wish to keep two full backups plus all of the intervening incremental backups at any one time.  You may continuously archive daily WAL data as well so that you can restore to any specific point in time during that day.
+
+When a new backup occurs, the oldest backup may be deleted or occasionally transferred to longer-term storage.  This gives you access to historical data if you need it, but the archive doesn't remain in your normal backup rotation.  A system like this can help give you options for recovery while minimizing the increase in your total storage over time.
+
+### Schedule and automate the backup process
+
+Once you have decided on a backup rotation, its important to schedule and automate as much of the process as possible.  Ensuring that your backups occur without supervision is an important part of safekeeping your data.
+
+Most backup mechanisms include scheduling components, so it shouldn't require special effort in most cases.  It is important, however, to ensure that you have mechanisms in place to alert you when scheduled backups do not occur.  This might be an email alert when a backup fails or a ping to a chat channel that your organization monitors.
+
+Automating the backup process may also require you to think about how best to implement your security requirements and access requirements.  Is a pull-based backup system, where the backup target pulls data from your production systems make sense?  What type of access does the backup process need to your systems?  What permissions can you remove to limit the reach and impact of the backup account?  These are the types of questions you'll need to ask yourself while implementing your backup system and especially when automating the process.
+
+### Test your backups often
+
+One of the most important, and frequently ignored, activities of a robust backup system is testing.  You need to regularly test that your backup files can be used to successfully restore data.  If you cannot guarantee that your backups are valid, the entire process is of limited or no value.
+
+Testing backups involves applying the backed up data to a clean system or to a system that has partial or differing data.  It is important to know that you can restore in these scenarios and the exact process you need to execute to recover.  This not only validates the integrity of your backup archives, it also ensures that your organization knows what steps must be executed to restore your system during high stress scenarios.  It also gives you valuable data on how long different types of data restoration may take.
+
+Backups may be tested manually from time to time, but ideally, the recovery process should be part of the automation you implement for the rest of your backups.  Backups can be restored to testing environments and test suites can be run to make sure that the data has the values and structure you expect it to have.  If you do automate backup testing, don't forget to set up alerts in the event that the restoration fails.
+
+## Conclusion
+
+In this guide, we covered why database backups are so important and introduced some of the things you'll need to think about when implementing them.  We went over the advantages of backups, different types and scopes of backups, the differences between online and offline backups, why replication isn't a backup strategy, and more.
+
+Being familiar with what choices you have as an organization and how different decisions can affect your performance, security, and availability is essential.  While every project's backup needs are different, there is commonality in the need for persistent, trusted long-term storage to help recover from data problems.  Taking the time to sort through your requirements and develop a comprehensive plan will allow you to safely and confidently move forward with less danger.
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
