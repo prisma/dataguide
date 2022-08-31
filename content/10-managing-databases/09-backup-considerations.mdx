@@ -56,11 +56,11 @@ Incremental backups are a modification of the strategy used by differential back
 
 This system allows you to back up frequently while only recording each change in the system once.  Each backup will only contain changes that have occurred since the last time any backup was run.  This helps keep the size of each incremental backup manageable and allows you to construct different points in time by combining the most recent full backup with various numbers of incremental backups.
 
-One downside of incremental backups is that restoring data can be a bit more complicated.  The longer it's been since a full backup, the more incremental backups you'll have to apply to get to recent changes.  This can take longer that restoring a single full backup and (at most) a single differential backup.
+One downside of incremental backups is that restoring data can be a bit more complicated.  The longer it's been since a full backup, the more incremental backups you'll have to apply to get to recent changes.  This can take longer than restoring a single full backup and (at most) a single differential backup.
 
 ### Write ahead or transaction log backups
 
-Databases frequently implement safety mechanisms to help recover from system crashes and unsafe shutdowns.  Depending on the system, these may be called write-ahead logs (WAL) or transaction logs.  While these are primarily used for crash recovery purposes, they can be used as a component of a back up strategy to allow for more flexible archiving.
+Databases frequently implement safety mechanisms to help recover from system crashes and unsafe shutdowns.  Depending on the system, these may be called write-ahead logs (WAL) or transaction logs.  While these are primarily used for crash recovery purposes, they can be used as a component of a backup strategy to allow for more flexible archiving.
 
 The basic idea behind WAL-based backups is to take a regular backup of the database's file system and then use the WAL to restore a consistent state to the database and replay any changes that occurred following the backup.  This sounds similar to incremental backups, but there are some key differences.
 
@@ -92,13 +92,13 @@ Another reason replication is not a backup is that it doesn't have any obvious a
 
 With that being said, replication can be an important component of a backup and disaster recovery plan.  For instance, replication can be useful in the event of a hardware failure on the primary database.  In this case, administrators can quickly promote a replication follower to the leader role and continue to serve client requests to avoid a lengthy restoration procedure.  Some organizations also set up a "delayed" replica which only applies changes after a period of time has elapsed, allowing them to quickly "roll back" the database state by switching to the replica if necessary.
 
-Another case where replication is often involved in backup processes is as the target of backup operations.  Many times, it's easiest to back up a replica than the primary server.  For instance, to get a consistent file-level backup, you could configure a secondary database as a replica of your production database.  Once the database is synchronized, you can turn off replication temporarily and perform a backup of the replica without affecting your production traffic.  When the backup is complete, you can turn replication back on to resynchronize the server with the changes that occurred during the backup window.
+Another case where replication is often involved in backup processes is as the target of backup operations.  Many times, it's easier to back up a replica than the primary server.  For instance, to get a consistent file-level backup, you could configure a secondary database as a replica of your production database.  Once the database is synchronized, you can turn off replication temporarily and perform a backup of the replica without affecting your production traffic.  When the backup is complete, you can turn replication back on to resynchronize the server with the changes that occurred during the backup window.
 
 ## How do backups affect security?
 
 Backup strategy intersects with security considerations in a few different ways.
 
-Backups can help protect against certain security incidents by providing secondary sources of data in scenarios like ransomware attacks.  For instance, if an intruder is able to access and encrypt the contents of your primary database, having access to historical snapshots may give you more options for addressing the situation.  For this to be an option, your backup destination be in a separate security context than your source data to prevent an attacker from impacting your backups as well.
+Backups can help protect against certain security incidents by providing secondary sources of data in scenarios like ransomware attacks.  For instance, if an intruder is able to access and encrypt the contents of your primary database, having access to historical snapshots may give you more options for addressing the situation.  For this to be an option, your backup destination must be in a separate security context than your source data to prevent an attacker from impacting your backups as well.
 
 It's important to understand that your security policies need to be reflected in your backup strategy or else you could be inadvertently exposing sensitive information when you back up your data.  For example, f your production systems implement security surrounding personally identifiable information (PII), your backups should be structured in a way to maintain that level of security.  This might mean using separate encryption for different types of data or using separate backup locations for different types of data.  Your specific situation will dictate what types of protections you need to incorporate within your backup strategy.
 
@@ -132,7 +132,7 @@ Once you have decided on a backup rotation, its important to schedule and automa
 
 Most backup mechanisms include scheduling components, so it shouldn't require special effort in most cases.  It is important, however, to ensure that you have mechanisms in place to alert you when scheduled backups do not occur.  This might be an email alert when a backup fails or a ping to a chat channel that your organization monitors.
 
-Automating the backup process may also require you to think about how best to implement your security requirements and access requirements.  Is a pull-based backup system, where the backup target pulls data from your production systems make sense?  What type of access does the backup process need to your systems?  What permissions can you remove to limit the reach and impact of the backup account?  These are the types of questions you'll need to ask yourself while implementing your backup system and especially when automating the process.
+Automating the backup process may also require you to think about how best to implement your security requirements and access requirements.  Does a pull-based backup system, where the backup target pulls data from your production systems, make sense?  What type of access does the backup process need to your systems?  What permissions can you remove to limit the reach and impact of the backup account?  These are the types of questions you'll need to ask yourself while implementing your backup system and especially when automating the process.
 
 ### Test your backups often
 
