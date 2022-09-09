@@ -49,7 +49,7 @@ If you want to learn more about why we think Prisma is a great option, check out
 
 ### Type Definitions: Built-in
 
-Prisma client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
+Prisma Client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
 
 ### Record Creation: Type-safe
 
