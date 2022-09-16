@@ -18,7 +18,7 @@ Checkout the [Prisma Data Platform](https://www.prisma.io/dataplatform) to manag
 
 </PrismaOutlinks>
 
-## What is OLAP and OLTP?
+## What are OLAP and OLTP?
 
 Upon first glance, you may notice the difference in each data processing type. One includes “Analytical” and the other “Transaction”, all else the same. This is in fact where the primary difference lies. An OLAP database is a database system primarily designed to be used for analytics and insight generation. Whereas an OLTP database will require performance characteristics that will be discussed in the proceeding section, OLAP databases are generally designed for ingesting and working on large datasets. The key operations are executing complex and long-running queries and generating reports, graphs and insights for business decisions.
 
@@ -57,7 +57,7 @@ Overall, the characteristics mentioned about OLAP and OLTP can be broken down in
 | Space requirements | Typically small assuming historical data archive | Typically large from storage of all historical and current data | 
 |Backup Frequency | Regular backups required for availability and data integrity | Less frequent because there are not modifications being done. Lost data can come from OLTP database |
 
-## Extract, Transform, Load
+## Extract, transform, load
 
 For most use cases, it is likely that there is an OLTP database handling the transactional data and an OLAP database acting as a warehouse for all data that has been transacted. In order to populate an OLAP database from an OLTP database, there is a process of extraction, transfer, and load (ETL) that occurs. ETL is specifically designed for extracting data from sources that are not optimized analytics (i.e an OLTP database) to a central warehouse.
 

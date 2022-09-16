@@ -1,5 +1,5 @@
 ---
-title: 'Tables, Tuples, Types'
+title: 'Tables, tuples, types'
 metaTitle: "Data Modeling | Tables, Tuples, Types | Prisma's Data Guide"
 metaDescription: "Calling tables the \"basic building block\" of relational databases is a little reductive. While it's hard to miss the mark by much in drawing up a list of each datum you're interested in and declaring this an integer, that a date, and so forth, effective relational database design depends first and foremost on well-thought-out and well-formulated table designs. "
 authors: ['dianfay']
@@ -12,7 +12,7 @@ One table generally, but not always, groups aspects of a single concept: a perso
 
 *Ineffective* table designs come in myriad forms. They may fail to capture important characteristics of the subject the table represents, restrict too far or not enough what values are considered valid in a <footnote><note>Also "attribute", most often in database internals.</note><text>column</text></footnote> or record, "split the datum" across multiple columns, or combine or concatenate aspects which are treated separately outside the database. Even tables with no major omissions or structural faults can have problems with confusing, misleading, or outdated column names.
 
-## Naming Things
+## Naming things
 
 <details><summary>Is one of the two hardest problems of computer science, along with cache invalidation and off-by-one errors. It's about the first computer science joke anyone learns, but it's no less true for that: coming up with meaningful and preferably short names is tough. And it's important to get them as right as possible up front, since changing a table or column name later will require changes in any other system that uses that table or column. A thesaurus is a useful but unreliable ally.</summary>
 
@@ -21,7 +21,7 @@ Opinions about how to approach [the nuts and bolts](https://www.sqlstyle.guide/#
 For my part, I use `snake_case`, prefix booleans with `is_` and suffix dates with `_at`, use plural for tables and singular for columns, and name junction tables `leader_followers`. But as any guide worth listening to will tell you: the single most important thing isn't that you do what I do, it's that you be consistent, either with your own preferences or with the conventions of an existing database you're working in.
 </details>
 
-## Storage: Making Records Out of Ones and Zeroes
+## Storage: making records out of ones and zeroes
 
 Modern RDBMSs abstract most of the intricate details of how data are arranged and stored, most of the time. The basic unit of storage is the *page*, a uniformly-sized logical block of records and metadata corresponding to a segment of physical storage space: 2kb in Oracle, 4 in DB2, 8 in SQL Server and PostgreSQL, 16 with MySQL's InnoDB. When the database reads or writes data, it does so page by page rather than record by record.
 
@@ -35,7 +35,7 @@ Most enterprise relational databases, Postgres excepted, also manage pages in gr
 
 The chief innovation of column-oriented databases like Cassandra and HBase is in abandoning the tuple-by-tuple physical page layout to speed up retrieval of huge amounts of data column by column. This is by no means a free lunch, however, as many basic RDBMS capabilities depend on tuples in themselves.
 
-## Data Types
+## Data types
 
 Types serve multiple purposes for relational databases. Like types anywhere else, they establish a contract: `books.title` is text and always text, `recipients.postcode` is a number and always a number -- which latter assumption fails the moment a recipient lives in the UK, Canada, or any of several other countries (postcodes are properly text).
 
@@ -45,7 +45,7 @@ Not all types define a fixed length, however. The standard `VARCHAR` type establ
 
 In all, the SQL standard defines a multitude of types, classed into numeric, boolean, date and time, time intervals, text, binary, all the way up to XML and JSON. Faithful adherence to the standard varies, as usual, across implementations. Some add non-standard data types on top, with currency, geometry and geography, ranges, and more making appearances.
 
-### Choosing a Data Type
+### Choosing a data type
 
 Defining the appropriate type for a datum is usually straightforward. If you're using PostgreSQL, care about exactitude, and have values running to eight decimal places, that rules out floating-point types and indicates the scale of the `NUMERIC` you'll need. Most other questions in this vein resolve similarly.
 
@@ -59,23 +59,23 @@ PostgreSQL is a special case: both `CHAR(n)` and `VARCHAR(n)` are recommended *a
 
 It bears mentioning here that relational databases are not especially good at being file servers. Images, audio or video files, text documents, and the like are usually better off in systems designed to store and serve them. But where these data, unstructured as far as the database is concerned, are directly germane to specific records -- think binary test output files recorded for a mechanical part being tracked through manufacturing or the source code of web pages being scraped and analyzed -- large object types suffice.
 
-### Semi-Structured Data Types
+### Semi-structured data types
 
 For most of the history of relational databases, substrings and the like have been the limit of delving into large objects, which are otherwise structurally opaque. What data types like `JSON` and `XML` ask is "what if they weren't?". Both JSON and XML documents are hierarchical, something earlier database designers had to break out the foreign keys and `JOIN`s to accommodate. Moreover, semi-structured types describe their own schemas. The only requirement the database can impose is that values be correctly formed, whatever their contents.
 
 Hierarchies are not uncommon, even in information systems mostly operating by relational rules. An addressable, processable hierarchy-as-data-type makes storage and retrieval about as simple as possible, and allows blending relational and document strategies to good effect. A table that does little more than wrap a document field can even make a helpful prototyping tool in the especially early stages of defining the schema. And while SQL is unlikely ever to match e.g. JavaScript's facility with a format named after it, the functionality that exists around these types (hierarchic or otherwise) opens up a lot of possibilities for [database programming](functional-units).
 
-### Collections and More
+### Collections and more
 
 Some values are only meaningful in combination: a low and a high bound, a start and an end date, an ordered list of numbers or strings. [Ranges](https://tapoueh.org/blog/2018/04/postgresql-data-types-ranges/) can be simulated by decomposition into e.g. `started_at` and `ended_at` fields, and in strictly relational terms an [array](https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/) is properly normalized into a separate table with a foreign key, but the convenience of treating a range or an array as a single value to test containment, overlap, and other specialized operations can't be underestimated. Range types are thus far exclusive to PostgreSQL, and both Postgres and Oracle support arrays.
 
 Another common case is for a column to represent one of a well-defined and relatively static set of values: status codes, continents, and the like. `CHAR` and `VARCHAR` take up a lot of redundant space used this way and must be carefully checked and constrained to prevent meaningless values from making it in; `INT` codes are safer, but always have to be looked up. Many programming languages offer readable names for numeric codes in the form of enumerations or `enum`s. PostgreSQL and MySQL both support these as column data types, albeit in slightly different ways, with MySQL's operating like constraints on individual columns while Postgres' enums are reusable.
 
-### Build Your Own
+### Build your own
 
 User-defined types in SQL Server or Oracle, composite types in PostgreSQL: they exist. A `POINT` type, for instance, can ensure that its x and y values are inseparable, and the possibilities of nesting tuples inside tuples rapidly get more complex. Dealing with custom data types isn't always easy, especially from outside the database, so defining data models in terms of built-in or extension-provided types is usually to be preferred.
 
-## More Than Complete
+## More than complete
 
 A list of each datum you're interested in, this an integer, that a date, and so forth. Types and tuples, columns and rows, make a table functionally complete. But there's more than completeness to think about: how can a table ensure that the information it records is *correct*?
 

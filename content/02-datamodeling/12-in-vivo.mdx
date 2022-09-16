@@ -1,5 +1,5 @@
 ---
-title: 'In Vivo: Information Ecosystems'
+title: 'In vivo: information ecosystems'
 metaTitle: "Information Ecosystems & Specialized Architecture Solutions"
 metaDescription: "Users, applications, scripts, and even other databases feed information into and extract information from databases. Discover how these ecosystems work."
 authors: ['dianfay']
@@ -19,7 +19,7 @@ A more "vegetable" species of database organizes what data it gets and no more, 
 
 Still other "mineral" database designs cede even that minimal authority over information, providing only storage with the bare minimum of structure like the five-thousand-year-old clay tablets onto which the Sumerians stamped everything from ledgers to complaints. It does happen that a situation calls for little more than an <footnote> <note>[ACID](https://en.wikipedia.org/wiki/ACID) denotes a common goal of relational databases to guarantee *atomicity* (any transaction succeeds in whole or fails in whole), *consistency* (the database cannot be put into an invalid state), *isolation* (independent transactions do not affect each other), and *durability* (committed transactions cannot be lost to crash or sudden shutdown).</note> <text>ACID-compliant</text> </footnote> spreadsheet, but looking more closely at the system is well warranted. It's also possible that an existing "mineral" database's implementation fails to account for or awkwardly approximates a more complex data model, or that part or all of the data model itself is ill-suited to relational representation.
 
-## Databases, Plural
+## Databases, plural
 
 Every program or system interacting with a database -- not to exclude designers, users, or developers -- also has an ecological role, consuming and generating information, combining it, separating it, adding or eliminating nuance for good or ill. Many of these interacting systems have their own data models, of which part or all of the target system's data model now forms a component (sometimes through the proverbial glass darkly, as anyone who's ever cursed an unexpected `VARCHAR(20)` can attest).
 
@@ -29,7 +29,7 @@ It's always more difficult to manage more things and more interactions between t
 
 The most important casualty of splitting a data model is referential integrity. Within a single database, the server can prevent operations which would violate a foreign key constraint, e.g. inserting or updating a record with a nonexistent parent id or <footnote> <note>That is, without an appropriate <inlineCode>ON DELETE</inlineCode> directive in the foreign key definition to handle just this case.</note> <text>deleting</text> </footnote> a record on which others depend. Move part of the data model into another store, and maintaining correctness is now your (and your team's) problem.
 
-## Specialized Solutions
+## Specialized solutions
 
 Like anything else, referential integrity is a negotiable constraint, and sacrificing it's an option if you get enough in return. Sometimes it isn't even a question being asked, if a data model is simple enough in a graph-theory sense with few entities, few or mostly hierarchical connections between them, or both. Performance and scalability requirements can also make the case for introducing alternatives to the relational model, where some part of a data model represents real information in higher volumes and faster flux than can be accommodated with ease in an RDBMS.
 
@@ -51,13 +51,13 @@ The latter half of the 00s saw a Cambrian explosion of these alternatives. Sudde
 
 Note the above are examples, not endorsements! Kristof Kovacs also maintains a [more detailed summary](https://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis) of many NoSQL options, from the popular to the obscure.
 
-## The Default
+## The default
 
 If you don't need to store at least gigabytes worth of exceptions to an otherwise relational data model, you may not even need to leave ACID and referential integrity behind! Relational databases in general are quite capable when it comes to full-text search and storing structured or unstructured documents; PostgreSQL's approach to JSON in particular is extensive, with indexable binary storage and a rich query toolset making hybrid relational-document strategies practical. Both Postgres and other RDBMSs support still other models through server components, extensions, or storage engines, with some specialized stores like TimescaleDB being built on top of relational databases.
 
 So despite the best efforts of dozens of marketing departments, the hoary half-century-old RDBMS remains the go-to general purpose data store, with non-relational solutions finding specialized niches suited to their strengths. NoSQL databases can do all manner of things that their relational counterparts can't, easily or at all, but the relational database is here to stay for the foreseeable future. With [server tuning](https://postgresqlco.nf/), indexing, and table partitioning, a single relational database can accommodate all but the heaviest workloads. And when even that doesn't suffice, there's still replication.
 
-## Replication and Architecture
+## Replication and architecture
 
 Covering replication techniques in depth falls outside the scope of a guide to data modeling, but their use does invoke consequences that can't be ignored. A replicated database isn't simply bigger: the instant data storage becomes networked, it's no longer a single element of the overall system architecture. Replication introduces a whole new set of concerns surrounding latency, network partitions, maintenance, and more.
 
@@ -76,7 +76,7 @@ Martin Kleppmann [described the shortcomings of CAP in detail in 2015](https://m
 </details>
 
 
-## Integrating External Information
+## Integrating external information
 
 Information rarely circulates between a system's database or databases and its users alone. Most information systems are *open* systems, with data flowing in from and out to still other information systems. These flows are usually ripe for automation, and at a certain not very large volume it becomes almost obligatory; manual data entry is the last of last resorts. Sometimes external information sources are always-on, with queues, stream processors, or specialized daemons adding records as they arrive but never doing too much at once. Other times, however, realtime data may be unavailable or just plain unnecessary -- monthly sales or yesterday's site analytics don't need to be current to the second.
 
@@ -88,7 +88,7 @@ First-party tooling for data import varies. Proprietary RDBMSs often include spe
 
 However, third-party ETL automation is becoming a viable business niche, especially as more and more databases are hosted in the cloud. If you've got a lot of different incoming flows or strict regulatory compliance constraints, it can be worth investigating these services. They aren't doing anything you can't with the tools already available to you -- the question is whether you have the time to implement and maintain sufficiently robust ETL processes yourself.
 
-## Federation: Unified Information Sources
+## Federation: unified information sources
 
 ETL isn't the only game in town. In 2003, the SQL standard introduced an extension called SQL/MED, for *Management of External Data*. Files, other databases, other relational or non-relational DBMSs, REST endpoints, directory services -- all these and more involve datasets that look a lot like columns and rows, at least from the right angle. And anything that looks enough like columns and rows can conceivably be queried, if not managed outright, via SQL. The database presents a single face to users and other external systems, while routing requests and changes to the appropriate destination.
 

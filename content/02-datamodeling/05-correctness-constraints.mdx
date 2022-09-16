@@ -1,5 +1,5 @@
 ---
-title: 'Correctness and Constraints'
+title: 'Correctness and constraints'
 metaTitle: "Correctness and Constraints | Data Modeling | Prisma's Data Guide"
 metaDescription: "Learn more about storing meaningful, useful, correct data and how correctness can be logically defined and enforced"
 authors: ['dianfay']
@@ -10,7 +10,7 @@ Storing data is one thing; storing meaningful, useful, *correct* data is quite a
 
 Constraints don't render other input validation techniques useless by any means, even when they test the same assertions. Time spent trying and failing to store invalid data is time wasted. Violation messaging, like `assert` in systems and application programming languages, only reveals the first problem with the first candidate record in much more detail than anyone not immediately involved with the database needs. But as far as the correctness of data is concerned, constraints are law, for good or ill; anything else is advice.
 
-## On Tuples: Not Null, Default, and Check
+## On tuples: not null, default, and check
 
 Non-null constraints are the simplest category. A tuple must have a value for the constrained attribute, or put another way, the set of allowed values for the column no longer includes the empty set. No value means no tuple: the insert or update is rejected.
 
@@ -20,7 +20,7 @@ The provision of a default value if nothing is specified (by omission or an expl
 
 Any other validation rule which depends only on the values within a single tuple can be implemented as a `CHECK` constraint. In a sense, `NOT NULL` itself is a shorthand for `CHECK (column_name IS NOT NULL)`; the error message received in violation makes most of the difference. `CHECK`, however, can apply and enforce the truth of any Boolean predicate over a single tuple. For example, a table storing geographic locations should `CHECK (latitude >= -90 AND latitude < 90)`, and similarly for longitude between -180 and 180 -- or, if available, use and validate a `GEOGRAPHY` data type.
 
-## On Tables: Unique and Exclusion
+## On tables: unique and exclusion
 
 Table-level constraints test tuples against each other. In a unique constraint, only one record may have any given set of values for the constrained columns. Nullability can cause problems here, since `NULL` never equals anything else, up to and including `NULL` itself. A unique constraint on `(batman, robin)` therefore allows for infinite copies of any Robinless Batman.
 
@@ -62,7 +62,7 @@ VALUES ('32A', '[2020-08-20T10:30:00Z,2020-08-20T11:30:00Z)');
 
 [Upsert](/postgresql/inserting-and-modifying-data/insert-on-conflict) operations such as PostgreSQL's `ON CONFLICT` clause or MySQL's `ON DUPLICATE KEY UPDATE` use a table-level constraint to detect conflicts. And like non-null constraints can be expressed as `CHECK` constraints, a unique constraint can be expressed as an exclusion constraint on equality.
 
-## The Primary Key
+## The primary key
 
 Unique constraints have a particularly useful special case. With an additional non-null constraint on the unique column or columns, each record in the table can be singularly identified by its values for the constrained columns, which are collectively termed a *key*. Multiple candidate keys can coexist in a table, such as `users` still sometimes having distinct unique and non-null `email`s and `username`s; but declaring a primary key establishes a single criterion by which records are publicly and exclusively known. Some RDBMSs even organize rows on pages by the primary key, called for this purpose a *clustered index*, to make searching by primary key values as fast as possible.
 
@@ -74,7 +74,7 @@ The surrogate key has historically been a single integer column, or `BIGINT` whe
 
 An autoincrementing numeric counter is not without drawbacks: adding in records with pregenerated keys can cause conflicts, and if sequential values are exposed to users, it's easy for them to guess what other valid keys might be. Universally Unique Identifiers, or UUIDs, avoid these weaknesses and have become a common choice for surrogate keys, although they're also much bigger in-page than a simple number. The v1 (MAC address-based) and v4 (pseudorandom) UUID types are most frequently used.
 
-## On the Database: Foreign Keys
+## On the database: foreign keys
 
 Relational databases implement only one class of multi-table constraint, the <footnote><note>We'll be talking more about some set theory concepts later on, but <a href='[https://www.apress.com/gp/book/9781430242840](https://www.apress.com/gp/book/9781430242840)'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></footnote> or foreign key. This sole constraint type is the guarantor of *referential integrity*, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
 
@@ -88,7 +88,7 @@ If the foreign key is not constrained -- i.e., it's just another column or colum
 
 Constraining the foreign key can't prevent a book from being misattributed should the erroneous `author_id` point to an existing record in `authors`, so other checks and tests remain important. However, the set of extant foreign key values is almost always a tiny subset of the *possible* foreign key values, so foreign key constraints will catch and prevent most wrong values. With a foreign key constraint, the *Quixote* with a nonexistent author will be rejected instead of recorded.
 
-### Is This Where the "Relational" in "Relational Database" Comes From?
+### Is this where the "relational" in "relational database" comes from?
 
 <details>
 <summary>
@@ -100,7 +100,7 @@ Foreign keys create relationships between tables, but tables as we know them are
 This has caused no end of confusion and will likely continue to do so in perpetuity.
 </details>
 
-## For Certain Values of Correct
+## For certain values of correct
 
 There are many more ways in which data may be incorrect than addressed here. Constraints help, but even they are only so flexible; many common intra-table specifications, like a limit of two or higher on the number of times a value is allowed to appear in a column, can only be enforced with [triggers](functional-units#triggers-and-consequences).
 

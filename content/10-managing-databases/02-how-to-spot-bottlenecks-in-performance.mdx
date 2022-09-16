@@ -1,5 +1,5 @@
 ---
-title: 'How to Spot Bottlenecks in Performance'
+title: 'How to spot bottlenecks in performance'
 metaTitle: 'How to Spot Bottlenecks in Performance'
 metaDescription: 'The culprit for many application performance issues can be traced back to the database. In this article, we cover some of the most common performance bottlenecks that you might run into and what to do about them'
 metaImage: '/social/performance-bottlenecks.png'
@@ -14,11 +14,11 @@ Knowing that your application's performance problems might involve your database
 
 This article covers some of the most common issues that create performance bottlenecks in databases and some steps that can be taken to remediate them.
 
-## Database Logs and Metrics
+## Database logs and metrics
 
 It's not possible to diagnose bottlenecks in your database without looking at the logs. Most cloud providers supply rich information for you to assess what's happening with your queries, but it can be difficult to know what that information is saying.
 
-### Explore the Logs, Metrics, and Query Statistics
+### Explore the logs, metrics, and query statistics
 
 Most cloud database providers, including DigitalOcean, AWS, Google Cloud Platform, MongoDB Atlas, and others, offer a spot to view logs. It's important to get familiar with the layout and structure of this logging information so that you can more easily find problems later.
 
@@ -32,7 +32,7 @@ In this section, there's a subsection called "Recent Logs" which provides a real
 
 The information contained in these logs may or may not be useful for the specific bottleneck issue you're trying to troubleshoot. However, some information, such as the session duration, might give an indication of sessions that are spending a long time connected to the database.
 
-### Explore the Metrics Dashboard
+### Explore the metrics dashboard
 
 The metrics dashboard for your cloud database provider gives you the most insight into the bottlenecks you might be experiencing. Most cloud providers show performance-related information, such as:
 
@@ -43,7 +43,7 @@ The metrics dashboard for your cloud database provider gives you the most insigh
 
 Viewing the metrics for items such as system CPU usage might reveal problems related to resource constraints. You may see spikes in usage related to administrative tasks such as taking backups. Sustained high usage may indicate that your database server is underprovisioned.
 
-### Explore Query Statistics
+### Explore query statistics
 
 The query statistics reports from your cloud database provider might be the best source of information for determining where slowdowns are coming from. In many cases, slowdowns can be traced to queries that take a long time to execute.
 
@@ -53,7 +53,7 @@ For example, DigitalOcean's query statistics surfaces this information in tabula
 
 ![DigitalOcean Query Statistics section](/content/database-bottlenecks/do-query-statistics.png)
 
-## Unindexed Tables
+## Unindexed tables
 
 [Indexes](/intro/database-glossary#index) for a database table are conceptually similar to indexes in a book. Without an index in a book, you're left to look through every page to find the topic you're interested in. If, instead, the book has an index, you can search for a particular topic in the index first and you will be pointed to the correct page or pages. This drastically decreases the time it takes to find the information you're looking for.
 
@@ -61,7 +61,7 @@ The same concept is applied to database indexes. Adding indexes to a database ta
 
 If you start out with a small amount of data in a table, it's common to not notice problems related to indexing immediately. As the data grows, however, a lack of indexing can become more apparent.
 
-### Create Indexes for your Tables
+### Create indexes for your tables
 
 Indexes for database tables need to be created based on common access patterns. When creating an index, you specify a column or field that the index should be built upon.
 
@@ -79,7 +79,7 @@ CREATE INDEX email_index ON users (email);
 
 With the index in place, inspect your query statistics over time to see if performance has improved.
 
-### Use `EXPLAIN` to Inspect Slow Queries
+### Use `EXPLAIN` to inspect slow queries
 
 In some scenarios, the query statistics dashboard for your cloud database provider might not give you sufficient information. It may show you which queries are slow but it might not be clear which indexes should be created or how your queries should otherwise be optimized.
 
@@ -108,7 +108,7 @@ Will produce this report:
 
 The `EXPLAIN` statement is a valuable tool to dig into specific queries and analyze their cost. The information gleaned from using `EXPLAIN` goes beyond what is provided by cloud providers in the query statistics reports and can be used to optimize your queries.
 
-## Large Data Volumes
+## Large data volumes
 
 Queries that aren't optimized or that are overly broad in their scope might return inordinately large amounts of data from the database. It's often difficult to detect this issue when starting with a new database that has minimal data, but as the database size grows, it's likely to cause problems.
 
@@ -118,11 +118,11 @@ Addressing data overfetching requires that queries be optimized to scope the sel
 
 Your cloud database provider logs and metrics can give some indication that large amounts of data are being returned from the database. You might see burst credit usage or CPU spikes. It can, however, be difficult to tell which queries are responsible just from these metrics.
 
-### Instrumentation in Your App Server
+### Instrumentation in your app server
 
 To get the full picture of which queries are responsible for returning large amounts of data, you can add instrumentation to your app server. Tools like New Relic, Datadog, and Dynatrace can monitor your app server and report on the size of data as it passes through. Looking for which endpoints or areas of your app server are processing large amounts of data can help you zero in on which database queries might be responsible.
 
-## Query Optimization
+## Query optimization
 
 Query optimization is not a one-size-fits-all endeavor and is very much case-dependent. There are, however, some common types of optimizations that should be considered.
 
