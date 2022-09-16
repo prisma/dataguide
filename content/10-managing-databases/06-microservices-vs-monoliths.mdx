@@ -24,7 +24,7 @@ In software development, monoliths and microservices both describe application a
 
 ### Monolithic applications
 
-**Monolithic applications** are the conventional style of application development and deployment.  In monolithic design, most of the processing, communication, and coordination required to perform useful work happens internally within a single application.  The application interfaces with the outside world to receive input and commands from users (many times exposed via a web server endpoint) and to interact with other services like databases.
+[**Monolithic applications**](/intro/database-glossary#monolithic-architecture) are the conventional style of application development and deployment.  In monolithic design, most of the processing, communication, and coordination required to perform useful work happens internally within a single application.  The application interfaces with the outside world to receive input and commands from users (many times exposed via a web server endpoint) and to interact with other services like databases.
 
 Monoliths are popular because they follow well-understood development patterns and have large suites of tooling that can help with debugging and troubleshooting.  The consolidated nature of monolithic applications also makes it relatively simple to deploy and manage in an operational context.  While care must be taken to coordinate changes when various teams work on the same application, the number of moving parts is relatively small.
 
@@ -32,7 +32,7 @@ With that being said, working with a single all-encompassing application can als
 
 ### Microservices
 
-Microservices are an alternative approach to architecting applications that involve splitting the functionality of an application into many discrete "services".  These services each have narrowly defined responsibilities and coordinate with each other over the network to complete useful work.  In a sense, microservices is a style of development that decomposes applications and reimplements internal communication as network communication.
+[Microservices](/intro/database-glossary#microservice-architecture) are an alternative approach to architecting applications that involve splitting the functionality of an application into many discrete "services".  These services each have narrowly defined responsibilities and coordinate with each other over the network to complete useful work.  In a sense, microservices is a style of development that decomposes applications and reimplements internal communication as network communication.
 
 There are many reasons that people choose microservices over monolithic applications.  Microservices allow you to scale services independently according to individual performance and load characteristics.  On top of the benefits of scalability itself, running multiple copies of small components across various hosts lets you increase the resiliency of your application to help ensure that hardware failures don't cause downtime.
 

@@ -76,7 +76,7 @@ A CI/CD pipeline helps to build confidence in new changes and relieve anxiety ov
 
 ### Configure your services to allow dark launches
 
-**Dark launching** is a way to deploy software changes and test them using real traffic without user-facing consequences.  The idea is to mirror production traffic and send duplicate requests to your newly deployed code so that you can ensure that it both performs correctly and can handle an actual production load.
+[**Dark launching**](/intro/database-glossary#dark-launching) is a way to deploy software changes and test them using real traffic without user-facing consequences.  The idea is to mirror production traffic and send duplicate requests to your newly deployed code so that you can ensure that it both performs correctly and can handle an actual production load.
 
 Dark launching can be quite complex as it requires you to replay existing traffic on multiple instances of your application without incurring slowdowns that would affect the legitimacy of your tests.  An alternative to duplicating requests in real time is to play back previous requests from event logs or other sources.  This strategy requires you to capture all of the relevant context from the initial request.
 

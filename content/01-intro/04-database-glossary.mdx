@@ -95,6 +95,10 @@ CRUD — an acronym standing for Create, Read, Update, and Delete — describes 
 A cache is a component of a system designed to allow faster retrieval for high value or frequently requested pieces of data.  In general, caches function by storing a useful fraction of data on media that is either higher performance or closer to the client than the general use persistent media focused on long term, non-volatile storage.  In general, caches tend to be higher performance but tend to have more limited capacity and be more expensive.
 </AnchorItem>
 
+<AnchorItem id="cache-aside" title="Cache-aside">
+Cache-aside is a caching architecture that positions the cache outside of the regular path between application and database.  In this arrangement, the application will fetch data from the cache if it is available there.  If the data is not in the cache, the application will issue a separate query to the original data source to fetch the data and then write that data to the cache for subsequent queries.  The minimal crossover between the cache and backing data source allows this architecture to be resilient against unavailable caches.  Cache-aside is well-suited for read-heavy workloads.
+</AnchorItem>
+
 <AnchorItem id="cache-invalidation" title="Cache invalidation">
 Cache invalidation is the process of targeting and removing specific items from a cache.  Most often, this is performed as part of a routine when updating records so that the data in the cache does not serve stale data to clients.
 </AnchorItem>
@@ -173,6 +177,10 @@ A constraint is a limitation imposed on a specific column or table that impacts 
 
 <AnchorItem id="cursor" title="Cursor">
 A database cursor is a way for clients to iterate over records and query results in a controlled, precise manner.  Cursors are primarily used to page through results that match a query one-by-one by iteratively returning the next row for processing.  This can help you operate on an unknown number of records by accessing the results as a queue.  Care must be taken when using cursors as they take up resources on the database system, can result in locking, and often result in many more network round trips than would be required otherwise.
+</AnchorItem>
+
+<AnchorItem id="dark-launching" title="Dark launching">
+Dark launching is a deployment and release strategy that helps organizations test new changes in production contexts without affecting the user experience.  Dark launching involves releasing new code in parallel to the original functionality.  Requests and actions are then mirrored and run against both the old code and the new code.  While the system's behavior from the user's perspective is only affected by the original code, the new code can be tested with real data to validate functionality and catch performance and functional problems.  When properly vetted, the application can be altered to use the new code path exclusively.
 </AnchorItem>
 
 <AnchorItem id="data" title="Data">
@@ -379,12 +387,20 @@ In databases, a lock is a technique used to prevent modification of a database r
 MariaDB is an open-source relational database system developed with the goal of providing a drop-in replacement for MySQL after Oracle's acquisition left some within the community uncertain about the future direction of the project.  Since its initial fork, each project has added features that widen the gap between the two database systems.
 </AnchorItem>
 
+<AnchorItem id="microservice-architecture" title="Microservice architecture">
+The microservices architecture is an application and service design that affects the development, deployment, and operation of the components.  The microservices approach decomposes an application's functionality and implements each responsibility as a discrete service.  Rather than internal function calls, the service communicates over the network using clearly defined interfaces.  Microservices are often used to help speed up development as each component can be coded and iterated on independently.  It also helps with scalability as each service can be scaled as needed, often with the help of service orchestration software.
+</AnchorItem>
+
 <AnchorItem id="migration" title="Migration (database, schema)">
 Database or schema migrations are processes used to transform a database structure to a new design.  This involves operations to modify the existing schema of a database or table as well as transforming any existing data to fit the new structure.  Database migrations are often built upon one another and stored as an ordered list in version control so that the current database structure can be built from any previous version by sequentially applying the migration files.  Often, developers must make decisions about how best to modify existing data to fit the new structure which might include columns that did not previously exist or changes to data that are difficult to easily reverse.
 </AnchorItem>
 
 <AnchorItem id="mongodb" title="MongoDB">
 MongoDB is the most popular document-oriented NoSQL database system in use today.  It stores data using JSON-like structures that can be specified at the time of data storage.  Each document can have its own structure with as much or as little complexity as required.  MongoDB provides a non-SQL methods and commands to manage and query data programmatically or interactively.  MongoDB is known for its fast performance, scalability, and for enabling a rapid development pace.
+</AnchorItem>
+
+<AnchorItem id="monolithic-architecture" title="Monolithic architecture">
+Monolithic architecture is a term used to refer to a traditional application.  In monoliths, although different pieces may be broken down internally for ease of development, once built, the application is a single item that has many different functions and responsibilities.  Monoliths can interface with the external world in any number of ways, but the communication and coordination of different functionality within the program happens internally.  Monolithic architecture is sometimes considered to be easier to implement, but does suffer from inflexibility with scaling and availability as the entire application must be scaled up and down as a single unit.
 </AnchorItem>
 
 <AnchorItem id="multiversion-concurrency-control" title="Multiversion concurrency control (MVCC)">
@@ -497,6 +513,10 @@ The read committed isolation level is a transaction isolation level for relation
 
 <AnchorItem id="read-operation" title="Read operation">
 A read operation is generally defined as any operation that retrieves data without modification.  Read operations should generally behave as if the underlying data were immutable.  They may modify the retrieved data to change its format, filter it, or make other modifications, but the underlying data stored in the database system is not changed.
+</AnchorItem>
+
+<AnchorItem id="read-through-caching" title="Read-through caching">
+Read-through caching is a caching strategy where the cache is deployed in the path to the backing data source.  The application sends all read queries directly to the cache.  If the cache contains the requested item, it is returned immediately.  It the cache request misses, the cache fetches the data from the backing database in order to return the items to the client and add it to the cache for future queries.  In this architecture, the application continues to send all write queries directly to the backing database.
 </AnchorItem>
 
 <AnchorItem id="read-uncommitted-isolation-level" title="Read uncommitted isolation level">
@@ -651,8 +671,24 @@ Volatile storage is any type of storage that is dependent on continual power to 
 A wide-column store is a type of NoSQL database that organizes its data into rows and columns using standard and super column families.  A row key is used to retrieve all of the associated columns and super columns.  Each row can contain entirely different columns as the column definitions and values are stored within the row structure itself.
 </AnchorItem>
 
+<AnchorItem id="wal" title="Write-ahead logging (WAL)">
+Write-ahead logging, or WAL, is an approach to data revision management that increases the resiliency of systems data corruption during crashes and failures.  Without a technique like WAL, corruption can occur if the system crashes when a change to a database is only partially completed.  In this case, the data will be in neither the initial nor the intended state.  With write ahead logging, the system records its intentions to a durable write ahead log before executing operations.  This way, the database can recover a known-good state of the data by reviewing the log during recovery and redoing any operations that did not complete correctly initially.
+</AnchorItem>
+
+<AnchorItem id="write-around-caching" title="Write-around caching">
+Write-around caching is a caching pattern where write queries are sent to the backing database directly rather than written to the cache first.  Because any items in the cache related to the update will be now be stale, this method requires a way to invalidate the cache results for those items for subsequent reads.  This technique is almost always combined with a policy for cache reads to control read behavior.  This approach is best for data that is read infrequently once written or updated.
+</AnchorItem>
+
+<AnchorItem id="write-back-caching" title="Write-back caching">
+Write-back caching is a caching method where write queries are sent to the cache instead of the backing database.  The cache then periodically bundles the write operations and sends them to the backing database for persistence.  This is a modification of the write-through caching approach to reduce strain caused by high throughput write operations at the cost of less durability in the event of a crash.  This ensures that all recently written data is immediately available to applications without additional operations, but can result in data loss if the cache crashes before it's able to persist writes to the database.
+</AnchorItem>
+
 <AnchorItem id="write-operation" title="Write operation">
 In the context of databases, a write operation is any database action that modifies the stored data.  This includes inserting new records, deleting records, and updating existing records to new values.
+</AnchorItem>
+
+<AnchorItem id="write-through-caching" title="Write-through caching">
+Write-through caching is a caching pattern where the application writes changes directly to the cache instead of the backing database.  The cache then immediately forwards the new data to the backing database for persistence.  This strategy minimizes the risk of data loss in the event of a cache crash while ensuring that read operations have access to all new data.  In high write scenarios, it may make sense to transition to write-back caching to prevent straining the backing database.
 </AnchorItem>
 
 </dl>
