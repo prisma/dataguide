@@ -1,5 +1,5 @@
 ---
-title: 'Making Connections'
+title: 'Making connections'
 metaTitle: "Making Connections | Data Modeling | Prisma's Data Guide"
 metaDescription: "Learn about using foreign keys to describe relationships which in turn define the structure of the database"
 authors: ['dianfay']
@@ -14,7 +14,7 @@ Several ERD notations exist. The full ["crow's foot"](http://www2.cs.uregina.ca/
 
 This attention to detail is at least in part an historical artifact from the days when running a database server on a workstation would be unheard of, and in the modern era few ERDs are that formally specified. As with the diagrams here, a symbol for "one at most" and a symbol for "zero to many" are enough to get the gist across, and there's rarely a need for a level between that and sharing the SQL scripts themselves anymore.
 
-## Cascading Behaviors
+## Cascading behaviors
 
 Inserting an invalid `author_id` into `books` isn't the only way to violate a foreign key constraint: changes to `authors` can also invalidate existing data in `books`. [Back in *Correctness and Constraints*](correctness-constraints#on-the-database-foreign-keys), unenforced foreign keys led to a copy of *Don Quixote* with a spurious `author_id`. How to resolve the contradiction between Pierre Menard and Miguel Cervantes?
 
@@ -26,7 +26,7 @@ A `DELETE` against a parent table is often intended to prune an entire tree of r
 
 On occasion, natural primary key values may also change as standards and formats update or as the assumption that the natural key was immutable turns out to have been incorrect. Most RDBMSs support an `ON UPDATE CASCADE` behavior for this eventuality.
 
-### The Future is Here and Everything Needs to be Destroyed
+### The future is here and everything needs to be destroyed
 
 <details>
 <summary>
@@ -38,7 +38,7 @@ Even if real `libraries` or `authors` are never supposed to be deleted (only dea
 The usual recourse is a "teardown" function or script which deletes anything previous tests might have inserted into the database, table by table. Without `CASCADE` directives, these deletions must be arranged carefully in a [topological sort order](https://en.wikipedia.org/wiki/Topological_sorting) around the relationship graph to avoid ever violating a foreign key constraint. With `CASCADE`s, teardown mostly takes care of itself once you delete records at the center of each of the database's various relationship graphs.
 </details>
 
-## Key Positioning
+## Key positioning
 
 Both libraries and authors preexist any useful record of the books they lend and write respectively. These cases correspond to the ["has-a"](https://en.wikipedia.org/wiki/Has-a) relationship type in object-oriented programming, which in database design requires the foreign key to be stored in the dependent table, `books`.
 
@@ -80,7 +80,7 @@ CREATE TABLE provenances (
 );
 ```
 
-## Many-to-Many Relationships
+## Many-to-many relationships
 
 Elsewhere in the example schema, `patrons` have a `library_id` value. This expresses a very important -- and likely a very wrong -- assumption: any person will patronize one library and one library only. If someone goes to another library, they'll have to enter all their information all over again. This violates *another* important assumption, namely, that a single record in `patrons` corresponds to a single person. Both can't be true.
 
@@ -102,7 +102,7 @@ CREATE TABLE library_patrons (
 
 `checkouts`, you might have noticed, doesn't follow the same naming convention as `library_patrons` -- it's not `patron_books` or vice versa. That's because it's [more than a junction table](know-your-problem-space#what-is-important-enough-to-qualify-as-an-entity). Like `library_patrons`, `checkouts` maintains foreign keys to the tables it connects in a many-to-many relationship, but it must also include information about each patron-book connection: the date checked out, the date due or returned, whether an extension has been granted. It's also perfectly possible for someone to check out the same book multiple times, so `(patron_id, book_id)` is not a viable primary key.
 
-## Building Blocks
+## Building blocks
 
 Many-to-many relationships are only one possible composition of the two primary relationship types. They're common enough that diagrams often omit `library_patrons`-style junction tables entirely in favor of representing both ends with a "many" symbol. But every network of connections among tables, no matter how complicated, is reducible into its constituent one-to-one and one-to-many relationships.
 

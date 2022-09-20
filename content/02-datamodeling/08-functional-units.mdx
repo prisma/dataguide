@@ -1,5 +1,5 @@
 ---
-title: 'Functional Units'
+title: 'Functional units'
 metaTitle: "Functional Units: Functions vs Procedures, Workflows, and More"
 metaDescription: "Databases are, by definition, very good at processing and manipulating information. Learn more about functional units, workflows, and more."
 authors: ['dianfay']
@@ -32,7 +32,7 @@ Some database engines split the difference between SQL and other programming lan
 
 Using non-SQL languages is an option if SQL is inadequate for some task or if you want to reuse other code, but it won't get you around the other issues that make database programming a many-edged sword. If anything, resorting to these complicates deployment and interoperability further. Caveat scriptor: let the writer beware.
 
-## Functions vs Procedures
+## Functions vs procedures
 
 <details><summary>One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. </summary>
 
@@ -47,7 +47,7 @@ More specifically, MySQL also disallows recursion and some additional SQL statem
 So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.
 </details>
 
-## Defaults and Generation
+## Defaults and generation
 
 Even simple computations can make trouble if they're performed often enough or if multiple competing implementations exist. Operations on values in a single row -- think converting between metric and imperial units, multiplying a rate by hours worked for invoice subtotals, calculating the area of a geographic polygon -- can be declared in a table definition to address one or the other problem:
 
@@ -100,7 +100,7 @@ If you're using Prisma, our documentation covers the equivalent method of [defin
 </PrismaOutlinks>
 
 
-## Referencing Data in Functions
+## Referencing data in functions
 
 The sequence approach above has one important weakness (and <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> at least one less important </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
 
@@ -131,7 +131,7 @@ So much of software architecture in general is about managing and isolating comp
 
 As mentioned above, this is an area where differences between RDBMS flavors and SQL dialects come to the fore. A function or procedure developed for one database probably won't run on another without changes, whether that's substituting SQL Server's `TOP` for a standard `LIMIT` clause or completely reworking how temporary state is stored in an enterprise Oracle to PostgreSQL migration. Canonizing your workflows in SQL also commits you to your current platform and dialect more thoroughly than almost any other choice you can make.
 
-## Computations in Queries
+## Computations in queries
 
 So far we've looked at using functions to store and modify data, whether bound to table definitions or managing multi-table workflows. In one sense, that's the more powerful use to which they can be put, but functions have a place in data retrieval as well. Many tools you may already use in your queries are implemented as functions, from standard built-ins like `count` to extensions such as Postgres' `jsonb_build_object`, PostGIS' `ST_SnapToGrid`, and more. Of course, since those are more tightly integrated with the database itself they're mostly written in languages other than SQL (e.g. C in the case of PostgreSQL and PostGIS).
 
@@ -139,7 +139,7 @@ If you often find yourself (or think you might find yourself) needing to retriev
 
 It has to be said: if you're working with an application backend, its data access toolkit may limit how much mileage you get out of augmenting query results with functions. Most such libraries can execute arbitrary SQL, but those which generate common SQL statements based on model classes may or may not allow customizing query `SELECT` lists. Generated columns or views can be an answer here.
 
-## Triggers and Consequences
+## Triggers and consequences
 
 Functions and procedures are contentious enough among database designers and users, but things *really* take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
 
@@ -186,7 +186,7 @@ In Prisma Client, you can achieve similar results with TypeScript at the client 
 
 </PrismaOutlinks>
 
-## Practical Programmability
+## Practical programmability
 
 Computations in the database aren't just faster and more concisely expressed: they eliminate ambiguity and set standards. The examples above free database users from having to calculate lot numbers themselves, or from worries about accidentally creating more lots than they can handle. Application developers in particular have often been trained to think of databases as "dumb storage", providing structure and persistence only, and can thus find themselves -- or worse, not realize that they are -- clumsily articulating outside the database what they could do more effectively in SQL.
 
