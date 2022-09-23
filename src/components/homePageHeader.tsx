@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import HeaderDiagram from '../icons/HeaderDiagram'
 import PrismaLogo from '../icons/PrismaLogo'
 import SocialShareSection from './socialShareSection'
+import Search from '../components/search'
+import { useLocation } from '@reach/router'
 
 const HeaderWrapper = styled.div`
   background: linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
@@ -99,7 +101,16 @@ const Highlight = styled.span`
   background: #4c51bf;
 `
 
+const SearchComponent = styled(Search)`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+`
+
 const HomePageHeader = () => {
+  const [showDocsBtn, setShowDocsBtn] = React.useState(true)
+  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
+  const location = useLocation()
   return (
     <HeaderWrapper>
       <div className="sub-wrapper">
@@ -112,6 +123,7 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
+            <SearchComponent hitsStatus={changeHitsStatus} location={location} />
             <SocialShareSection homePage={true}/>
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
