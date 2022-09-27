@@ -25,7 +25,9 @@ Object stores can hold any type of data spanning from human-readable files to un
 To be clear, it is possible to store large data such as text or image files in a database as you would any other piece of information. However, this viability quickly runs dry as your database scale grows. On a large scale database, storing these file types will lead to major pitfalls that are better to avoid. 
 
 ### Slower database queries
-Query performance depends a considerable amount on the database’s ability to use database resources to serve the query response. When including files in the database,  overall query performance becomes slower simply from more transmitted data. The files are large and can take up considerable RAM resources. RAM is a finite database resource that also acts as memory for recently accessed data. If queries accessing large data are stored in RAM, then there is limited RAM now available for additional queries potentially forcing the data to be read from disk. Any time data has to come from disk usually results in slower performance. 
+Query performance depends a considerable amount on the database’s ability to use database resources to serve the query response. When including files in the database,  overall query performance becomes slower simply from more transmitted data. 
+
+The files are large and can take up considerable RAM resources. RAM is a finite database resource that also acts as memory for recently accessed data. If queries accessing large data are stored in RAM, then there is limited RAM now available for additional queries potentially forcing the data to be read from disk. Any time data has to come from disk usually results in slower performance. 
 
 ### Database maintenance and backups
 It is generally a good rule to keep your database as small as possible to meet your needs. The larger your database becomes, the larger the maintenance burden. With the inclusion of files, the database size will inevitably increase. 
@@ -43,7 +45,9 @@ There are other conversion methods that can achieve the same results, but they a
 
 
 ### Increased database costs
-Lastly, there’s the issue of database costs. As a database grows in size, there is typically a correlated increase in costs. In order to query data efficiently, databases will store indexes and frequently queried data in RAM. By storing large files and introducing additional application logic to your stack, it is fair to assume that this will have a large increase in cost associated. By using an object store, you significantly reduce the size of the data stored in your database. Generally, the costs of using an object store for large files will be much lower compared to database storage. This also provides you a much more cost scalable solution as your application continues to grow.
+Lastly, there’s the issue of database costs. As a database grows in size, there is typically a correlated increase in costs. In order to query data efficiently, databases will store indexes and frequently queried data in RAM. By storing large files and introducing additional application logic to your stack, it is fair to assume that this will have a large increase in cost associated. 
+
+By using an object store, you significantly reduce the size of the data stored in your database. Generally, the costs of using an object store for large files will be much lower compared to database storage. This also provides you a much more cost scalable solution as your application continues to grow.
 
 ## Conclusion 
 In this guide, we covered object storage and why you should consider storing large data in an object store rather than your database. We covered the main pitfalls of large data storage in a database. Object storage will allow you to maintain query performance, simplify backup processes, and keep costs low among other benefits.
