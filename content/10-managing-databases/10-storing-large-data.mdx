@@ -1,0 +1,57 @@
+---
+title: 'Introduction to storing large data'
+metaTitle: 'Introduction to storing large data'
+metaDescription: 'Learn about the considerations to take when storing large application data.'
+authors: ['alexemerich']
+---
+
+## Introduction
+Much like humans, fruits, and apartments, data can come in all different shapes and sizes. By definition, a database is a structure used to organize, structure, and *store* data. By this logic, it is fair for one to assume that a database is suitable for storing all different sizes of data. While this assumption is technically true, using a relational database to store very large pieces of data can actually prove to be a very inefficient practice.  
+
+Data such as images, binary files, and other larger items generally lead to slower database processes such as saving or retrieving the data. This inefficiency will lead many organizations to introduce another storage system in conjunction with their database, an object-based storage system. In this guide, we are going to discuss what an object store is, the downsides of using a database to store large data, and the benefits of using an object store with a data.
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
+
+## What is object-based storage?
+Object storage, is a storage strategy that manages and manipulates data storage as distinct units, called objects. Each individual object is the combination of the pieces of data that make up a file. The object includes all of the relevant metadata of that file, and then attaches a custom identifier for reference. Object metadata typically identifies the properties of the object, how the object should be handled when accessed, and other application-specific or user-specific information. Each object is then assigned a uniquely identifiable URL path that can be referenced by an application or web server to access that file. This is then what is stored in the database taking up much less space and mitigating other pitfalls we’ll discuss.
+
+Object stores can hold any type of data spanning from human-readable files to unstructured data files (binary files) to media files such as audio, video, or image.  For the purposes of this guide, we will focus on object stores in relation to databases and how they are a better fit for these aforementioned large data types. 
+
+## What are the pitfalls of storing large data in a database?
+To be clear, it is possible to store large data such as text or image files in a database as you would any other piece of information. However, this viability quickly runs dry as your database scale grows. On a large scale database, storing these file types will lead to major pitfalls that are better to avoid. 
+
+### Slower database queries
+Query performance depends a considerable amount on the database’s ability to use database resources to serve the query response. When including files in the database,  overall query performance becomes slower simply from more transmitted data. The files are large and can take up considerable RAM resources. RAM is a finite database resource that also acts as memory for recently accessed data. If queries accessing large data are stored in RAM, then there is limited RAM now available for additional queries potentially forcing the data to be read from disk. Any time data has to come from disk usually results in slower performance. 
+
+### Database maintenance and backups
+It is generally a good rule to keep your database as small as possible to meet your needs. The larger your database becomes, the larger the maintenance burden. With the inclusion of files, the database size will inevitably increase. 
+
+With database size increasing, this causes a cascade of potential performance pitfalls. With a large database, backing up the database becomes a more time-consuming operation. With larger backup files, it takes longer to restore from backup and do other operations like disaster recovery tests. Anything contributing to longer running maintenance tasks has the potential to add strain to the database and impact application performance.
+
+In addition to backups and maintenance, a larger database makes adding indexes a less efficient task for database administrators. Similarly, any sort of replication process may also see a hit in performance and lead to delays in synchronization and ability to maintain high database availability.  
+
+### More complex file storage format
+Every application owner aims to keep their application stable and as error-free as possible. To do this, you should limit as many potential points of failure as possible. In the case of storing large data in a database, a couple avoidable points of failure are introduced into the back and forth communication of the application and database. 
+
+Often times, in order to store a file in a database, the file needs to converted to a storable format. Typically, the file is converted to a text format such as [base64](https://en.wikipedia.org/wiki/Base64). The points of failure are introduced in this conversion logic that needs to be written. For example, when the application receives new data from a user file upload, it will then need to convert that file into base64 to be saved in the database. Vice-versa, the database will also need the logic to convert the stored base64 string to binary to communicate the file to the application client. 
+
+There are other conversion methods that can achieve the same results, but they also open up the same potential risks for failure as the aforementioned example. With the introduction of an object store, the file will be uploaded to the store and assigned a specific URL path. This URL path is then stored in the database and referenced by the application client when pulling the file. This setup removes all of the risks introduced by including conversion logic. 
+
+
+### Increased database costs
+Lastly, there’s the issue of database costs. As a database grows in size, there is typically a correlated increase in costs. In order to query data efficiently, databases will store indexes and frequently queried data in RAM. By storing large files and introducing additional application logic to your stack, it is fair to assume that this will have a large increase in cost associated. By using an object store, you significantly reduce the size of the data stored in your database. Generally, the costs of using an object store for large files will be much lower compared to database storage. This also provides you a much more cost scalable solution as your application continues to grow.
+
+## Conclusion 
+In this guide, we covered object storage and why you should consider storing large data in an object store rather than your database. We covered the main pitfalls of large data storage in a database. Object storage will allow you to maintain query performance, simplify backup processes, and keep costs low among other benefits.
+
+Being familiar with the pitfalls of storing large data in your database prepares you to make optimal decisions for long-term application success. While both options are capable of storing large data like files, videos, and audio, it is important to know why using object storage is the best option for your application long-term. 
+
+<PrismaOutlinks>
+
+The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify access to your database in production environments.  If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+
+</PrismaOutlinks>
