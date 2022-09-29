@@ -1,5 +1,5 @@
 ---
-title: 'Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety'
+title: 'Top 8 TypeScript ORMs, query builders, & database libraries: evaluating type safety'
 metaTitle: 'Top 8 TypeScript ORMs, Query Builders, Libraries: Evaluate Type Safety'
 metaDescription: "This article assesses the type safety of popular TypeScript ORMs, query builders, and database libraries."
 metaImage: '/social/typescript-orms-2022.png'
@@ -47,15 +47,15 @@ If you want to learn more about why we think Prisma is a great option, check out
 
 </PrismaOutlinks>
 
-### Type Definitions: Built-in
+### Type definitions: built-in
 
-Prisma client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
+Prisma Client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
 
-### Record Creation: Type-safe
+### Record creation: type-safe
 
 When creating a new record with Prisma, attempting to add properties not defined in the model results in a type error. Model properties are autocompleted. Furthermore, nested writes are also type safe. Nested writes insert data into multiple tables using relations. This means that when creating a `User` and a nested `Post` using the same `prisma.user.create()` call, the `Post` model fields are also type-checked and autocompleted, guaranteeing that the nested record will also be valid.
 
-### Record Fetching: Type-safe
+### Record fetching: type-safe
 
 When fetching records from the database, return objects are fully typed, even for relation queries. For example, when fetching all users from the database and including the post relation to additionally fetch all of a user's posts, the type is inferred as `(User & {posts: Post[];})[]`. Furthermore autocomplete also works when using `include` to add fetched relations, so that you can't query relations that don't exist, a feature lacking from many of the libraries considered in this article.
 
@@ -87,7 +87,7 @@ In this query, all users are returned, but only the `title` and `published` fiel
 
 This means that attempting to access `post` fields that weren't selected, like `content`, will fail. Prisma is the only ORM-like library considered in this article that is able to achieve this granularity of type safety.
 
-### Type Safety: Strong
+### Type safety: strong
 
 Prisma's unique design of generating a local CRUD client that encodes your data model allows it to achieve an unparalleled level of type safety among TypeScript ORMs. When using Prisma to manipulate and query data from your database, you'll have accurate typings for nested relation queries and also partial queries that modify the shape of returned models. 
 
@@ -115,21 +115,21 @@ For a more focused comparison of Prisma and Sequelize, you can look at our [Sequ
 
 </PrismaOutlinks>
 
-### Type Definitions: Built-in
+### Type definitions: built-in
 
 As of v5 (at the time of writing, Sequelize is v6.16.1), Sequelize contains built-in type definitions. Prior to this, type definitions were available via [`@types`](https://github.com/DefinitelyTyped/DefinitelyTyped). Sequelize was originally designed as a JavaScript ORM, and TypeScript support was added in recent years.
 
-### Record Creation: Not Type-Safe
+### Record creation: not type-safe
 
 Out-of-the-box, Sequelize will not provide strict type-checking for model properties. To implement this, the developer must write a [non-trivial](https://sequelize.org/master/manual/typescript.html) amount of boilerplate including `interfaces`, classes and definitions for CRUD methods for any relations. For complex data models with multiple relations, this can quickly become cumbersome and unwieldy. When creating records using mixins added to models or using nested models, it is again up to the developer to provide type definitions. 
 
 Sequelize also allows you to define models without type checking their attributes. Using this approach, you can get up and running quickly with Sequelize and TypeScript, but lose all type safety when working with your data.
 
-### Record Fetching: Not Type-Safe
+### Record fetching: not type-safe
 
 Given that Sequelize allows both strict and loose type checking of model attributes, the compiler will only correctly type check queries if the developer provides all of the necessary type definitions. Furthermore, when fetching associations using `include`, the return type does not include information about the nested shape of the fetched data, and to properly compile without errors, the developer must use `!` non-null assertions and `rejectOnEmpty` parameters to override the compiler.
 
-### Type Safety: Weak
+### Type safety: weak
 
 As of v5, Sequelize provides built-in type definitions, but to have any sort of real type safety when working with models and records, the onus is on the developer to write interfaces and fully define typings for associations and classes. Out-of-the-box, not much type safety is provided.
 
@@ -157,11 +157,11 @@ For a more focused comparison of Prisma and TypeORM, you can look at our [TypeOR
 
 </PrismaOutlinks>
 
-### Type Definitions: Built-in
+### Type definitions: built-in
 
 TypeORM is a TypeScript-first ORM that was explicitly designed for use with TypeScript. Types are built-in to the library and it leverages TypeScript features like decorators when defining models. 
 
-### Record Creation: Type safe
+### Record creation: type safe
 
 With TypeORM, models are defined using the `Entity` class. You decorate a model class (like `User`) with the `@Entity()` decorator, and decorate its properties like `id` and `name` with column decorators like `@PrimaryGeneratedColumn()` and `@Column`. If you're using the DataMapper pattern, a record is then defined by creating a new instance of the now type-safe model class and setting its properties. The record is saved using a model-specific `Repository` object, which is also typed. 
 
@@ -195,7 +195,7 @@ await conn
 
 Even though there is no valid `postssss` relation.
 
-### Record Fetching: Partially type safe
+### Record fetching: partially type safe
 
 Fetching records from the database can be accomplished in many different ways. Using typed, model-specific `Repository` objects,  the developer calls a method on the repository like `userRepo.find()`, where the return type is correctly inferred as `User[]`. 
 
@@ -224,7 +224,7 @@ user.photos = await getConnection()
 
 The type of `user.photos` is `Photo[]`. 
 
-### Type Safety: Strong
+### Type safety: strong
 
 TypeORM is TypeScript ORM with good type safety around its models. Its query builder also has a good level of type safety. Type safety for relations is less strict and it is up to the developer to program defensively against this limitation.
 
@@ -246,19 +246,19 @@ TypeORM is TypeScript ORM with good type safety around its models. Its query bui
 
 Bookshelf.js is Node.js ORM built on top of the Knex.js query builder library. It is inspired by the Data Mapper ORM pattern and provides a pared-down interface for modeling and interacting with your data. Bookshelf.js gives you the standard set of data modeling, querying, and manipulation tools. Since it's built on top of the Knex.js query builder, you can always drop down and write more involved queries if you find yourself limited by its interface. It is not as active a project as some of the other tools considered in this article, but has been around for a long time and has a core user base that prefers its streamlined style.
 
-### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
+### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
 
 Type definitions for Bookshelf.js can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository of TypeScript type definitions. They are not built-in to the library.
 
-### Record Creation: Not type-safe
+### Record creation: not type-safe
 
 Bookshelf.js models are created by extending the `bookshelf.Model` class or calling `bookshelf.model()` with a model and table name. The tables and schema must be created beforehand and are not defined within these models. For example, after creating a `User` model that corresponds to table name `users`, to set the `name` property, the developer would call `user.set('name', 'Joe')`. If the `name` column does not exist in the `users` table, then this call will fail at runtime. As such, model creation in Bookshelf is not type safe out-of-the-box. The type of most objects passed around is `any`.
 
-### Record Fetching: Not type-safe
+### Record fetching: not type-safe
 
 Given the above, it is no surprise that fetching records from the database is also not type safe. When fetching a `user` record using `const user = await User.where({'name': 'Joe'}).fetch();`, the resulting type is `any`. Including relations using `withRelated` within a `fetch()` does not change this. Query parameters in the `where()` clause are not type checked and if you include a column that does not exist in the database, the command will pass compilation but fail at run time.
 
-### Type Safety: Weak
+### Type safety: weak
 
 Although Bookshelf.js does have `@types` type definitions, these provide the bare minimum to compile TypeScript code without errors. If you're looking to work with a Knex.js-based ORM-like library with strong TypeScript support, both Objection.js and MikroORM provide thorough type safety and are better supported and maintained.
 
@@ -280,11 +280,11 @@ Although Bookshelf.js does have `@types` type definitions, these provide the bar
 
 Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to. [Objection to ORM Hatred](https://www.jakso.me/blog/objection-to-orm-hatred), written by the creator of the Objection.js library, concisely summarizes its design goals and where it fits in the raw SQL-to-ORM spectrum. Objection.js seems to be more actively maintained and better documented than Bookshelf.js, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](https://github.com/Vincit/objection.js/issues/1069)
 
-### Type Definitions: Built-in
+### Type definitions: built-in
 
 Objection.js provides [built-in TypeScript support](https://github.com/Vincit/objection.js/blob/master/typings/objection/index.d.ts). Like Bookshelf.js, Objection.js began as a JavaScript library and typings were added later as TypeScript grew in popularity and adoption. However, unlike Bookshelf.js, Objection.js provides thorough type safety when working with models and queries. 
 
-### Record Creation: Type safe
+### Record creation: type safe
 
 Models are defined in Objection.js by extending the `Model` class. Within a, say, `User` model, the developer defines non-nullable and optional properties like `name!` and `age?`, and provides a required `tableName` property.  The developer can also provide an optional [JSON Schema](https://json-schema.org) for Model validation. Relations to other models like `HasMany`  are also defined in the model class.
 
@@ -308,7 +308,7 @@ Nested writes can also be done using the `insertGraph()` operation:
 
 This operation is also type-safe and model properties are autocompleted for the nested model.
 
-### Record Fetching: Partially type safe
+### Record fetching: partially type safe
 
 When fetching records from the database, queries and return objects are typed. When fetching relations using `relatedQuery`, the return type of the relation is also correctly inferred. In the following example, the return type of posts is `Post[]`:
 
@@ -336,7 +336,7 @@ If instead of `'posts'` you enter a model or relation that doesn't exist, the co
 const userWithPosts = await User.query().findById(1).withGraphFetched('postssss');
 ```
 
-### Type Safety: Strong
+### Type safety: strong
 
 Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built around the Knex.js query builder. Its TypeScript support and type safety are much stronger than Bookshelf.js and comparable to MikroORM’s. It is a strong choice for developers seeking a pared-down, minimal ORM-like library with strong TypeScript typings.
 
@@ -358,11 +358,11 @@ Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built 
 
 MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
 
-### Type Definitions: Built-in
+### Type definitions: built-in
 
 As a TypeScript-first ORM, MikroORM builds in its own extensive set of type definitions.
 
-### Record Creation: Type safe
+### Record creation: type safe
 
 Defining models with MikroORM involves extending a `BaseEntity` class where the model's properties are declared, typed, and decorated with `@Property` and relation decorators. With these classes defined, records can be created in a type-safe manner by creating instances of these model classes. Model fields are type-checked and autocompleted. Models linked by a relation can be persisted at the same time in a transaction using `persistAndFlush()`. For example:
 
@@ -378,7 +378,7 @@ await DI.em.persistAndFlush([post1, post2]);
 
 Here the `Post` model requires a `title` and  `User` in its constructor, and record creation will fail if these are not provided. You can access the post's author object using its properties, e.g. `post1.author.title`.
 
-### Record Fetching: Type-safe
+### Record fetching: type-safe
 
 MikroORM also provides strong type safety when fetching records from the database. Records can be fetched using EntityRepositories or an EntityManager. 
 
@@ -414,7 +414,7 @@ const user: (User & {
 }) | null
 ```
 
-### Type Safety: Strong
+### Type safety: strong
 
 MikroORM is a powerful ORM that also packs in the flexible Knex.js query builder. Knex.js results can be mapped to Models using `EntityManager.map()`, a unique and powerful feature. It provides strong type safety when working with models and query results.
 
@@ -436,19 +436,19 @@ MikroORM is a powerful ORM that also packs in the flexible Knex.js query builder
 
 Waterline is the default ORM used in the Sails Node.js framework. Part of its design is to allow you to use "write once, use anywhere" data manipulation code, so that you can write code to query or manipulate your data whether it lives in a MySQL, PostgreSQL, MongoDB, or other database.
 
-### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
+### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
 
 Type definitions for Waterline can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository of TypeScript type definitions. They are not built-in to the library.
 
-### Record Creation: Not type-safe
+### Record creation: not type-safe
 
 With Waterline, models are defined using `Waterline.Collection.extend()`. The table name is specified and attributes for the model like `id` and `name` are declared along with their type. Models are then added to the Waterline instance which is used to create records. Record creation in Waterline is not type-safe and you can set attributes in new records that weren't defined in the model. Furthermore, the return type is `any`, which is frequently passed around when using Waterline.
 
-### Record Fetching: Not type-safe
+### Record fetching: not type-safe
 
 When fetching records from the database using the Waterline instance and the given model, any attributes, even non-existent ones, can be inserted into the `find()` method without triggering any compiler errors. The method's return type is `any`. Querying data using Waterline and the `@types` typings is generally not type-safe.
 
-### Type Safety: Weak
+### Type safety: weak
 
 Waterline's models are not type-safe and data manipulation and creation operations are similarly not type-safe. Waterline is primarily a JavaScript library and its typings provide the bare minimum for TypeScript code to compile. 
 
@@ -478,17 +478,17 @@ For a more focused comparison of Prisma and Mongoose, you can look at our [Mongo
 
 </PrismaOutlinks>
 
-### Type Definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mongoose)
+### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mongoose)
 
 To use Typegoose you first have to install Mongoose and its `@types` type definitions. These can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository. They are not built-in to the library.
 
-### Record Creation: Type-safe
+### Record creation: type-safe
 
 To create models with Typegoose, you define model classes, like `User`, and their properties, like `name` and `age`. Properties are decorated with the `@prop()` decorator to specify additional information like whether or not the properties are required and how they are related to other models. 
 
 Once the models have been defined, records can be created in a type-safe manner using Mongoose `Model` objects. Model properties are autocompleted and attempting to add undefined properties results in a compiler error. The return object type corresponds to the defined Model class (`DocumentType<User>`) and its properties can be accessed in a type-safe manner. This type safety also extends to nested models (for example saving a `User` with nested `Post` objects).
 
-### Record Fetching: Not type-safe
+### Record fetching: not type-safe
 
 When querying records from the database using `Model.find()`, filter properties are not type checked and it is possible to append properties that haven't been defined without any compiler error. This will result in Mongoose attempting to cast the filter. If this fails, a `CastError` will be thrown at runtime. 
 
@@ -496,11 +496,11 @@ When using `.populate()` on a model to populate references to other documents, a
 
 The return type from a `find()` or `findOne()` command is correctly typed according to the model used to query the database.
 
-### Type Safety: Moderate
+### Type safety: moderate
 
 Typegoose leverages Classes and Decorators to help you build Mongoose models quickly. When creating records, parameters are type checked, but when querying it is up to the developer to build in additional safeguards. It is a great place to get started with type-safe TypeScript and MongoDB.
 
-## Briefly Considered
+## Briefly considered
 
 This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide/). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
 
@@ -532,4 +532,4 @@ This article briefly assesses the type safety of the most popular Node.js ORMs, 
 
 Type safety is not the only criteria you should use when choosing a tool to interact with your database. It is also important to consider the package’s programming interface, design, support for your database’s features, and flexibility. Different Node.js projects may require different tools.
 
-To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://dataguide.prisma.io/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://dataguide.prisma.io/), a free helpful knowledge base for learning about databases, data modeling, and much more.
+To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide/), a free helpful knowledge base for learning about databases, data modeling, and much more.

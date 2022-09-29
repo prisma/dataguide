@@ -14,7 +14,7 @@ While [serverless computing has many benefits](https://www.prisma.io/dataguide/s
 
 <PrismaOutlinks>
 
-[Prisma's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+[Prisma's Data Proxy](https://www.prisma.io/docs/data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
 
 </PrismaOutlinks>
 
@@ -42,7 +42,7 @@ Another challenge that is fundamental to the serverless model is the application
 
 ### Designing a cloud-friendly architecture
 
-The first requirement that applications must meet to use serverless platforms is to be designed in a cloud-friendly way.  In the context of this discussion, at the very least this means that the application must be at least partly deployable to a cloud service that the other components are able to communicate with.  And while it's possible to implement monolithic functions in your design, the serverless model best accommodates microservice architectures.
+The first requirement that applications must meet to use serverless platforms is to be designed in a cloud-friendly way.  In the context of this discussion, at the very least this means that the application must be at least partly deployable to a cloud service that the other components are able to communicate with.  And while it's possible to implement [monolithic functions](/intro/database-glossary#monolithic-architecture) in your design, the serverless model best accommodates [microservice architectures](/intro/database-glossary#microservice-architecture).
 
 The upshot of this is that your application must be designed in part as a series of functions executed by your serverless provider.  You must be comfortable with the processing taking place on infrastructure that you do not control.  Furthermore, you must be able to decompose your application's functionality into discrete functions that can be executed remotely.
 
@@ -101,6 +101,6 @@ By gaining familiarity with the different obstacles that you might face, you can
 
 <PrismaOutlinks>
 
-[Prisma's Data Proxy](https://www.prisma.io/docs/concepts/components/prisma-data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+[Prisma's Data Proxy](https://www.prisma.io/docs/data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
 
 </PrismaOutlinks>

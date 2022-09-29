@@ -47,7 +47,7 @@ Concepts:
 
 <PrismaOutlinks>
 
-[Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/concepts/database-connectors/postgresql).  You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres)
+[Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/concepts/database-connectors/postgresql).  You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres)
 
 </PrismaOutlinks>
 
@@ -90,7 +90,7 @@ Concepts:
 
 <PrismaOutlinks>
 
-When working with Prisma Client, [data models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model) in the Prisma schema are equivalent to tables in PostgreSQL.
+When working with Prisma Client, [data models](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) in the Prisma schema are equivalent to tables in PostgreSQL.
 
 </PrismaOutlinks>
 
@@ -116,7 +116,7 @@ PostgreSQL offers a variety of solutions for spreading workloads over multiple s
 
 *Load balancing* is a strategy that involves duplicating data on multiple database servers and alternating requests between them to increase the amount of work that can be performed concurrently.  Similarly, *high availability* is a strategy that allows a secondary database server to take over the responsibilities of the first if there are problems, decreasing the amount of time that the data is unavailable.  Both of these strategies are possible in PostgreSQL through a combination of [Write-Ahead Logging (WAL)](https://www.postgresql.org/docs/current/wal-intro.html) and [replication](https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling).
 
-Write-Ahead Logging is a technique used to guarantee data integrity by writing all changes to a log file *before* actually applying them to the database.  In the event of a failure during a transaction, PostgreSQL can determine exactly what operations were applied to the database by checking the log.  Any partially applied transactions can then be rolled back since the system knows exactly what change was intended.
+[Write-Ahead Logging](/intro/database-glossary#wal) is a technique used to guarantee data integrity by writing all changes to a log file *before* actually applying them to the database.  In the event of a failure during a transaction, PostgreSQL can determine exactly what operations were applied to the database by checking the log.  Any partially applied transactions can then be rolled back since the system knows exactly what change was intended.
 
 The WAL is important for load balancing and high availability because of its relationship with replication.  *Replication* is a process of mirroring the data and all database operations between two or more database servers.  It is the primary method of implementing both load balancing and high availability by providing a means to duplicate data between servers.
 

@@ -1,0 +1,46 @@
+---
+title: 'What is an ORM?'
+metaTitle: "What is an ORM (Object Relational Mapper)?"
+metaDescription: "What are ORMs and how are they useful? In this guide, we'll explain what ORMs are and why they are helpful for many projects."
+authors: ['justinellingwood']
+---
+
+## Introduction
+
+What is an ORM and why are they so common when working with database?  If you are new to programming applications backed by relational databases, you may have come across the term ORM during your research.  In this guide, we'll briefly cover what an ORM is and how they can be helpful.
+
+<PrismaOutlinks>
+
+[Prisma](https://www.prisma.io/docs/concepts/overview/what-is-prisma) is an ORM focused on making it easy for Node.js and TypeScript applications to work with databases.  You can learn more about what Prisma offers in our [Why Prisma? page](https://www.prisma.io/docs/concepts/overview/why-prisma).
+
+</PrismaOutlinks>
+
+## What is an ORM?
+
+An [ORM](/intro/database-glossary#orm), or Object Relational Mapper, is a piece of software designed to translate between the data representations used by databases and those used in object-oriented programming.  Basically, these two ways of working with data don't naturally fit together, so an ORM attempts to bridge the gap between the two systems' data designs.
+
+From a developer's perspective, an ORM allows you to work with database-backed data using the same object-oriented structures and mechanisms you'd use for any type of internal data.  The promise of ORMs is that you won't need to rely on special techniques or necessarily learn a new querying language like [SQL](/intro/database-glossary#sql) to be productive with your data.
+
+In general, ORMs serve as an abstraction layer between the application and the database.  They attempt to increase developer productivity by removing the need for boilerplate code and avoiding the use of awkward techniques that might break the idioms and ergonomics that you expect from your language of choice.
+
+## Do I need an ORM?
+
+While ORMs can be helpful, it's important to view them as a tool.  They won't be useful in every scenario and there may be trade-offs you need to account for.
+
+In general, an ORM might be a good fit if you are using many object-oriented features of your language to manage a lot of state.  The implications of managing state encapsulated in objects that have complex inheritance relationships, for instance, may be difficult to account for manually.  They can also help get your project off the ground easier and can manage changes in your data structure through functionality like schema migration.
+
+While ORMs are often useful, they're not perfect.  Sometimes the level of abstraction introduced by an ORM can make debugging difficult.  There are also times when the representation the ORM uses to translate between the database and your application might not be completely accurate or might leak details of your internal implementation.  These may be problems for certain use cases.
+
+It's important to understand what your project's requirements are and how you want to spend your resources when building your software.  ORMs are a tool that can help you build database-backed applications more easily, but you'll have to decide for yourself if add value for your project.
+
+## Conclusion
+
+In this guide, we took a brief look at what ORMs are and how they can be useful.  In general, it's a good idea to ask yourself early on whether an ORM would help your project.  Evaluating the trade-offs can be a good exercise to help you understand how you wish to focus your efforts.
+
+To take a look at how ORMs compare to other ways of interacting with databases, take a look at our [comparison of SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).
+
+<PrismaOutlinks>
+
+[Prisma](https://www.prisma.io/docs/concepts/overview/what-is-prisma) is an ORM focused on making it easy for Node.js and TypeScript applications to work with databases.  You can learn more about what Prisma offers in our [Why Prisma? page](https://www.prisma.io/docs/concepts/overview/why-prisma).
+
+</PrismaOutlinks>

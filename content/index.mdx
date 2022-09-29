@@ -15,17 +15,17 @@ Learn the basics of what databases are, why they are so important for most softw
 <DocLink icon='file' text="Introduction to database schemas" href={'/intro/intro-to-schemas'}/>
 <DocLink icon='file' text="Glossary of common database terminology" href={'/intro/database-glossary'}/>
 
-## [Data Modeling](/datamodeling)
+## [Data modeling](/datamodeling)
 
 A crash course in (relational, although not ignoring others) designing data models. Concentrating first on situating databases and data modeling problems in an organization and systems design context before moving on to some of the less-prominent areas of database functionality. Published in partnership with [Dian Fay](https://twitter.com/dianmfay?lang=en).
 
-<DocLink icon='file' text="Intro (Don't Panic)" href={'/datamodeling/intro-dont-panic'}/>
-<DocLink icon='file' text="Know Your Problem Space" href={'/datamodeling/know-your-problem-space'}/>
-<DocLink icon='file' text="Tables, Tuples, Types" href={'/datamodeling/tables-tuples-types'}/>
-<DocLink icon='file' text="Correctness and Constraints" href={'/datamodeling/correctness-constraints'}/>
-<DocLink icon='file' text="Making Connections" href={'/datamodeling/making-connections'}/>
-<DocLink icon='file' text="Functional Units" href={'/datamodeling/functional-units'}/>
-<DocLink icon='file' text="In Vivo: Information Ecosystems" href={'/datamodeling/in-vivo'}/>
+<DocLink icon='file' text="Intro (don't panic)" href={'/datamodeling/intro-dont-panic'}/>
+<DocLink icon='file' text="Know your problem space" href={'/datamodeling/know-your-problem-space'}/>
+<DocLink icon='file' text="Tables, tuples, types" href={'/datamodeling/tables-tuples-types'}/>
+<DocLink icon='file' text="Correctness and constraints" href={'/datamodeling/correctness-constraints'}/>
+<DocLink icon='file' text="Making connections" href={'/datamodeling/making-connections'}/>
+<DocLink icon='file' text="Functional units" href={'/datamodeling/functional-units'}/>
+<DocLink icon='file' text="In vivo: information ecosystems" href={'/datamodeling/in-vivo'}/>
 
 ## [Database types](/types)
 
@@ -37,6 +37,7 @@ Each style of database has its own strengths and weaknesses. Learn more about co
 
 Relational databases are great at handling highly structured data and making it accessible through flexible querying. Discover why the relational paradigm has stood the test of time.
 
+<DocLink icon='file' text="What is an ORM?" href={'/types/relational/what-is-an-orm'}/>
 <DocLink icon='file' text="Comparing SQL, query builders, and ORMs" href={'/types/relational/comparing-sql-query-builders-and-orms'}/>
 <DocLink icon='file' text="What are database migrations?" href={'/types/relational/what-are-database-migrations'}/>
 <DocLink icon='file' text="Strategies for deploying database migrations" href={'/types/relational/migration-strategies'}/>
@@ -160,7 +161,7 @@ MongoDB is a popular document database that is often praised for its practicalit
   icon="file"
   text="Introduction to provisioning MongoDB Atlas"
   href={'/mongodb/mongodb-atlas-setup'}
-/>  
+/>
 <DocLink
   icon="file"
   text="How to manage users and authentication in MongoDB"
@@ -190,7 +191,7 @@ MongoDB is a popular document database that is often praised for its practicalit
   icon="file"
   text="Introduction to MongoDB data types"
   href={'/mongodb/mongodb-datatypes'}
-/>  
+/>
 <DocLink
   icon="file"
   text="Introduction to MongoDB indexes"
@@ -232,23 +233,24 @@ MongoDB is a popular document database that is often praised for its practicalit
 
 Tools dedicated to improving your interactions with databases.
 
-<DocLink icon='file' text="Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022" href={'/database-tools/top-nodejs-orms-query-builders-and-database-libraries'}/>
-<DocLink icon='file' text="Top 8 TypeScript ORMs, Query Builders, & Database Libraries: Evaluating Type Safety" href={'/database-tools/evaluating-type-safety-in-the-top-8-typescript-orms'}/>
+<DocLink icon='file' text="Top 11 Node.js ORMs, query builders & database libraries in 2022" href={'/database-tools/top-nodejs-orms-query-builders-and-database-libraries'}/>
+<DocLink icon='file' text="Top 8 TypeScript ORMs, query builders, & database libraries: evaluating type safety" href={'/database-tools/evaluating-type-safety-in-the-top-8-typescript-orms'}/>
 <DocLink icon='file' text="What is connection pooling and how does it work?" href={'/database-tools/connection-pooling'}/>
 
 ## [Managing databases](/managing-databases)
 
 Strategies and techniques for maintaining and managing databases in your environments.
 
-<DocLink icon='file' text="Troubleshooting Database Outages and Connection Issues" href={'/managing-databases/database-troubleshooting'}/>
-<DocLink icon='file' text="How to Spot Bottlenecks in Performance" href={'/managing-databases/how-to-spot-bottlenecks-in-performance'}/>
-<DocLink icon='file' text="Syncing Development Databases Between Team Members" href={'/managing-databases/syncing-development-databases-between-team-members'}/>
-<DocLink icon='file' text="Database Replication" href={'/managing-databases/database-replication'}/>
-<DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; An introduction to Database replication and its benefits" href={'/managing-databases/database-replication/database-replication-introduction'}/>
+<DocLink icon='file' text="Troubleshooting database outages and connection issues" href={'/managing-databases/database-troubleshooting'}/>
+<DocLink icon='file' text="How to spot bottlenecks in performance" href={'/managing-databases/how-to-spot-bottlenecks-in-performance'}/>
+<DocLink icon='file' text="Syncing development databases between team members" href={'/managing-databases/syncing-development-databases-between-team-members'}/>
+<DocLink icon='file' text="Database replication" href={'/managing-databases/database-replication'}/>
+<DocLink icon='file' text="&emsp;&emsp;&bull;&nbsp; An introduction to database replication and its benefits" href={'/managing-databases/database-replication/database-replication-introduction'}/>
 <DocLink icon='file' text="Introduction to OLAP and OLTP" href={'/managing-databases/introduction-to-OLAP-OLTP'}/>
 <DocLink icon='file' text="How microservices and monoliths impact the database" href={'/managing-databases/microservices-vs-monoliths'}/>
 <DocLink icon='file' text="Introduction to database caching" href={'/managing-databases/introduction-database-caching'}/>
 <DocLink icon='file' text="Introduction to testing in production" href={'/managing-databases/testing-in-production'}/>
+<DocLink icon='file' text="Introduction to database backup considerations" href={'/managing-databases/backup-considerations'}/>
 
 
 ## [Serverless architecture](/serverless)
@@ -259,10 +261,11 @@ The serverless model represents a new way of designing applications by abstracti
 <DocLink icon='file' text="Top 13 serverless computing and database providers" href={'/serverless/serverless-comparison'}/>
 <DocLink icon='file' text="Introduction to common serverless challenges" href={'/serverless/serverless-challenges'}/>
 <DocLink icon='file' text="Traditional databases vs serverless databases" href={'/serverless/traditional-vs-serverless-databases'}/>
-<DocLink icon='file' text="Serverless Glossary" href={'/serverless/serverless-glossary'}/>
+<DocLink icon='file' text="Serverless glossary" href={'/serverless/serverless-glossary'}/>
 
 ## [Just for fun](/just-for-fun)
 
 A collection of interesting topics and research not pertaining to any specific topic but just for fun :)
 
 <DocLink icon='file' text="The United States' most popular databases going into 2022" href={'/just-for-fun/us-most-popular-databases-by-states'}/>
+

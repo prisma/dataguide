@@ -28,7 +28,7 @@ const BannerText = styled.div`
 const Banner = () => (
   <BannerWrapper>
     <BannerText>
-      <a href="/dataplatform">
+      <a href="/data-platform">
         Manage your application data in one place with the <strong>Prisma Data Platform</strong>.
         Learn more ->
       </a>

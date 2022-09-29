@@ -28,13 +28,15 @@ We won’t cover the steps for installation, but if you are working with MongoDB
 
 <PrismaOutlinks>
 
-Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
 </PrismaOutlinks>
 
-## Binary Import / Export
+## Binary import / export
 
-### mongodump
+### `mongodump`
 
 `mongodump` is a utility for creating a binary export of the contents of a database. This utility can export data from standalone, replica set, and sharded cluster deployments. The exports can be executed from either `mongod` or `mongos` instances. It is important to note that `mongodump` needs to be run from the system command line, not the `mongo` shell.
 
@@ -48,7 +50,7 @@ The basic syntax for `mongodump` looks as follows in the system command line:
 
 `mongodump` will generate a file and store it in a `dump/` directory for you to access. You can read more about the [connection string configuration](https://www.mongodb.com/docs/database-tools/mongodump/#connect-to-a-mongodb-instance) and additional [options](https://www.mongodb.com/docs/database-tools/mongodump/#options) in the official MongoDB documentation.
 
-### mongorestore
+### `mongorestore`
 
 `mongorestore` is the partner tool to `mongodump` for creating a sufficient backup strategy for small deployments. The `mongorestore` program loads data from either a binary database dump (`mongodump` file) or the standard input into a `mongod` or `mongos` instance.
 
@@ -60,7 +62,7 @@ The basic syntax for `mongorestore` looks like the following:
 
 The additional [options](https://www.mongodb.com/docs/database-tools/mongorestore/#options) for `mongorestore` can be added to meet whatever requirements you may need for your backup strategy or standalone imports.
 
-### bsondump
+### `bsondump`
 `bsondump` is a tool for reading binary files produced from using `mongodump`. The `bsondump` utility converts BSON files into human-readable formats, including JSON. 
 
 `bsondump` must be run in the command line, and it is a diagnostic tool for inspecting BSON files. It is not meant to be used for data ingestion or other application use. 
@@ -76,9 +78,9 @@ The additional [options](https://www.mongodb.com/docs/database-tools/mongorestor
 	bsondump --type=debug file.bson
 
 
-## Data Import / Export
+## Data import / export
 
-### mongoexport
+### `mongoexport`
 The `mongoexport` tool can also export data from a MongoDB instance. This command-line tool, however, produces a JSON or CSV export of the data rather than a binary dump like `mongodump` making it a slower operation. 
 
 In order to use `mongoexport`, a user requires at least read access on the target database. They can either be connected to a `mongod` or `mongos` instance. The basic syntax for `mongoexport` looks as follows:
@@ -93,7 +95,7 @@ This is an important option to know because JSON can only directly represent som
 
 Like `mongodump`, `mongoexport` has a partner import tool that will be able to render the exported file for import into MongoDB.
 
-### mongoimport
+### `mongoimport`
 The `mongoimport`  tool imports the data captured from an Extended JSON (`mongoexport` file with preserved BSON data types), CSV, or TSV exports created from the `mongoexport` tool. With the correct formatting, `mongoimport` can also import files from a third-party export tool. 
 
 The `mongoimport` tool can only be used from the system command-line and not the `mongo` shell. It has the following basic syntax:
@@ -104,9 +106,9 @@ The `mongoimport` tool can only be used from the system command-line and not the
 
 `mongoimport` also only supports data files that are UTF-8 encoded. If you attempt to import with any other encoding, then it will result in an error. An exhaustive list of additional option configuration can be found in the [official MongoDB documentation](https://www.mongodb.com/docs/database-tools/mongoimport/#options).
 
-## Diagnostic Tools
+## Diagnostic tools
 
-### mongostat
+### `mongostat`
 MongoDB also has helpful tools for gathering insights on any of your database instances. One such tool is `mongostat`. `mongostat` is a diagnostic tool that provides a quick overview of the status of a currently running `mongod` or `mongos` instance. If you are familiar with UNIX/Linux, this will sound familiar to `vmstat` except in a MongoDB context.
 
 The `mongostat` utility can only be run from the system command line and not the `mongo` shell. In order to connect to a `mongod` instance and use the `mongostat` tool, a user must have the `serverStatus` privilege action on the cluster. MongoDB has a built-in role called `clusterMonitor` that provides this. It is also possible to [customize other roles](https://www.mongodb.com/docs/manual/tutorial/manage-users-and-roles/#std-label-create-role-for-mongostat) to take advantage of `mongostat.`
@@ -126,7 +128,7 @@ By default, `mongostat` reports values that reflect operations over a 1 second p
 
 There are many more fields covered in the [Official MongoDB Documentation](https://www.mongodb.com/docs/database-tools/mongostat/#fields), but these few examples demonstrate the `mongostat` utility’s capability for database monitoring from the system command-line.
 
-### mongotop
+### `mongotop`
 While `mongostat` is a useful tool for monitoring on a database level, `mongotop` is a useful tool to know for providing statistics on a per-collection level. Specifically, `mongotop` provides a method to track the amount of time a `mongod` instance spends reading and writing data every second.
 
 `mongotop` can only be run from the command line, and its basic syntax looks as follows:
@@ -146,7 +148,7 @@ While `mongostat` is a useful tool for monitoring on a database level, `mongotop
 ## GridFS
 [GridFS](https://www.mongodb.com/docs/manual/core/gridfs/) is a convention for storing large files in a MongoDB database. All of the official MongoDB drivers support this convention, as does the following `mongofiles` program. It acts as an abstraction layer for storage and recovery of large files such as videos, audios, and images. 
 
-### mongofiles
+### `mongofiles`
 The `mongofiles` tool makes it possible to manipulate files stored in a MongoDB instance as GridFS objects from the system’s command line. This is particularly useful because it provides an interface between the objects stored in your file system and GridFS.
 
 The basic syntax of `mongofiles` is the following:
@@ -168,6 +170,8 @@ Whether it’s exporting/importing data for maintaining a sound backup/recovery 
 
 <PrismaOutlinks>
 
-Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
 </PrismaOutlinks>

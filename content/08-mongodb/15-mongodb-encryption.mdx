@@ -14,7 +14,9 @@ The need for data encryption is even more paramount for organizations handling s
 
 <PrismaOutlinks>
 
-Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
 </PrismaOutlinks>
 
@@ -64,7 +66,7 @@ MongoDB Atlas has built-in encryption at rest for disks by default with every no
 
 MongoDB supports [AWS](https://docs.atlas.mongodb.com/security-aws-kms/#std-label-security-aws-kms), [Azure](https://docs.atlas.mongodb.com/security-azure-kms/#std-label-security-azure-kms), and [Google Cloud Platform](https://docs.atlas.mongodb.com/security-gcp-kms/#std-label-security-gcp-kms) key management services. This is a great feature for those who do not want to rely solely on MongoDB’s encryption keys and take ownership control of generated encryption keys.
 
-### Encryption in Use
+### Encryption in use
 The last type of MongoDB encryption is a feature that provides encryption in use, [Client-Side Field Level Encryption (CSFLE)](https://www.mongodb.com/docs/manual/core/security-client-side-encryption/). CSFLE allows engineers to specify the fields of a [document](/intro/database-glossary#document) that should be kept encrypted. Sensitive data is encrypted/decrypted by the client and only communicated to and from the server in its encrypted form. 
 
 This feature ensures the security of encryption required fields on both the server and the network, accessible only by appropriate clients. At all times, sensitive data is encrypted on the database host and in network transit. Security responsibility shifts to the client. CSFLE prevents all of the vulnerabilities described throughout: database privilege abuse, network snooping, data theft, and access memory of a database host.
@@ -89,6 +91,8 @@ With more and more data entering the digital universe, more threats are trying t
 
 <PrismaOutlinks>
 
-Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb) has recently been [promoted to general availability](https://www.prisma.io/blog/mongodb-general-availability-pixnun6mffmu)!  With this change, you can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
 </PrismaOutlinks>

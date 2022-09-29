@@ -1,6 +1,6 @@
 ---
 title: 'Introduction to database caching'
-metaTitle: 'An introduction to database caching strategies and their benefits.'
+metaTitle: 'Database caching: Overview, types, strategies and their benefits.'
 metaDescription: 'An introduction to database caching strategies and their benefits.'
 metaImage: '/social/syncing-databases.png'
 authors: ['alexemerich']
@@ -53,7 +53,7 @@ The five most popular strategies to consider are cache-aside, read-through, writ
 
 ### Cache-aside
 
-In a cache-aside arrangement, the database cache sits next to the database. When the application requests data, it will check the cache first. If the cache has the data (a cache hit), then it will return it. If the cache does not have the data (a cache miss), then the application will query the database. The application then stores that data in the cache for any subsequent queries.
+In a [cache-aside](/intro/database-glossary#cache-aside) arrangement, the database cache sits next to the database. When the application requests data, it will check the cache first. If the cache has the data (a cache hit), then it will return it. If the cache does not have the data (a cache miss), then the application will query the database. The application then stores that data in the cache for any subsequent queries.
 
 ![Cache-Aside](/content/database-caching/cache-aside.png)
 
@@ -63,7 +63,7 @@ On the other hand, the main drawback of a cache-aside strategy is the window bei
 
 ### Read-through
 
-In a read through cache arrangement, the cache sits between the application and the database. It can be envisioned like a straight line from application to database with the cache in the middle. In this strategy, the application will always speak with the cache for a read, and when there is a cache hit, the data is immediately returned. In the case of a cache miss, the cache will populate the missing data from the database and then return it to the application. For any data [writes](/intro/database-glossary#write-operation), the application will still go directly to the database.
+In a [read through cache](/intro/database-glossary#read-through-caching) arrangement, the cache sits between the application and the database. It can be envisioned like a straight line from application to database with the cache in the middle. In this strategy, the application will always speak with the cache for a read, and when there is a cache hit, the data is immediately returned. In the case of a cache miss, the cache will populate the missing data from the database and then return it to the application. For any data [writes](/intro/database-glossary#write-operation), the application will still go directly to the database.
 
 ![Read-Through](/content/database-caching/read-through.png)
 
@@ -73,7 +73,7 @@ A read-through caching strategy also has the disadvantage of needing to go to th
 
 ### Write-through
 
-A write-through caching strategy differs from the previously two mentioned because instead of writing data to the database, it will write to the cache first and the cache immediately writes to the database. The arrangement can still be visualized like the read-through strategy, in a straight line with the application in the middle.
+A [write-through caching](/intro/database-glossary#write-through-caching) strategy differs from the previously two mentioned because instead of writing data to the database, it will write to the cache first and the cache immediately writes to the database. The arrangement can still be visualized like the read-through strategy, in a straight line with the application in the middle.
 
 ![Write-Through](/content/database-caching/write-through.png)
 
@@ -83,7 +83,7 @@ The real benefit comes from pairing a write-through with a read-through cache. T
 
 ### Write-back
 
-Write-back works almost exactly the same as the write-through strategy except for one key detail. In a write-back strategy, the application again writes directly to the cache. However, the cache does not immediately write to the database, and it instead writes after a delay. 
+[Write-back](/intro/database-glossary#write-back-caching) works almost exactly the same as the write-through strategy except for one key detail. In a write-back strategy, the application again writes directly to the cache. However, the cache does not immediately write to the database, and it instead writes after a delay. 
 
 ![Write-Back](/content/database-caching/write-back.png)
 
@@ -93,7 +93,7 @@ The delay in cache to database writes can improve overall write performance and 
 
 ### Write-around
 
-A write-around caching strategy will be combined with either a cache-aside or a read-through. In this arrangement, data is always written to the database and the data that is read goes to the cache. If there is a cache miss, then the application will read to the database and then update the cache for next time. 
+A [write-around caching](/intro/database-glossary#write-around-caching) strategy will be combined with either a cache-aside or a read-through. In this arrangement, data is always written to the database and the data that is read goes to the cache. If there is a cache miss, then the application will read to the database and then update the cache for next time. 
 
 ![Write-Around](/content/database-caching/write-around.png)
 

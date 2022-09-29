@@ -1,5 +1,5 @@
 ---
-title: 'Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022'
+title: 'Top 11 Node.js ORMs, query builders & database libraries in 2022'
 metaTitle: 'Best 11 ORMs for Node.js, Query Builders & Database Libraries in 2022'
 metaDescription: "Choosing an ORM or query builder for your Node.js app can be daunting. We review the most popular query builders, ORMs, and other database libraries so you don't have to."
 metaImage: '/social/node-orms-2022.png'
@@ -15,7 +15,7 @@ It does not attempt to choose "one best library" or rank packages in an opiniona
 
 **Note:** This article was originally published on September 18, 2020.  It was most recently updated on February 15, 2022.
 
-## Criteria: Evaluating Database Libraries
+## Criteria: evaluating database libraries
 
 This article will focus on the most popular Node.js query builders, ORMs, and database toolkits. Database drivers and newer libraries will briefly be considered at the end. Type safety and TypeScript support are not covered and will be evaluated in a forthcoming article.
 
@@ -32,7 +32,7 @@ The month of data considered for this article is **January 15 2022 to February 1
 
 This criteria is not exhaustive and you should choose the tool that best suits your project and programming preferences.
 
-## SQL, Query Builders, and ORMs
+## SQL, query builders, and ORMs
 
 Libraries to query and manipulate data can broadly be grouped into three categories, each operating at a different level of abstraction.
 
@@ -46,7 +46,7 @@ Many tools blur the lines between these and allow the developer to drop down to 
 
 ## Prisma
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Popular
 - **Repo Activity**: Very active
@@ -71,7 +71,7 @@ In terms of npm downloads, with 362k weekly downloads at the time period conside
 
 **Evaluation:** Popular
 
-### Repo Activity
+### Repo activity
 
 It is safe to say that the Prisma GitHub repo is the most active out of all the tools considered for this article. With 258 commits in the month of data considered for this article, 3 releases, and 101 merged PRs, Prisma is under active development. New features, bug fixes, and updates are pushed frequently, with new versions released every two weeks.
 
@@ -85,7 +85,7 @@ If you have a question, you can use the Prisma Slack channel, ask on their GitHu
 
 **Evaluation:** Strong
 
-### Maturity and Stability
+### Maturity and stability
 
 Prisma was first created and released in 2016, making it one of the newer tools being considered for this article. It has gone through several iterations and redesigns, beginning as Graphcool, a GraphQL backend-as-a-service. Graphcool then pivoted into a database and GraphQL tool to become Prisma 1.0, a very popular project with 16.9k GitHub stars. Prisma 2.0, released in beta in 2020, then shed both the Prisma server and GraphQL layer to become the JavaScript and TypeScript ORM alternative it is today.
 
@@ -93,11 +93,11 @@ Prisma 2.0 is an open-source JavaScript ORM being maintained, supported, and act
 
 **Evaluation:** Newer
 
-### Database Support
+### Database support
 
 Prisma currently supports **PostgreSQL, MySQL, MSSQL, and SQLite**.  Additionally, MongoDB, PlanetScale, and CockroachDB are currently in Preview support.
 
-### Notable Features
+### Notable features
 
 - Work directly with JavaScript objects and not classes and instances
 - A "single source of truth," the Prisma Schema, to reduce object-relational impedance mismatch
@@ -107,7 +107,7 @@ Prisma currently supports **PostgreSQL, MySQL, MSSQL, and SQLite**.  Additionall
 - VSCode plugin
 - Autocompletion support
 
-For a full list of features consult [Database Features](https://www.prisma.io/docs/reference/database-connectors/database-features) from the Prisma official documentation.
+For a full list of features consult [Database Features](https://www.prisma.io/docs/reference/database-reference/database-features) from the Prisma official documentation.
 
 ### Usage example
 
@@ -129,7 +129,7 @@ If you want to learn more about why we think Prisma is a great option, check out
 
 ## Sequelize
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Very popular
 - **Repo Activity**: Very active
@@ -151,7 +151,7 @@ With 25.7k GitHub stars and 1.35 million npm weekly downloads in the time period
 
 **Evaluation:** Very popular
 
-### Repo Activity
+### Repo activity
 
 In the time period considered, 10 new versions of Sequelize were released, 179 commits pushed (across all branches), and 86 PRs were merged. This indicates that Sequelize is very active.
 
@@ -163,7 +163,7 @@ Having been around for close to ten years, you are likely to find support for Se
 
 **Evaluation:** Average
 
-### Maturity and Stability
+### Maturity and stability
 
 Sequelize is one of the most mature Node ORMs available. It is no longer a rapidly shifting project and development lately seems to be maintenance-focused on bug fixes and documentation updates. It is a stable tool that relies entirely on open-source contributions from maintainers and the Sequelize community.
 
@@ -171,11 +171,11 @@ According to its [documentation](https://sequelize.org/master/manual/whos-using.
 
 **Evaluation:** Very mature
 
-### Database Support
+### Database support
 
 PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It also supports CockroachDB using an external package.
 
-### Notable Features
+### Notable features
 
 - Familiar ORM interface and ActiveRecord usage patterns
 - Detailed control over transactions and how they are executed
@@ -211,7 +211,7 @@ For a more focused comparison of Prisma and Sequelize, you can look at our [Sequ
 
 ## TypeORM
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Very popular
 - **Repo Activity**: Active
@@ -233,7 +233,7 @@ Since its release in 2016, TypeORM has grown very rapidly to become one of the m
 
 **Evaluation:** Very popular
 
-### Repo Activity
+### Repo activity
 
 TypeORM's GitHub repo is active. In the past month, 74 commits were pushed (to all branches), and 41 PRs were merged. There seems to be no strict release schedule, with the latest release occurring on November 2021.
 
@@ -245,17 +245,17 @@ TypeORM's documentation is good, also covering database concepts like migrations
 
 **Evaluation:** Good
 
-### Maturity and Stability
+### Maturity and stability
 
 Although comparable in maturity to Prisma, TypeORM's design has shifted less since its initial release as a Hibernate-influenced ORM built for TypeScript (that also works well with JavaScript). It is entirely dependent on open-source contributions, but has some support with a roughly \$15000 annual budget from OpenCollective contributions. Notable corporate contributors include Cockroach Labs, Aplas, and VoterCircle Inc.
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 MySQL, MariaDB, PostgreSQL, CockroachDB, SQLite, Microsoft SQL Server, Oracle, SAP Hana, sql.js
 
-### Notable Features
+### Notable features
 
 - Supports both Data Mapper and Active Record ORM patterns
 - Powerful and flexible query builder
@@ -290,7 +290,7 @@ For a more focused comparison of Prisma and TypeORM, you can look at our [TypeOR
 
 ## Mongoose
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Very popular
 - **Repo Activity**: Active
@@ -312,7 +312,7 @@ Mongoose is the most popular JavaScript data modeling tool for MongoDB databases
 
 **Evaluation:** Very popular
 
-### Repo Activity
+### Repo activity
 
 Mongoose's GitHub repo is quite active. In the past month there were 199 commits across branches, and 58 merged PRs. Recent commits have focussed on bug fixes, adding features, and documentation. Releases seem to be quite frequent, with 5 in the time period considered.
 
@@ -324,17 +324,17 @@ Mongoose's documentation consists of usage guides for its most common operations
 
 **Evaluation:** Good
 
-### Maturity and Stability
+### Maturity and stability
 
 Mongoose has been around since 2011, making it one of the most mature projects considered in this article. If you want to use a Node.js ODM with MongoDB, you can trust that the Mongoose interface is not going to radically change and that it will be kept up to date with MongoDB releases. It boasts an impressive amount of open-source financial backing with a \$67k annual budget derived entirely from OpenCollective contributors. Through a series of acquisitions, Automattic, the company that owns Wordpress.com, Tumblr, and Simplenote, inherited Mongoose. Terra Vera, SixPlus, and Payment Ninja are all built using Mongoose.
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 MongoDB
 
-### Notable Features
+### Notable features
 
 - Schemas and Models for your NoSQL database
 - Validators, pre and post middleware hooks
@@ -363,7 +363,7 @@ For a more focused comparison of Prisma and Mongoose, you can look at our [Mongo
 
 ## Bookshelf.js
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Popular
 - **Repo Activity**: Not very active
@@ -385,7 +385,7 @@ With 6.3k GitHub stars, Bookshelf.js isn't quite as popular as Sequelize and Typ
 
 **Evaluation:** Popular
 
-### Repo Activity
+### Repo activity
 
 In the past month, there were no commits in the Bookshelf repo, no releases, and no merged pull requests. No new commits have been made to the main branch in about a year. The last release at the time of writing was `1.2.0` on June 7, 2020.
 
@@ -397,17 +397,17 @@ Bookshelf's core documentation consists of a brief quick start guide and some co
 
 **Evaluation:** Average
 
-### Maturity and Stability
+### Maturity and stability
 
 Bookshelf.js has been around since 2013 and is quite mature at this point. Among its notable users are Ghost, Soapee, NodeZA, Sunday Cook, and FlyptoX. It is an open-source package with few maintainers and no financial or corporate backing.
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 PostgreSQL, MySQL, and SQLite.
 
-### Notable Features
+### Notable features
 
 - Lean interface with a streamlined set of ORM features
 - Built on top of Knex.js so can drop down and use query builder as necessary
@@ -434,7 +434,7 @@ Bookshelf.js is a pared-down ORM that gives you the standard set of data modelin
 
 ## Objection.js
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Popular
 - **Repo Activity**: Somewhat active
@@ -456,7 +456,7 @@ With 6.5k GitHub stars and 115k weekly npm downloads, Objection.js ranks close t
 
 **Evaluation:** Popular
 
-### Repo Activity
+### Repo activity
 
 The Objection.js repo had no commits or merged PRs in the time period considered for this article. The last Objection release was on December 31, 2021, and included some bug fixes. Although not as active as projects like Prisma and TypeORM, it is actively maintained.
 
@@ -468,17 +468,17 @@ Objection's docs consist of a usage guide covering its main functionality, like 
 
 **Evaluation:** Good
 
-### Maturity and Stability
+### Maturity and stability
 
 Objection has been out since 2015 and is a mature project. It does not seem to have any sort of financial or corporate backing and is maintained by the open-source community. For a list of production use cases of Objection.js, consult [Who uses objection.js in production?](Who uses objection.js in production?)
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 SQLite, PostgreSQL, and MySQL
 
-### Notable Features
+### Notable features
 
 - Built on top of Knex.js
 - Eager loading
@@ -508,7 +508,7 @@ Objection.js is most similar to Bookshelf.js in that it builds a set of ORM-like
 
 ## Waterline
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Somewhat Popular
 - **Repo Activity**: Not very active
@@ -530,7 +530,7 @@ Waterline is a popular ORM, with 5.3k GitHub stars and 37k weekly npm downloads.
 
 **Evaluation:** Somewhat popular
 
-### Repo Activity
+### Repo activity
 
 Waterline's GitHub repo does not seem to be very active these days, with 0 commits and merged PRs in the month of data considered. Its last release was on October 22, 2021, with the release before that occurring in March of 2021.
 
@@ -542,17 +542,17 @@ You are most likely going to be on your own if you run into any issues with Wate
 
 **Evaluation:** Average
 
-### Maturity and Stability
+### Maturity and stability
 
 Waterline has been around since 2013 and is a mature package with a stable API. As part of the Sails.js JavaScript framework, it is managed and maintained by the Sails Company, a private, seed funded company that incubated at the Y Combinator startup incubator. Sails.js is a popular JavaScript framework used by Verizon, Postman, JetBlue, etc. but it is unclear how many production use cases depend on the standalone Waterline library.
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 MySQL, PostgreSQL, MongoDB. Via community adapters: Redis, MS-SQL, Oracle, and many more.
 
-### Notable Features
+### Notable features
 
 - Write database-agnostic code
 - Populate relations between models, even if the data for different models lives in different databases
@@ -573,7 +573,7 @@ Waterline is the ORM/ODM built-in to the Sails.js JavaScript framework and as su
 
 ## Knex.js (Query Builder)
 
-### Evaluation Summary
+### Evaluation summary
 
 - **Popularity**: Very popular
 - **Repo Activity**: Active
@@ -595,7 +595,7 @@ With 15.4k GitHub stars and 1.04 million weekly npm downloads, Knex.js is a very
 
 **Evaluation:** Very popular
 
-### Repo Activity
+### Repo activity
 
 In the month of data considered, Knex.js had 42 commits pushed across all branches, 26 merged PRs, and published 3 releases. Recent commits include bug fixes and features.
 
@@ -607,17 +607,17 @@ Knex.js's docs mostly consist of full documentation of its API, which is extensi
 
 **Evaluation:** Good
 
-### Maturity and Stability
+### Maturity and stability
 
 Knex has been around since 2013 and is a mature project. It was designed as a "batteries-included" JavaScript query builder that supports multiple database drivers, and since then its interface has not changed much. It is an open-source project maintained entirely by the community, and although it is not as active as some of the other libraries considered in this article, minor releases are frequent and a handful of contributors continue to push fixes and improvements to the library.
 
 **Evaluation:** Mature
 
-### Database Support
+### Database support
 
 PostgreSQL, Amazon Redshift, MySQL, MariaDB, SQLite, MSSQL
 
-### Notable Features
+### Notable features
 
 - Callback and Promise interfaces
 - Stream interface
@@ -669,7 +669,7 @@ Mikro-ORM is a newer TypeScript ORM that also [supports vanilla JavaScript](http
 
 Slonik sits at a level just above the `node-postgres` database driver. It is a collection of utilities that builds in type safety, query mocking, connection and transaction handling, detailed logging, value interpolation, and [many other features](https://github.com/gajus/slonik#features). You will still have to write raw SQL but it's designed to add a level of safety and efficiency when working with a PostgreSQL database. The library was released in 2017 and is still quite active and supported on GitHub.
 
-### Database Drivers
+### Database drivers
 
 At the lowest level of the abstraction spectrum sit database drivers, which can be used to interact directly with your database using its query language. Summarizing every Node.js database client goes beyond the scope of this article but for convenience purposes, here is a list of the main database drivers:
 
