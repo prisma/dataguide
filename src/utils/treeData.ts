@@ -25,8 +25,6 @@ export const calculateTreeData = (edges: any, defaultCollapsed: any, location: a
             staticLink,
             duration,
             experimental,
-            dbSwitcher,
-            langSwitcher,
             hidePage,
           },
         },
@@ -36,9 +34,6 @@ export const calculateTreeData = (edges: any, defaultCollapsed: any, location: a
       const topLevel = parts.length == 3 && parts[parts.length - 1] === 'index' ? true : false
       let { items: prevItems } = accu
       const slicedParts = parts.slice(1, -1)
-      const newParams = `${langSwitcher ? `${langSwitcher[0]}${dbSwitcher ? '-' : ''}` : ''}${
-        dbSwitcher ? `${dbSwitcher[0]}` : ''
-      }`
       for (const part of slicedParts) {
         let tmp = prevItems && prevItems.find(({ label }: any) => label == part)
         if (tmp) {
@@ -56,7 +51,7 @@ export const calculateTreeData = (edges: any, defaultCollapsed: any, location: a
           prevItems.push(tmp)
         }
         if (parts[parts.length - 1] === 'index' && parts[parts.length - 2] === part) {
-          tmp.url = `${urlGenerator(modSlug)}${newParams ? '-' + newParams : ''}`
+          tmp.url = `${urlGenerator(modSlug)}`
           tmp.slug = slug
           tmp.title = title
           tmp.staticLink = staticLink
@@ -78,7 +73,7 @@ export const calculateTreeData = (edges: any, defaultCollapsed: any, location: a
       if (!existingItem) {
         prevItems.push({
           label: parts[slicedLength],
-          url: `${urlGenerator(modSlug)}${newParams ? '-' + newParams : ''}`,
+          url: `${urlGenerator(modSlug)}`,
           slug: slug,
           items: [],
           title,
