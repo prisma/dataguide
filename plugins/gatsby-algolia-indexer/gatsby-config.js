@@ -101,9 +101,6 @@ module.exports = (options) => {
               }
               frontmatter {
                 title
-                langSwitcher
-                dbSwitcher
-                search
               }
               tableOfContents
             }
