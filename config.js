@@ -18,7 +18,7 @@ const config = {
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
     description: "Learn how databases work, how to choose the right one, and how to use databases with your applications to their full potential.",
     keywords: "Prisma's Data Guide, prisma, database, mysql, postgres, postgresql, dataguide",
-    docsLocation: 'https://github.com/prisma/dataguide/tree/master/content',
+    dataguideLocation: 'https://github.com/prisma/dataguide/tree/master/content',
     twitter: {
       site: '@prisma',
       creator: '@prisma',

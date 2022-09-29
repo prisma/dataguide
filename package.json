@@ -70,6 +70,7 @@
     "dev": "gatsby develop",
     "serve": "npm run build && gatsby serve --prefix-paths -o",
     "prettify": "prettier --write \"**/*.{js,mdx,json,md,ts,tsx,yml,toml,graphql,css}\"",
+    "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install",
     "test": "jest"
   },
   "devDependencies": {

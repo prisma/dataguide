@@ -17,6 +17,7 @@ const HitsWrapper = styled.div`
   }
   max-height: 85vh;
   overflow-y: scroll;
+  color: black;
   overflow-x: hidden;
   z-index: 100002;
   -webkit-overflow-scrolling: touch;
@@ -133,7 +134,7 @@ const Results = connectStateResults(
 const createURL = (state: any) => `?${qs.stringify(state)}`
 
 const searchStateToUrl = (location: any, searchState: any) =>
-  searchState ? `${location.pathname.replace('/docs', '')}${createURL(searchState)}` : ``
+  searchState ? `${location.pathname.replace('/dataguide', '')}${createURL(searchState)}` : ``
 
 const urlToSearchState = (location: any) => qs.parse(location.search.slice(1))
 
@@ -197,6 +198,10 @@ export default function Search({ hitsStatus, location }: any) {
       }
     })
   }
+  React.useEffect(() => {
+    const index = searchClient.initIndex('indexName');
+    console.log(indexName, searchClient)
+  }, [])
   return (
     <InstantSearch
       searchClient={searchClient}
