@@ -108,6 +108,9 @@ const ListItem = styled.li`
       color: var(--section-main-color) !important;
       font-weight: 500;
       line-height: 20px;
+      &:hover, &.active-item {
+        text-decoration: underline;
+      }
       @media (min-width: 0px) and (max-width: 1024px) {
         color: var(--main-bgd-color) !important;
       }
@@ -212,7 +215,7 @@ const TreeNode = ({
     <ListItem className={calculatedClassName}>
       {title && label !== 'index' && !hidePage && (
         <Link
-          to={staticLink || topLevel ? null : url}
+          to={staticLink ? null : url}
           activeClassName="active-item"
           className={isCurrent ? 'active-item' : 'hh'}
           id={withPrefix(url)}
