@@ -307,6 +307,10 @@ A flat-file database is a database or database-like structure stored in a file. 
 A foreign key is a designated column or group of columns in a relational database that is used to maintain data integrity between two tables.  A foreign key in one table refers to a candidate key, typically the primary key, in another table.  Since a candidate key is referenced, each row in the database will be unique and the two tables can be linked together row for row.  The values are of these designated columns is expected to remain identical across the two tables.  The foreign key constraint allows the database system to enforce this requirement by not allowing the values to be out of sync.
 </AnchorItem>
 
+<AnchorItem id="full-text-search" title="Full-text search">
+Full-text search describes a family of techniques and functionality that allow you to search the complete text of documents within a database system.  This is in direct opposition to search functionality that relies only on metadata, partial text sources, and other incomplete assessments.  Full-text search relies on asynchronous indexing using natural language-aware parsers to analyze and categorize text within documents.
+</AnchorItem>
+
 <AnchorItem id="graph-database" title="Graph database">
 A graph database is a NoSQL database that uses a graph structure to store and define relationships between pieces of data.  Graph databases are constructed using nodes, which represent entities and can contain properties or attributes.  Nodes are connected to one another using edges, which are responsible not only for linking nodes, but also defining the nature of the relationship.  For example, a node might describe a person with a property of "teacher".  It might be connected to a class node with an edge called that specifies "teaches" but may be connected to another person node with an edge that specifies "married to".
 </AnchorItem>
@@ -373,6 +377,10 @@ A key-value database, or key-value store, is a database model that allows users 
 
 <AnchorItem id="left-join" title="Left join">
 A left join is a join operation for relational databases where all of the rows of the first table specified are returned, regardless of whether a matching row in the second table is found.  Join operations construct virtual rows by matching records that have identical values in specified comparison columns from each table.  The results for a left join will contain the rows from both tables where the column values matched and will additionally contain all of the unmatched rows from the first, or left, table.  For these rows, the columns associated with the second, or right, table will be padded with `NULL` values to indicate that no matching row was found.
+</AnchorItem>
+
+<AnchorItem id="lexeme" title="Lexeme">
+Lexemes are language-level units of meaning that are relevant in natural language processing and full-text search contexts.  Typically, when text is indexed, it is broken down into individual tokens which are then analyzed as lexemes using language-level resources like dictionaries, thesauruses, and other word lists to understand how to process them further.
 </AnchorItem>
 
 <AnchorItem id="locale" title="Locale">
@@ -487,6 +495,10 @@ A phantom read is a type of isolation anomaly that can occur within a transactio
 PostgreSQL is a popular, high performance relational database system known for its compliance to various SQL standards.  PostgreSQL focuses on providing a single, flexible database engine instead of offering multiple engines for different use cases.  It is highly extensible and has a great range of community additions and client applications.
 </AnchorItem>
 
+<AnchorItem id="precision" title="Precision (searching)">
+In the context of search performance, precision is a measure of how relevant the retrieved results are to the given query.  Specifically, search precision is defined as the ratio between the number of relevant results out of all of the results that were returned.  A query with a high level of precision does not retrieve many items that are not applicable to the query.
+</AnchorItem>
+
 <AnchorItem id="primary-key" title="Primary key">
 A primary key is a type of database key that is designated as the main way to uniquely address a database row.  While other keys may be able to pull individual rows, the primary key is specifically marked for this purpose with the system enforcing uniqueness and not `NULL` consistency checks.  A primary key can be a natural key (a key that is naturally unique across records) or a surrogate key (a key added specifically to serve as a primary key) and can be formed from a single or multiple columns.
 </AnchorItem>
@@ -523,6 +535,10 @@ Read-through caching is a caching strategy where the cache is deployed in the pa
 The read uncommitted isolation level is a transaction isolation level for relational database systems that fundamentally offers no isolation.  Transactions performed using the read uncommitted isolation level can suffer from dirty reads, nonrepeatable reads, phantom reads, and serialization anomalies.  Generally speaking, the read uncommitted level is not very useful as it does not fulfill most users' expectations for isolation.
 </AnchorItem>
 
+<AnchorItem id="recall" title="Recall">
+In the context of search performance, recall is a measure of how many of the relevant items a query was able to retrieve.  Recall is specifically defined as the ratio of the number of relevant results returned by a query compared to the total number of relevant entries in the dataset.  A query with high recall retrieves a large number of the items that would be potentially relevant to a search query.
+</AnchorItem>
+
 <AnchorItem id="record" title="Record">
 In databases, a record is a group of data usually representing a single entity.  In relational databases, a record is synonymous with a row in a table.  Each record may have multiple pieces of data or attributes associated with it (these would be fields in a relational table).
 </AnchorItem>
@@ -557,6 +573,10 @@ Role-based access control, also known as RBAC, is a security strategy that restr
 
 <AnchorItem id="row" title="Row">
 In relational databases, a row is a representation of a single record within a database table.  Rows in these databases have a predefined structure in the form of a collection of columns that specify the data type and any constraints on the range of acceptable values.  Each row in a relational table has the same columns or fields, leading to a very regular data structure.
+</AnchorItem>
+
+<AnchorItem id="serial-scanning" title="Serial scanning">
+Serial scanning is a search technique that involves analyzing each potential item against the query at the time of the search.  This is in opposition to index-based searching where items are accounted for and organized ahead of time to allow for faster query response.
 </AnchorItem>
 
 <AnchorItem id="sql" title="SQL">
@@ -603,6 +623,14 @@ When working with data storage, stale data refers to any data that does not accu
 A standard column family is a type of column family database object that stores data by defining row keys that are associated with key value pairs akin to columns.  Each row can define and use its own columns, so the resulting dataset is not regular as with relational database tables.  However, the row keys combined with column labels and values still somewhat resembles a table.  Standard column families offer good performance for key-based data retrieval as they are able to store all of the information associated with a key in the same place and can modify the data structure for that key easily.
 </AnchorItem>
 
+<AnchorItem id="stemming" title="Stemming">
+Stemming is a technique used in full-text search indexing where words with the same stem are collapsed into a single entry.  This increases the number of relevant results considered at the expense of a slight decrease in precision.  For instance, the words "cook", "cooked", and "cooks" might occupy a single entry where a search for any of the terms would return results for the whole entry.
+</AnchorItem>
+
+<AnchorItem id="stop-words" title="Stop words">
+In full-text search contexts, stop words are a list of words that are considered inapplicable to search queries.  These are typically the most common words in a language that lack much meaning on their own or are ambiguous to the point of irrelevancy.  Some examples in English are words like "the", "it", and "a".
+</AnchorItem>
+
 <AnchorItem id="storage-engine" title="Storage engine">
 A storage engine is the underlying component in database management systems that is responsible for inserting, removing, querying, and updating data within the database.  Many database features, like the ability to execute transactions, are actually properties of the underlying storage engine.  Some database systems, like MySQL, have many different storage engines that can be used according to the requirements of your use case.  Other systems, like PostgreSQL, focus on providing a single storage engine that is useful in all typical scenarios. 
 </AnchorItem>
@@ -629,6 +657,10 @@ A table alias is name given at query time for an existing or calculated table or
 
 <AnchorItem id="three-tier-architecture" title="Three tier architecture">
 The three tier application architecture is a common infrastructure architecture for deploying web applications.  The first layer is comprised of one or more web servers that respond to client requests, serve static content, and generate requests to the subsequent layers.  The second layer is handled by application servers and is responsible for generating dynamic content by executing code to generate responses for the front end.  The third layer is handled by the database system and is responsible for responding to requests from the middle layer for custom values used to generate content.
+</AnchorItem>
+
+<AnchorItem id="token" title="Token">
+In natural language processing and full-text search, a token is a discrete word that is recognized to the system and can be categorized according to different features.  A token might be stored with information including its relative position in a piece of text, it's type (number, word, phrase, etc.), as well as any additional metadata that might be useful.
 </AnchorItem>
 
 <AnchorItem id="transaction" title="Transaction">
@@ -673,6 +705,10 @@ A wide-column store is a type of NoSQL database that organizes its data into row
 
 <AnchorItem id="wal" title="Write-ahead logging (WAL)">
 Write-ahead logging, or WAL, is an approach to data revision management that increases the resiliency of systems data corruption during crashes and failures.  Without a technique like WAL, corruption can occur if the system crashes when a change to a database is only partially completed.  In this case, the data will be in neither the initial nor the intended state.  With write ahead logging, the system records its intentions to a durable write ahead log before executing operations.  This way, the database can recover a known-good state of the data by reviewing the log during recovery and redoing any operations that did not complete correctly initially.
+</AnchorItem>
+
+<AnchorItem id="search-weight" title="Weight (search)">
+In the context of searching, a search weight is an arbitrary value assigned to different categories of data designed to influence the priority of the item when analyzed for relevance.  Assigning a heavy weight to a specific type of information will cause a query engine to assign greater significance to that category compared to other categories when compiling a list of relevant results.
 </AnchorItem>
 
 <AnchorItem id="write-around-caching" title="Write-around caching">
