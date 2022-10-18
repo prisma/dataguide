@@ -9,7 +9,7 @@ authors: ['justinellingwood']
 
 One of the most familiar functions of a database system is the ability to retrieve items according to a given query.  While conventional database queries are well suited to structured commands by users who are familiar with the system's tools and the structure of the data, most search functionality exposed to users uses a different technique.
 
-In this article, we'll introduce the ideas behind full-text search.  We'll discuss how this type of text processing and retrieval differs from conventional database querying and why it is helpful in many cases.  We will explore some of the decisions that you can make during the indexing and querying process to affect the results you retrieve and we'll discuss some of the trade-offs you'll have to make when interacting with these systems to get the results you need.
+In this article, we'll introduce the ideas behind full-text search.  We'll discuss how this type of text processing and retrieval differs from conventional database querying and why it is helpful in many cases.  We will explore some of the decisions that you can make during the indexing and querying process to affect the results you retrieve, and we'll discuss some of the trade-offs you'll have to make when interacting with these systems to get the results you need.
 
 <PrismaOutlinks>
 
@@ -17,7 +17,7 @@ The [Prisma Data Platform](https://www.prisma.io/dataplatform) can help simplify
 
 </PrismaOutlinks>
 
-## What is full text search?
+## What is full-text search?
 
 **[Full-text search](/intro/database-glossary#full-text-search)** is a term for the family of techniques that allow you to search the complete text of documents within a database system.  This is in direct opposition to search functionality that relies only on metadata, partial text sources, and other incomplete assessments.
 
@@ -30,7 +30,7 @@ Full-text search often also includes the ability to rank and sort results based 
 
 While many database operations can be improved by indexing, full-text search is especially dependent on an asynchronous indexing processes.
 
-Indexing is the process of parsing existing documents to compile an index.  An [index](/intro/database-glossary#index) is a smaller, optimized structure specifically designed for quickly finding requested items.  While normal database indexes might analyze a few fields to create an index, a full-text search index is created by analyzing complete the complete text of documents.
+Indexing is the process of parsing existing documents to compile an index.  An [index](/intro/database-glossary#index) is a smaller, optimized structure specifically designed for quickly finding requested items.  While normal database indexes might analyze a few fields to create an index, a full-text search index is created by analyzing the complete text of documents.
 
 Without an index, searches must complete a processes called [serial scanning](/intro/database-glossary#serial-scanning) where the system analyzes each item at query time to see whether they match the query criteria.  For those familiar with Unix-like systems, this is akin to the difference between searching for a filename using the `find` tool, which scans the filesystem during a query, and the faster `locate` command, which relies on an index that is periodically updated.
 
@@ -44,7 +44,7 @@ The results of the analysis are then sorted and stored in an optimized index so 
 
 ### Balancing the indexing process
 
-While we talked about the general steps required to create a full-text index, we left out some of the key factors that shape the index and resulting querying functionality.  There are many different ways to index text and the way that you choose to do so can have a large impact on the performance and characteristics of your search functionality.
+While we talked about the general steps required to create a full-text index, we left out some of the key factors that shape the index and resulting querying functionality.  There are many different ways to index text, and the way that you choose to do so can have a large impact on the performance and characteristics of your search functionality.
 
 One optimization that almost all indexing processes adopt is the use of stop words.  [Stop words](/intro/database-glossary#stop-words) are a list of words deemed irrelevant or too ambiguous to be useful during a search.  They are often the most common words in a language that contain the least amount of relevant context.  Some examples in English include "the", "a", and "it".  During indexing, stop words are removed from the index, which helps keep the index smaller and faster for more relevant searches.
 
@@ -83,7 +83,7 @@ Another important way that search interfaces can influence the querying engine i
 
 In this article, we talked about what full-text search is and introduced some of the core concepts behind it.  We discussed the difference between full-text search and conventional database queries, explained why indexes are of critical importance in this context, and went over some of the factors you might need to take into account when designing your search indexes.
 
-Full-text search is an incredibly broad topic with many nuances, optimizations, balance considerations, and implementations.  While this article isn't intended to be as a definitive resource, it should hopefully serve as a strong conceptual foundation to build on as you continue to learn.
+Full-text search is an incredibly broad topic with many nuances, optimizations, balance considerations, and implementations.  While this article isn't intended to be a definitive resource, it should hopefully serve as a strong conceptual foundation to build on as you continue to learn.
 
 <PrismaOutlinks>
 
