@@ -54,10 +54,6 @@ const HeaderWrapper = styled.div`
       margin: 16px 0;
       width: 370px;
     }
-
-    svg {
-      margin-top:-30px;
-    }
   }
   
   @media (min-width: 0) and (max-width: 1024px) {
@@ -108,8 +104,8 @@ const SearchComponent = styled(Search)`
 `
 
 const HomePageHeader = () => {
-  const [showDocsBtn, setShowDocsBtn] = React.useState(true)
-  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
+  const [showDataguideBtn, setShowDataguideBtn] = React.useState(true)
+  const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
   const location = useLocation()
   return (
     <HeaderWrapper>

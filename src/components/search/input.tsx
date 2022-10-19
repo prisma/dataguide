@@ -6,27 +6,54 @@ import Clear from '../../icons/Clear'
 import useWindowDimensions from '../hooks/useWindowDimensions'
 
 const SearchBoxDiv = styled.div`
-  width: 250px;
   display: flex;
+  height: 56px;
+  background: #F7FAFC;
+  border: 1px solid #CBD5E0;
+  box-shadow: -4px -4px 32px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 19px 26px;
+  max-width: 459px;
+  width: 100%;
 
   form {
-    width: 250px;
+    width: 100%;
     position: relative;
+  }
+
+  &.header {
+    height: 16px;
+    padding: 0;
+    box-shadow: none;
+    max-width: 248px;
+    border-radius: 0;
+    border: none;
+    font-size: 16px;
+    background: transparent;
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    .clear {
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+    &.opened {
+      .clear {
+        width: 25px;
+        height: 25px;
+      }
+    }
   }
 
   &.opened {
     position: relative;
     z-index: 100001;
-    max-width: 1200px;
-    width: 100%;
-    height: 77px;
     background: #fff;
-    padding: 20px;
-    border-bottom: 1px solid #E2E8F0;
-    border-radius: 5px;
 
     form {
-      width: 100%;
       input {
         color: #4A5568;
       }
@@ -74,14 +101,14 @@ const SearchBoxDiv = styled.div`
       width: 100%;
       background: transparent;
       outline: none;
-      padding: 0rem 32px;
+      padding: 0rem 37px;
       font-style: normal;
       font-weight: normal;
       font-size: 16px;
       line-height: 100%;
       border-width: 0;
       &::placeholder {
-        content: 'Search Documentation...';
+        content: 'Search Data Guide...';
         color: #A0AEC0;
         opacity: 1; /* Firefox */
       }
@@ -135,6 +162,7 @@ const SearchBox = ({
   upClicked,
   downClicked,
   selectedInd,
+  header,
   ...rest
 }: any) => {
   const [value, setValue] = React.useState(currentRefinement)
@@ -142,7 +170,7 @@ const SearchBox = ({
   const timeoutId = React.useRef<any>(null)
   const inputEl = React.useRef<any>(null)
   const { width } = useWindowDimensions()
-  const [placeholderText, setPlaceholderText] = React.useState('Search Documentation...')
+  const [placeholderText, setPlaceholderText] = React.useState('Search Data Guide...')
 
   const onChange = (e: any) => {
     const { value: newValue } = e.target
@@ -216,7 +244,7 @@ const SearchBox = ({
   React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
     if (width > 640) {
-      setPlaceholderText('Search Documentation...')
+      setPlaceholderText('Search Data Guide...')
     }
     if (value) {
       onFocus()
@@ -224,14 +252,14 @@ const SearchBox = ({
   }, [])
 
   return (
-    <SearchBoxDiv className={isOpened ? 'opened' : ''} t>
+    <SearchBoxDiv className={`${isOpened ? 'opened' : ''} ${header && 'header'}`} t>
       <form onSubmit={onSubmit}>
         <SearchIcon />
         <input
           ref={inputEl}
           type="text"
           placeholder={placeholderText}
-          aria-label="Search Documentation..."
+          aria-label="Search Data Guide..."
           onChange={onChange}
           onFocus={onFocus}
           value={value}
@@ -243,7 +271,6 @@ const SearchBox = ({
             <ClearIcon onClick={clearInput} />
           </span>
         )}
-        {!isOpened && <div>{`//`}</div>}
       </form>
     </SearchBoxDiv>
   )

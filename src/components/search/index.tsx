@@ -93,6 +93,9 @@ const HitsWrapper = styled.div`
     border-top-right-radius: 0;
     border-top-left-radius: 0;
   }
+  &.header {
+    top: 125px;
+  }
 `
 
 const indexName = config.header.search.indexName
@@ -138,7 +141,7 @@ const searchStateToUrl = (location: any, searchState: any) =>
 
 const urlToSearchState = (location: any) => qs.parse(location.search.slice(1))
 
-export default function Search({ hitsStatus, location }: any) {
+export default function Search({ hitsStatus, location, header }: any) {
   const [searchState, setSearchState] = useState(urlToSearchState(location))
   const [query, setQuery] = useState(``)
   const [showHits, setShowHits] = React.useState(false)
@@ -210,16 +213,17 @@ export default function Search({ hitsStatus, location }: any) {
       searchState={searchState}
       createURL={createURL}
     >
-      <Overlay visible={showHits} hideSearch={hideSearch} />
+      <Overlay visible={showHits} hideSearch={hideSearch} header={header} />
       <CustomSearchBox
         onFocus={showSearch}
         isOpened={showHits}
+        header={header}
         closeSearch={hideSearch}
         upClicked={decrementIndex}
         downClicked={incrementIndex}
       />
       {query && query !== '' && showHits && (
-        <HitsWrapper className={`${showHits ? 'show' : ''}`} onClick={hideSearch}>
+        <HitsWrapper className={`${showHits ? 'show' : ''} ${header ? 'header' : ''}`} onClick={hideSearch}>
           <Index key={indexName} indexName={indexName}>
             <Results>
               <Hits hitComponent={DocHit} selectedIndex={selectedIndex} />
