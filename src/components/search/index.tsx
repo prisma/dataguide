@@ -213,7 +213,7 @@ export default function Search({ hitsStatus, location, header }: any) {
       searchState={searchState}
       createURL={createURL}
     >
-      <Overlay visible={showHits} hideSearch={hideSearch} header={header} />
+      <Overlay visible={showHits} hideSearch={hideSearch} />
       <CustomSearchBox
         onFocus={showSearch}
         isOpened={showHits}

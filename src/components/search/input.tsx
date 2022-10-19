@@ -23,10 +23,10 @@ const SearchBoxDiv = styled.div`
 
   &.header {
     height: 16px;
-    padding: 0;
+    padding: 20px 12px;
+    border-radius: 4px;
     box-shadow: none;
     max-width: 248px;
-    border-radius: 0;
     border: none;
     font-size: 16px;
     background: transparent;
