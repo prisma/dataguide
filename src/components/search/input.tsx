@@ -45,6 +45,11 @@ const SearchBoxDiv = styled.div`
       }
     }
     &.opened {
+      position: relative;
+      top: unset;
+      left: unset;
+      transform: unset;
+      width: auto;
       .clear {
         width: 25px;
         height: 25px;
@@ -63,9 +68,15 @@ const SearchBoxDiv = styled.div`
   }
 
   &.opened {
-    position: relative;
     z-index: 100001;
     background: #fff;
+
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    z-index: 1000000;
+    left: 50%;
+    transform: translateX(-50%);
 
     form {
       input {
@@ -85,12 +96,6 @@ const SearchBoxDiv = styled.div`
         stroke: #4A5568;
       }
     }
-      position: absolute;
-      top: 100px;
-      width: 100%;
-      z-index: 1000000;
-      left: 50%;
-      transform: translateX(-50%);
   }
   @media (max-width: 620px) {
     width: auto;

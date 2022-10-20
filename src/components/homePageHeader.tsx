@@ -100,7 +100,14 @@ const Highlight = styled.span`
 const SearchComponent = styled(Search)`
   position: absolute;
   top: 12px;
+  width: auto;
   left: 12px;
+`
+
+const SearchWrapper = styled.div`
+> * {
+  width: 100%;
+}
 `
 
 const HomePageHeader = () => {
@@ -119,7 +126,9 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
-            <SearchComponent hitsStatus={changeHitsStatus} location={location} />
+            <SearchWrapper>
+              <SearchComponent hitsStatus={changeHitsStatus} location={location} />
+            </SearchWrapper>
             <SocialShareSection homePage={true}/>
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
