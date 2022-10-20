@@ -70,6 +70,7 @@ const LogoContainer = styled.div`
 `
 
 const DocsMobileButton = styled.div`
+  cursor: pointer;
   background: var(--main-theme-color);
   box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
   border-radius: 5px;
@@ -137,7 +138,9 @@ const PrismaButton = styled.a`
 const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
   display: flex;
   justify-content: space-between;
-  position: relative;
+  @media only screen and (min-width: 1024px) {
+    display:none;
+  }
   ${({ isSticky }: any) =>
     isSticky &&
     css`
@@ -182,11 +185,10 @@ const Header = ({ headerProps }: HeaderViewProps) => {
           </div>
         </HeaderNav>
         <SearchContainer>
-          {showDataguideBtn && (
-            <DocsMobileButton onClick={toggleMobileNav}>
-              {showMobileNav ? <Clear /> : 'Menu'}
-            </DocsMobileButton>
-          )}
+          {!showMobileNav && <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile/>}
+          <DocsMobileButton onClick={toggleMobileNav}>
+            {showMobileNav ? <Clear /> : 'Menu'}
+          </DocsMobileButton>
         </SearchContainer>
         {showMobileNav && (
         <MobileOnlyNav>

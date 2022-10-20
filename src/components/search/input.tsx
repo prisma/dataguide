@@ -16,6 +16,10 @@ const SearchBoxDiv = styled.div`
   max-width: 459px;
   width: 100%;
 
+  @media (max-width: 1024px) {
+    margin: 0 auto;
+  }
+
   form {
     width: 100%;
     position: relative;
@@ -46,6 +50,16 @@ const SearchBoxDiv = styled.div`
         height: 25px;
       }
     }
+    &.mobile {
+      @media (max-width: 1024px) {
+        position: unset;
+        top: 0;
+        width: auto;
+        z-index: 1000000;
+        left: unset;
+        transform: unset;
+      }
+    }
   }
 
   &.opened {
@@ -71,6 +85,12 @@ const SearchBoxDiv = styled.div`
         stroke: #4A5568;
       }
     }
+      position: absolute;
+      top: 100px;
+      width: 100%;
+      z-index: 1000000;
+      left: 50%;
+      transform: translateX(-50%);
   }
   @media (max-width: 620px) {
     width: auto;
@@ -163,6 +183,7 @@ const SearchBox = ({
   downClicked,
   selectedInd,
   header,
+  mobile,
   ...rest
 }: any) => {
   const [value, setValue] = React.useState(currentRefinement)
@@ -252,7 +273,7 @@ const SearchBox = ({
   }, [])
 
   return (
-    <SearchBoxDiv className={`${isOpened ? 'opened' : ''} ${header && 'header'}`} t>
+    <SearchBoxDiv className={`${isOpened ? 'opened' : ''} ${header ? 'header' : ''} ${mobile ? 'mobile' : ''}`} t>
       <form onSubmit={onSubmit}>
         <SearchIcon />
         <input

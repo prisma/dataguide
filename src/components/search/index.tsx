@@ -12,10 +12,12 @@ import { navigate } from 'gatsby'
 
 const HitsWrapper = styled.div`
   display: none;
+  text-align: left;
   &.show {
     display: grid;
   }
-  max-height: 85vh;
+  width: calc(100% - 32px);
+  max-height: 80vh;
   overflow-y: scroll;
   color: black;
   overflow-x: hidden;
@@ -25,9 +27,8 @@ const HitsWrapper = styled.div`
   left: 50%;
   top: 97px;
 
-  transform: translate(-50%, -0%);
+  transform: translateX(-50%);
   max-width: 1200px;
-  width: 100%;
   background: #fff;
   box-shadow: 0px 4px 8px rgba(47, 55, 71, 0.05), 0px 1px 3px rgba(47, 55, 71, 0.1);
   border-radius: 5px;
@@ -85,14 +86,12 @@ const HitsWrapper = styled.div`
       transform: rotate(360deg);
     }
   }
-  @media (min-width: 0px) and (max-width: 1024px) {
     // left: 0;
-    top: 88px;
+    top: 160px;
     // max-width: 100%;
     border-top: 1px solid #E2E8F0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-  }
   &.header {
     top: 125px;
   }
@@ -141,7 +140,7 @@ const searchStateToUrl = (location: any, searchState: any) =>
 
 const urlToSearchState = (location: any) => qs.parse(location.search.slice(1))
 
-export default function Search({ hitsStatus, location, header }: any) {
+export default function Search({ hitsStatus, location, header, mobile = false }: any) {
   const [searchState, setSearchState] = useState(urlToSearchState(location))
   const [query, setQuery] = useState(``)
   const [showHits, setShowHits] = React.useState(false)
@@ -218,6 +217,7 @@ export default function Search({ hitsStatus, location, header }: any) {
         onFocus={showSearch}
         isOpened={showHits}
         header={header}
+        mobile={mobile}
         closeSearch={hideSearch}
         upClicked={decrementIndex}
         downClicked={incrementIndex}
