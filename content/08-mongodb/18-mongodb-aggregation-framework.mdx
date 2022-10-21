@@ -1,0 +1,132 @@
+---
+title: 'Introduction to MongoDB Aggregation Framework'
+metaTitle: "MongoDB Aggregation Framework: How to simply complex logic into stages"
+metaDescription: "Learn about MongoDB's Aggregation Framework and how to break complex logic into stages."
+metaImage: '/social/generic-mongodb.png'
+authors: ['alexemerich']
+---
+
+## Introduction 
+MongoDB is a document-based NoSQL database where data is organized in collections that are made up of JSON documents. As with any database, MongoDB has a language that a user can use to access data. In MongoDB’s case, this language is the MongoDB Query Language or simply, MQL. Whether MQL or SQL, database queries can start off simple, but as a database scales more complex queries arise. 
+
+The [MongoDB Aggregation Framework](https://www.mongodb.com/docs/manual/core/aggregation-pipeline/) is a way to query documents from MongoDB in a way that breaks down these more confounding queries. It separates complex logic into sequential operations. In this guide, we will introduce the MongoDB Aggregation Framework, discuss common aggregation stages, and finish up with a simple conceptual example aggregation pipeline. 
+
+<PrismaOutlinks>
+
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+
+</PrismaOutlinks>
+
+## How does the MongoDB Aggregation Framework work?
+
+The purpose of MongoDB’s Aggregation Framework is to design a pipeline consisting of multiple stages for the processing of documents. You start with your collection of inputted data and after each stage of the pipeline you are closer to the end result which will be the desired documents. 
+
+Each stage performs an operation on the documents. There are several operations that can be conducted. For example, a stage can filter, group, or even calculate values on the inputted data. After each stage, the outputted documents are passed into the next stage and so on until no stages are left. 
+
+With an aggregation framework, one can achieve several goals. We’ll go into specific examples with the actual operation syntax, but in theory an analyst for the fiction department at a bookstore could set up a framework that groups the number of purchases based on genre or author to inform the sales floor. No matter the team, there are insights to be had from data that are all the more easily discovered with the breakdown done by an aggregation pipeline.
+
+## What are the most common MongoDB aggregation operations?
+
+There are approximately 38 aggregation stages available in the MongoDB framework at the time of this writing. We are not going to delve into all of them in this guide, but you can view the whole list in the [official MongoDB documentation](https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/#alphabetical-listing-of-stages). We’ll spend some time to highlight a few that will also get used in an example pipeline.
+
+- `$project` : Reshapes each document in the stream, such as by adding new fields or removing existing fields. For each input document, outputs one document.
+- `$match` : Filters the document stream to allow only matching documents to pass unmodified into the next pipeline stage. `$match` uses standard MongoDB queries. For each input document, outputs either one document (a match) or zero documents (no match). 
+- `$group` : Groups input documents by a specified identifier expression and applies the accumulator expression(s), if specified, to each group. Consumes all input documents and outputs one document per each distinct group. The output documents only contain the identifier field and, if specified, accumulated fields.
+- `$sort` : Reorders the document stream by a specified sort key. Only the order changes; the documents remain unmodified. For each input document, outputs one document. 
+- `$skip` : Skips the first n documents where n is the specified skip number and passes the remaining documents unmodified to the pipeline. For each input document, outputs either zero documents (for the first n documents) or one document (if after the first n documents). 
+- `$limit` : Passes the first n documents unmodified to the pipeline where n is the specified limit. For each input document, outputs either one document (for the first n documents) or zero documents (after the first n documents).
+- `$unwind` : Deconstructs an array field from the input documents to output a document for each element. Each output document replaces the array with an element value. For each input document, outputs n documents where n is the number of array elements and can be zero for an empty array.
+
+## Aggregation pipeline in action
+
+To bring aggregation to life with a practical example, we’ll run through setting up a pipeline with an imaginary bookstore. We’ll start with some inventory order data, and we’ll create a pipeline that takes this raw data and outputs which authors have multiple orders and how many copies of their books were ordered.
+
+To begin, we’ll insert some sample order documents into the collection `bookOrders`. 
+
+```
+db.bookOrders.insertMany ( [
+	{ _id: 0, first_name: "Fyodor", last_name: "Dostoyevsky", book_title: 'Demons', genre: 'Fiction', quantity: 10, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 1, first_name: "Fyodor", last_name: "Dostoyevsky", book_title: 'Brothers Karamosov', genre: 'Fiction', quantity: 25, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 2, first_name: "Jacques", last_name: "Derrida", book_title: 'The Politics of Friendship', genre: 'Fiction', quantity: 5, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 3, first_name: "Charles", last_name: "Dickens", book_title: 'Tale of Two Cities', genre: 'Fiction', quantity: 6, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 4, first_name: "James", last_name: "Joyce", book_title: 'Ulysses', genre: 'Fiction', quantity: 30, date: ISODate( "2021-03-13T11:19:30Z" ) },
+	{ _id: 5, first_name: "Henry David", last_name: "Thoreau", book_title: 'Walden', genre: 'Nonfiction', quantity: 15, date: ISODate( "2021-03-13T11:19:30Z" ) },
+	{ _id: 6, first_name: "Virginia", last_name: "Woolf", book_title: "A Room of One's Own", genre: 'Nonfiction',
+     quantity: 18, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 7, first_name: "Virginia", last_name: "Woolf", book_title: "Mr's Dalloway", genre: 'Fiction', quantity: 14, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 8, first_name: "Zadie", last_name: "Smith", book_title: 'White Teeth', genre: 'Fiction', quantity: 8, date: ISODate( "2022-10-21T11:19:30Z" ) },
+	{ _id: 9, first_name: "Charles", last_name: "Dickens", book_title: 'The Old Curiousity Shop', genre: 'Fiction', quantity: 6, date: ISODate( "2022-10-21T11:19:30Z" ) }
+] )
+```
+
+Now that our collection has some sample documents, we can start our query. Aggregation pipelines run with the `db.<collection-name>.aggregate()` method.  Our goal is to design a query that return a list of the authors with the most total copies of their fiction books ordered. An example aggregation query can be found below with each stage described. 
+
+```
+db.bookOrders.aggregate ( [ 
+	// Stage 1: The $match operator scans the collection for documents matching the specified condition to pass to the next stage. 
+	{ 
+		$match: 
+		{ 
+			genre: "Fiction" 
+		} 
+	}, 
+
+	// Stage 2: The $project operator specifies which fields in the matched documents should pass onto the next stage.
+	{
+		$project:
+		{
+			last_name : 1,
+			quantity : 1
+		}
+	},
+	
+	// Stage 3: The $group operator groups the documents by the specified expression and outputs a document for each unique grouping. The _id field specifies the distinct key to group by.
+	{ 
+		$group: 
+		{ 
+			_id: "$last_name", 
+			totalQuantity: { $sum: "$quantity" } } 
+		}, 
+
+	// Stage 4: The $sort operator specifies the field(s) to sort by and the order. -1 specifies a descending order and 1 specifies ascending order. 
+	{ 
+		$sort: 
+		{ totalQuantity: -1 } 
+	} 
+] )
+```
+
+After running our aggregation query, we get the following output:
+
+```
+[
+  { _id: 'Dostoyevsky', totalQuantity: 35 },
+  { _id: 'Joyce', totalQuantity: 30 },
+  { _id: 'Woolf', totalQuantity: 14 },
+  { _id: 'Dickens', totalQuantity: 12 },
+  { _id: 'Smith', totalQuantity: 8 },
+  { _id: 'Derrida', totalQuantity: 5 }
+]
+```
+
+This example is intentionally simple, but it demonstrates how an aggregation pipeline can take some of the complexity out of some queries. Each step to reaching your desired output is clearly broken down and compartmentalized into a clear stage.
+
+Depending on the collection and document data structure, there are optmizations to consider when building an aggregation pipeline. Additionally, this framework may not work for all complex logic. It is case dependent. 
+
+One small optimization that should be pointed out can be seen in the first two stages of our example. Generally, the `$match` operator is used to begin most pipelines and best practice. However, if your collection is full of very large documents, then it is recommended to begin with the `$project` operator instead. Starting with `$project` limits the amount of fields that get passed onto the next stage earlier in the pipeline and reduces some unnecessary load.
+
+## Conclusion
+
+In this article, we introduced MongoDB’s Aggregation Framework. We discussed what it is and how it can be a tool for simplifying complex logic and longwinded queries. An aggregation pipeline’s stages break logic down into blocks that can be easily followed and manipulated.
+
+Aggregation pipelines simplify data access, and it is important to understand how it works. MongoDB’s Aggregation Framework can be used to do even more than we demonstrated in our bookstore example, and we hope this introduction starts you down the path of further exploration. 
+
+<PrismaOutlinks>
+
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+
+To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+
+</PrismaOutlinks>
