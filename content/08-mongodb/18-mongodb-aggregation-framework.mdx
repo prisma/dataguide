@@ -65,7 +65,8 @@ Now that our collection has some sample documents, we can start our query. Aggre
 
 ```
 db.bookOrders.aggregate ( [ 
-	// Stage 1: The $match operator scans the collection for documents matching the specified condition to pass to the next stage. 
+	// Stage 1: The $match operator scans the collection for documents 
+    matching the specified condition to pass to the next stage. 
 	{ 
 		$match: 
 		{ 
@@ -73,7 +74,8 @@ db.bookOrders.aggregate ( [
 		} 
 	}, 
 
-	// Stage 2: The $project operator specifies which fields in the matched documents should pass onto the next stage.
+	// Stage 2: The $project operator specifies which fields 
+    in the matched documents should pass onto the next stage.
 	{
 		$project:
 		{
@@ -82,7 +84,8 @@ db.bookOrders.aggregate ( [
 		}
 	},
 	
-	// Stage 3: The $group operator groups the documents by the specified expression and outputs a document for each unique grouping. The _id field specifies the distinct key to group by.
+	// Stage 3: The $group operator groups the documents by the specified expression 
+    and outputs a document for each unique grouping. The _id field specifies the distinct key to group by.
 	{ 
 		$group: 
 		{ 
@@ -90,7 +93,8 @@ db.bookOrders.aggregate ( [
 			totalQuantity: { $sum: "$quantity" } } 
 		}, 
 
-	// Stage 4: The $sort operator specifies the field(s) to sort by and the order. -1 specifies a descending order and 1 specifies ascending order. 
+	// Stage 4: The $sort operator specifies the field(s) to sort by and the order. 
+    -1 specifies a descending order and 1 specifies ascending order. 
 	{ 
 		$sort: 
 		{ totalQuantity: -1 } 
