@@ -189,6 +189,7 @@ const SearchBox = ({
   selectedInd,
   header,
   mobile,
+  clear,
   ...rest
 }: any) => {
   const [value, setValue] = React.useState(currentRefinement)
@@ -220,12 +221,13 @@ const SearchBox = ({
     window.clearTimeout(timeoutId.current)
     setValue('')
     refine('')
+    closeSearch()
   }
 
   // Focus shortcuts on keydown
   const onKeyDown = (e: any) => {
     if (e && e.keyCode == ESCAPE_KEY) {
-      closeSearch()
+      clearInput()
     } else if (e && e.keyCode === 40) {
       downClicked()
     } else if (e && e.keyCode === 38) {
@@ -267,6 +269,10 @@ const SearchBox = ({
     return false
   }
 
+  React.useEffect(() => {
+    if (clear) clearInput()
+  }, [clear])
+  
   React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
     if (width > 640) {

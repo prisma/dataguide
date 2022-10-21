@@ -146,14 +146,19 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
   const [showHits, setShowHits] = React.useState(false)
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const debouncedSetStateRef = useRef<any>(null)
+  const [cleared, clearInput] = useState<boolean>(false);
+
+
   const hideSearch = () => {
     setShowHits(false)
+    setQuery(``)
     if (searchState.query === '' && debouncedSetStateRef.current) {
       clearTimeout(debouncedSetStateRef.current)
       debouncedSetStateRef.current = setTimeout(() => {
         navigate(location.href.split('?')[0])
       }, DEBOUNCE_TIME)
     }
+    clearInput(true)
   }
 
   const showSearch = () => setShowHits(true)
@@ -162,6 +167,7 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
   const onSearchStateChange = (updatedSearchState: any) => {
     setQuery(updatedSearchState.query)
     clearTimeout(debouncedSetStateRef.current)
+    clearInput(false);
 
     debouncedSetStateRef.current = setTimeout(() => {
       navigate(searchStateToUrl(location, updatedSearchState))
@@ -175,7 +181,6 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
   }, [showHits, query])
 
   React.useEffect(() => {
-    console.log(query)
     setSearchState(urlToSearchState(location))
     setQuery(searchState.query)
   }, [location])
@@ -218,6 +223,7 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
         isOpened={showHits}
         header={header}
         mobile={mobile}
+        clear={cleared}
         closeSearch={hideSearch}
         upClicked={decrementIndex}
         downClicked={incrementIndex}

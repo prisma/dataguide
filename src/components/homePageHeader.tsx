@@ -107,6 +107,9 @@ const SearchComponent = styled(Search)`
 const SearchWrapper = styled.div`
 > * {
   width: 100%;
+  &.show {
+    width: calc(100% - 32px);
+  }
 }
 `
 
