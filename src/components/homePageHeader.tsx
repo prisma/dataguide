@@ -132,7 +132,7 @@ const HomePageHeader = () => {
             <SearchWrapper>
               <SearchComponent hitsStatus={changeHitsStatus} location={location} />
             </SearchWrapper>
-            <SocialShareSection homePage={true}/>
+            {/* <SocialShareSection homePage={true}/> */}
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
             technologies, and teach you how to unlock the potential of your databases. New material
