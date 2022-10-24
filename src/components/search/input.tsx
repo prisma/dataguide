@@ -270,7 +270,9 @@ const SearchBox = ({
   }
 
   React.useEffect(() => {
-    if (clear) clearInput()
+    if (clear) {
+      clearInput()
+    }
   }, [clear])
   
   React.useEffect(() => {

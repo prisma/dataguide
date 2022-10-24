@@ -5,9 +5,10 @@ import styledTS from 'styled-components-ts'
 interface Props {
   visible: boolean
   hideSearch: () => void
+  clearInput: (arg0: boolean) => void
 }
 
-const Overlay = ({ visible, hideSearch }: Props) => {
+const Overlay = ({ visible, hideSearch, clearInput }: Props) => {
   const [transition, setTransition] = React.useState(false)
 
   React.useEffect(() => {
@@ -16,7 +17,12 @@ const Overlay = ({ visible, hideSearch }: Props) => {
     }, 1000)
   })
 
-  return <StyledOverlay isVisible={visible} isTransitioning={transition} onClick={hideSearch} />
+  const overlayClick = () => {
+    hideSearch();
+    clearInput(true)
+  }
+
+  return <StyledOverlay isVisible={visible} isTransitioning={transition} onClick={overlayClick} />
 }
 
 const StyledOverlay = styledTS<{ isVisible: boolean; isTransitioning: boolean }>(styled.div)`

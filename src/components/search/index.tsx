@@ -158,7 +158,6 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
         navigate(location.href.split('?')[0])
       }, DEBOUNCE_TIME)
     }
-    clearInput(true)
   }
 
   const showSearch = () => setShowHits(true)
@@ -216,7 +215,7 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
       searchState={searchState}
       createURL={createURL}
     >
-      <Overlay visible={showHits} hideSearch={hideSearch} />
+      <Overlay visible={showHits} hideSearch={hideSearch} clearInput={clearInput}/>
       <CustomSearchBox
         onFocus={showSearch}
         isOpened={showHits}
