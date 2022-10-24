@@ -167,7 +167,6 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
   const onSearchStateChange = (updatedSearchState: any) => {
     setQuery(updatedSearchState.query)
     clearTimeout(debouncedSetStateRef.current)
-    clearInput(false);
 
     debouncedSetStateRef.current = setTimeout(() => {
       navigate(searchStateToUrl(location, updatedSearchState))
