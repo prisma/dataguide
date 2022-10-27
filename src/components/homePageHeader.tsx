@@ -113,6 +113,15 @@ const SearchWrapper = styled.div`
 }
 `
 
+const HeaderNavWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (min-width: 0) and (max-width: 1024px) {
+    padding: 0 16px;
+  }
+`
+
 const HomePageHeader = () => {
   const [showDataguideBtn, setShowDataguideBtn] = React.useState(true)
   const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
@@ -120,7 +129,12 @@ const HomePageHeader = () => {
   return (
     <HeaderWrapper>
       <div className="sub-wrapper">
-        <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
+        <HeaderNavWrapper>
+          <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
+          <SearchWrapper>
+            <SearchComponent hitsStatus={changeHitsStatus} location={location} />
+          </SearchWrapper>
+        </HeaderNavWrapper>
         <div className="container">
           <div className="content">
             <h1>Prisma's Data Guide</h1>
@@ -129,9 +143,6 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
-            <SearchWrapper>
-              <SearchComponent hitsStatus={changeHitsStatus} location={location} />
-            </SearchWrapper>
             {/* <SocialShareSection homePage={true}/> */}
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right

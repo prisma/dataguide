@@ -7,13 +7,13 @@ import useWindowDimensions from '../hooks/useWindowDimensions'
 
 const SearchBoxDiv = styled.div`
   display: flex;
-  height: 56px;
+  height: 40px;
   background: #F7FAFC;
   border: 1px solid #CBD5E0;
   box-shadow: -4px -4px 32px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
-  padding: 19px 26px;
-  max-width: 459px;
+  padding: 10px 26px;
+  max-width: 300px;
   width: 100%;
 
   @media (max-width: 1024px) {
@@ -71,12 +71,12 @@ const SearchBoxDiv = styled.div`
     z-index: 100001;
     background: #fff;
 
-    position: absolute;
-    top: 100px;
+    position: relative;
+    // top: 100px;
     width: 100%;
     z-index: 1000000;
-    left: 50%;
-    transform: translateX(-50%);
+    // left: 50%;
+    // transform: translateX(-50%);
 
     form {
       input {
@@ -87,8 +87,13 @@ const SearchBoxDiv = styled.div`
     .clear {
       background: #E2E8F0;
       border-radius: 6px;
-      height: 36px;
-      width: 36px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      z-index: 1000001;
+      right: 0;
+      width: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -167,7 +172,10 @@ const SearchIcon = styled(SearchPic)`
   min-width: 1em;
   pointer-events: none;
   z-index: 100001;
+  top: 50%;
+  transform: translateY(-50%);
   position: absolute;
+  stroke: #4A5568;
 `
 
 const ClearIcon = styled(Clear)`
