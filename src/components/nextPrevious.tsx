@@ -5,6 +5,8 @@ import { useAllArticlesQuery } from '../hooks/useAllArticlesQuery'
 import Link from './link'
 import { ArrowRight, ArrowLeft } from 'react-feather'
 import { urlGenerator } from '../utils/urlGenerator'
+import { withPrefix } from 'gatsby'
+
 
 const NextPreviousWrapper = styled.div`
   display: flex;
@@ -148,12 +150,12 @@ const NextPrevious = ({ slug }: any) => {
           <div className="previous">
             <div className="text">
               <span className="direction">Previous</span>
-              <Link to={urlGenerator(nav[currentIndex - 1].url)}>
+              <a href={withPrefix(urlGenerator(nav[currentIndex - 1].url)).replace(/\/$/, '')}>
                 <span className="icon">
                   <ArrowLeft color="#3182CE" />
                 </span>
                 <div className="title">{nav[currentIndex - 1].title}</div>
-              </Link>
+              </a>
             </div>
           </div>
         ) : null}
