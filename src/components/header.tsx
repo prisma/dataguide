@@ -162,7 +162,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         <HeaderNav>
           <div style={{ display: 'flex' }}>
             <Link
-              to={headerProps.logoLink || '/'}
+              to={headerProps.logoLink || ''}
               style={{
                 color: 'white',
                 textDecoration: 'none',
