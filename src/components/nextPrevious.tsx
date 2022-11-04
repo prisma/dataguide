@@ -150,8 +150,8 @@ const NextPrevious = ({ slug }: any) => {
               <span className="direction">Previous</span>
               <Link
                 to={
-                  urlGenerator(nav[currentIndex - 1].url) === '/dataguide/'
-                    ? '/dataguide'
+                  urlGenerator(nav[currentIndex - 1].url) === '/'
+                    ? ''
                     : urlGenerator(nav[currentIndex - 1].url)
                 }
               >
