@@ -161,8 +161,8 @@ const Header = ({ headerProps }: HeaderViewProps) => {
       <div className={'container'}>
         <HeaderNav>
           <div style={{ display: 'flex' }}>
-            <Link
-              to={headerProps.logoLink || ''}
+            <a
+              href={headerProps.logoLink || '/'}
               style={{
                 color: 'white',
                 textDecoration: 'none',
@@ -174,7 +174,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
                 <HeaderLogo />
                 <span>Prisma's Data Guide</span>
               </LogoContainer>
-            </Link>
+            </a>
           </div>
         </HeaderNav>
         <SearchContainer>
