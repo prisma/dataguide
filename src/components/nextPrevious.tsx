@@ -148,7 +148,7 @@ const NextPrevious = ({ slug }: any) => {
           <div className="previous">
             <div className="text">
               <span className="direction">Previous</span>
-              <Link to={urlGenerator(nav[currentIndex - 1].url).replace(/\/$/, '')}>
+              <Link to={urlGenerator(nav[currentIndex - 1].url)}>
                 <span className="icon">
                   <ArrowLeft color="#3182CE" />
                 </span>

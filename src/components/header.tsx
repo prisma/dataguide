@@ -162,7 +162,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         <HeaderNav>
           <div style={{ display: 'flex' }}>
             <a
-              href={withPrefix(headerProps.logoLink || '')}
+              href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}
               style={{
                 color: 'white',
                 textDecoration: 'none',
