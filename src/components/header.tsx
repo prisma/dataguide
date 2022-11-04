@@ -155,7 +155,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
   const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
-
+  console.log(headerProps.logoLink)
   return (
     <HeaderWrapper>
       <div className={'container'}>
