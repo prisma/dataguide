@@ -1,4 +1,3 @@
-import Link from '../components/link'
 import * as React from 'react'
 import styled, { css } from 'styled-components'
 import styledTS from 'styled-components-ts'
@@ -7,6 +6,7 @@ import Clear from '../icons/Clear'
 import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
+import { withPrefix } from 'gatsby'
 
 type HeaderViewProps = {
   headerProps: HeaderProps
@@ -162,7 +162,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         <HeaderNav>
           <div style={{ display: 'flex' }}>
             <a
-              href={headerProps.logoLink || '/'}
+              href={withPrefix(headerProps.logoLink || '/')}
               style={{
                 color: 'white',
                 textDecoration: 'none',

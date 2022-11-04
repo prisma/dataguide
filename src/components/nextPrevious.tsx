@@ -35,7 +35,7 @@ const NextPreviousWrapper = styled.div`
       }
 
       .icon {
-        background: #EBF8FF;
+        background: #ebf8ff;
       }
     }
   }
@@ -71,7 +71,7 @@ const NextPreviousWrapper = styled.div`
   @media (max-width: 768px) {
     padding: 24px;
     margin-top: -140px;
-  } 
+  }
 
   @media (max-width: 640px) {
     //padding: 12px;
@@ -148,7 +148,13 @@ const NextPrevious = ({ slug }: any) => {
           <div className="previous">
             <div className="text">
               <span className="direction">Previous</span>
-              <Link to={urlGenerator(nav[currentIndex - 1].url)}>
+              <Link
+                to={
+                  urlGenerator(nav[currentIndex - 1].url) === '/dataguide/'
+                    ? '/dataguide'
+                    : urlGenerator(nav[currentIndex - 1].url)
+                }
+              >
                 <span className="icon">
                   <ArrowLeft color="#3182CE" />
                 </span>
