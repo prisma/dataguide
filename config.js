@@ -1,11 +1,11 @@
 const config = {
   gatsby: {
-    pathPrefix: '/dataguide-test',
+    pathPrefix: '/dataguide',
     siteUrl: 'https://www.prisma.io', 
   },
   redirects: [],
   header: {
-    logoLink: '/', 
+    logoLink: '', 
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
     search: {
       indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
