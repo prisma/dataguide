@@ -64,6 +64,9 @@ module.exports = {
           `/dummy`,
           `/intro/example`,
         ],
+        resolvePagePath: (page) => {
+          return page.path.replace(/\/$/, '')
+        },
       },
     },
     {
