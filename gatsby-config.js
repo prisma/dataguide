@@ -1,6 +1,26 @@
 const config = require('./config')
 require('dotenv').config()
+function getNodes(results) {
+  if ("nodes" in results) {
+    return {
+      allPages: results.nodes,
+      originalType: "nodes"
+    };
+  }
 
+  if ("edges" in results) {
+    var _results$edges;
+
+    return {
+      allPages: results === null || results === void 0 ? void 0 : (_results$edges = results.edges) === null || _results$edges === void 0 ? void 0 : _results$edges.map(function (edge) {
+        return edge.node;
+      }),
+      originalType: "edges"
+    };
+  }
+
+  throw new Error("[gatsby-plugin-sitemap]: Plugin is unsure how to handle the results of your query, you'll need to write custom page filter and serializer in your gatsby config");
+}
 const gatsbyRemarkPlugins = [
   'gatsby-remark-sectionize',
   {
@@ -64,6 +84,24 @@ module.exports = {
           `/dummy`,
           `/intro/example`,
         ],
+        query: "\n    {\n      site {\n        siteMetadata {\n          siteUrl\n        }\n      }\n\n      allSitePage {\n        edges {\n          node {\n            path\n          }\n        }\n      }\n  }",
+        serialize: function serialize(_ref) {
+          var site = _ref.site,
+              allSitePage = _ref.allSitePage;
+      
+          var _getNodes2 = getNodes(allSitePage),
+              allPages = _getNodes2.allPages;
+      
+          return allPages === null || allPages === void 0 ? void 0 : allPages.map(function (page) {
+            var _ref2, _site$siteMetadata;
+      
+            return {
+              url: ("" + ((_ref2 = (_site$siteMetadata = site.siteMetadata) === null || _site$siteMetadata === void 0 ? void 0 : _site$siteMetadata.siteUrl) !== null && _ref2 !== void 0 ? _ref2 : "") + page.path).replace(/\/$/, ''),
+              changefreq: "daily",
+              priority: 0.7
+            };
+          });
+        },
       },
     },
     {

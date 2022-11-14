@@ -1,4 +1,3 @@
-import Link from '../components/link'
 import * as React from 'react'
 import styled, { css } from 'styled-components'
 import styledTS from 'styled-components-ts'
@@ -7,6 +6,7 @@ import Clear from '../icons/Clear'
 import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
+import { withPrefix } from 'gatsby'
 
 type HeaderViewProps = {
   headerProps: HeaderProps
@@ -155,14 +155,14 @@ const Header = ({ headerProps }: HeaderViewProps) => {
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
   const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
-
+  console.log(headerProps.logoLink)
   return (
     <HeaderWrapper>
       <div className={'container'}>
         <HeaderNav>
           <div style={{ display: 'flex' }}>
-            <Link
-              to={headerProps.logoLink || '/'}
+            <a
+              href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}
               style={{
                 color: 'white',
                 textDecoration: 'none',
@@ -174,7 +174,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
                 <HeaderLogo />
                 <span>Prisma's Data Guide</span>
               </LogoContainer>
-            </Link>
+            </a>
           </div>
         </HeaderNav>
         <SearchContainer>
