@@ -175,7 +175,7 @@ backend_type     | walwriter
 
 </details>
 
-**Note:** Using the `\gx` line termination sequence instead of the traditional semicolon (`;`) tells PostgreSQL to display to use expanded output mode for the current query.  This displays the columns and associated values for each record vertically instead of horizontally, which can improve readability in some cases.
+**Note:** Using the `\gx` line termination sequence instead of the traditional semicolon (`;`) tells PostgreSQL to use the expanded output mode for the current query.  This displays the columns and associated values for each record vertically instead of horizontally, which can improve readability in some cases.
 
 There are a number of fields in the output that can be helpful when looking for slower queries.  Some of the most relevant ones include:
 
@@ -411,7 +411,7 @@ fastpath           | t
 waitstart          |
 ```
 
-The output will provide information about all locks within PostgreSQL which can help you diagnose contention between different processes control control of different objects.
+The output will provide information about all locks within PostgreSQL.  This can help you diagnose contention issues that can occur when separate processes request control over the same objects.
 
 Some columns that may help you investigate problematic locks include:
 
@@ -507,7 +507,7 @@ Inside the file, search for the `log_min_duration_statement` setting.  If our ex
 . . .
 ```
 
-Currently, the `log_min_duration_statement` setting is commented out with its current value set to `-1` to represent the default value.  The other settings are well-commented within the file and allow you to sample statements that are over the minimum instead of logging all of the statements.  The last setting show allows you to do sampling of statements within transactions as well.
+Currently, the `log_min_duration_statement` setting is commented out with its current value set to `-1` to represent the default value.  The other settings are well-commented within the file and allow you to sample statements that are over the minimum instead of logging all of the statements.  The last setting allows you to do sampling of statements that occur within transactions as well.
 
 You can turn on long query logging by uncommenting the `log_min_duration_statement` and setting it to another value.  For instance, we can set it to 5 seconds to log any statements that take longer than that to complete:
 
@@ -551,7 +551,7 @@ Now, the `setting` field is set to 5000 and the `unit` field is set to `ms`, ind
 
 #### Logging slow queries per database
 
-Another option when trying to detect slow queries is to limit slow query logging to a specific database.  While you can  `log_min_duration_statement` can be set globally as we showed in the last section, it can also be configured at the database level.
+Another option when trying to detect slow queries is to limit slow query logging to a specific database.  While `log_min_duration_statement` can be set globally, as we showed in the last section, it can also be configured at the database level.
 
 To turn on slow query logging for a single database, use the `ALTER DATABASE` command:
 
@@ -562,7 +562,7 @@ ALTER DATABASE helloprisma SET 'log_min_duration_statement' = 2000;
 ALTER DATABASE
 ```
 
-Note that unlike the global setting, when using the `ALTER DATABASE` command the value must be a unit-less integer representing time in milliseconds.
+Note that unlike the global setting, when using the `ALTER DATABASE` command, the value must be a unit-less integer representing time in milliseconds.
 
 We can verify that the setting has been applied by querying for the per-database role settings:
 
