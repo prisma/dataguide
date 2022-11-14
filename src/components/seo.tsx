@@ -29,7 +29,7 @@ const SEO = ({ title, description, image }: SEOProps) => {
 
   const metaImageURL = image ? `${siteUrl + pathPrefix}${image}` : `${siteUrl + pathPrefix}${oUrl}`
 
-  let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`
+  let canonicalUrl = (`${siteUrl}${location.pathname === '/' ? '' : location.pathname}`).replace(/\/$/, '')
 
   return (
     <Helmet htmlAttributes={{ lang: 'en' }}>
