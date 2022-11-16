@@ -56,7 +56,7 @@ exports.onPostBuild = async ({ graphql, pathPrefix, basePath = pathPrefix }, plu
       url: url.resolve(
         data.site.siteMetadata.siteUrl,
         path.join(data.site.siteMetadata.pathPrefix, pathById[edge.node.fields.id])
-      ),
+      ).replace(/\/+$/, ''),
     }
   })
   await fsPromises.writeFile(outputFile, JSON.stringify(pages))
