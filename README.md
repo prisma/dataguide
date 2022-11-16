@@ -1,6 +1,6 @@
 # Prisma's Data Guide
 
-This repository contains the [source code](./src) and the [content](./content) for [Prisma's Data Guide](https://www.prisma.io/dataguide/).
+This repository contains the [source code](./src) and the [content](./content) for [Prisma's Data Guide](https://www.prisma.io/dataguide).
 
 ## Licenses
 

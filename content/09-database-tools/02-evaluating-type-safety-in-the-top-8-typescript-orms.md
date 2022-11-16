@@ -17,7 +17,7 @@ This article will look at the following:
 * **Record Creation:** Are models type-safe and can records be created in a type-safe manner? 
 * **Record Fetching**: When fetching data, are objects type-safe, even for partial models and relations? 
 
-This article will assume some familiarity with TypeScript and type safety. To learn more, please consult the official [TypeScript documentation](https://www.typescriptlang.org/docs). It will also assume some familiarity with ORMs and query builders. To learn more about these database tools, please see [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms), also from Prisma's [Data Guide](https://www.prisma.io/dataguide/).
+This article will assume some familiarity with TypeScript and type safety. To learn more, please consult the official [TypeScript documentation](https://www.typescriptlang.org/docs). It will also assume some familiarity with ORMs and query builders. To learn more about these database tools, please see [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms), also from Prisma's [Data Guide](https://www.prisma.io/dataguide).
 
 **Note:** This article was originally published on October 2, 2020.  It was most recently updated on February 15, 2022.
 
@@ -502,7 +502,7 @@ Typegoose leverages Classes and Decorators to help you build Mongoose models qui
 
 ## Briefly considered
 
-This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide/). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
+This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
 
 ### Knex.js
 
@@ -532,4 +532,4 @@ This article briefly assesses the type safety of the most popular Node.js ORMs, 
 
 Type safety is not the only criteria you should use when choosing a tool to interact with your database. It is also important to consider the package’s programming interface, design, support for your database’s features, and flexibility. Different Node.js projects may require different tools.
 
-To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide/), a free helpful knowledge base for learning about databases, data modeling, and much more.
+To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide), a free helpful knowledge base for learning about databases, data modeling, and much more.

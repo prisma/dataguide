@@ -65,7 +65,7 @@
   ],
   "scripts": {
     "clean": "gatsby clean",
-    "build": "GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES=true gatsby build --prefix-paths --log-pages",
+    "build": "./scripts/build",
     "dev": "gatsby develop",
     "serve": "npm run build && gatsby serve --prefix-paths -o",
     "prettify": "prettier --write \"**/*.{js,mdx,json,md,ts,tsx,yml,toml,graphql,css}\"",
