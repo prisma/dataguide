@@ -2,7 +2,7 @@
 name: Report a content problem
 about: Create a bug report for the Data Guide content
 title: ''
-labels: bug, needs triage
+labels: bug, content
 assignees: ''
 ---
 

@@ -2,7 +2,7 @@
 name: Report a website bug
 about: Create a bug report for the Data Guide website
 title: ''
-labels: bug, needs triage
+labels: bug
 assignees: ''
 ---
 
