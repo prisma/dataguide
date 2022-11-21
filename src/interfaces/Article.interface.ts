@@ -27,7 +27,7 @@ export interface ArticleData {
   }
   site: {
     siteMetadata: {
-      dataguideLocation: string
+      docsLocation: string
     }
   }
 }

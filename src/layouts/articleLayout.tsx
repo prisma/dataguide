@@ -27,7 +27,7 @@ const ArticleLayout = ({ data, pageContext: { seoTitle, seoDescription }, ...pro
       tableOfContents,
     },
     site: {
-      siteMetadata: { dataguideLocation },
+      siteMetadata: { docsLocation },
     },
   } = data
 
@@ -54,7 +54,7 @@ const ArticleLayout = ({ data, pageContext: { seoTitle, seoDescription }, ...pro
       <MDXRenderer>{body}</MDXRenderer>
       {authors && <section><AuthorDetails authors={authors}/></section>}
       {!slug.includes('index') && <NextPrevious slug={modSlug}/>}
-      <PageBottom editDocsPath={`${dataguideLocation}/${parent.relativePath}`} pageUrl={slug} />
+      <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
     </Layout>
   )
 }
@@ -65,7 +65,7 @@ export const query = graphql`
   query($id: String!) {
     site {
       siteMetadata {
-        dataguideLocation
+        docsLocation
       }
     }
     mdx(fields: { id: { eq: $id } }) {
