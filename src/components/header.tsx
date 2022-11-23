@@ -7,6 +7,7 @@ import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 import { withPrefix } from 'gatsby'
+import { useLocation } from '@reach/router'
 
 type HeaderViewProps = {
   headerProps: HeaderProps
@@ -161,7 +162,7 @@ const Header = ({ headerProps }: HeaderViewProps) => {
 
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
-  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
+  const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
   console.log(headerProps.logoLink)
   return (
     <HeaderWrapper>
