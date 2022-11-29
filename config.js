@@ -1,4 +1,4 @@
-export default config = {
+const config = {
   gatsby: {
     pathPrefix: '/dataguide',
     siteUrl: 'https://www.prisma.io', 
@@ -49,3 +49,4 @@ export default config = {
     },
   },
 }
+module.exports = config

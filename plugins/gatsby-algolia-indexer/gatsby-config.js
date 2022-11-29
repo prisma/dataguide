@@ -8,6 +8,11 @@ const settings = {
   hitsPerPage: 20,
   attributeForDistinct: 'slug',
   distinct: 2,
+  customRanking: [
+    'asc(content)',
+    'asc(title)',
+    'asc(heading)'
+  ],
   separatorsToIndex: '!#()[]{}*+-_一,:;<>?@/^|%&~£¥$§€†‡',
 }
 

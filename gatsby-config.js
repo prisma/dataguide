@@ -21,6 +21,8 @@ function getNodes(results) {
 
   throw new Error("[gatsby-plugin-sitemap]: Plugin is unsure how to handle the results of your query, you'll need to write custom page filter and serializer in your gatsby config");
 }
+
+
 const gatsbyRemarkPlugins = [
   'gatsby-remark-sectionize',
   {
@@ -52,6 +54,116 @@ const gatsbyRemarkPlugins = [
   },
 ]
 
+const algoliaPlugin = {
+  resolve: 'gatsby-algolia-indexer',
+  options: {
+    appId: process.env.GATSBY_ALGOLIA_APP_ID,
+    adminKey: process.env.GATSBY_ALGOLIA_ADMIN_API_KEY,
+    searchKey: process.env.GATSBY_ALGOLIA_SEARCH_KEY,
+    indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
+    types: [`Mdx`],
+  },
+  __key: 'search',
+}
+
+let plugins = [
+  algoliaPlugin,
+  'gatsby-plugin-react-helmet',
+  'gatsby-transformer-sharp',
+  'gatsby-plugin-sharp',
+  'gatsby-plugin-typescript',
+  'gatsby-image',
+  'gatsby-plugin-styled-components',
+  'gatsby-plugin-smoothscroll',
+  'gatsby-plugin-catch-links',
+  {
+    resolve: `gatsby-plugin-sitemap`,
+    options: {
+      sitemapSize: 5000,
+      excludes: [
+        // Remove these from sitemap for SEO purposes
+        `/dummy`,
+        `/intro/example`,
+      ],
+      query: "\n    {\n      site {\n        siteMetadata {\n          siteUrl\n        }\n      }\n\n      allSitePage {\n        edges {\n          node {\n            path\n          }\n        }\n      }\n  }",
+      serialize: function serialize(_ref) {
+        var site = _ref.site,
+            allSitePage = _ref.allSitePage;
+    
+        var _getNodes2 = getNodes(allSitePage),
+            allPages = _getNodes2.allPages;
+    
+        return allPages === null || allPages === void 0 ? void 0 : allPages.map(function (page) {
+          var _ref2, _site$siteMetadata;
+    
+          return {
+            url: ("" + ((_ref2 = (_site$siteMetadata = site.siteMetadata) === null || _site$siteMetadata === void 0 ? void 0 : _site$siteMetadata.siteUrl) !== null && _ref2 !== void 0 ? _ref2 : "") + page.path).replace(/\/$/, ''),
+            changefreq: "daily",
+            priority: 0.7
+          };
+        });
+      },
+    },
+  },
+  {
+    resolve: 'gatsby-plugin-robots-txt',
+    options: {
+      policy: [
+        {
+          userAgent: '*',
+          allow: '/',
+        },
+      ],
+    },
+  },
+  // 'gatsby-plugin-offline', // it causes infinite loop issue with workbox
+  {
+    resolve: `gatsby-plugin-mdx`,
+    options: {
+      decks: [],
+      defaultLayouts: {
+        default: require.resolve('./src/layouts/articleLayout.tsx'),
+      },
+      extensions: ['.mdx', '.md'],
+      gatsbyRemarkPlugins,
+    },
+  },
+  {
+    resolve: 'gatsby-source-filesystem',
+    options: {
+      name: 'docs',
+      path: `${__dirname}/content`,
+      ignore: ['**/.tsx*'],
+    },
+  },
+  {
+    resolve: 'gatsby-source-filesystem',
+    options: {
+      name: 'images',
+      path: `${__dirname}/src/images`,
+    },
+  },
+  'gatsby-plugin-remove-trailing-slashes',
+  'gatsby-plugin-page-list',
+  {
+    resolve: 'gatsby-plugin-google-tagmanager',
+    options: {
+      id: 'GTM-KCGZPWB',
+
+      // Include GTM in development.
+      //
+      // Defaults to false meaning GTM will only be loaded in production.
+      includeInDevelopment: false,
+
+      // datalayer to be set before GTM is loaded
+      // should be an object or a function that is executed in the browser
+      //
+      // Defaults to null
+      defaultDataLayer: { website: 'dataguide' },
+    },
+  },
+]
+
 module.exports = {
   pathPrefix: process.env.ADD_PREFIX === 'true' ? config.gatsby.pathPrefix : '/',
   siteMetadata: {
@@ -66,100 +178,5 @@ module.exports = {
     footer: config.footer,
     docsLocation: config.siteMetadata.docsLocation,
   },
-  plugins: [
-    'gatsby-plugin-react-helmet',
-    'gatsby-transformer-sharp',
-    'gatsby-plugin-sharp',
-    'gatsby-plugin-typescript',
-    'gatsby-image',
-    'gatsby-plugin-styled-components',
-    'gatsby-plugin-smoothscroll',
-    'gatsby-plugin-catch-links',
-    {
-      resolve: `gatsby-plugin-sitemap`,
-      options: {
-        sitemapSize: 5000,
-        excludes: [
-          // Remove these from sitemap for SEO purposes
-          `/dummy`,
-          `/intro/example`,
-        ],
-        query: "\n    {\n      site {\n        siteMetadata {\n          siteUrl\n        }\n      }\n\n      allSitePage {\n        edges {\n          node {\n            path\n          }\n        }\n      }\n  }",
-        serialize: function serialize(_ref) {
-          var site = _ref.site,
-              allSitePage = _ref.allSitePage;
-      
-          var _getNodes2 = getNodes(allSitePage),
-              allPages = _getNodes2.allPages;
-      
-          return allPages === null || allPages === void 0 ? void 0 : allPages.map(function (page) {
-            var _ref2, _site$siteMetadata;
-      
-            return {
-              url: ("" + ((_ref2 = (_site$siteMetadata = site.siteMetadata) === null || _site$siteMetadata === void 0 ? void 0 : _site$siteMetadata.siteUrl) !== null && _ref2 !== void 0 ? _ref2 : "") + page.path).replace(/\/$/, ''),
-              changefreq: "daily",
-              priority: 0.7
-            };
-          });
-        },
-      },
-    },
-    {
-      resolve: 'gatsby-plugin-robots-txt',
-      options: {
-        policy: [
-          {
-            userAgent: '*',
-            allow: '/',
-          },
-        ],
-      },
-    },
-    // 'gatsby-plugin-offline', // it causes infinite loop issue with workbox
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        decks: [],
-        defaultLayouts: {
-          default: require.resolve('./src/layouts/articleLayout.tsx'),
-        },
-        extensions: ['.mdx', '.md'],
-        gatsbyRemarkPlugins,
-      },
-    },
-    {
-      resolve: 'gatsby-source-filesystem',
-      options: {
-        name: 'docs',
-        path: `${__dirname}/content`,
-        ignore: ['**/.tsx*'],
-      },
-    },
-    {
-      resolve: 'gatsby-source-filesystem',
-      options: {
-        name: 'images',
-        path: `${__dirname}/src/images`,
-      },
-    },
-    'gatsby-plugin-remove-trailing-slashes',
-    'gatsby-plugin-page-list',
-    {
-      resolve: 'gatsby-plugin-google-tagmanager',
-      options: {
-        id: 'GTM-KCGZPWB',
-
-        // Include GTM in development.
-        //
-        // Defaults to false meaning GTM will only be loaded in production.
-        includeInDevelopment: false,
-
-        // datalayer to be set before GTM is loaded
-        // should be an object or a function that is executed in the browser
-        //
-        // Defaults to null
-        defaultDataLayer: { website: 'dataguide' },
-      },
-    },
-  ],
+  plugins,
 }
