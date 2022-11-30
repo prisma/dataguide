@@ -95,7 +95,6 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
   return (
     // <ThemeProvider theme={theme}>
     <MDXProvider components={customMdx}>
-      <Banner />
       {!isHomePage && <Header headerProps={header} />}
       {isHomePage && <HomePageHeader />}
       <Wrapper>
