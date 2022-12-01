@@ -2,7 +2,7 @@
 name: Request an article
 about: Suggest something that you'd like the Data Guide to cover
 title: ''
-labels: enhancement, content
+labels: content/new
 assignees: ''
 ---
 
