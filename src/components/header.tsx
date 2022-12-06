@@ -7,6 +7,7 @@ import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 import { withPrefix } from 'gatsby'
+import { useLocation } from '@reach/router'
 
 type HeaderViewProps = {
   headerProps: HeaderProps
@@ -51,6 +52,8 @@ const SearchComponent = styled(Search)`
   position: absolute;
   top: 12px;
   left: 12px;
+  max-width: 175px;
+  background: pink;
 `
 
 const LogoContainer = styled.div`
@@ -68,6 +71,7 @@ const LogoContainer = styled.div`
 `
 
 const DocsMobileButton = styled.div`
+  cursor: pointer;
   background: var(--main-theme-color);
   box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
   border-radius: 5px;
@@ -121,6 +125,7 @@ const PrismaButton = styled.a`
   color: var(--secondary-font-color);
   background: var(--border-color);
   border-radius: 4px;
+  white-space: nowrap;
   display: inline-block;
   padding: 6px 10px;
   margin-left: 10px;
@@ -134,7 +139,9 @@ const PrismaButton = styled.a`
 const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
   display: flex;
   justify-content: space-between;
-  position: relative;
+  @media only screen and (min-width: 1024px) {
+    display:none;
+  }
   ${({ isSticky }: any) =>
     isSticky &&
     css`
@@ -149,12 +156,13 @@ const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
 `
 
 const Header = ({ headerProps }: HeaderViewProps) => {
-  const [showDocsBtn, setShowDocsBtn] = React.useState(true)
+  const [showDataguideBtn, setShowDataguideBtn] = React.useState(true)
   const [showMobileNav, setShowMobileNav] = React.useState(false)
+  const location = useLocation()
 
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
-  const changeHitsStatus = (status: boolean) => setShowDocsBtn(!status)
+  const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
   console.log(headerProps.logoLink)
   return (
     <HeaderWrapper>
@@ -178,12 +186,10 @@ const Header = ({ headerProps }: HeaderViewProps) => {
           </div>
         </HeaderNav>
         <SearchContainer>
-          {/* <SearchComponent hitsStatus={changeHitsStatus} /> */}
-          {showDocsBtn && (
-            <DocsMobileButton onClick={toggleMobileNav}>
-              {showMobileNav ? <Clear /> : 'Menu'}
-            </DocsMobileButton>
-          )}
+          {!showMobileNav && <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile/>}
+          <DocsMobileButton onClick={toggleMobileNav}>
+            {showMobileNav ? <Clear /> : 'Menu'}
+          </DocsMobileButton>
         </SearchContainer>
         {showMobileNav && (
         <MobileOnlyNav>
@@ -191,15 +197,10 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         </MobileOnlyNav>
       )}
       <PrismaLink>
-        Modern Database Access for TypeScript & Node.js
+        <SearchComponent hitsStatus={changeHitsStatus} location={location} header />
         <PrismaButton href="https://www.prisma.io" target="_blank">Explore Prisma</PrismaButton>
       </PrismaLink>
       </div>
-
-      
-
-      
-
     </HeaderWrapper>
   )
 }

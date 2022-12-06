@@ -1,16 +1,122 @@
-import React from 'react'
+import * as React from 'react'
 import { connectSearchBox } from 'react-instantsearch-dom'
 import styled from 'styled-components'
 import SearchPic from '../../icons/Search'
 import Clear from '../../icons/Clear'
+import useWindowDimensions from '../hooks/useWindowDimensions'
 
 const SearchBoxDiv = styled.div`
-  width: 215px;
+  display: flex;
+  height: 40px;
+  background: #F7FAFC;
+  border: 1px solid #CBD5E0;
+  box-shadow: -4px -4px 32px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 10px 26px;
+  max-width: 300px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    margin: 0 auto;
+  }
+
   form {
+    width: 100%;
     position: relative;
+  }
+
+  &.header {
+    height: 16px;
+    padding: 20px 12px;
+    border-radius: 4px;
+    box-shadow: none;
+    max-width: 248px;
+    border: none;
+    font-size: 16px;
+    background: transparent;
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    .clear {
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+    &.opened {
+      position: relative;
+      top: unset;
+      left: unset;
+      transform: unset;
+      width: auto;
+      .clear {
+        width: 25px;
+        height: 25px;
+      }
+    }
+    &.mobile {
+      @media (max-width: 1024px) {
+        position: unset;
+        top: 0;
+        width: auto;
+        z-index: 1000000;
+        left: unset;
+        transform: unset;
+      }
+    }
+  }
+
+  &.opened {
     z-index: 100001;
-    // display: flex;
-    // align-items: center;
+    background: #fff;
+
+    position: relative;
+    // top: 100px;
+    width: 100%;
+    z-index: 1000000;
+    // left: 50%;
+    // transform: translateX(-50%);
+
+    form {
+      input {
+        color: #4A5568;
+      }
+    }
+
+    .clear {
+      background: #E2E8F0;
+      border-radius: 6px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      z-index: 1000001;
+      right: 0;
+      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      svg path {
+        stroke: #4A5568;
+      }
+    }
+  }
+  @media (max-width: 620px) {
+    width: auto;
+    flex: 1;
+    form {
+      width: 100%;
+    }
+  }
+
+  .clear {
+    display: none;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
 
     button.ais-SearchBox-submit {
       display: none;
@@ -23,20 +129,17 @@ const SearchBoxDiv = styled.div`
 
     input {
       width: 100%;
-      background: var(--white-color);
-      box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
-      border-radius: 5px;
-      padding: 0.6rem 2.5rem;
-      font-family: Open Sans;
+      background: transparent;
+      outline: none;
+      padding: 0rem 37px;
       font-style: normal;
       font-weight: normal;
       font-size: 16px;
       line-height: 100%;
       border-width: 0;
-
       &::placeholder {
-        content: 'Search';
-        color: var(--list-bullet-color);
+        content: 'Search Data Guide...';
+        color: #A0AEC0;
         opacity: 1; /* Firefox */
       }
     }
@@ -49,57 +152,60 @@ const SearchBoxDiv = styled.div`
     }
   }
 
-  @media (min-width: 0px) and (max-width: 1024px) {
-    flex: 1;
+  .slash {
+    border: 1px solid #CBD5E0;
+    border-radius: 4px;
+    color: #CBD5E0;
+    min-width: 18px;
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (min-width: 0px) and (max-width: 768px) {
+    .slash {
+      display: none;
+    }
   }
 `
 
 const SearchIcon = styled(SearchPic)`
-  position: absolute;
-  left: 12px;
-  width: 1em;
+  min-width: 1em;
   pointer-events: none;
   z-index: 100001;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  stroke: #4A5568;
 `
 
 const ClearIcon = styled(Clear)`
-  position: absolute;
-  right: 12px;
   cursor: pointer;
 `
 
-const Input = styled.input`
-  width: 100%;
-  // background: var(--header-btn-color);
-  // box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
-  border-radius: 5px;
-  padding: 0.6rem 2.5rem;
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 100%;
-  border-width: 0;
-  // color: var(--white-color);
-
-  &::placeholder {
-    color: var(--placeholder-color);
-    opacity: 1; /* Firefox */
-  }
-  &:focus,
-  &:active,
-  &:hover {
-    outline: none;
-  }
-`
-
 const DEBOUNCE_DELAY = 500
+const ESCAPE_KEY = 27
 const focusShortcuts = ['s', 191]
 
-const SearchBox = ({ refine, onFocus, currentRefinement, ...rest }: any) => {
+const SearchBox = ({
+  refine,
+  onFocus = () => {},
+  currentRefinement,
+  isOpened,
+  closeSearch,
+  upClicked,
+  downClicked,
+  selectedInd,
+  header,
+  mobile,
+  clear,
+  ...rest
+}: any) => {
   const [value, setValue] = React.useState(currentRefinement)
-  const timeoutId = React.useRef(null)
-  const inputEl = React.useRef(null)
+
+  const timeoutId = React.useRef<any>(null)
+  const inputEl = React.useRef<any>(null)
+  const { width } = useWindowDimensions()
+  const [placeholderText, setPlaceholderText] = React.useState('Search Data Guide...')
 
   const onChange = (e: any) => {
     const { value: newValue } = e.target
@@ -115,17 +221,28 @@ const SearchBox = ({ refine, onFocus, currentRefinement, ...rest }: any) => {
     window.clearTimeout(timeoutId.current)
     timeoutId.current = window.setTimeout(() => refine(newValue), DEBOUNCE_DELAY)
     setValue(newValue)
+    inputEl.current.blur()
+    inputEl.current.focus()
   }
 
   const clearInput = () => {
     window.clearTimeout(timeoutId.current)
     setValue('')
     refine('')
+    closeSearch()
   }
 
   // Focus shortcuts on keydown
   const onKeyDown = (e: any) => {
-    const shortcuts = focusShortcuts.map(key =>
+    if (e && e.keyCode == ESCAPE_KEY) {
+      clearInput()
+    } else if (e && e.keyCode === 40) {
+      downClicked()
+    } else if (e && e.keyCode === 38) {
+      upClicked()
+    }
+
+    const shortcuts = focusShortcuts.map((key) =>
       typeof key === 'string' ? key.toUpperCase().charCodeAt(0) : key
     )
 
@@ -161,24 +278,41 @@ const SearchBox = ({ refine, onFocus, currentRefinement, ...rest }: any) => {
   }
 
   React.useEffect(() => {
+    if (clear) {
+      clearInput()
+    }
+  }, [clear])
+  
+  React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
+    if (width > 640) {
+      setPlaceholderText('Search Data Guide...')
+    }
+    if (value) {
+      onFocus()
+    }
   }, [])
 
   return (
-    <SearchBoxDiv>
+    <SearchBoxDiv className={`${isOpened ? 'opened' : ''} ${header ? 'header' : ''} ${mobile ? 'mobile' : ''}`} t>
       <form onSubmit={onSubmit}>
+        <SearchIcon />
         <input
           ref={inputEl}
           type="text"
-          placeholder="Search"
-          aria-label="Search"
+          placeholder={placeholderText}
+          aria-label="Search Data Guide..."
           onChange={onChange}
           onFocus={onFocus}
           value={value}
           {...rest}
         />
-        <SearchIcon />
-        {value !== '' && <ClearIcon onClick={clearInput} />}
+
+        {value !== '' && isOpened && (
+          <span className="clear">
+            <ClearIcon onClick={clearInput} />
+          </span>
+        )}
       </form>
     </SearchBoxDiv>
   )
@@ -186,4 +320,3 @@ const SearchBox = ({ refine, onFocus, currentRefinement, ...rest }: any) => {
 
 const CustomSearchBox = connectSearchBox(SearchBox)
 export default CustomSearchBox
-

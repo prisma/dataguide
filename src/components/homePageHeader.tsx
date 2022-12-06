@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import HeaderDiagram from '../icons/HeaderDiagram'
 import PrismaLogo from '../icons/PrismaLogo'
 import SocialShareSection from './socialShareSection'
+import Search from '../components/search'
+import { useLocation } from '@reach/router'
 
 const HeaderWrapper = styled.div`
   background: linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
@@ -52,10 +54,6 @@ const HeaderWrapper = styled.div`
       margin: 16px 0;
       width: 370px;
     }
-
-    svg {
-      margin-top:-30px;
-    }
   }
   
   @media (min-width: 0) and (max-width: 1024px) {
@@ -99,11 +97,44 @@ const Highlight = styled.span`
   background: #4c51bf;
 `
 
+const SearchComponent = styled(Search)`
+  position: absolute;
+  top: 12px;
+  width: auto;
+  left: 12px;
+`
+
+const SearchWrapper = styled.div`
+> * {
+  width: 100%;
+  &.show {
+    width: calc(100% - 32px);
+  }
+}
+`
+
+const HeaderNavWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (min-width: 0) and (max-width: 1024px) {
+    padding: 0 16px;
+  }
+`
+
 const HomePageHeader = () => {
+  const [showDataguideBtn, setShowDataguideBtn] = React.useState(true)
+  const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
+  const location = useLocation()
   return (
     <HeaderWrapper>
       <div className="sub-wrapper">
-        <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
+        <HeaderNavWrapper>
+          <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
+          <SearchWrapper>
+            <SearchComponent hitsStatus={changeHitsStatus} location={location} />
+          </SearchWrapper>
+        </HeaderNavWrapper>
         <div className="container">
           <div className="content">
             <h1>Prisma's Data Guide</h1>
@@ -112,7 +143,7 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
-            <SocialShareSection homePage={true}/>
+            {/* <SocialShareSection homePage={true}/> */}
             {/* <p>
             The articles here will walk you through database fundamentals, help you choose the right
             technologies, and teach you how to unlock the potential of your databases. New material
