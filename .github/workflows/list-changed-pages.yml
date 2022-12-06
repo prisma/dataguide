@@ -28,11 +28,12 @@ jobs:
               cleaned_file=$(echo "$changed_file" | sed -E 's:content/:/:g' | sed -E 's:/index.mdx::g' | sed -e 's/.mdx//g' | sed -E 's:/[0-9]+-:/:g' )
               # TODO special case for images and similar non .mdx files
 
+              normalized_ref=$(echo "${{github.event.pull_request.head.ref}}" | sed -E 's:_::g')
               # Output inside the action
-              echo "- https://dataguide-git-${{github.event.pull_request.head.ref}}-prisma.vercel.app$cleaned_file"
+              echo "- https://dataguide-git-${normalized_ref}-prisma.vercel.app$cleaned_file"
 
               # Also collect into string
-              linksVercel="%0A- [/dataguide$cleaned_file](https://dataguide-git-${{github.event.pull_request.head.ref}}-prisma.vercel.app$cleaned_file) ([currently](https://prisma.io/dataguide$cleaned_file))"
+              linksVercel="%0A- [/dataguide$cleaned_file](https://dataguide-git-${normalized_ref}-prisma.vercel.app$cleaned_file) ([currently](https://prisma.io/dataguide$cleaned_file))"
               body="$body$linksVercel"
             fi
           done
