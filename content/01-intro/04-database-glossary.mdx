@@ -503,6 +503,10 @@ In the context of search performance, precision is a measure of how relevant the
 A primary key is a type of database key that is designated as the main way to uniquely address a database row.  While other keys may be able to pull individual rows, the primary key is specifically marked for this purpose with the system enforcing uniqueness and not `NULL` consistency checks.  A primary key can be a natural key (a key that is naturally unique across records) or a surrogate key (a key added specifically to serve as a primary key) and can be formed from a single or multiple columns.
 </AnchorItem>
 
+<AnchorItem id="query" title="Query">
+In databases, a query is a formatted command used to make a request to a database management system using a query language.  The database system processes the query to understand what actions to take and what data to return to the client.  Often, queries are used to request data matching specific patterns, insert new data into an existing structure, or modify and save changes to existing records.  In addition to targeting data items, queries can often manipulate items like table structures and the server settings, making them the general administrative interface for the system.  SQL, or Structured Query Language, is the most common database querying language used with relational databases.
+</AnchorItem>
+
 <AnchorItem id="query-builder" title="Query builder">
 A query builder is a database abstraction used in application development to make programming against databases easier.  Similar to an ORM, a query builder provides an interface for working with a database system from within the application.  However, instead of attempting to map application objects to database records directly, query builders focus on providing native functions and methods that translate closely to the database operations.  This allows you to build queries programmatically in a safer and more flexible way than working with SQL (or other database language) strings directly.
 </AnchorItem>
