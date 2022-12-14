@@ -1,0 +1,22 @@
+# From https://github.com/actions/add-to-project
+#
+# Automatically add any issues opened on the Data Guide
+# repo to the project for triaging.
+#
+name: Adds all issues to the project board
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.4.0
+        with:
+          project-url: https://github.com/orgs/prisma/projects/94
+          # PAT: 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
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
