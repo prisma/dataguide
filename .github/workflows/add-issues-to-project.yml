@@ -18,5 +18,4 @@ jobs:
       - uses: actions/add-to-project@v0.4.0
         with:
           project-url: https://github.com/orgs/prisma/projects/94
-          # PAT: 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
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
