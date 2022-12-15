@@ -77,7 +77,7 @@ const handleRawBody = (node) => {
       apiReference: isApiTerm(item.text) ? getApiVal(item.text) : null,
       heading: item.heading ? removeInlineCode(item.heading) : null,
       content: item.text.includes('\n') ? item.text.split(' ').slice(0, 20).join(' ') : item.text,
-      path: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
+      dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
     }
     return record
   })
