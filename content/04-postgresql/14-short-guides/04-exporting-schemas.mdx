@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and it's component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
+In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
 
 In this short guide, we'll discuss how to export PostgreSQL database schemas using the `pg_dump` command.  While this utility can export many types of data from PostgreSQL, we'll focus on extracting the data structures themselves in this guide.
 
@@ -33,7 +33,7 @@ Depending on your PostgreSQL configuration, you may need to also include some of
 * `--host=` / `-h`: The hostname or IP address of where PostgreSQL is located
 * `--port=` / `-p`: The port number where PostgreSQL is listening
 
-The option responsible for telling `pg_dump` to only include the database structures, not the data itself is `--schema-only`:
+The option responsible for telling `pg_dump` to only include the database structures, not the data itself, is `--schema-only`:
 
 * `--schema-only`: `-s`: Export only the object definitions, not the data itself.
 
@@ -80,11 +80,11 @@ You can also reduce the structures exported by naming specific tables to export:
 
 For example, if three of the tables in your `SALES` database are called `EMPLOYEE`, `STORE`, and `INVENTORY`, all defined in the default `public` schema, you can export only those structures by typing:
 
-> **Note:** You can find out more about how PostgreSQL interprets different types of quotation marks in our guide on [how to use single and double quotes in PostgreSQL](https://www.prisma.io/dataguide/postgresql/short-guides/quoting-rules).
-
 ```command
 pg_dump --schema-only --table='public."EMPLOYEE"' --table='public."STORE"' --table='public."INVENTORY"' SALES > some_sales_tables.sql
 ```
+
+> **Note:** You can find out more about how PostgreSQL interprets different types of quotation marks in our guide on [how to use single and double quotes in PostgreSQL](https://www.prisma.io/dataguide/postgresql/short-guides/quoting-rules).
 
 If you want all of the sales data *except* for these three tables, you would instead use:
 

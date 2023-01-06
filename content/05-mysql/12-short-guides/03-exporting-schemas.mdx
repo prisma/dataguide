@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and it's component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
+In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
 
 In this short guide, we'll discuss how to export MySQL database schemas using the `mysqldump` command.  While this utility can export many types of data from MySQL, we'll focus on extracting the data structures themselves in this guide.
 
@@ -39,7 +39,7 @@ If you are connecting to a local MySQL instance running in the default configura
 
 The second category tells `mysqldump` what to export:
 
-* `--no-data` / `-d`: This tells the utility to only export the structure itself, not the records they contain.
+* `--no-data` / `-d`: This tells the utility to only export the structure itself, not the records they contain
 
 Additionally, the first non-option argument (represented here by the word "DATABASE") indicates the exact database to export.
 
