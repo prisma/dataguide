@@ -224,7 +224,7 @@ The `date` type can store values ranging from `1000-01-01` to `9999-12-31`.
 
 The `time` data type can store a specific time of day without an associated timezone or date.
 
-When processing input for `time` columns, MySQL can interpret multiple formats to determine the correct time to store.  When input has colons, it is generally interpreted as `hh:mm:ss`.  Any shortened value (using only one column) will be interpreted as using `hh:mm`.  When the input does *not* have colons, the time is processed to fill up the smallest value first.  For example, `1045` is taken as 10 minutes and 45 seconds.
+When processing input for `time` columns, MySQL can interpret multiple formats to determine the correct time to store.  When the input has colons, it is generally interpreted as `hh:mm:ss`.  Any shortened value (using only one colon) will be interpreted as using `hh:mm`.  When the input does *not* have colons, the time is processed to fill up the smallest value first.  For example, `1045` is taken as 10 minutes and 45 seconds.
 
 MySQL also supports fractional seconds if a decimal point is given.  It stores up to 6 digits of precision after the decimal.  Values in `time` columns can range from `-838:59:59.000000` to `838:59:59.000000`.
 
