@@ -70,14 +70,16 @@ const handleRawBody = (node) => {
 
   const records = data.map((item, index) => {
     const record = {
-      id: index,
-      objectID: rest.objectID,
+      id: rest.id + index,
       title: rest.title,
       slug: rest.modSlug,
       apiReference: isApiTerm(item.text) ? getApiVal(item.text) : null,
       heading: item.heading ? removeInlineCode(item.heading) : null,
       content: item.text.includes('\n') ? item.text.split(' ').slice(0, 20).join(' ') : item.text,
       dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
+      internal: {
+        contentDigest: rest.internal.contentDigest,
+      }
     }
     return record
   })
@@ -93,10 +95,14 @@ module.exports = (options) => {
         allMdx{
           edges {
             node {
+              id
               rawBody
               fields {
                 slug
                 modSlug
+              }
+              internal {
+                contentDigest
               }
               frontmatter {
                 title
