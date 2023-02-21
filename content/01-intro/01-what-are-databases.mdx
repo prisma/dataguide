@@ -21,7 +21,7 @@ Finally, we'll discuss how applications rely on databases for storing and retrie
 
 ## What are databases?
 
-[_Databases_](/intro/database-glossary#database) are logical structures used to organize and store data for future processing, retrieval, or evaluation. In the context of computers, these structures are nearly always managed by an application called a [_database management system_](/intro/database-glossary#database-management-system) or _DBMS_. The DBMS manages dedicated files on the computer's disk and presents a logical interface for users and applications.
+[_Databases_](/intro/database-glossary#database-false-in) are logical structures used to organize and store data for future processing, retrieval, or evaluation. In the context of computers, these structures are nearly always managed by an application called a [_database management system_](/intro/database-glossary#database-management-system) or _DBMS_. The DBMS manages dedicated files on the computer's disk and presents a logical interface for users and applications.
 
 Database management systems are typically designed to organize data according to a specific pattern. These patterns, called [_database types_ or database models](/intro/comparing-database-types), are the logical and structural foundations that determine how individual pieces of data are stored and managed. There are many different database types, each with their own advantages and limitations. The [_relational model_](/intro/comparing-database-types#relational-databases-working-with-tables-as-a-standard-solution-to-organize-well-structured-data), which organizes data into cross-referenced tables, rows, and columns, is often considered to be the default paradigm.
 
@@ -33,7 +33,7 @@ Databases store data either on disk or in-memory.
 
 On disk storage is generally said to be [_persistent_](/intro/database-glossary#persistent-storage), meaning that the data is reliably saved for later, even if the database application or the computer itself restarts.
 
-In contrast, [in-memory storage](/intro/database-glossary#in-memory-database) is said to be [_ephemeral_](/intro/database-glossary#ephemeral-storage) or [_volatile_](/intro/database-glossary#ephemeral-storage). Ephemeral storage does not survive application or system shutdown. The advantage of in-memory databases is that they are typically very fast.
+In contrast, [in-memory storage](/intro/database-glssossary#in-memory-database) is said to be [_ephemeral_](/intro/database-glossary#ephemeral-storage) or [_volatile_](/intro/database-glossary#ephemeral-storage). Ephemeral storage does not survive application or system shutdown. The advantage of in-memory databases is that they are typically very fast.
 
 In practice, many environments will use a mixture of both of these types of systems to gain the advantages of each type. For systems that accept new writes to the ephemeral layer, this can be accomplished by periodically saving ephemeral data to disk. Other systems use read-only in-memory copies of persistent data to speed up read access. These systems can reload the data from the backing storage at any time to refresh their data.
 
