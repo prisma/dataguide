@@ -118,8 +118,7 @@ module.exports = async function plugin(
 
         const url = hasHash ? link.tranformedUrl.slice(0, hashIndex) : link.tranformedUrl
         const urlToCheck = url.slice(-1) === pathSep ? url.slice(0, -1) : url
-        const keyToLook = `${key}${key.endsWith('/') ? '' : '/'}`
-        const headings = headingsMap[keyToLook]
+        const headings = headingsMap[key]
 
         if (headings) {
           if (hasHash) {
