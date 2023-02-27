@@ -84,8 +84,8 @@ module.exports = async function plugin(
         visited = await mdxCache.get(key)
       }
       if (visited && setAt >= visited.setAt) {
-        linksMap[visited.path] = visited.links
-        headingsMap[visited.path] = visited.headings
+        linksMap[visited.path.replace(/\/$/, "")] = visited.links
+        headingsMap[visited.path.replace(/\/$/, "")] = visited.headings
         continue
       }
 
@@ -99,7 +99,6 @@ module.exports = async function plugin(
   const prefixedExceptions = exceptions.map(withPathPrefix)
   const pathKeys = Object.keys(linksMap)
   const pathKeysWithoutIndex = pathKeys.map(p => p.replace(`index${pathSep}`, '').replace(/.$/,''))
-
   for (const pathL in linksMap) {
     if (prefixedIgnore.includes(pathL)) {
       // don't count broken links for ignored pages
@@ -109,7 +108,6 @@ module.exports = async function plugin(
     const linksForPath = linksMap[pathL]
     if (linksForPath.length) {
       const brokenLinks = linksForPath.filter(link => {
-
         // return true for broken links, false = pass
         const { key, hasHash, hashIndex } = getHeadingsMapKey(link.tranformedUrl, pathL)
         if (prefixedExceptions.includes(key)) {
@@ -119,7 +117,6 @@ module.exports = async function plugin(
         const url = hasHash ? link.tranformedUrl.slice(0, hashIndex) : link.tranformedUrl
         const urlToCheck = url.slice(-1) === pathSep ? url.slice(0, -1) : url
         const headings = headingsMap[key]
-
         if (headings) {
           if (hasHash) {
             const id = link.tranformedUrl.slice(hashIndex + 1)

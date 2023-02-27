@@ -51,6 +51,9 @@ const gatsbyRemarkPlugins = [
   },
   {
     resolve: require.resolve('./plugins/gatsby-remark-check-links-numberless'),
+    options: {
+      exceptions: ["/intro/database-glossary", "/serverless/serverless-glossary"]
+    }
   },
 ]
 
