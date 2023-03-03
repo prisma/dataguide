@@ -96,22 +96,6 @@ const Newsletter = ({ newsletter }: any) => {
     <NewsLetterWrapper>
       <h2>Get notified of new articles</h2>
       <p>{newsletter.text}</p>
-
-      <form className="email" onSubmit={submitEmail}>
-        <label htmlFor="email" aria-label="Insert your email">
-          <input
-            id="email"
-            type="text"
-            placeholder={submitted ? 'Thank you!' : 'your@email.com'}
-            value={email}
-            onChange={validate}
-            disabled={submitted}
-          />
-        </label>
-        <button disabled={submitted || !validEmail} type="submit">
-          Subscribe <ArrowEmail />
-        </button>
-      </form>
     </NewsLetterWrapper>
   )
 }

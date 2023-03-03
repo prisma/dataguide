@@ -17,6 +17,22 @@ const FooterWrapper = styled.div`
     margin-left: 230px;
   }
 
+  .container-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 2rem;
+    gap: 2rem;
+    max-width: 944px;
+    @media (max-width: 500px) {
+      flex-direction: column-reverse;
+      margin-top: 124px;
+    }
+
+    > img {
+    }
+  }
+
   h3 {
     font-size: 1rem;
     line-height: 3rem;
@@ -37,11 +53,16 @@ const FooterWrapper = styled.div`
 
     .love a {
       color: inherit !important;
+      font-weight: bold;
+      margin-top: 35px;
     }
 
     &.info {
       color: var(--secondary-font-color);
       align-items: center;
+      flex: 1;
+      display: block;
+      width: auto;
 
       h4 {
         margin: 16px 0;
@@ -56,7 +77,22 @@ const FooterWrapper = styled.div`
       p {
         margin: 0;
         color: var(--code-inner-color);
+        font-weight: bold;
       }
+      @media (max-width: 500px) {
+        text-align: center;
+        margin-bottom: 80px;
+        .content {
+          text-align: center;
+        }
+        p {
+          font-weight: normal;
+        }
+        .love a {
+          font-weight: normal;
+        }
+      }
+
     }
   }
 
@@ -71,10 +107,6 @@ const FooterWrapper = styled.div`
       align-items: center;
 
       .content {
-        width: auto;
-        margin: 0 0 45px;
-        text-align: center;
-
         > * {
           width: auto;
         }
@@ -91,13 +123,7 @@ const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
   const { newsletter } = footerProps
   return (
     <FooterWrapper>
-      <div className={`${!isHomePage && 'push-right'}`}>
-        <div className="container">
-          <div className="content">
-            <NewsLetter newsletter={newsletter} />
-          </div>
-          <FooterLogo />
-        </div>
+      <div className={`container-wrapper ${!isHomePage && 'push-right'}`}>
         <div className="container info">
           <div className="content">
             <h4>Prisma's Data Guide</h4>
@@ -105,6 +131,7 @@ const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
           </div>
           <div className="love">Made with ❤️ by <a href="https://www.prisma.io" target="_blank">Prisma</a></div>
         </div>
+        <img src="/footer-icon.svg" />
       </div>
     </FooterWrapper>
   )
