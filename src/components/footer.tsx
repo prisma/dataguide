@@ -45,11 +45,8 @@ const FooterWrapper = styled.div`
     width: 800px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 80px;
     padding: 45px 0;
-
-    .content {
-      width: 65%;
-    }
 
     .love a {
       color: inherit !important;
@@ -89,6 +86,7 @@ const FooterWrapper = styled.div`
           font-weight: normal;
         }
         .love a {
+          margin-top: 35px;
           font-weight: normal;
         }
       }
