@@ -48,7 +48,7 @@ const FooterWrapper = styled.div`
     margin-bottom: 80px;
     padding: 45px 0;
 
-    .love a {
+    .love {
       color: inherit !important;
       font-weight: bold;
       margin-top: 35px;
@@ -85,7 +85,7 @@ const FooterWrapper = styled.div`
         p {
           font-weight: normal;
         }
-        .love a {
+        .love {
           margin-top: 35px;
           font-weight: normal;
         }
@@ -112,9 +112,6 @@ const FooterWrapper = styled.div`
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1024px) {
-    padding: 0 120px;
-  }
 `
 
 const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
