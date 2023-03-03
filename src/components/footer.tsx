@@ -16,6 +16,9 @@ const FooterWrapper = styled.div`
   .push-right {
     margin-left: 230px;
   }
+  a {
+    color: inherit !important;
+  }
 
   .container-wrapper {
     display: flex;
@@ -27,9 +30,6 @@ const FooterWrapper = styled.div`
     @media (max-width: 500px) {
       flex-direction: column-reverse;
       margin-top: 124px;
-    }
-
-    > img {
     }
   }
 
@@ -50,7 +50,6 @@ const FooterWrapper = styled.div`
 
     .love {
       color: inherit !important;
-      font-weight: bold;
       margin-top: 35px;
     }
 
@@ -74,7 +73,6 @@ const FooterWrapper = styled.div`
       p {
         margin: 0;
         color: var(--code-inner-color);
-        font-weight: bold;
       }
       @media (max-width: 500px) {
         text-align: center;
