@@ -35,146 +35,49 @@ const PageBottomWrapper = styled.div`
   button {
     color: var(--white-color) !important;
   }
-  @media (min-width: 0px) and (max-width: 767px) {
+  @media (min-width: 0px) and (max-width: 500px) {
     padding: 1rem;
-    flex-direction: column;
-    align-items: flex-start;
     .edit-git {
       order: 1;
     }
   }
+  .return-home {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 17px;
+    color: #5D6571;
+    position: relative;
+    &:after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      background: #5D6571;
+      height: 2px;
+      left: -12px;
+      top: 9.5px;
+    }
+    &:before {
+      border-top: 2px solid #5D6571;
+      width: 5px;
+      height: 5px;
+      border-right: 2px solid #5D6571;
+      content: "";
+      position: absolute;
+      left: -13px;
+      transform: rotate(-135deg);
+      top: 7px;
+    }
+  }
 `
 
-// const Feedback = styled.div`
-//   h4 {
-//     text-transform: uppercase;
-//     font-weight: bold;
-//     letter-spacing: 0.01em;
-//     text-transform: uppercase;
-//     color: var(--list-bullet-color) !important;
-//   }
-//   .sentiments {
-//     button {
-//       background: transparent;
-//       border: 0;
-//       &:hover svg {
-//         border-radius: 50%;
-//         background: rgba(204, 217, 223, 0.5);
-//       }
-//     }
-//   }
-//   @media (min-width: 0px) and (max-width: 767px) {
-//     order: 2;
-//   }
-// `
-
-// const Wrapper = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   align-items: flex-start;
-//   cursor: default;
-// `
-
-// const Content = styled.div`
-//   flex: 1;
-// `
-
-// const Title = styled.div`
-//   margin: 0 0 16px 0 !important;
-//   font-weight: 600;
-//   font-size: 16px;
-// `
-// const P = styled.p`
-//   color: var(--list-bullet-color) !important;
-//   margin-top: 0;
-// `
-
-// const Button = styled(ButtonWrapper)`
-//   display: inline-flex !important;
-//   svg {
-//     margin-right: 10px;
-//     path {
-//       stroke: var(--white-color);
-//     }
-//   }
-//   @media (min-width: 0px) and (max-width: 767px) {
-//     font-size: 12px;
-//     text-transform: none;
-//     svg {
-//       width: 14px;
-//     }
-//   }
-// `
-
 const PageBottom = ({ editDocsPath }: any) => {
-  // const [submitted, setSubmitted] = React.useState(false)
-  // const [sentiment, setSentiment] = React.useState(sentiments['happy'])
-
-  // let location = useLocation()
-  // const pageUrl = location ? location.pathname : '/'
-  // const currentDocsPageURL = encodeURIComponent(location ? location.href : '/')
-
-  // const sendFeedback = async (selectedSentiment: string) => {
-  //   const body = JSON.stringify({ pageUrl, sentiment: sentiments[selectedSentiment] })
-  //   const requestOptions: any = {
-  //     method: 'POST',
-  //     body,
-  //   }
-  //   await fetch(config.feedback.function_name, requestOptions)
-  // }
-
-  // const handleSentiment = (e: any) => {
-  //   const selectedSentiment = e.currentTarget.id
-  //   setSentiment(sentiments[selectedSentiment])
-  //   setSubmitted(true)
-  //   sendFeedback(selectedSentiment)
-  // }
 
   return (
     <PageBottomWrapper>
-      <div/> 
-      {/* {!submitted ? (
-        <Feedback>
-          <h4>Was this helpful?</h4>
-          <div className="sentiments">
-            <button id="happy" onClick={handleSentiment}>
-              <Up />
-            </button>
-            <button id="unhappy" onClick={handleSentiment}>
-              <Down />
-            </button>
-          </div>
-        </Feedback>
-      ) : (
-        <Wrapper>
-          <Content>
-            <Title>Thank you for your feedback!</Title>
-            {sentiment !== 'Happy' ? (
-              <>
-                <P>
-                  We love to hear back from our community.
-                  <br />
-                  Tell us why on GitHub!
-                </P>
-                <Button target="_blank" href={gitIssueUrl} type="primary" color="dark">
-                  Tell us On GitHub
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  color="dark"
-                  type="primary"
-                  href={`${twitterShareUrl}${currentDocsPageURL}`}
-                >
-                  <Twitter /> Share Dataguide on Twitter
-                </Button>
-              </>
-            )}
-          </Content>
-        </Wrapper>
-      )} */}
+      <Link className="return-home" to="/">
+       Return to prisma
+      </Link>
       {editDocsPath && (
         <Link className="edit-git" to={`${editDocsPath}`}>
           Edit this page on GitHub
