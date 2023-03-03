@@ -41,6 +41,14 @@ const PageBottomWrapper = styled.div`
       order: 1;
     }
   }
+  .edit-git {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 17px;
+    color: #5D6571;
+    text-decoration: underline;
+  }
   .return-home {
     font-style: normal;
     font-weight: 800;
@@ -55,7 +63,7 @@ const PageBottomWrapper = styled.div`
       background: #5D6571;
       height: 2px;
       left: -12px;
-      top: 9.5px;
+      top: 8.5px;
     }
     &:before {
       border-top: 2px solid #5D6571;
@@ -66,7 +74,7 @@ const PageBottomWrapper = styled.div`
       position: absolute;
       left: -13px;
       transform: rotate(-135deg);
-      top: 7px;
+      top: 6px;
     }
   }
 `
