@@ -124,7 +124,7 @@ const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
           </div>
           <div className="love">Made with ❤️ by <a href="https://www.prisma.io" target="_blank">Prisma</a></div>
         </div>
-        <img src="/footer-icon.svg" />
+        <FooterLogo />
       </div>
     </FooterWrapper>
   )
