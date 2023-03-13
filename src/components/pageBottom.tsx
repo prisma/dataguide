@@ -79,13 +79,13 @@ const PageBottomWrapper = styled.div`
   }
 `
 
-const PageBottom = ({ editDocsPath }: any) => {
+const PageBottom = ({ editDocsPath, pageUrl }: any) => {
 
   return (
     <PageBottomWrapper>
-      <Link className="return-home" to="/">
-       Return to prisma
-      </Link>
+      {pageUrl === '/' && (<a href="https://www.prisma.io" className="return-home">
+       Return to Prisma
+      </a>)}
       {editDocsPath && (
         <Link className="edit-git" to={`${editDocsPath}`}>
           Edit this page on GitHub

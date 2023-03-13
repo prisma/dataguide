@@ -69,16 +69,6 @@ const NextPreviousWrapper = styled.div`
       margin-left: 14px;
     }
   }
-
-  @media (max-width: 768px) {
-    padding: 24px;
-    margin-top: -140px;
-  }
-
-  @media (max-width: 640px) {
-    //padding: 12px;
-    margin-top: -225px;
-  }
 `
 
 const NextPrevious = ({ slug }: any) => {
