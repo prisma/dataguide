@@ -7,7 +7,7 @@ import Footer from './footer'
 import { MDXProvider } from '@mdx-js/react'
 import customMdx from '../components/customMdx'
 import HomePageHeader from '../components/homePageHeader'
-import './layout.css'
+import '../styles/layout.css'
 import Sidebar from './sidebar'
 import Banner from './banner'
 

@@ -1,31 +1,36 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Montserrat:400,700|Rubik:400,500|Roboto+Mono:400,500,700&display=swap');
+
 html {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;
   overflow-y: scroll;
-  /* Issue 894 */
-  font-size: 16px;
 }
 
 body {
   /* Generic */
+  --main-theme-color: #667eea;
   --main-font-color: #1a202c;
+  --secondary-font-color: #2f3747;
   --main-bgd-color: #f7fafc;
   --selection-bgd-color: #0c344b;
   --white-color: #ffffff;
   --link-color: #3182ce;
   --border-color: #e2e8f0;
-  --code-bgd-color: #f6f8fa;
-  --code-inline-bgd-color: #edf2f7;
+  --code-bgd-color: #edf2f7;
   --list-bullet-color: #a0aec0;
   --search-highlight-bg-color: #ebf8ff;
   --tag-media-color: #2d3748;
-  --gradient1-color: #2f3747;
-  --gradient2-color: #0d0f14;
-  --header-btn-color: #4a5568;
+  --header-gradient-color: #2a6379;
+  --header-bg-color: #255468;
+  --header-btn-color: #153d4e;
+  --placeholder-color: #7f9199;
+  --section-main-color: #2f3747;
+  --muted-font-color: #a2aebe;
+  --sidebar-font-color: #4a5568;
   /* Code blocks */
-  --code-inner-color: #718096;
+  --code-inner-color: #5d6571;
   --code-token1-color: #d5408c;
   --code-token2-color: #805ad5;
   --code-token3-color: #319795;
@@ -40,21 +45,23 @@ body {
   --code-deleted-bg-color: #f5e4e7;
   --code-highlight-color: #a0aec0;
   --code-highlight-bg-color: #e2e8f0;
-  --code-edit-bg-color: #c3dafe;
   --code-result-bg-color: #e7edf3;
+
   /* Buttons */
   --red-color: #ff4f56;
   --green-color: #15bd76;
   --grey-color: #3d556b;
   --grey-bg-color: #8fa6b2;
   --dark-color: rgb(12, 52, 75);
+  --tooltip-bg-color: #333333;
+  --link-light-color: #63b3ed;
 
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: normal;
   word-wrap: break-word;
   color: var(--main-font-color);
-  background-color: var(--white-color);
+  background-color: var(--main-bgd-color);
 }
 
 ::selection,
@@ -64,10 +71,6 @@ code[class*='language-']::selection,
 code[class*='language-'] ::selection {
   color: var(--white-color);
   background: var(--selection-bgd-color);
-}
-
-pre {
-  margin: 0;
 }
 
 a {
@@ -80,16 +83,19 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: 500;
-}
-
-h1.inline-code {
-  display: inline-block;
 }
 
 h2 {
   margin: 0;
+}
+
+section h3 {
+  border-top: 1px solid var(--border-color);
+  padding: 24px 40px 0;
+  margin-left: -40px;
+  margin-right: -40px;
 }
 
 section h2,
@@ -97,15 +103,14 @@ section h3,
 section h4,
 section h5,
 section h6 {
-  margin-top: 2em;
   font-weight: 600;
   text-decoration: none;
-  color: var(--main-font-color);
+  color: var(--main-font-color) !important;
 }
 
 .title-link {
   /* margin-left: -24px;
-      margin-right: 5px; */
+  margin-right: 5px; */
   opacity: 0;
 }
 
@@ -122,7 +127,29 @@ h3 code,
 h4 code,
 h5 code,
 h6 code {
-  font-size: inherit;
+  font-size: inherit !important;
+}
+
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
+  color: var(--main-font-color) !important;
+  text-decoration: none;
+}
+
+h2 a:hover,
+h2 a:focus,
+h3 a:hover,
+h3 a:focus,
+h4 a:hover,
+h4 a:focus,
+h5 a:hover,
+h5 a:focus,
+h6 a:hover,
+h6 a:focus {
+  text-decoration: underline;
 }
 
 * {
@@ -144,12 +171,12 @@ img {
 }
 
 p {
-  margin: 1rem 0;
+  margin: 1.5rem 0;
 }
 
 p,
 li {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Open Sans';
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -164,9 +191,8 @@ kbd {
   padding: 2px 6px;
   vertical-align: baseline;
   font-size: 14px;
-  font-family: 'JetBrainsMono';
+  font-family: 'Roboto Mono';
 }
-
 table {
   width: 100%;
   word-break: normal;
@@ -178,7 +204,7 @@ table {
 }
 
 table * {
-  font-size: 13px;
+  font-size: 13px !important;
 }
 
 table th {
@@ -199,7 +225,7 @@ table code {
 }
 
 blockquote {
-  font-family: Inter;
+  font-family: Open Sans;
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -210,10 +236,6 @@ blockquote {
   padding-bottom: 8px;
   margin: 2rem 0px;
   position: relative;
-}
-
-blockquote pre {
-  font-weight: normal;
 }
 
 blockquote::before {
@@ -227,7 +249,7 @@ blockquote::before {
 }
 
 blockquote code {
-  color: var(--code-inner-color);
+  color: var(--code-inner-color) !important;
 }
 
 blockquote p {
@@ -235,12 +257,10 @@ blockquote p {
 }
 
 hr {
+  border: 0.5px solid var(--border-color);
   margin: 2rem 0;
   margin-left: -40px;
   margin-right: -40px;
-  border: 0;
-  height: 1px;
-  background: var(--border-color);
 }
 
 .list {
@@ -259,13 +279,8 @@ hr {
 .o-list li {
   margin-top: 10px;
 }
-
 .clearfix {
   clear: both;
-}
-
-.list li pre .line-no {
-  width: 45px;
 }
 
 @media (min-width: 0px) and (max-width: 767px) {
@@ -285,115 +300,4 @@ hr {
   .tab-content .copy-button {
     right: 40px;
   }
-
-  .list li pre .pre-highlight {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-/* TEMP */
-
-a.question,
-span.concept,
-span.api,
-span.guide {
-  background: #bee3f8;
-  border-radius: 4px;
-  padding: 2px;
-  color: #3182ce;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 24px;
-  text-decoration: none;
-}
-
-span.api::before {
-  content: 'API';
-}
-
-span.concept::before {
-  content: 'CONCEPT';
-}
-
-span.guide::before {
-  content: 'GUIDE';
-}
-
-a.question {
-  border-radius: 10px;
-  padding: 2px 6px;
-}
-
-a.question::before {
-  content: '?';
-}
-
-.videoWrapper {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  height: 0;
-}
-.videoWrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.gatsby-resp-image-wrapper {
-  margin-left: 0 !important;
-}
-
-/* 
-    
-    
-    nav.toc {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 250px;
-    }
-    
-    ul.toc-list > li {
-      list-style-type: none;
-      margin-left: 24px;
-      font-size: 13px;
-    }
-    
-    ul.toc-list > li > a {
-      color: #c2c2c2;
-      text-decoration: none;
-      border-bottom: 0;
-      transition: 1s all ease-in-out;
-    }
-    
-    ul.toc-list > li.is-current > a {
-      color: black !important;
-    } */
-
-/*
-      We want to hide YouTube videos in Percy snapshots since they can provide
-      unstable results.
-    
-      https://docs.percy.io/docs/percy-specific-css#percy-css-media-query
-    */
-@media only percy {
-  iframe {
-    visibility: hidden;
-  }
-
-  section img {
-    visibility: hidden;
-  }
-
-  /* hide cookie banner */
-  #onetrust-consent-sdk {
-    display: none;
-  }
-}
-
-.gatsby-resp-image-wrapper {
-  margin-left: inherit !important;
 }
