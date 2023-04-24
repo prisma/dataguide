@@ -1,17 +1,16 @@
 import React from 'react'
 import Tree from './tree'
 import styled, { css } from 'styled-components'
-import styledTS from 'styled-components-ts'
 import { StickyContainer, Sticky } from 'react-sticky'
 import { useAllArticlesQuery } from '../../hooks/useAllArticlesQuery'
 import { AllArticles } from '../../interfaces/AllArticles.interface'
 import config from '../../../config'
 const SidebarContainer = styled.aside`
-width: 231px;
-margin: 0px 16px 0 -16px;
+  width: 231px;
+  margin: 0px 16px 0 -16px;
 `
 
-const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
+const Sidebar = styled.div<{ isSticky?: boolean }>`
   margin: 0;
   overflow: auto;
   height: 100vh;
@@ -23,7 +22,7 @@ const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
 
   .tablet-only {
     display: none;
-    
+
     justify-content: space-between;
     padding: 2rem 0;
 
@@ -38,7 +37,7 @@ const Sidebar = styledTS<{ isSticky: boolean }>(styled.div)`
     }
 
     @media (min-width: 768px) and (max-width: 1024px) {
-      display:flex;    
+      display: flex;
     }
   }
 
@@ -84,7 +83,7 @@ const SidebarLayout = ({ isMobile }: any) => {
   ) : (
     <Sidebar>
       <div className="tablet-only">
-      <List>
+        <List>
           <Tree edges={getLeftPane(allMdx.edges)} />
         </List>
         <List>

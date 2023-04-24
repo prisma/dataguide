@@ -4,6 +4,8 @@ const url = require('url')
 
 const publicPath = `./public`
 
+const excludedPaths = []
+
 exports.onPostBuild = async ({ graphql, pathPrefix, basePath = pathPrefix }, pluginOptions) => {
   const outputFile = path.join(publicPath, '/pages.json')
 
@@ -15,49 +17,33 @@ exports.onPostBuild = async ({ graphql, pathPrefix, basePath = pathPrefix }, plu
           pathPrefix
         }
       }
-      allMdx {
-        edges {
-          node {
-            frontmatter {
-              title
-              hidePage
-            }
-            fields {
-              id
-            }
-          }
-        }
-      }
       allSitePage {
         edges {
           node {
             path
-            context {
-              id
-            }
+            pageContext
           }
         }
       }  
   }`
   const { data } = await graphql(query)
 
-  // Create an object mapping the id -> path
-  const pathById = {}
-  data.allSitePage.edges.forEach(edge => {
-    // Some pages have no ID, e.g. 404 pages.
-    if (!edge.node.context) return
-    pathById[edge.node.context.id] = edge.node.path
-  })
-
   // Construct the pages json by iterating over the mdx files.
-  const pages = data.allMdx.edges.filter(edge => !edge.node.frontmatter.hidePage).map((edge, i) => {
-    return {
-      title: edge.node.frontmatter.title,
-      url: url.resolve(
-        data.site.siteMetadata.siteUrl,
-        path.join(data.site.siteMetadata.pathPrefix, pathById[edge.node.fields.id])
-      ).replace(/\/+$/, ''),
-    }
-  })
+  const pages = data.allSitePage.edges
+    .map((edge, i) => {
+      // Skip the 404 pages and pages without seoTitle
+      if (!edge.node.pageContext || !edge.node.pageContext.seoTitle) return null
+      // Skip explicitly excluded paths
+      if (excludedPaths.includes(edge.node.path)) return null
+
+      return {
+        title: edge.node.pageContext.seoTitle,
+        url: url.resolve(
+          data.site.siteMetadata.siteUrl,
+          path.join(data.site.siteMetadata.pathPrefix, edge.node.path)
+        ),
+      }
+    })
+    .filter((edge) => edge !== null)
   await fsPromises.writeFile(outputFile, JSON.stringify(pages))
 }

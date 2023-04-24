@@ -1,11 +1,11 @@
-const config = {
+const siteConfig = {
   gatsby: {
     pathPrefix: '/dataguide',
-    siteUrl: 'https://www.prisma.io', 
+    siteUrl: 'https://www.prisma.io',
   },
   redirects: [],
   header: {
-    logoLink: '/', 
+    logoLink: '/',
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
     search: {
       indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME,
@@ -16,7 +16,8 @@ const config = {
   },
   siteMetadata: {
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
-    description: "Learn how databases work, how to choose the right one, and how to use databases with your applications to their full potential.",
+    description:
+      'Learn how databases work, how to choose the right one, and how to use databases with your applications to their full potential.',
     keywords: "Prisma's Data Guide, prisma, database, mysql, postgres, postgresql, dataguide",
     docsLocation: 'https://github.com/prisma/dataguide/tree/master/content',
     twitter: {
@@ -36,17 +37,14 @@ const config = {
       },
     },
   },
-  feedback: {
-    function_name: 'https://dataguide.netlify.app/.netlify/functions/index', // Replace with correct one
-  },
   sidebar: {
     tablet_menu_split: ['04-datamodeling'], // Slugs for top level folders which should appear in right pane on tablet
   },
   footer: {
     newsletter: {
-      text:
-        "Sign up to get notified by email when new content is added to Prisma's Data Guide.",
+      text: "Sign up to get notified by email when new content is added to Prisma's Data Guide.",
     },
   },
 }
-module.exports = config
+
+export default siteConfig

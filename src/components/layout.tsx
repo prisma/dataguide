@@ -1,7 +1,6 @@
-import { RouterProps, useLocation } from '@reach/router'
+import { RouterProps } from '@reach/router'
 import * as React from 'react'
-import styled, { ThemeProvider } from 'styled-components'
-import withProps from 'styled-components-ts'
+import styled from 'styled-components'
 import { useLayoutQuery } from '../hooks/useLayoutQuery'
 import Header from './header'
 import Footer from './footer'
@@ -14,7 +13,7 @@ import Banner from './banner'
 
 interface PathProps {
   isHomePage?: boolean
-  slug?: string;
+  slug?: string
 }
 
 // interface ThemeProps {
@@ -41,10 +40,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
     padding: 0 10px;
   `
 
-  const Content = withProps<any>(styled.article)`
+  const Content = styled.article<{ fullWidth?: boolean }>`
     max-width: 880px;
     width: 880px;
-    margin: ${p => (p.moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
+    margin: ${(p) => (p.moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
     position: relative;
     z-index: 100;
     @media (min-width: 0px) and (max-width: 1024px) {
@@ -53,7 +52,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
     }
   `
 
-  const MaxWidth = styled.div<{noIndex: boolean}>`
+  const MaxWidth = styled.div<{ noIndex: boolean }>`
     > section {
       background: var(--white-color);
       box-shadow: 0px 4px 8px rgba(47, 55, 71, 0.05), 0px 1px 3px rgba(47, 55, 71, 0.1);
@@ -73,7 +72,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
         }
       }
       &:last-of-type {
-        padding-bottom: ${p=> p.noIndex && '164px'};
+        padding-bottom: ${(p) => p.noIndex && '164px'};
       }
     }
   `
@@ -100,7 +99,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
           <MaxWidth noIndex={!isIndexPage}>{children}</MaxWidth>
         </Content>
       </Wrapper>
-      <Footer footerProps={footer} isHomePage={isHomePage}/>
+      <Footer footerProps={footer} isHomePage={isHomePage} />
     </MDXProvider>
     // </ThemeProvider>
   )

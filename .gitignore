@@ -68,9 +68,22 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+yarn.lock
 
 .envrc
 
+# Example page
+content/00-example.mdx
+
+# History
 .history/
 
-yarn.lock
+# webStorm settings
+.idea
+
+# vscode settings
+.vscode/
+.vercel
+
+# gatsby typegen
+src/gatsby-types.d.ts

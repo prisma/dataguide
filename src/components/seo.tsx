@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Helmet } from 'react-helmet'
 import favicon from '../images/favicon-32x32.png'
 import { useStaticQuery, graphql } from 'gatsby'
 import { useLocation } from '@reach/router'
@@ -29,10 +28,13 @@ const SEO = ({ title, description, image }: SEOProps) => {
 
   const metaImageURL = image ? `${siteUrl + pathPrefix}${image}` : `${siteUrl + pathPrefix}${oUrl}`
 
-  let canonicalUrl = (`${siteUrl}${location.pathname === '/' ? '' : location.pathname}`).replace(/\/$/, '')
+  let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`.replace(
+    /\/$/,
+    ''
+  )
 
   return (
-    <Helmet htmlAttributes={{ lang: 'en' }}>
+    <>
       {/* <meta charSet="utf-8" /> */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>{title}</title>
@@ -58,7 +60,7 @@ const SEO = ({ title, description, image }: SEOProps) => {
       <meta property="og:image:height" content={oImgHeight} />
       <link rel="canonical" href={canonicalUrl} />
       <link rel="icon" href={favicon} />
-    </Helmet>
+    </>
   )
 }
 
