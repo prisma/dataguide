@@ -8,9 +8,9 @@ authors: ['alexemerich']
 
 ## Introduction
 
-![Article header](/content/serverless/what-is-serverless/header.png)
+![Article header](/dataguide-images/serverless/what-is-serverless/header.png)
 
-The introduction of *serverless* capabilities into the developer landscape has transformed the way a lot of people work with their data and build their applications. In order to best understand using [serverless architecture](https://www.prisma.io/dataguide/serverless/what-is-serverless), it is important to understand the terminology that one can come across. 
+The introduction of _serverless_ capabilities into the developer landscape has transformed the way a lot of people work with their data and build their applications. In order to best understand using [serverless architecture](https://www.prisma.io/dataguide/serverless/what-is-serverless), it is important to understand the terminology that one can come across.
 
 This glossary aims to house the common terminology used in the serverless community and provide definitions and context to help you familiarize yourself with serverless.
 
@@ -27,76 +27,134 @@ Checkout the [Prisma Data Platform](https://www.prisma.io/data-platform) to mana
 <dl>
 
 <AnchorItem id="api-gateway" title="API gateway">
-An application programming interface (API) gateway is an API management tool that sits between and the backend services. In a serverless deployment, the API Gateway operates as a proxy that handles routing to backend services required to fulfill the request and returns the appropriate result.
+  An application programming interface (API) gateway is an API management tool
+  that sits between and the backend services. In a serverless deployment, the
+  API Gateway operates as a proxy that handles routing to backend services
+  required to fulfill the request and returns the appropriate result.
 </AnchorItem>
 
 <AnchorItem id="backend-as-a-service" title="Backend as a Service (BaaS)">
-BaaS is a cloud service model that allows developers to outsource all of the backend, behind-the-scenes, aspects of their application. This puts the main focus of the developer on maintaining the frontend and delegates things like database management, cloud storage, user authentication and other tasks to their BaaS provider.
+  BaaS is a cloud service model that allows developers to outsource all of the
+  backend, behind-the-scenes, aspects of their application. This puts the main
+  focus of the developer on maintaining the frontend and delegates things like
+  database management, cloud storage, user authentication and other tasks to
+  their BaaS provider.
 </AnchorItem>
 
 <AnchorItem id="cold-start" title="Cold start">
-In computing, a cold start refers to a problem where a system or one of its parts experiences some latency when it is created or rebooted resulting in it experiencing a delay before executing.
+  In computing, a cold start refers to a problem where a system or one of its
+  parts experiences some latency when it is created or rebooted resulting in it
+  experiencing a delay before executing.
 </AnchorItem>
 
 <AnchorItem id="connection-pooling" title="Connection pooling">
-Connection pooling is the caching of database connections so that the connections can be reused in the future when new requests to the database are required. They are used to enhance performance of executing command on a database.
+  Connection pooling is the caching of database connections so that the
+  connections can be reused in the future when new requests to the database are
+  required. They are used to enhance performance of executing command on a
+  database.
 </AnchorItem>
 
 <AnchorItem id="container" title="Container">
-In computing, a container refers to a unit of software that packages up code and all of its dependencies to improve application performance. Container code can be executed in an isolated namespace that avoids collisions with system and other container resources.
+  In computing, a container refers to a unit of software that packages up code
+  and all of its dependencies to improve application performance. Container code
+  can be executed in an isolated namespace that avoids collisions with system
+  and other container resources.
 </AnchorItem>
 
 <AnchorItem id="edge-computing" title="Edge computing">
-Edge Computing is a distributed computing paradigm that brings computation and data storage closer to the sources of data with the expectation that this will improve response times and save bandwidth.
+  Edge Computing is a distributed computing paradigm that brings computation and
+  data storage closer to the sources of data with the expectation that this will
+  improve response times and save bandwidth.
 </AnchorItem>
 
 <AnchorItem id="event-driven-architecture" title="Event-driven architecture">
-Event-driven architecture uses events to trigger and communicate between distributed services and is common in microservice applications. An event can be any change in state such as an update or occurrence of an identifier. The three main components of *event-driven architecture* are event producers, event routers, and event consumers.
+  Event-driven architecture uses events to trigger and communicate between
+  distributed services and is common in microservice applications. An event can
+  be any change in state such as an update or occurrence of an identifier. The
+  three main components of *event-driven architecture* are event producers,
+  event routers, and event consumers.
 </AnchorItem>
 
 <AnchorItem id="functions-as-a-service" title="Functions as a Service (FaaS)">
-FaaS is a type of cloud computing service that allows you to execute functions without managing the infrastructure typically involved in building microservice applications. FaaS allows developers to have their code executed in response to events. 
+  FaaS is a type of cloud computing service that allows you to execute functions
+  without managing the infrastructure typically involved in building
+  microservice applications. FaaS allows developers to have their code executed
+  in response to events.
 </AnchorItem>
 
 <AnchorItem id="latency" title="Latency">
-Latency is the time it takes for a packet of data to be captured, transmitted, and processed through a device and then received at its destination and decoded.
+  Latency is the time it takes for a packet of data to be captured, transmitted,
+  and processed through a device and then received at its destination and
+  decoded.
 </AnchorItem>
 
 <AnchorItem id="polyglot" title="Polyglot systems/teams/evironments">
-A polyglot system/team/environment is the practice of allowing an engineering team responsible for a certain service to decide the stack they want to work with. This is common in microservices architecture and potentially leads to higher developer motivation and productivity.
-Serverless computing enables polyglot development by supporting many languages and decomposing application functionality into discrete actions.
+  A polyglot system/team/environment is the practice of allowing an engineering
+  team responsible for a certain service to decide the stack they want to work
+  with. This is common in microservices architecture and potentially leads to
+  higher developer motivation and productivity. Serverless computing enables
+  polyglot development by supporting many languages and decomposing application
+  functionality into discrete actions.
 </AnchorItem>
 
 <AnchorItem id="prisma-data-proxy" title="Prisma Data Proxy">
-The <a href="https://cloud.prisma.io/" title="Prisma Data Proxy">Prisma Data Proxy</a> is an intermediary between an application and a database. It maintains a database connection pool, so that traditional databases can be reliably used in serverless environments.
+  The{' '}
+  <a href="https://cloud.prisma.io/" title="Prisma Data Proxy">
+    Prisma Data Proxy
+  </a>{' '}
+  is an intermediary between an application and a database. It maintains a
+  database connection pool, so that traditional databases can be reliably used
+  in serverless environments.
 </AnchorItem>
 
 <AnchorItem id="serverless-computing" title="Serverless computing">
-<a href="https://www.prisma.io/dataguide/serverless/serverless-comparison" title="Serverless computing">Serverless computing</a> is a cloud computing execution model in which a cloud provider allocates machine resources in response to current demand. The cloud provider takes care of the servers on behalf of the customers. 
+  <a
+    href="https://www.prisma.io/dataguide/serverless/serverless-comparison"
+    title="Serverless computing"
+  >
+    Serverless computing
+  </a>{' '}
+  is a cloud computing execution model in which a cloud provider allocates
+  machine resources in response to current demand. The cloud provider takes care
+  of the servers on behalf of the customers.
 </AnchorItem>
 
 <AnchorItem id="serverless-databases" title="Serverless databases">
-A serverless database is any database that embodies the key principles of the serverless computing model: 
+A serverless database is any database that embodies the key principles of the serverless computing model:
 
-* No manual server management
-* Automatic, elastic usage scaling
-* Built-in resilience and fault tolerance
-* High availability and instant access
-* Consumption based billing
+- No manual server management
+- Automatic, elastic usage scaling
+- Built-in resilience and fault tolerance
+- High availability and instant access
+- Consumption based billing
 
 The concept behind them is the separation of the data storage responsibility from the data processing tasks.
+
 </AnchorItem>
 
-<AnchorItem id="stateful-database-connection" title="Stateful database connection">
-A stateful database connection is a connection in which an application or process performs with the context of previous transactions. Current transactions may be affected by what happened from previous transactions.
+<AnchorItem
+  id="stateful-database-connection"
+  title="Stateful database connection"
+>
+  A stateful database connection is a connection in which an application or
+  process performs with the context of previous transactions. Current
+  transactions may be affected by what happened from previous transactions.
 </AnchorItem>
 
-<AnchorItem id="stateless-serverless-function" title="Stateless serverless function">
-A stateless process or function happens in isolation of previous requests. There is no stored knowledge of previous requests, so current requests are not affected and function as if made from scratch.
+<AnchorItem
+  id="stateless-serverless-function"
+  title="Stateless serverless function"
+>
+  A stateless process or function happens in isolation of previous requests.
+  There is no stored knowledge of previous requests, so current requests are not
+  affected and function as if made from scratch.
 </AnchorItem>
 
 <AnchorItem id="vendor-lock-in" title="Vendor lock-in">
-Vendor Lock-In is what occurs when a software application's architecture is made up of components that are designed according to specific cloud providers or tool offerings. The result is a cost to switching to another cloud provider or adopting different tools. 
+  Vendor Lock-In is what occurs when a software application's architecture is
+  made up of components that are designed according to specific cloud providers
+  or tool offerings. The result is a cost to switching to another cloud provider
+  or adopting different tools.
 </AnchorItem>
 
 </dl>

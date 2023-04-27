@@ -5,9 +5,10 @@ metaDescription: "In this guide, we'll cover provisioning MongoDB Atlas."
 metaImage: '/social/generic-mongodb.png'
 authors: ['alexemerich']
 ---
+
 ## What is MongoDB Atlas?
 
-MongoDB Atlas is [MongoDB's](/intro/database-glossary#mongodb) cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization. 
+MongoDB Atlas is [MongoDB's](/intro/database-glossary#mongodb) cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization.
 
 In this guide, we are going to walk through the steps to provision a MongoDB Atlas [cluster](/intro/database-glossary#cluster) from the browser. We'll walk through all of the options from configuring a cluster up until deploy.
 
@@ -27,11 +28,11 @@ If you do not already have a MongoDB account, to begin setting up your new Atlas
 
 If you already have a MongoDB account registered, you can login from the registration page. Once logged in, you will want to click on the green "+ Create" button pictured below. This will take you to the same page for creating a cluster as if you were creating a cluster for the first time.
 
-![Create Cluster](/content/mdb-atlas-setup/create-cluster-button.png)
+![Create Cluster](/dataguide-images/mdb-atlas-setup/create-cluster-button.png)
 
-The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: [Serverless](/serverless/serverless-glossary#serverless-databases) (Preview), Dedicated, and Shared. 
+The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: [Serverless](/serverless/serverless-glossary#serverless-databases) (Preview), Dedicated, and Shared.
 
-![Cluster Type](/content/mdb-atlas-setup/cluster-type.png)
+![Cluster Type](/dataguide-images/mdb-atlas-setup/cluster-type.png)
 
 The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with the cost matching your actual usage.
 
@@ -43,18 +44,17 @@ Lastly, is the shared cluster instance. This cluster type is for learning and ex
 
 The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write [latency](/serverless/serverless-glossary#latency) of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
 
-![Global Cluster](/content/mdb-atlas-setup/global-cluster.png)
+![Global Cluster](/dataguide-images/mdb-atlas-setup/global-cluster.png)
 
-They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters.  For the purpose of this guide, we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
-
+They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters. For the purpose of this guide, we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
 
 ### Cloud Provider & Region
 
 The next section provides you the option to pick which of the three major cloud providers you would like to use and their respective regions.
 
-![Cloud Provider & Region](/content/mdb-atlas-setup/cloud-provider-region.png)
+![Cloud Provider & Region](/dataguide-images/mdb-atlas-setup/cloud-provider-region.png)
 
-It is up to you which provider is best for you. One consideration is making sure that the region you need is supported and recommended. For example, in the screenshot above, we can see that the desired Frankfurt region is available on AWS and recommended by MongoDB. 
+It is up to you which provider is best for you. One consideration is making sure that the region you need is supported and recommended. For example, in the screenshot above, we can see that the desired Frankfurt region is available on AWS and recommended by MongoDB.
 
 **NOTE:** In recommended regions, Atlas replica sets always span 3 availability zone. In other regions only 2 availability zones are used.
 
@@ -62,26 +62,26 @@ It is up to you which provider is best for you. One consideration is making sure
 
 #### Multi-Cloud, Multi-Region & Workload Isolation
 
-An additional option within the Cloud Provider & Region section is configuring Multi-Cloud, Multi-Region & Workload Isolation(M10+ clusters). Toggling this option on enables you to distribute data across clouds or regions for improved availability and local read performance, or introduce replicas for workload isolation. 
+An additional option within the Cloud Provider & Region section is configuring Multi-Cloud, Multi-Region & Workload Isolation(M10+ clusters). Toggling this option on enables you to distribute data across clouds or regions for improved availability and local read performance, or introduce replicas for workload isolation.
 
 You can configure 3, 5, or 7 nodes across multiple regions and cloud providers to better withstand data center outages. You can also add replicas in additional regions to optimize for local reads or analytics nodes to isolate queries on read-only nodes to achieve workload isolation.
 
 For the purposes of this guide, we will leave this option toggled off, but you can read in more depth in the [MongoDB Documentation](https://docs.atlas.mongodb.com/cluster-config/multi-cloud-distribution/).
-  
+
 ### Cluster Tier
 
-After selecting your cloud provider and region, the next step is selecting your cluster tier. MongoDB divides cluster tiers into two categories: 
+After selecting your cloud provider and region, the next step is selecting your cluster tier. MongoDB divides cluster tiers into two categories:
 
 1. Dedicated Clusters for development environments and low-traffic applications
 2. Dedicated Clusters for high-traffic applications and large datasets
 
 The first category includes M10 and M20 clusters while the second category ranges from M30 to M700. Each tier displays its RAM, Storage, vCPU, and its Base Price per hour.
 
-![Cluster Tier](/content/mdb-atlas-setup/cluster-tier.png)
+![Cluster Tier](/dataguide-images/mdb-atlas-setup/cluster-tier.png)
 
 When a tier is selected, the configuration options are available to edit if needed. You are able to adjust the storage with a slider. This increases the Base Price per hour which updates at the bottom of the screen.
 
-![Base Price](/content/mdb-atlas-setup/base-price.png)
+![Base Price](/dataguide-images/mdb-atlas-setup/base-price.png)
 
 The Auto-scale option has [Cluster Tier Scaling](https://docs.atlas.mongodb.com/cluster-autoscaling/) selected by default. This feature enables you to configure your cluster to auto scale up or down based on traffic. You can set a minimum cluster size and a maximum depending on your limits.
 
@@ -97,9 +97,9 @@ to get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ### Additional Settings
 
-Now that you have your cluster tier picked out, there are some additional settings to consider. 
+Now that you have your cluster tier picked out, there are some additional settings to consider.
 
-![Additional Settings](/content/mdb-atlas-setup/additional-settings.png)
+![Additional Settings](/dataguide-images/mdb-atlas-setup/additional-settings.png)
 
 #### Version
 
@@ -107,13 +107,13 @@ First will be the MongoDB version. By default, the most up-to-date version will 
 
 #### Backups
 
-Next, you will need to decide which backup strategy is best for your organization. There is Cloud Backup where snapshots are taken automatically and stored according to your backup and retention policy. 
+Next, you will need to decide which backup strategy is best for your organization. There is Cloud Backup where snapshots are taken automatically and stored according to your backup and retention policy.
 
 There is also Continuous Cloud Backup that when toggled on records the full [oplog](https://docs.mongodb.com/manual/core/replica-set-oplog/) for a configured window of time. This permits you to restore to any point in time within that window. Which option is best for you will depend on your organization's [recovery point objective (RPO)](https://www.mongodb.com/backup-and-its-role-disaster-recovery).
 
 #### Sharding
 
-The next option is for configuring [sharding](/intro/database-glossary#shard) to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.  
+The next option is for configuring [sharding](/intro/database-glossary#shard) to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.
 
 This option is only able to be toggled on if your cluster tier is an M30+ and your auto-scaling minimum tier is at least an M30. Sharding support high throughput and large datasets, and can be increased as data requirements grow.
 
@@ -129,7 +129,7 @@ Lastly, there is the ability to toggle on the ability to manage your own encrypt
 
 Now that we have crafted our cluster to our desired configuration, we can name it.
 
-![Create Name](/content/mdb-atlas-setup/cluster-name.png)
+![Create Name](/dataguide-images/mdb-atlas-setup/cluster-name.png)
 
 It is important to make note that a cluster cannot be renamed. Additionally, cluster names can only contain ASCII letters, numbers, and hyphens. You can now click on the Create Cluster button, wait for your replica set to spin up, and get to work with your new MongoDB instance.
 
@@ -137,7 +137,7 @@ It is important to make note that a cluster cannot be renamed. Additionally, clu
 
 MongoDB's à la carte menu for setting up a cluster makes it easy to see what options are available for you to mix and match per one's needs. However, this plethora of options can be difficult to wrap one's head around if unsure of the implications.
 
-In this guide, we walked through all of the MongoDB Atlas setup sections. We discussed each selection on its surface and provided further reading if interested in further details. Every option may not be useful for every use case, but it is important to know what is available when provisioning a new Atlas cluster.   
+In this guide, we walked through all of the MongoDB Atlas setup sections. We discussed each selection on its surface and provided further reading if interested in further details. Every option may not be useful for every use case, but it is important to know what is available when provisioning a new Atlas cluster.
 
 <PrismaOutlinks>
 
@@ -167,7 +167,7 @@ The BI Connector provides users SQL-based access to their MongoDB databases. It 
 
 <details><summary>How do you monitor a replica set cluster in MongoDB Atlas?</summary>
 
-MongoDB Atlas has [built-in monitoring for database metrics](https://www.mongodb.com/basics/how-to-monitor-mongodb-and-what-metrics-to-monitor). Within the clusters view of your MongoDB Atlas dashboard, there is a *View Monitoring* section.
+MongoDB Atlas has [built-in monitoring for database metrics](https://www.mongodb.com/basics/how-to-monitor-mongodb-and-what-metrics-to-monitor). Within the clusters view of your MongoDB Atlas dashboard, there is a _View Monitoring_ section.
 
 Once in that view, you can click into the metrics tab and can identify any performance issues or deployment stats.
 
@@ -185,6 +185,6 @@ MongoDB Atlas also support multi-cloud database deployments.
 
 MongoDB Atlas Global Clusters require that you define single or multi-region Zones, where each zone supports write and read operations from geographically local shards.
 
-If you want to enable global writes in your cluster configuration, your clusters must be M30+. 
+If you want to enable global writes in your cluster configuration, your clusters must be M30+.
 
 </details>

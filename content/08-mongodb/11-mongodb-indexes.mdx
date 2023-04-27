@@ -1,20 +1,20 @@
 ---
 title: 'Introduction to MongoDB indexes'
-metaTitle: "MongoDB Indexes - How to Create, Drop, Show and Use Indexes"
-metaDescription: "In this guide we will cover everything you need to know about MongoDB indexes, from how to drop, show, create, and use them."
+metaTitle: 'MongoDB Indexes - How to Create, Drop, Show and Use Indexes'
+metaDescription: 'In this guide we will cover everything you need to know about MongoDB indexes, from how to drop, show, create, and use them.'
 metaImage: '/social/generic-mongodb.png'
 authors: ['alexemerich']
 ---
 
 ## Introduction
 
-Much like an encyclopedia, a database is a bountiful store of accessible information. To answer find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for. 
+Much like an encyclopedia, a database is a bountiful store of accessible information. To answer find a specific piece of information in an encyclopedia would require sifting through every page until you come across what you are looking for. This inefficiency is why an encyclopedia has an index which points you to the exact page you need to turn to for the information you are looking for.
 
-A database [index](/intro/database-glossary#index) similarly points you in the right place for information more efficiently. In MongoDB, an un-indexed query that "searches through the whole book" is called a *collection scan*.
+A database [index](/intro/database-glossary#index) similarly points you in the right place for information more efficiently. In MongoDB, an un-indexed query that "searches through the whole book" is called a _collection scan_.
 
 Indexes can be thought of as shortcuts for accessing your data so that the entire database does not need to be scanned to find what you are looking for. In this article, we are going to introduce indexes in MongoDB, discuss when to use them, and how to manage them.
 
-![Database Indexes](/content/mongodb/mdb-indexes-2.png)
+![Database Indexes](/dataguide-images/mongodb/mdb-indexes-2.png)
 
 <PrismaOutlinks>
 
@@ -23,7 +23,6 @@ If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prism
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
 </PrismaOutlinks>
-
 
 ## When should you use an index
 
@@ -65,13 +64,14 @@ The basic syntax for seeing all of your collection's indexes is:
 
 ```
 db.COLLECTION_NAME.getIndexes()
-``` 
+```
 
 Using the previous example from when we created an index, the following displays the method and what it would return.
 
 ```
 db.mycoll.getIndexes()
 ```
+
 with a return of:
 
 ```
@@ -85,6 +85,7 @@ with a return of:
    }
  ]
 ```
+
 Index information includes the keys and options used to create the index.
 
 <PrismaOutlinks>
@@ -97,18 +98,20 @@ If you're interested in using full text indexes with MongoDB, Prisma has the [`f
 
 Now with the ability to create and check what indexes exist on your collection, you will want to see if your indexes are performing the way you expect.
 
-To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collecton provided by [MongoDB University](https://university.mongodb.com/) simulating a datastore of movie and tv comments. 
+To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collecton provided by [MongoDB University](https://university.mongodb.com/) simulating a datastore of movie and tv comments.
 
 To understand the performance of an index, we will want to first run a query that does not have an index. The following query will return all 273 documents in the collection that are comments made by `Ramsay Bolton`:
 
 ```
 db.comments.find( { "name" : "Ramsay Bolton" } )
 ```
+
 Now, if we append [MongoDB's explain plan](https://docs.mongodb.com/manual/reference/explain-results/) to the query, we will see the performance of this query.
 
 ```
 db.comments.find( { "name" : "Ramsay Bolton" } ).explain("executionStats")
 ```
+
 This results in the following:
 
 ```
@@ -149,6 +152,7 @@ This results in the following:
   }
 }
 ```
+
 There are several key results to focus on in this output. First, we can see in the `winningPlan` that the `stage` for this query is a `COLLSCAN`. This means that a collection scan occurred to complete this query with a `totalDocsExamined` of 50,303 and `executionTimeMillis` of 23 milliseconds. The query had to examine every document in the collection and took 23ms even though `nReturned` was only 273 documents. While 23ms may not sound like much, this can get much longer for a collection housing one million documents.
 
 If querying on `name` is going to be a recurrent pattern for the application accessing this collection, we may want to create an index on this field. To do so we write the following:
@@ -237,21 +241,23 @@ db.comments.find( { "name" : "Ramsay Bolton" } ).explain("executionStats")
   }
 }
 ```
+
 Comparing to the un-indexed query, we now see that the `winningPlan.inputstage` is now `IXSCAN` which indicates an index was used.
 
-Additionally, we see that `totalDocsExamined` is now just the 273 documents where `name` is `"Ramsay Bolton"` and not the entire 50,303 documents. This increased efficiency can be see especially now with `executionTimeMillis` totaling 0ms. Our new index on `name` communicated to the query exactly where to look to find the data it was looking for.  
+Additionally, we see that `totalDocsExamined` is now just the 273 documents where `name` is `"Ramsay Bolton"` and not the entire 50,303 documents. This increased efficiency can be see especially now with `executionTimeMillis` totaling 0ms. Our new index on `name` communicated to the query exactly where to look to find the data it was looking for.
 
-Analyzing the explain plan on your most important queries will show you the performance of your index or highlight when one needs to be created to increase the efficiency of your application. 
+Analyzing the explain plan on your most important queries will show you the performance of your index or highlight when one needs to be created to increase the efficiency of your application.
 
 ## How to drop an index
 
-While the explain plan may show the need for an index, it can also do the opposite. For example, if an index is no longer needed or not adding that much improved performance, it may be in your best interest to drop that index to reserve the space or gain some write performance. 
+While the explain plan may show the need for an index, it can also do the opposite. For example, if an index is no longer needed or not adding that much improved performance, it may be in your best interest to drop that index to reserve the space or gain some write performance.
 
 To drop an index on your collection, the basic syntax is as follows using the `dropIndexes()` method:
 
 ```
 db.COLLECTION_NAME.dropIndex( { "FIELD_NAME": 1 } )
 ```
+
 If we wanted to drop our `country` index example from earlier, we would write the following:
 
 ```
@@ -260,7 +266,7 @@ db.mycoll.dropIndex( { "country":1 } )
 
 ## Conclusion
 
-In this guide, we discussed how efficiently querying your database leads to an improved user experience of your application. Additionally those using the data for analytics or other internal efforts will have faster performance and ease of working with the database. Knowing how to index and how indexes work is key to achieving query efficiency. 
+In this guide, we discussed how efficiently querying your database leads to an improved user experience of your application. Additionally those using the data for analytics or other internal efforts will have faster performance and ease of working with the database. Knowing how to index and how indexes work is key to achieving query efficiency.
 
 We covered the basics of creating, analyzing, and dropping indexes in MongoDB. Knowing these index foundations will provide the right base for continuing on to more advanced indexing with MongoDB.
 
@@ -284,9 +290,9 @@ A `2d` index can reference two fields. The first must be the location field. A `
 
 <details><summary> How do you create an index on a large collection in MongoDB? </summary>
 
-Whether a small or large collection, you will still use the `createIndex()` method. 
+Whether a small or large collection, you will still use the `createIndex()` method.
 
-If you are running into issues building an index on a larger collection, then you may want to consider horizontal scaling so that it is more manageable. 
+If you are running into issues building an index on a larger collection, then you may want to consider horizontal scaling so that it is more manageable.
 
 MongoDB also recommends a [rolling index build](https://www.mongodb.com/docs/manual/tutorial/build-indexes-on-replica-sets/#rolling-index-builds-on-replica-sets) approach.
 
@@ -298,35 +304,35 @@ In order to index and embedded object field in MongoDB, you can use dot notation
 
 For example, if you have an app for tracking books read, then there might be a collection for each user structured like the following:
 
-	db.users.insertOne({
-		"first_name": "Alex",
-		"last_name": "Emerich",
-		"books": {
-			"first_book": {
-				"title": "Flights",
-				"author": "Olga Tokarczuk"
-			},
-			"second book": {
-				"title": "The Master and Margarita",
-				"author": "Mikhail Bulgakov"
-			},
-			"total": 2
-		}
-	})
+    db.users.insertOne({
+    	"first_name": "Alex",
+    	"last_name": "Emerich",
+    	"books": {
+    		"first_book": {
+    			"title": "Flights",
+    			"author": "Olga Tokarczuk"
+    		},
+    		"second book": {
+    			"title": "The Master and Margarita",
+    			"author": "Mikhail Bulgakov"
+    		},
+    		"total": 2
+    	}
+    })
 
 In order to create an index on the embedded `total` field, write the following statement:
 
-	db.users.createIndex( {"books.total": 1 } )
+    db.users.createIndex( {"books.total": 1 } )
 
 </details>
 
 <details><summary> What is a compound index in MongoDB? </summary>
 
-A compound index is a single index structure that holds reference to multiple fields within a collection’s documents. 
+A compound index is a single index structure that holds reference to multiple fields within a collection’s documents.
 
 The basic syntax to create a compound index is as follows:
 
-	db.collection.createIndex( { <field1>: <type>, <field2>: <type2>, ... } )
+    db.collection.createIndex( { <field1>: <type>, <field2>: <type2>, ... } )
 
 </details>
 

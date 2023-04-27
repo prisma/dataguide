@@ -1,12 +1,13 @@
 ---
 title: 'Correctness and constraints'
 metaTitle: "Correctness and Constraints | Data Modeling | Prisma's Data Guide"
-metaDescription: "Learn more about storing meaningful, useful, correct data and how correctness can be logically defined and enforced"
+metaDescription: 'Learn more about storing meaningful, useful, correct data and how correctness can be logically defined and enforced'
 authors: ['dianfay']
 ---
+
 ## Introduction
 
-Storing data is one thing; storing meaningful, useful, *correct* data is quite another. While meaning and utility are themselves [subjective](know-your-problem-space) qualities, correctness at least can be logically defined and enforced. [Types](tables-tuples-types) already ensure that numbers are numbers and dates are dates, but can't guarantee that weight or distance are positive numbers or prevent date ranges from overlapping. Tuple, table, and database constraints apply rules to data being stored and reject values or combinations of values which don't pass muster.
+Storing data is one thing; storing meaningful, useful, _correct_ data is quite another. While meaning and utility are themselves [subjective](know-your-problem-space) qualities, correctness at least can be logically defined and enforced. [Types](tables-tuples-types) already ensure that numbers are numbers and dates are dates, but can't guarantee that weight or distance are positive numbers or prevent date ranges from overlapping. Tuple, table, and database constraints apply rules to data being stored and reject values or combinations of values which don't pass muster.
 
 Constraints don't render other input validation techniques useless by any means, even when they test the same assertions. Time spent trying and failing to store invalid data is time wasted. Violation messaging, like `assert` in systems and application programming languages, only reveals the first problem with the first candidate record in much more detail than anyone not immediately involved with the database needs. But as far as the correctness of data is concerned, constraints are law, for good or ill; anything else is advice.
 
@@ -64,7 +65,7 @@ VALUES ('32A', '[2020-08-20T10:30:00Z,2020-08-20T11:30:00Z)');
 
 ## The primary key
 
-Unique constraints have a particularly useful special case. With an additional non-null constraint on the unique column or columns, each record in the table can be singularly identified by its values for the constrained columns, which are collectively termed a *key*. Multiple candidate keys can coexist in a table, such as `users` still sometimes having distinct unique and non-null `email`s and `username`s; but declaring a primary key establishes a single criterion by which records are publicly and exclusively known. Some RDBMSs even organize rows on pages by the primary key, called for this purpose a *clustered index*, to make searching by primary key values as fast as possible.
+Unique constraints have a particularly useful special case. With an additional non-null constraint on the unique column or columns, each record in the table can be singularly identified by its values for the constrained columns, which are collectively termed a _key_. Multiple candidate keys can coexist in a table, such as `users` still sometimes having distinct unique and non-null `email`s and `username`s; but declaring a primary key establishes a single criterion by which records are publicly and exclusively known. Some RDBMSs even organize rows on pages by the primary key, called for this purpose a _clustered index_, to make searching by primary key values as fast as possible.
 
 There are two types of primary key. A natural key is defined on a column or columns "naturally" included in the table's data, while a surrogate or synthetic key is invented solely for the purpose of becoming the key. Natural keys require care -- more things can change than database designers often credit, from names to numbering schemes. A lookup table containing country and region names can use their respective [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166) codes as a safe natural primary key, but a `users` table with a natural key based on mutable values like names or email addresses invites trouble. When in doubt, create a surrogate key.
 
@@ -76,17 +77,17 @@ An autoincrementing numeric counter is not without drawbacks: adding in records 
 
 ## On the database: foreign keys
 
-Relational databases implement only one class of multi-table constraint, the <footnote><note>We'll be talking more about some set theory concepts later on, but <a href='[https://www.apress.com/gp/book/9781430242840](https://www.apress.com/gp/book/9781430242840)'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></footnote> or foreign key. This sole constraint type is the guarantor of *referential integrity*, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
+Relational databases implement only one class of multi-table constraint, the <footnote><note>We'll be talking more about some set theory concepts later on, but <a href='[https://www.apress.com/gp/book/9781430242840](https://www.apress.com/gp/book/9781430242840)'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></footnote> or foreign key. This sole constraint type is the guarantor of _referential integrity_, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
 
-![The first steps toward a database schema design for tracking books and patrons in a library system.](/content/modeling/libraries-initial.png)
+![The first steps toward a database schema design for tracking books and patrons in a library system.](/dataguide-images/modeling/libraries-initial.png)
 
 This informal "entity-relationship diagram" or ERD shows the beginnings of a schema for a database of libraries and their collections and patrons. Each edge represents a relationship between the tables it connects. The | glyph indicates a single record on its side, while the "crow's foot" glyph represents multiple: a library holds many books and has many patrons.
 
 A foreign key is a copy of another table's primary key, column for column (a point in favor of surrogate keys: only one column to copy and reference), with values linking records in this table to "parent" records in that. In the schema above, the `books` table maintains a `library_id` foreign key to `libraries`, which hold books, and an `author_id` to `authors`, who write them. But what happens if a book is inserted with an `author_id` that doesn't exist in `authors`?
 
-If the foreign key is not constrained -- i.e., it's just another column or columns -- a book can have an author who doesn't exist. This is a problem: if someone tries to follow the link between `books` and `authors`, they wind up nowhere. If `authors.author_id` is a serial integer, there's also the possibility that no-one notices until the spurious `author_id` is eventually assigned, and you wind up with a particular copy of *Don Quixote* attributed first to nobody known and then to Pierre Menard, with Miguel Cervantes nowhere to be found.
+If the foreign key is not constrained -- i.e., it's just another column or columns -- a book can have an author who doesn't exist. This is a problem: if someone tries to follow the link between `books` and `authors`, they wind up nowhere. If `authors.author_id` is a serial integer, there's also the possibility that no-one notices until the spurious `author_id` is eventually assigned, and you wind up with a particular copy of _Don Quixote_ attributed first to nobody known and then to Pierre Menard, with Miguel Cervantes nowhere to be found.
 
-Constraining the foreign key can't prevent a book from being misattributed should the erroneous `author_id` point to an existing record in `authors`, so other checks and tests remain important. However, the set of extant foreign key values is almost always a tiny subset of the *possible* foreign key values, so foreign key constraints will catch and prevent most wrong values. With a foreign key constraint, the *Quixote* with a nonexistent author will be rejected instead of recorded.
+Constraining the foreign key can't prevent a book from being misattributed should the erroneous `author_id` point to an existing record in `authors`, so other checks and tests remain important. However, the set of extant foreign key values is almost always a tiny subset of the _possible_ foreign key values, so foreign key constraints will catch and prevent most wrong values. With a foreign key constraint, the _Quixote_ with a nonexistent author will be rejected instead of recorded.
 
 ### Is this where the "relational" in "relational database" comes from?
 
@@ -95,16 +96,17 @@ Constraining the foreign key can't prevent a book from being misattributed shoul
 As it happens, no!
 </summary>
 
-Foreign keys create relationships between tables, but tables as we know them are mathematically *relations* among the sets of possible values for each attribute. A single tuple relates a value for column A to a value for column B and onward. E.F. Codd's <a href="https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf">original paper</a> uses "relational" in this sense.
+Foreign keys create relationships between tables, but tables as we know them are mathematically _relations_ among the sets of possible values for each attribute. A single tuple relates a value for column A to a value for column B and onward. E.F. Codd's <a href="https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf">original paper</a> uses "relational" in this sense.
 
 This has caused no end of confusion and will likely continue to do so in perpetuity.
+
 </details>
 
 ## For certain values of correct
 
 There are many more ways in which data may be incorrect than addressed here. Constraints help, but even they are only so flexible; many common intra-table specifications, like a limit of two or higher on the number of times a value is allowed to appear in a column, can only be enforced with [triggers](functional-units#triggers-and-consequences).
 
-But there are also ways in which the very structure of a table can lead to inconsistencies. To prevent these, we'll need to marshal both primary and foreign keys not just to define and validate but to *normalize* the relationships between tables. First, though, we've barely scratched the surface of how [the relationships between tables define the structure of the database itself](making-connections).
+But there are also ways in which the very structure of a table can lead to inconsistencies. To prevent these, we'll need to marshal both primary and foreign keys not just to define and validate but to _normalize_ the relationships between tables. First, though, we've barely scratched the surface of how [the relationships between tables define the structure of the database itself](making-connections).
 
 <PrismaOutlinks>
 
@@ -126,7 +128,7 @@ Tuples are static and cannot be modified, typically resulting in lower memory re
 
 <details><summary>What is a named tuple?</summary>
 
-A typical tuple uses numerical indexes to access its members. 
+A typical tuple uses numerical indexes to access its members.
 
 A named tuple differs in that its members are assigned names in addition to the numerical index. This can be beneficial in instances where a tuple has a lot of fields and is constructed far from where it is being used.
 
@@ -134,7 +136,7 @@ A named tuple differs in that its members are assigned names in addition to the 
 
 <details><summary>What is a tuple in a database?</summary>
 
-In the context of a relational database, a tuple can be thought of as a single record or row of that database. 
+In the context of a relational database, a tuple can be thought of as a single record or row of that database.
 
 For example, in a customer database a row might include a customer’s first name, last name, phone number, email, and shipping address. All of this information together can be thought of as a tuple.
 
@@ -142,9 +144,9 @@ For example, in a customer database a row might include a customer’s first nam
 
 <details><summary>What is a foreign key in a database?</summary>
 
-A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table. 
+A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table.
 
-However, it can also refer to any unique column that is also not null. 
+However, it can also refer to any unique column that is also not null.
 
 </details>
 

@@ -13,11 +13,11 @@ This page explains how to set up [SQLite](https://www.sqlite.org/index.html) on 
 
 This guide will cover the following platforms:
 
-* [Setting up SQLite on Windows](#setting-up-sqlite-on-windows)
-* [Setting up SQLite on macOS](#setting-up-sqlite-on-macos)
-* [Setting up SQLite on Linux](#setting-up-sqlite-on-linux)
-  * [Install using the zipped SQLite tools for Linux](#install-using-the-zipped-sqlite-tools-for-linux)
-  * [Install from your distribution's repositories](#install-from-your-distributions-repositories)
+- [Setting up SQLite on Windows](#setting-up-sqlite-on-windows)
+- [Setting up SQLite on macOS](#setting-up-sqlite-on-macos)
+- [Setting up SQLite on Linux](#setting-up-sqlite-on-linux)
+  - [Install using the zipped SQLite tools for Linux](#install-using-the-zipped-sqlite-tools-for-linux)
+  - [Install from your distribution's repositories](#install-from-your-distributions-repositories)
 
 Navigate to the sections that match the platforms you will be working with.
 
@@ -33,49 +33,49 @@ The [SQLite](/intro/database-glossary#sqlite) project provides a zipped bundle o
 
 Visit the [SQLite download page](https://www.sqlite.org/download.html) to find a link to the zip file. The archive file you need is under the **Precompiled Binaries for Windows** section and begins with **sqlite-tools**:
 
-![SQLite download page](/content/sqlite/setting-up-a-local-database/windows/download_page.png)
+![SQLite download page](/dataguide-images/sqlite/setting-up-a-local-database/windows/download_page.png)
 
 Save the file to a convenient location.
 
 Next, open the File Explorer on your computer and navigate to the location of the zip file you downloaded:
 
-![SQLite zip file](/content/sqlite/setting-up-a-local-database/windows/downloads.png)
+![SQLite zip file](/dataguide-images/sqlite/setting-up-a-local-database/windows/downloads.png)
 
 Right-click the file and select **Extract All...** to bring up a new extract window:
 
-![SQLite extract window](/content/sqlite/setting-up-a-local-database/windows/extract_menu.png)
+![SQLite extract window](/dataguide-images/sqlite/setting-up-a-local-database/windows/extract_menu.png)
 
 Click **Browse...** to select a convenient location to extract the archive's content. For example, to extract the content to the Windows Desktop, select **This PC** followed by **Desktop**:
 
-![SQLite select desktop](/content/sqlite/setting-up-a-local-database/windows/extract_folder.png)
+![SQLite select desktop](/dataguide-images/sqlite/setting-up-a-local-database/windows/extract_folder.png)
 
 After selecting a folder, click **Extract**.
 
 A new folder should be created at the location you specified containing the SQLite tools:
 
-![SQLite tools in folder](/content/sqlite/setting-up-a-local-database/windows/sqlite_directory.png)
+![SQLite tools in folder](/dataguide-images/sqlite/setting-up-a-local-database/windows/sqlite_directory.png)
 
 If you click the `sqlite3.exe` application, a new window will appear with an interactive SQLite session:
 
-![new SQLite session](/content/sqlite/setting-up-a-local-database/windows/sqlite_no_db.png)
+![new SQLite session](/dataguide-images/sqlite/setting-up-a-local-database/windows/sqlite_no_db.png)
 
 Notice that SQLite is currently using an [in-memory database](/intro/database-glossary#in-memory-database). This means that it is not [reading](/intro/database-glossary#read-operation) from or [writing](/intro/database-glossary#write-operation) to a file currently.
 
 To make SQLite write to a new database file, type `.open --new` followed by the database file name you wish to use:
 
-![SQLite open new database](/content/sqlite/setting-up-a-local-database/windows/sqlite_open_new_db.png)
+![SQLite open new database](/dataguide-images/sqlite/setting-up-a-local-database/windows/sqlite_open_new_db.png)
 
 This will save your existing changes to the given file and continue to use it for the remainder of the session.
 
 To open up an existing database file, use the `.open` command without the `--new` flag:
 
-![SQLite open database](/content/sqlite/setting-up-a-local-database/windows/sqlite_open_db.png)
+![SQLite open database](/dataguide-images/sqlite/setting-up-a-local-database/windows/sqlite_open_db.png)
 
 You can use the `.databases` command to verify that the database file is being used. Type `.quit` to exit.
 
 To access SQLite from the Windows Command Prompt, start a new Command Prompt session from the start menu. Navigate to the folder containing the `sqlite3.exe` file using `cd`. Afterwards, you can execute the application along with a database file to use SQLite with the given file:
 
-![SQLite open database](/content/sqlite/setting-up-a-local-database/windows/sqlite_from_cmd.png)
+![SQLite open database](/dataguide-images/sqlite/setting-up-a-local-database/windows/sqlite_from_cmd.png)
 
 Type `.quit` to exit the SQLite session when you are done.
 
@@ -85,17 +85,17 @@ The SQLite project provides a zipped bundle of tools that includes the `sqlite3`
 
 Visit the [SQLite download page](https://www.sqlite.org/download.html) to find a link to the zip file. The archive file you need is under the **Precompiled Binaries for Mac OS X (x86)** section:
 
-![SQLite download page](/content/sqlite/setting-up-a-local-database/macos/download_page.png)
+![SQLite download page](/dataguide-images/sqlite/setting-up-a-local-database/macos/download_page.png)
 
 Save the file to a convenient location.
 
 Open the Finder file manager and navigate to the location of the zipped archive:
 
-![SQLite zip file](/content/sqlite/setting-up-a-local-database/macos/zip_file.png)
+![SQLite zip file](/dataguide-images/sqlite/setting-up-a-local-database/macos/zip_file.png)
 
 Double-click the zip file to extract the contents to a new directory. Inside, you will see a few utilities, including the `sqlite3` tool:
 
-![SQLite SQLite tools](/content/sqlite/setting-up-a-local-database/macos/sqlite_tools.png)
+![SQLite SQLite tools](/dataguide-images/sqlite/setting-up-a-local-database/macos/sqlite_tools.png)
 
 Open your terminal and navigate to the extracted SQLite directory using `cd`. Run the `sqlite3` executable by calling it from the command line:
 
@@ -173,8 +173,8 @@ Again, type `.quit` when you are finished to return to the command line shell:
 
 Installation methods differ depending on method you use prefer. Follow the section below that matches your needs:
 
-* [Install using the zipped SQLite tools for Linux](#install-using-the-zipped-sqlite-tools-for-linux)
-* [Install from your distribution's repositories](#install-from-your-distributions-repositories)
+- [Install using the zipped SQLite tools for Linux](#install-using-the-zipped-sqlite-tools-for-linux)
+- [Install from your distribution's repositories](#install-from-your-distributions-repositories)
 
 ### Install using the zipped SQLite tools for Linux
 
@@ -182,7 +182,7 @@ The SQLite project provides a zipped bundle of tools that includes the `sqlite3`
 
 Visit the [SQLite download page](https://www.sqlite.org/download.html) to find a link to the zip file. The archive file you need is under the **Precompiled Binaries for Linux** section:
 
-![SQLite download page](/content/sqlite/setting-up-a-local-database/linux/download_page.png)
+![SQLite download page](/dataguide-images/sqlite/setting-up-a-local-database/linux/download_page.png)
 
 Save the file to a convenient location.
 

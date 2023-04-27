@@ -13,11 +13,11 @@ This page explains how to install and configure the [MySQL database server](http
 
 This guide will cover the following platforms:
 
-* [Setting up MySQL on Windows](#setting-up-mysql-on-windows)
-* [Setting up MySQL on macOS](#setting-up-mysql-on-macos)
-* [Setting up MySQL on Linux](#setting-up-mysql-on-linux)
-  * [Debian and Ubuntu](#debian-and-ubuntu)
-  * [CentOS and Fedora](#centos-and-fedora)
+- [Setting up MySQL on Windows](#setting-up-mysql-on-windows)
+- [Setting up MySQL on macOS](#setting-up-mysql-on-macos)
+- [Setting up MySQL on Linux](#setting-up-mysql-on-linux)
+  - [Debian and Ubuntu](#debian-and-ubuntu)
+  - [CentOS and Fedora](#centos-and-fedora)
 
 Navigate to the sections that match the platforms you will be working with.
 
@@ -27,46 +27,46 @@ The MySQL project provides a native Windows installer to install and configure y
 
 Visit the [MySQL download page](https://dev.mysql.com/downloads/) to find a link to the installer:
 
-![MySQL list of installers](/content/mysql/setting-up-a-local-database/windows/list_of_installers.png)
+![MySQL list of installers](/dataguide-images/mysql/setting-up-a-local-database/windows/list_of_installers.png)
 
 Click **MySQL Installer for Windows**.
 
 On the next page, you'll have a choice of installers to download:
 
-* **web installer**: The web installer is a smaller initial download. It will download components as-needed during the installation process. This option works when you have an internet connection during installation.
-* **conventional (offline) installer**: The conventional installer is the larger download. It comes bundled with all of the components and files you will need to install. This makes offline installation possible.
+- **web installer**: The web installer is a smaller initial download. It will download components as-needed during the installation process. This option works when you have an internet connection during installation.
+- **conventional (offline) installer**: The conventional installer is the larger download. It comes bundled with all of the components and files you will need to install. This makes offline installation possible.
 
-![MySQL download windows installer](/content/mysql/setting-up-a-local-database/windows/download_installer.png)
+![MySQL download windows installer](/dataguide-images/mysql/setting-up-a-local-database/windows/download_installer.png)
 
 Choose the installer that suits your requirements and click **Download**.
 
 Next, you will be given the option to create an Oracle Web Account. Feel free to skip this by clicking **No thanks, just start my download** towards the bottom of the page:
 
-![MySQL skip account creation](/content/mysql/setting-up-a-local-database/windows/skip_account_creation.png)
+![MySQL skip account creation](/dataguide-images/mysql/setting-up-a-local-database/windows/skip_account_creation.png)
 
 Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer).
 
 The installer begins by asking what components you would like to install:
 
-![MySQL choose setup type](/content/mysql/setting-up-a-local-database/windows/installer_1.png)
+![MySQL choose setup type](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_1.png)
 
 For a minimal install, the **Server only** option contains all of the components you need. Despite its name, this option also includes the `mysql` command line client. Click **Next** after making your selection.
 
 The following page confirms your selection:
 
-![MySQL installation confirmation](/content/mysql/setting-up-a-local-database/windows/installer_2.png)
+![MySQL installation confirmation](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_2.png)
 
 If the selection looks correct, click **Execute** to begin the installation.
 
 Once the installation is complete, the installer prompts you to configure the new MySQL server:
 
-![MySQL begin configuration](/content/mysql/setting-up-a-local-database/windows/installer_3.png)
+![MySQL begin configuration](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_3.png)
 
 Click **Next** to begin the configuration process.
 
 The first configuration option is to select the level of [availability](/intro/database-glossary#availability) for the installation. Since this is a local installation, select **Standalone MySQL Server / Classic MySQL Replication**.
 
-![MySQL choose availability](/content/mysql/setting-up-a-local-database/windows/installer_4.png)
+![MySQL choose availability](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_4.png)
 
 Click **Next** to continue.
 
@@ -74,34 +74,34 @@ The page that follows allows you to configure your machine type (which influence
 
 **Development Computer** option is usually the best choice if you are using the computer for daily tasks. The default networking options are also usually adequate.
 
-![MySQL machine type](/content/mysql/setting-up-a-local-database/windows/installer_5.png)
+![MySQL machine type](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_5.png)
 
 Click **Next** to move on.
 
 The next page allows you to choose between two [authentication](/intro/database-glossary#authentication) encryption methods:
 
-* **Strong Password Encryption**: Configures more secure authentication for new installations.
-* **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
+- **Strong Password Encryption**: Configures more secure authentication for new installations.
+- **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
 
-![MySQL auth method](/content/mysql/setting-up-a-local-database/windows/installer_6.png)
+![MySQL auth method](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_6.png)
 
 Unless you have a strong reason not to, choose **Strong Password Encryption** and click **Next** to continue.
 
 Next, you are prompted to set a password for the MySQL `root` account, which has administrative privileges for the MySQL installation:
 
-![MySQL set password](/content/mysql/setting-up-a-local-database/windows/installer_7.png)
+![MySQL set password](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_7.png)
 
 Choose and confirm a strong password. If you want to use this opportunity to add additional user accounts, you can click **Add User** and follow the prompts. Click **Next** when you are ready to move on.
 
 Finally, you'll be asked to configure the MySQL Windows Service:
 
-![MySQL configure service](/content/mysql/setting-up-a-local-database/windows/installer_8.png)
+![MySQL configure service](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_8.png)
 
 The default selections work well unless you have specific requirements. Click **Next** to continue.
 
 The configuration is now complete.
 
-![MySQL apply configuration](/content/mysql/setting-up-a-local-database/windows/installer_9.png)
+![MySQL apply configuration](/dataguide-images/mysql/setting-up-a-local-database/windows/installer_9.png)
 
 If you're happy with your selections, click **Execute** to configure your installation.
 
@@ -109,7 +109,7 @@ With MySQL configured, you can now test your access using the `mysql` command li
 
 A MySQL window will appear, prompting for a password:
 
-![MySQL command line client](/content/mysql/setting-up-a-local-database/windows/mysql_cli.png)
+![MySQL command line client](/dataguide-images/mysql/setting-up-a-local-database/windows/mysql_cli.png)
 
 Enter the administrative `root` password that you selected during configuration. Upon successfully authenticating, you will be given a MySQL prompt where you can interact with your database. Type `quit` to exit.
 
@@ -119,31 +119,31 @@ The MySQL project provides a macOS DMG archive to install and configure MySQL.
 
 Visit the [MySQL download page](https://dev.mysql.com/downloads/mysql) and select **macOS** from the operating system drop down. A few different installation options are available:
 
-![MySQL list of installers](/content/mysql/setting-up-a-local-database/macos/list_of_installers.png)
+![MySQL list of installers](/dataguide-images/mysql/setting-up-a-local-database/macos/list_of_installers.png)
 
 Click **Download** next to the macOS DMG Archive.
 
 Next, you will be given the option to create an Oracle Web Account. Feel free to skip this by clicking **No thanks, just start my download** towards the bottom of the page:
 
-![MySQL skip account creation](/content/mysql/setting-up-a-local-database/macos/skip_account_creation.png)
+![MySQL skip account creation](/dataguide-images/mysql/setting-up-a-local-database/macos/skip_account_creation.png)
 
 Once the download completes, double click on the file to mount the DMG file:
 
-![MySQL downloaded DMG](/content/mysql/setting-up-a-local-database/macos/downloaded_dmg.png)
+![MySQL downloaded DMG](/dataguide-images/mysql/setting-up-a-local-database/macos/downloaded_dmg.png)
 
 Click on the installer package inside the mounted DMG. You may have to confirm that you wish to allow the program to make changes to your computer:
 
-![MySQL installer package](/content/mysql/setting-up-a-local-database/macos/installer_package.png)
+![MySQL installer package](/dataguide-images/mysql/setting-up-a-local-database/macos/installer_package.png)
 
 The MySQL installer will launch, displaying the welcome screen:
 
-![MySQL installer welcome](/content/mysql/setting-up-a-local-database/macos/welcome_screen.png)
+![MySQL installer welcome](/dataguide-images/mysql/setting-up-a-local-database/macos/welcome_screen.png)
 
 Click **Continue** to begin the installation procedure.
 
 Next, you will be asked to select the installation type:
 
-![MySQL installer installation type](/content/mysql/setting-up-a-local-database/macos/installation_type.png)
+![MySQL installer installation type](/dataguide-images/mysql/setting-up-a-local-database/macos/installation_type.png)
 
 The standard installation is a good choice for most people, but if you wish to modify things, you can click **Customize**. When you are happy with your choices, click **Install**. The installation will then begin.
 
@@ -151,22 +151,22 @@ When the installation is complete, you will be asked to configure MySQL.
 
 The first configuration page allows you to choose between two [authentication](/intro/database-glossary#authentication) methods:
 
-* **Strong Password Encryption**: Configures more secure authentication for new installations.
-* **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
+- **Strong Password Encryption**: Configures more secure authentication for new installations.
+- **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
 
-![MySQL installer encryption type](/content/mysql/setting-up-a-local-database/macos/encryption_type.png)
+![MySQL installer encryption type](/dataguide-images/mysql/setting-up-a-local-database/macos/encryption_type.png)
 
 Unless you have a strong reason not to, choose **Strong Password Encryption** and click **Next** to continue.
 
 Next, you are prompted to set a password for the MySQL `root` account, which has administrative privileges for the MySQL installation:
 
-![MySQL installer set password](/content/mysql/setting-up-a-local-database/macos/set_password.png)
+![MySQL installer set password](/dataguide-images/mysql/setting-up-a-local-database/macos/set_password.png)
 
 Choose a strong password and click **Finish** when you are done.
 
 The installer will confirm that the operation was successful:
 
-![MySQL installer complete](/content/mysql/setting-up-a-local-database/macos/complete.png)
+![MySQL installer complete](/dataguide-images/mysql/setting-up-a-local-database/macos/complete.png)
 
 Click **Close** to close the window.
 
@@ -180,11 +180,11 @@ sudo nano /etc/paths
 
 You will be prompted for your computer's administrative password:
 
-![MySQL open path file](/content/mysql/setting-up-a-local-database/macos/open_path.png)
+![MySQL open path file](/dataguide-images/mysql/setting-up-a-local-database/macos/open_path.png)
 
 At the bottom of the file, add the `/usr/local/mysql/bin` directory:
 
-![Add MySQL path](/content/mysql/setting-up-a-local-database/macos/add_path.png)
+![Add MySQL path](/dataguide-images/mysql/setting-up-a-local-database/macos/add_path.png)
 
 When you are done, save and close the editor by typing <kbd>CTL-X</kbd>, <kbd>Y</kbd>, and hitting <kbd>ENTER</kbd>.
 
@@ -196,7 +196,7 @@ mysql -u root -p
 
 You will be prompted for the password you set up during the MySQL configuration process. After successfully authenticating, you will be given a MySQL prompt:
 
-![MySQL prompt](/content/mysql/setting-up-a-local-database/macos/prompt.png)
+![MySQL prompt](/dataguide-images/mysql/setting-up-a-local-database/macos/prompt.png)
 
 Type `quit` to exit when you are finished.
 
@@ -204,19 +204,19 @@ Type `quit` to exit when you are finished.
 
 You can install MySQL on Linux with a number of different methods depending on your Linux distribution and preferences. Choose the link below that best fits your needs:
 
-* [Debian and Ubuntu](#debian-and-ubuntu)
-  * [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-  * [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
-* [CentOS and Fedora](#centos-and-fedora)
-  * [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-  * [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
+- [Debian and Ubuntu](#debian-and-ubuntu)
+  - [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
+  - [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
+- [CentOS and Fedora](#centos-and-fedora)
+  - [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
+  - [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
 
 ### Debian and Ubuntu
 
 You can either choose to use the version of MySQL available in your distribution's default repositories or use repositories provided by the MySQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the MySQL project will be more up-to-date but may require extra configuration.
 
-* [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-* [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
+- [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
+- [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
 
 #### Install using Debian or Ubuntu's default repositories
 
@@ -274,8 +274,8 @@ Read the prompts carefully to decide which actions you wish to take. If you are 
 
 You can either choose to use the version of MySQL available in your distribution's default repositories or use repositories provided by the MySQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the MySQL project will be more up-to-date but require extra configuration.
 
-* [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-* [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
+- [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
+- [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
 
 #### Install using CentOS or Fedora's default repositories
 

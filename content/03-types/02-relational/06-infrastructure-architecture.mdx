@@ -1,124 +1,124 @@
 ---
 title: 'Comparing common database infrastructure patterns'
-metaTitle: "Database Infrastructure: Data Sharding, Caching, and Vertical Scaling"
+metaTitle: 'Database Infrastructure: Data Sharding, Caching, and Vertical Scaling'
 metaDescription: 'In this article, we cover some of the most common ways of deploying your database infrastructure to meet the needs of your application environment.'
 ---
 
 ## Introduction
 
-Figuring out what kind of database infrastructure you need to match your applications' performance, reliability, and scaling requirements can be a difficult task.  The choices you make for your database topology can impact how your entire application stack responds to different types of usage and what failure scenarios it can account for.  Because of this, it's important to understand your options and make an informed decision that aligns with your goals.
+Figuring out what kind of database infrastructure you need to match your applications' performance, reliability, and scaling requirements can be a difficult task. The choices you make for your database topology can impact how your entire application stack responds to different types of usage and what failure scenarios it can account for. Because of this, it's important to understand your options and make an informed decision that aligns with your goals.
 
-There are many different ways to go from a single database handling all of your infrastructure needs to more complex systems.  Along with this, there are many trade-offs to consider.
+There are many different ways to go from a single database handling all of your infrastructure needs to more complex systems. Along with this, there are many trade-offs to consider.
 
-In this guide, we'll introduce some of the most common patterns for relational database infrastructure and how they align with different usage patterns.  We'll walk through what advantages each configuration offers as well as some of the shortcomings that you need to account for.  We'll also talk about the impact of different decisions on your overall operations complexity.  Once you've finished, you should be able to make a better decision about what designs are best suited for your current needs and which options you may wish to experiment with as your needs change.
+In this guide, we'll introduce some of the most common patterns for relational database infrastructure and how they align with different usage patterns. We'll walk through what advantages each configuration offers as well as some of the shortcomings that you need to account for. We'll also talk about the impact of different decisions on your overall operations complexity. Once you've finished, you should be able to make a better decision about what designs are best suited for your current needs and which options you may wish to experiment with as your needs change.
 
 ## Scaling vertically
 
-![Scaling vertically diagram](/content/types/relational/infrastructure-architecture/scaling-vertically.png)
+![Scaling vertically diagram](/dataguide-images/types/relational/infrastructure-architecture/scaling-vertically.png)
 
-The simplest way to scale a database system is vertical scaling.  *Scaling vertically*, also called *scaling up*, means adding capacity to the server that manages your database.  By increasing the processing power, memory allocation, or storage capacity, you can increase the performance and volume that a database system can handle without increasing the complexity of the system as a whole.
+The simplest way to scale a database system is vertical scaling. _Scaling vertically_, also called _scaling up_, means adding capacity to the server that manages your database. By increasing the processing power, memory allocation, or storage capacity, you can increase the performance and volume that a database system can handle without increasing the complexity of the system as a whole.
 
-As a general rule, scaling up your database is a good first step as it increases your database's capabilities without affecting your infrastructure topology.  Scaling up is usually fairly simple as well, since a larger capacity machine can be configured as a [replication](/intro/database-glossary#replication) follower until it is synchronized and then a failover can be triggered to make it the new primary server.
+As a general rule, scaling up your database is a good first step as it increases your database's capabilities without affecting your infrastructure topology. Scaling up is usually fairly simple as well, since a larger capacity machine can be configured as a [replication](/intro/database-glossary#replication) follower until it is synchronized and then a failover can be triggered to make it the new primary server.
 
-Scaling up has its limitations however because the amount of resources that can be reasonably allocated to one machine is constricted.  It also represents a single point of failure if no replication followers are configured to take over when problems occur.  These concerns are addressed by some of the other scaling options.
+Scaling up has its limitations however because the amount of resources that can be reasonably allocated to one machine is constricted. It also represents a single point of failure if no replication followers are configured to take over when problems occur. These concerns are addressed by some of the other scaling options.
 
 ## Command query responsibility segregation (CQRS) and Read-only replicas
 
-The other primary way of scaling your database infrastructure is to scale out.  *Scaling out* means that instead of increasing the capacity of a single server, you increase the number of servers dedicated to serving a specific need.  So you add capacity by adding additional machines to your infrastructure.
+The other primary way of scaling your database infrastructure is to scale out. _Scaling out_ means that instead of increasing the capacity of a single server, you increase the number of servers dedicated to serving a specific need. So you add capacity by adding additional machines to your infrastructure.
 
-![CQRS with read-only replicas diagram](/content/types/relational/infrastructure-architecture/cqrs.png)
+![CQRS with read-only replicas diagram](/dataguide-images/types/relational/infrastructure-architecture/cqrs.png)
 
-*Command query responsibility segregation* (CQRS) is a term used to describe adding logic to separate out queries that mutate data ([write queries](/intro/database-glossary#write-operation)) from those that do not ([read queries](/intro/database-glossary#read-operation)).  This allows you to route these different categories of requests to different hosts to help distribute the load.
+_Command query responsibility segregation_ (CQRS) is a term used to describe adding logic to separate out queries that mutate data ([write queries](/intro/database-glossary#write-operation)) from those that do not ([read queries](/intro/database-glossary#read-operation)). This allows you to route these different categories of requests to different hosts to help distribute the load.
 
-The most basic infrastructure to take advantage of this design is a primary server that can accept read and write queries combined with one or more replica servers following the primary server that can accept read queries.  This design is appropriate for application usage patterns that are read-heavy, as read operations can be handled by any of the database servers.
+The most basic infrastructure to take advantage of this design is a primary server that can accept read and write queries combined with one or more replica servers following the primary server that can accept read queries. This design is appropriate for application usage patterns that are read-heavy, as read operations can be handled by any of the database servers.
 
-Additionally, this system provides some redundancy to your architecture as the system will still function if any of the servers go down.  If a follower goes down, read requests can be routed to the other servers.  If the primary server goes down, one of the replica followers can be promoted to accept write queries.
+Additionally, this system provides some redundancy to your architecture as the system will still function if any of the servers go down. If a follower goes down, read requests can be routed to the other servers. If the primary server goes down, one of the replica followers can be promoted to accept write queries.
 
 ## Multi-primary replication
 
-While using CQRS with read-only replicas helps you address a higher number of read requests, it does not significantly impact the write performance of your infrastructure.  To increase the number of writes your architecture can handle, you need to consider if you can adopt a multi-primary replication design.
+While using CQRS with read-only replicas helps you address a higher number of read requests, it does not significantly impact the write performance of your infrastructure. To increase the number of writes your architecture can handle, you need to consider if you can adopt a multi-primary replication design.
 
-![Multi-primary replication diagram](/content/types/relational/infrastructure-architecture/multi-primary.png)
+![Multi-primary replication diagram](/dataguide-images/types/relational/infrastructure-architecture/multi-primary.png)
 
-*Multi-primary replication* is a form of replication where multiple servers can accept write requests.  Some systems are configured so that any server can process write requests, while others are designed so that a core group of primary servers handle writes with a larger number of read-only followers.  Regardless of the implementation, multi-primary replication increases the number of servers who are responsible for write queries.
+_Multi-primary replication_ is a form of replication where multiple servers can accept write requests. Some systems are configured so that any server can process write requests, while others are designed so that a core group of primary servers handle writes with a larger number of read-only followers. Regardless of the implementation, multi-primary replication increases the number of servers who are responsible for write queries.
 
-While this design sounds ideal at the outset, there are some major challenges that prevent this from being a widely adopted pattern.  While multiple servers can handle write requests, they still must coordinate to replicate changes between their servers and to resolve conflicts in data changes.  This can either lead to long response times as conflicts are negotiated or the possibility inconsistent data.
+While this design sounds ideal at the outset, there are some major challenges that prevent this from being a widely adopted pattern. While multiple servers can handle write requests, they still must coordinate to replicate changes between their servers and to resolve conflicts in data changes. This can either lead to long response times as conflicts are negotiated or the possibility inconsistent data.
 
-Each system chooses their own approach to handle these challenges.  This is a demonstration of [*CAP Theorem*](/intro/database-glossary#cap-theorem) — a statement describing the interplay between consistency, availability, and partition tolerance in distributed systems — in action.  Some systems offer weaker consistency guarantees to maintain availability, while other databases refuse to accept changes if their peers cannot coordinate the transaction at the time of the write.  Choosing the approach that best fits your needs is an important factor when deciding between various implementations.
+Each system chooses their own approach to handle these challenges. This is a demonstration of [_CAP Theorem_](/intro/database-glossary#cap-theorem) — a statement describing the interplay between consistency, availability, and partition tolerance in distributed systems — in action. Some systems offer weaker consistency guarantees to maintain availability, while other databases refuse to accept changes if their peers cannot coordinate the transaction at the time of the write. Choosing the approach that best fits your needs is an important factor when deciding between various implementations.
 
 ## Read query caching
 
-While using read-only replicas is a way to increase the available databases that can respond to read requests, it does not improve the basic query performance of complex read operations.  One of the servers is still expected to execute the read operation each time a request is made, even if the results are identical to the previous lookup.
+While using read-only replicas is a way to increase the available databases that can respond to read requests, it does not improve the basic query performance of complex read operations. One of the servers is still expected to execute the read operation each time a request is made, even if the results are identical to the previous lookup.
 
-![Adding a read cache diagram](/content/types/relational/infrastructure-architecture/read-cache.png)
+![Adding a read cache diagram](/dataguide-images/types/relational/infrastructure-architecture/read-cache.png)
 
-To decrease response times, a *read query caching* layer can be introduced.  Adding a [cache](/intro/database-glossary#cache) between your database clients and the databases themselves can reduce query time for common requests significantly.  The application can request read results from the cache and receive them almost immediately if available.  For cases where the results are not found in the cache, they are fetched from the database itself and added to the cache for next time.
+To decrease response times, a _read query caching_ layer can be introduced. Adding a [cache](/intro/database-glossary#cache) between your database clients and the databases themselves can reduce query time for common requests significantly. The application can request read results from the cache and receive them almost immediately if available. For cases where the results are not found in the cache, they are fetched from the database itself and added to the cache for next time.
 
-Configuring caching in this way is incredibly efficient for scenarios where data is not likely to change each time the request is made.  It is especially helpful for expensive read queries that consult multiple tables and include complex join operations.  These results can be executed once and then saved for future queries.
+Configuring caching in this way is incredibly efficient for scenarios where data is not likely to change each time the request is made. It is especially helpful for expensive read queries that consult multiple tables and include complex join operations. These results can be executed once and then saved for future queries.
 
-In cases where data is changing more rapidly, a read cache may not help nearly as much.  Depending on the configured behavior, caches risk returning stale data in these situations and thoughtful cache invalidation strategies should be implemented to evict stale data from the cache when changed.
+In cases where data is changing more rapidly, a read cache may not help nearly as much. Depending on the configured behavior, caches risk returning stale data in these situations and thoughtful cache invalidation strategies should be implemented to evict stale data from the cache when changed.
 
 ## Data sharding
 
-So far, the designs we've discussed have segmented database components based on whether they respond to write requests or not.  However, another way of dividing responsibility is to split up the actual data set into multiple parts.
+So far, the designs we've discussed have segmented database components based on whether they respond to write requests or not. However, another way of dividing responsibility is to split up the actual data set into multiple parts.
 
-![Data sharding diagram](/content/types/relational/infrastructure-architecture/data-sharding.png)
+![Data sharding diagram](/dataguide-images/types/relational/infrastructure-architecture/data-sharding.png)
 
-**Sharding** is the process of breaking a logical data set into smaller subsets to distribute their management to different machines.  Each database server only handles a portion of the data and a routing mechanic is introduced that understands which machines are responsible for what pieces of data.
+**Sharding** is the process of breaking a logical data set into smaller subsets to distribute their management to different machines. Each database server only handles a portion of the data and a routing mechanic is introduced that understands which machines are responsible for what pieces of data.
 
-Typically, sharding is performed in scenarios where operating on the entire dataset at once is unnecessary or uncommon.  The dataset is segmented based on each record's value for a specific key, known as the *sharding key*.  For example, you could manually shard data based on the location of customers.  You can also shard automatically using a hashing algorithm to determine which nodes should handle which keys.  This can help your system avoid imbalanced distribution in cases where the shard keyspace is unevenly distributed.
+Typically, sharding is performed in scenarios where operating on the entire dataset at once is unnecessary or uncommon. The dataset is segmented based on each record's value for a specific key, known as the _sharding key_. For example, you could manually shard data based on the location of customers. You can also shard automatically using a hashing algorithm to determine which nodes should handle which keys. This can help your system avoid imbalanced distribution in cases where the shard keyspace is unevenly distributed.
 
-Sharding introduces quite a bit of complexity into data systems and isn't appropriate for all scenarios.  Operations that interact with multiple shards will suffer significant performance penalties as they retrieve results from each member.  This can happen for aggregate queries or if the specific shard key is not known ahead of time.  Additionally, uneven allocation of shards can also cause inefficiencies and bottlenecks that need to be fixed by rebalancing the distribution of the entire data set.
+Sharding introduces quite a bit of complexity into data systems and isn't appropriate for all scenarios. Operations that interact with multiple shards will suffer significant performance penalties as they retrieve results from each member. This can happen for aggregate queries or if the specific shard key is not known ahead of time. Additionally, uneven allocation of shards can also cause inefficiencies and bottlenecks that need to be fixed by rebalancing the distribution of the entire data set.
 
 ## Decentralized functional data management
 
-Rather than splitting the values of a dataset into multiple segments, in many cases, it makes more sense to use different databases for different functional purposes.  For instance, if you have an accounts service and a products service, having dedicated databases that coincide with each concern can help you scale different components independently.
+Rather than splitting the values of a dataset into multiple segments, in many cases, it makes more sense to use different databases for different functional purposes. For instance, if you have an accounts service and a products service, having dedicated databases that coincide with each concern can help you scale different components independently.
 
-![Functional data management diagram](/content/types/relational/infrastructure-architecture/functional-separation.png)
+![Functional data management diagram](/dataguide-images/types/relational/infrastructure-architecture/functional-separation.png)
 
-Functional data management allows you to break up your database infrastructure and manage each part according to the needs of its clients.  Each functional part can be scaled using whatever strategy makes the most sense.  It allows you to design the database schema and deploy it to a location that best matches the patterns of a specific use case instead of requiring it to serve the entire organization.
+Functional data management allows you to break up your database infrastructure and manage each part according to the needs of its clients. Each functional part can be scaled using whatever strategy makes the most sense. It allows you to design the database schema and deploy it to a location that best matches the patterns of a specific use case instead of requiring it to serve the entire organization.
 
-For many organizations, this strategy has important advantages that go beyond the properties of the actual systems.  Decentralizing data management can allow smaller teams to own their own data without coordinating changes with other parties.  It aligns well with the focused separation of concerns promoted by [microservice-oriented application architectures](/intro/database-glossary#microservice-architecture).
+For many organizations, this strategy has important advantages that go beyond the properties of the actual systems. Decentralizing data management can allow smaller teams to own their own data without coordinating changes with other parties. It aligns well with the focused separation of concerns promoted by [microservice-oriented application architectures](/intro/database-glossary#microservice-architecture).
 
 ## Serverless databases
 
-The different trade-offs that you must evaluate and the amount of infrastructure you may be expected to manage for proper scaling can be overwhelming for many people.  One option for offloading this complexity is to take advantage of database services that manage infrastructure and scale for you.
+The different trade-offs that you must evaluate and the amount of infrastructure you may be expected to manage for proper scaling can be overwhelming for many people. One option for offloading this complexity is to take advantage of database services that manage infrastructure and scale for you.
 
-![Serverless database architecture diagram](/content/types/relational/infrastructure-architecture/serverless-databases.png)
+![Serverless database architecture diagram](/dataguide-images/types/relational/infrastructure-architecture/serverless-databases.png)
 
-*Serverless databases* are a category of services that decouple data storage from data processing to easily scale resources in response to changes in demand.
+_Serverless databases_ are a category of services that decouple data storage from data processing to easily scale resources in response to changes in demand.
 
-A data storage layer is responsible for maintaining the actual data managed by the system.  In front of this layer, a tier of scalable database processing units is deployed to handle the actual query processing against the datasets.  The number of units active at any given time is tied directly to the current usage, so more resources are allocated as demand peaks and the processing units are returned to standby if things quiet down.
+A data storage layer is responsible for maintaining the actual data managed by the system. In front of this layer, a tier of scalable database processing units is deployed to handle the actual query processing against the datasets. The number of units active at any given time is tied directly to the current usage, so more resources are allocated as demand peaks and the processing units are returned to standby if things quiet down.
 
 Queries are forwarded to the database processors through a routing proxy that knows how to forward requests to the active nodes and when to request additional resources.
 
-Serverless databases have many of the same properties as traditional database services that implement autoscaling features.  Both can allocate capacity based on demand.  However, serverless databases allow you to separate storage costs from processing costs and can scale processing down to zero when not needed.  Additionally serverless solutions tend to be able to scale up much quicker to meet demand compared to the autoscaling offered by traditional offerings.
+Serverless databases have many of the same properties as traditional database services that implement autoscaling features. Both can allocate capacity based on demand. However, serverless databases allow you to separate storage costs from processing costs and can scale processing down to zero when not needed. Additionally serverless solutions tend to be able to scale up much quicker to meet demand compared to the autoscaling offered by traditional offerings.
 
-Although serverless databases may be a good fit for some, they are not a silver bullet.  In cases where the database processors *were* scaled down to zero, there can be delays in processing again due to cold starts.  Furthermore, the churn through connections between the various components in a serverless database stack can lead to additional latency.
+Although serverless databases may be a good fit for some, they are not a silver bullet. In cases where the database processors _were_ scaled down to zero, there can be delays in processing again due to cold starts. Furthermore, the churn through connections between the various components in a serverless database stack can lead to additional latency.
 
-Serverless database platforms can also be difficult from an operations standpoint.  Deployments and database changes can be more difficult to reason about and monitor.  The local development environment may also differ significantly from the production environment because of the dynamic state of the database system.  And finally, as with any other cloud service, using serverless databases can potentially put you in danger of vendor lock-in.  It is important to remember these trade-offs when designing around a serverless platform.
+Serverless database platforms can also be difficult from an operations standpoint. Deployments and database changes can be more difficult to reason about and monitor. The local development environment may also differ significantly from the production environment because of the dynamic state of the database system. And finally, as with any other cloud service, using serverless databases can potentially put you in danger of vendor lock-in. It is important to remember these trade-offs when designing around a serverless platform.
 
 ## Conclusion
 
-There are many ways to design, deploy, and manage your database infrastructure as your application requirements become more serious.  Each solution has its strengths and limitations that are important to understand when trying to find a fit for your environment.
+There are many ways to design, deploy, and manage your database infrastructure as your application requirements become more serious. Each solution has its strengths and limitations that are important to understand when trying to find a fit for your environment.
 
-Learning about how database infrastructure impacts the availability, performance, and integrity of your data allows you to avoid costly mistakes and implementations that do not provide the guarantees you need.  If one of the above designs does not cover your requirements, you may be able to combine some of the elements of different approaches to gain additional advantages.
+Learning about how database infrastructure impacts the availability, performance, and integrity of your data allows you to avoid costly mistakes and implementations that do not provide the guarantees you need. If one of the above designs does not cover your requirements, you may be able to combine some of the elements of different approaches to gain additional advantages.
 
 If you'd like to learn more about the general patterns covered above, here are some additional resources you may want to check out:
 
-* [Scaling up versus scaling out](https://en.wikipedia.org/wiki/Scalability#Horizontal_(scale_out)_and_vertical_scaling_(scale_up))
-* [Command query responsibility segregation](https://martinfowler.com/bliki/CQRS.html)
-* [Multi-primary replication](https://en.wikipedia.org/wiki/Multi-master_replication)
-* [Caching read queries](https://redis.com/blog/query-caching-redis/)
-* [Data sharding](https://en.wikipedia.org/wiki/Shard_(database_architecture))
-* [Decentralized data management](https://martinfowler.com/articles/microservices.html#DecentralizedDataManagement)
-* [Serverless databases](https://en.wikipedia.org/wiki/Serverless_computing#Serverless_databases)
+- [Scaling up versus scaling out](<https://en.wikipedia.org/wiki/Scalability#Horizontal_(scale_out)_and_vertical_scaling_(scale_up)>)
+- [Command query responsibility segregation](https://martinfowler.com/bliki/CQRS.html)
+- [Multi-primary replication](https://en.wikipedia.org/wiki/Multi-master_replication)
+- [Caching read queries](https://redis.com/blog/query-caching-redis/)
+- [Data sharding](<https://en.wikipedia.org/wiki/Shard_(database_architecture)>)
+- [Decentralized data management](https://martinfowler.com/articles/microservices.html#DecentralizedDataManagement)
+- [Serverless databases](https://en.wikipedia.org/wiki/Serverless_computing#Serverless_databases)
 
 ## FAQ
 
 <details><summary>What is database scaling?</summary>
 
-Database scalability is the ability to expand or contract the capacity of system resources in order to support the changing use of an application. 
+Database scalability is the ability to expand or contract the capacity of system resources in order to support the changing use of an application.
 
 There is both vertical and horizontal scaling. Vertical scaling refers to the scaling up of a single server or cluster. Horizontal scaling refers to bringing on additional nodes into the system to share the load from the increased usage.
 
@@ -126,9 +126,9 @@ There is both vertical and horizontal scaling. Vertical scaling refers to the sc
 
 <details><summary>What is the CQRS pattern?</summary>
 
-Command query responsibility segregation (CQRS) is a term used to describe adding logic to separate out queries that mutate data (write queries) from those that do not (read queries). 
+Command query responsibility segregation (CQRS) is a term used to describe adding logic to separate out queries that mutate data (write queries) from those that do not (read queries).
 
-This allows you to route these different categories of requests to different hosts to help distribute the load. 
+This allows you to route these different categories of requests to different hosts to help distribute the load.
 
 </details>
 

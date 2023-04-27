@@ -1,14 +1,15 @@
 ---
 title: 'Making connections'
 metaTitle: "Making Connections | Data Modeling | Prisma's Data Guide"
-metaDescription: "Learn about using foreign keys to describe relationships which in turn define the structure of the database"
+metaDescription: 'Learn about using foreign keys to describe relationships which in turn define the structure of the database'
 authors: ['dianfay']
 ---
+
 ## Introduction
 
-Foreign keys describe relationships, and the entity-relationship diagrams (ERDs) introduced in *[Correctness and Constraints](correctness-constraints#on-the-database-foreign-keys)* map networks or graphs of those foreign keys. In these examples, there are only a few tables and relationships among them, but a visual layout is still a useful reference when it comes time to make sure every required relationship is accounted for. With larger databases, ERDs are invaluable, full stop. Many database clients have built-in tools to generate diagrams, although manual adjustment is usually required to make them readable.
+Foreign keys describe relationships, and the entity-relationship diagrams (ERDs) introduced in _[Correctness and Constraints](correctness-constraints#on-the-database-foreign-keys)_ map networks or graphs of those foreign keys. In these examples, there are only a few tables and relationships among them, but a visual layout is still a useful reference when it comes time to make sure every required relationship is accounted for. With larger databases, ERDs are invaluable, full stop. Many database clients have built-in tools to generate diagrams, although manual adjustment is usually required to make them readable.
 
-![The first steps toward a database schema design for tracking books and patrons in a library system.](/content/modeling/libraries-initial.png)
+![The first steps toward a database schema design for tracking books and patrons in a library system.](/dataguide-images/modeling/libraries-initial.png)
 
 Several ERD notations exist. The full ["crow's foot"](http://www2.cs.uregina.ca/~bernatja/crowsfoot.html) notation, one of the oldest and most influential, defines symbols for 0 (a ring), 1 (a dash), or many (the eponymous crow's foot, as above) records. Each line represents a relationship between two tables and has not just one but two of these symbols on each end, with each pair establishing the minimum and maximum for that side.
 
@@ -16,13 +17,13 @@ This attention to detail is at least in part an historical artifact from the day
 
 ## Cascading behaviors
 
-Inserting an invalid `author_id` into `books` isn't the only way to violate a foreign key constraint: changes to `authors` can also invalidate existing data in `books`. [Back in *Correctness and Constraints*](correctness-constraints#on-the-database-foreign-keys), unenforced foreign keys led to a copy of *Don Quixote* with a spurious `author_id`. How to resolve the contradiction between Pierre Menard and Miguel Cervantes?
+Inserting an invalid `author_id` into `books` isn't the only way to violate a foreign key constraint: changes to `authors` can also invalidate existing data in `books`. [Back in _Correctness and Constraints_](correctness-constraints#on-the-database-foreign-keys), unenforced foreign keys led to a copy of _Don Quixote_ with a spurious `author_id`. How to resolve the contradiction between Pierre Menard and Miguel Cervantes?
 
-If the Menard record could be deleted from `authors`, the copy of the *Quixote* in question would no longer have a valid `author_id`. The database rejects this, as violations cannot be allowed either from the child or the parent table. To get rid of Pierre Menard, one must first dispose of *Don Quixote*, either by deleting it or by changing its `author_id`.
+If the Menard record could be deleted from `authors`, the copy of the _Quixote_ in question would no longer have a valid `author_id`. The database rejects this, as violations cannot be allowed either from the child or the parent table. To get rid of Pierre Menard, one must first dispose of _Don Quixote_, either by deleting it or by changing its `author_id`.
 
-As the web of constrained relationships grows larger, cleaning up such dependent records becomes more and more complicated. Deleting an author entails deleting all their `books`; deleting a library requires the same, plus removing its `patrons` -- and any table with a foreign key to `books` or `patrons` must be deleted first of all, lest *those* foreign key constraints be violated in turn.
+As the web of constrained relationships grows larger, cleaning up such dependent records becomes more and more complicated. Deleting an author entails deleting all their `books`; deleting a library requires the same, plus removing its `patrons` -- and any table with a foreign key to `books` or `patrons` must be deleted first of all, lest _those_ foreign key constraints be violated in turn.
 
-A `DELETE` against a parent table is often intended to prune an entire tree of relationships: a library and its books and its patrons, in one fell swoop (sometimes it *isn't* meant to do this, which makes knowing where your `CASCADE`s are very important!). Since foreign key constraints reify these relationships, making of them objects to be acted upon, they can also help automate responses to changes in the parent table. A constraint declaring `ON DELETE SET NULL` will void the first foreign key values only, without traversing the relationship graph any further. `ON DELETE CASCADE` ensures that a `DELETE` to `authors` will automatically delete those authors' `books` as well, and onward through any foreign key that declares `books` a parent table.
+A `DELETE` against a parent table is often intended to prune an entire tree of relationships: a library and its books and its patrons, in one fell swoop (sometimes it _isn't_ meant to do this, which makes knowing where your `CASCADE`s are very important!). Since foreign key constraints reify these relationships, making of them objects to be acted upon, they can also help automate responses to changes in the parent table. A constraint declaring `ON DELETE SET NULL` will void the first foreign key values only, without traversing the relationship graph any further. `ON DELETE CASCADE` ensures that a `DELETE` to `authors` will automatically delete those authors' `books` as well, and onward through any foreign key that declares `books` a parent table.
 
 On occasion, natural primary key values may also change as standards and formats update or as the assumption that the natural key was immutable turns out to have been incorrect. Most RDBMSs support an `ON UPDATE CASCADE` behavior for this eventuality.
 
@@ -36,6 +37,7 @@ On occasion, natural primary key values may also change as standards and formats
 Even if real `libraries` or `authors` are never supposed to be deleted (only deactivated, or "soft-deleted"), both automated and manual tests often require a fresh, empty database up front or even for each individual test. Dropping and recreating the database breaks connections, requires elevated permissions, and is the slowest possible solution to boot.
 
 The usual recourse is a "teardown" function or script which deletes anything previous tests might have inserted into the database, table by table. Without `CASCADE` directives, these deletions must be arranged carefully in a [topological sort order](https://en.wikipedia.org/wiki/Topological_sorting) around the relationship graph to avoid ever violating a foreign key constraint. With `CASCADE`s, teardown mostly takes care of itself once you delete records at the center of each of the database's various relationship graphs.
+
 </details>
 
 ## Key positioning
@@ -44,11 +46,11 @@ Both libraries and authors preexist any useful record of the books they lend and
 
 Other cases aren't so clear. Imagine that some books are themselves on loan to libraries from outside collections, and that their original <footnote><note><a href="https://en.wikipedia.org/wiki/Provenance">Provenance</a> is the term used in archiving to describe who had an item before you did. Tracking provenance matters for rare books, museum artifacts, works of art, fine wines, data sets, and other less-than-building-sized things of value which change owners or holders.</note><text>provenances</text></footnote> are tracked separately. Should all `books` have a `provenance_id`, or should the `provenances` table have a `book_id` column?
 
-![Expanding the libraries schema to begin tracking provenance for individual books.](/content/modeling/libraries-provenances.png)
+![Expanding the libraries schema to begin tracking provenance for individual books.](/dataguide-images/modeling/libraries-provenances.png)
 
 Both solutions will serve the purpose of tracking provenance. However, in the case of `books.provenance_id`, there's no way to follow the link back to a book from its provenance -- one would have to search `books` for a matching `provenance_id`. And since most books have no special provenance, most values for `provenance_id` will be `NULL`.
 
-In this situation, the `provenances.book_id` approach is clearly superior. The `book_id` link is traceable, columns are used efficiently, and `provenances.book_id` is even a primary key, since a single book shouldn't have come to a library from more than one place. De Haan and Koppelaars would call `provenances` a *specialization* of `books`, a table which adds supplementary information to records in its parent identified by the same primary key. The connection between `books` and `provenances` is a "one-to-one" relationship, since only one of any `book_id` value can exist in either table.
+In this situation, the `provenances.book_id` approach is clearly superior. The `book_id` link is traceable, columns are used efficiently, and `provenances.book_id` is even a primary key, since a single book shouldn't have come to a library from more than one place. De Haan and Koppelaars would call `provenances` a _specialization_ of `books`, a table which adds supplementary information to records in its parent identified by the same primary key. The connection between `books` and `provenances` is a "one-to-one" relationship, since only one of any `book_id` value can exist in either table.
 
 ```sql
 CREATE TABLE provenances (
@@ -82,13 +84,13 @@ CREATE TABLE provenances (
 
 ## Many-to-many relationships
 
-Elsewhere in the example schema, `patrons` have a `library_id` value. This expresses a very important -- and likely a very wrong -- assumption: any person will patronize one library and one library only. If someone goes to another library, they'll have to enter all their information all over again. This violates *another* important assumption, namely, that a single record in `patrons` corresponds to a single person. Both can't be true.
+Elsewhere in the example schema, `patrons` have a `library_id` value. This expresses a very important -- and likely a very wrong -- assumption: any person will patronize one library and one library only. If someone goes to another library, they'll have to enter all their information all over again. This violates _another_ important assumption, namely, that a single record in `patrons` corresponds to a single person. Both can't be true.
 
 There's a second problem with a similar solution: we aren't yet tracking who's checked a book out. A single patron can borrow many books, while a single book can be checked out many times. Structurally, this is nearly identical to the case of a single library having many patrons, who themselves may borrow from multiple libraries.
 
-![Adding junction tables to the model allows the relationships between patrons and books, and patrons and libraries, to be fully represented.](/content/modeling/libraries-full.png)
+![Adding junction tables to the model allows the relationships between patrons and books, and patrons and libraries, to be fully represented.](/dataguide-images/modeling/libraries-full.png)
 
-A "many-to-many" relationship has to be represented in a dedicated table, often called a *junction* or *bridge* table, among [other names](https://en.wikipedia.org/wiki/Associative_entity). The junction table maintains foreign keys to each table it mediates, making it the "many" side of its relationships to those tables. A primary key across each foreign key prevents duplicates of the same relationship.
+A "many-to-many" relationship has to be represented in a dedicated table, often called a _junction_ or _bridge_ table, among [other names](https://en.wikipedia.org/wiki/Associative_entity). The junction table maintains foreign keys to each table it mediates, making it the "many" side of its relationships to those tables. A primary key across each foreign key prevents duplicates of the same relationship.
 
 `library_patrons`, a textbook example of a junction table, looks like this:
 

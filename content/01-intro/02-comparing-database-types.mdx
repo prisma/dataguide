@@ -1,7 +1,7 @@
 ---
 title: 'Comparing database types: how database types evolved to meet different needs'
 metaTitle: 'The Different Types of Databases - Overview with Examples'
-metaDescription: "Many types of databases exist, each with their own benefits. In this guide, we compare the different types of databases and what each of them offer."
+metaDescription: 'Many types of databases exist, each with their own benefits. In this guide, we compare the different types of databases and what each of them offer.'
 authors: ['justinellingwood']
 ---
 
@@ -60,7 +60,7 @@ Examples:
 
 [Hierarchical databases](/intro/database-glossary#hierarchical-database) were the next evolution in database management development. They encode a relationship between items where every record has a single parent. This builds a tree-like structure that can be used to categorize records according to their parent record.
 
-![Diagram of a hierarchical database](/content/intro/database-type-comparison/hierarchical.png)
+![Diagram of a hierarchical database](/dataguide-images/intro/database-type-comparison/hierarchical.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startwbs '
@@ -97,7 +97,7 @@ Examples:
 
 [Network databases](/intro/database-glossary#network-database) built on the foundation provided by hierarchical databases by adding additional flexibility. Instead of always having a single parent, as in hierarchical databases, network database entries can have more than one parent, which effectively allows them to model more complex relationships. When talking about network databases, it is important to realize that _network_ is being used to refer to connections between different data entries, not connections between different computers or software.
 
-![Diagram of a network database](/content/intro/database-type-comparison/network.png)
+![Diagram of a network database](/dataguide-images/intro/database-type-comparison/network.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -139,7 +139,7 @@ Examples:
 
 Relational databases organize data using _tables_. Tables are structures that impose a schema on the records that they hold. Each column within a table has a _name_ and a [_data type_](/intro/database-glossary#data-type). Each row represents an individual record or data item within the table, which contains values for each of the columns. Relational databases get their name from mathematical relationships that use tuples (like the rows in a table) to represent ordered sets of data.
 
-![Diagram of relational schema used to map entities for a school](/content/intro/database-type-comparison/relational.png)
+![Diagram of relational schema used to map entities for a school](/dataguide-images/intro/database-type-comparison/relational.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -225,7 +225,7 @@ Examples:
 
 [Key-value databases](/intro/database-glossary#key-value-database), or key-value stores, are one of the simplest database types. Key-value stores work by storing arbitrary data accessible through a specific _key_. To store data, you provide a key and the blob of data you wish to save, for example a JSON object, an image, or plain text. To retrieve data, you provide the key and will then be given the blob of data back. In most basic implementations, the database does not evaluate the data it is storing and allows limited ways of interacting with it.
 
-![Diagram of key-value data store](/content/intro/database-type-comparison/key-value.png)
+![Diagram of key-value data store](/dataguide-images/intro/database-type-comparison/key-value.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -262,7 +262,7 @@ Examples:
 
 [Document databases](/intro/database-glossary#document-database), also known as document-oriented databases or document stores, share the basic access and retrieval semantics of key-value stores. Document databases also use a key to uniquely identify data within the database. In fact, the line between advanced key-value stores and document databases can be fairly unclear. However, instead of storing arbitrary blobs of data, document databases store data in structured formats called documents, often using formats like JSON, BSON, or XML.
 
-![Diagram of document database](/content/intro/database-type-comparison/document.png)
+![Diagram of document database](/dataguide-images/intro/database-type-comparison/document.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -340,7 +340,7 @@ Examples:
 
 [Graph databases](/intro/database-glossary#graph-database) are a type of NoSQL database that takes a different approach to establishing relationships between data. Rather than mapping relationships with tables and foreign keys, graph databases establish connections using the concepts of _nodes_, _edges_, and _properties_.
 
-![Diagram of a graph database structure](/content/intro/database-type-comparison/graph.png)
+![Diagram of a graph database structure](/dataguide-images/intro/database-type-comparison/graph.png)
 
 Graph databases represents data as individual nodes which can have any number of properties associated with them. Between these nodes, edges (also called relationships) are established to represent different types of connections. In this way, the database encodes information about the data items within the nodes and information about their relationship in the edges that connect the nodes.
 
@@ -366,7 +366,7 @@ Instead of tables, column-family databases have structures called [_column famil
 
 With this design, each row in a column family defines its own schema. That schema can be easily modified because it only affects that single row of data. Each row can have different numbers of columns with different types of data. Sometimes it helps to think of column family databases as key-value databases where each key (row identifier) returns a dictionary of arbitrary attributes and their values (the column names and their values).
 
-![Diagram of column-family database structure](/content/intro/database-type-comparison/column.png)
+![Diagram of column-family database structure](/dataguide-images/intro/database-type-comparison/column.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -380,25 +380,25 @@ With this design, each row in a column family defines its own schema. That schem
 [comment]: # ( '  package "Columns" { )
 [comment]: # '   together { '
 [comment]: # '     together { '
-[comment]: # '       apple - [color\n---\nred] '
-[comment]: # '       [color\n---\nred] - [price\n---\n1] '
-[comment]: # '       [price\n---\n1] - [On sale\n---\nfalse] '
+[comment]: # '       apple - [color\\n---\nred] '
+[comment]: # '       [color\\n---\nred] - [price\n---\n1] '
+[comment]: # '       [price\\n---\n1] - [On sale\n---\nfalse] '
 [comment]: # '     } '
 [comment]: # '     together { '
-[comment]: # '       banana - [color\n---\nyellow] '
-[comment]: # '       [color\n---\nyellow] - [ripe\n---\ntrue] '
-[comment]: # '       [ripe\n---\ntrue] - [number per bunch\n---\n6] '
+[comment]: # '       banana - [color\\n---\nyellow] '
+[comment]: # '       [color\\n---\nyellow] - [ripe\n---\ntrue] '
+[comment]: # '       [ripe\\n---\ntrue] - [number per bunch\n---\n6] '
 [comment]: # '     } '
 [comment]: # '     together { '
-[comment]: # '       grape - [color\n---\ngreen] '
-[comment]: # '       [color\n---\ngreen] - [price\n---\n3] '
-[comment]: # '       [price\n---\n3] - [number per bunch\n---\n40] '
-[comment]: # '       [number per bunch\n---\n40] - [imported\n---\ntrue] '
+[comment]: # '       grape - [color\\n---\ngreen] '
+[comment]: # '       [color\\n---\ngreen] - [price\n---\n3] '
+[comment]: # '       [price\\n---\n3] - [number per bunch\n---\n40] '
+[comment]: # '       [number per bunch\\n---\n40] - [imported\n---\ntrue] '
 [comment]: # '     } '
 [comment]: # " '  } "
-[comment]: # '   [color\n---\nred] -[hidden]- [color\n---\ngreen] '
-[comment]: # '   [color\n---\ngreen] -[hidden]- [color\n---\nyellow] '
-[comment]: # '   Keys -[hidden]- [color\n---\nred] '
+[comment]: # '   [color\\n---\nred] -[hidden]- [color\n---\ngreen] '
+[comment]: # '   [color\\n---\ngreen] -[hidden]- [color\n---\nyellow] '
+[comment]: # '   Keys -[hidden]- [color\\n---\nred] '
 [comment]: # " '  Keys -[hidden]- Columns "
 [comment]: # ' } '
 [comment]: # ' @enduml '
@@ -421,7 +421,7 @@ _Time series databases_ are data stores that focus on collecting and managing va
 
 Many time series databases are organized into structures that record the values for a single item over time. For example, a table or similar structure could be created to track CPU temperature. Inside, each value would consist of a timestamp and a temperature value to map what the temperature was at specific points in time.
 
-![Single metric time series databases](/content/intro/database-type-comparison/time-series-single-metric.png)
+![Single metric time series databases](/dataguide-images/intro/database-type-comparison/time-series-single-metric.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -442,7 +442,7 @@ Many time series databases are organized into structures that record the values 
 
 Other implementations use timestamps as keys to store values for multiple metrics or columns at once. For instance, these structures would allow you to store and retrieve the values for CPU temperature, system load, and memory usage using a single timestamp.
 
-![Multi-metric time series databases](/content/intro/database-type-comparison/time-series-multi-metric.png)
+![Multi-metric time series databases](/dataguide-images/intro/database-type-comparison/time-series-multi-metric.png)
 
 [comment]: # ' ``` '
 [comment]: # ' @startuml '
@@ -539,6 +539,6 @@ Many times, using a mixture of different database types is the best approach for
 
 <PrismaOutlinks>
 
-You can use Prisma work more easily with databases from within your application code.  Check out our [database connectors page](https://www.prisma.io/docs/concepts/database-connectors) to see all of the databases Prisma supports.
+You can use Prisma work more easily with databases from within your application code. Check out our [database connectors page](https://www.prisma.io/docs/concepts/database-connectors) to see all of the databases Prisma supports.
 
 </PrismaOutlinks>

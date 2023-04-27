@@ -1,24 +1,24 @@
 ---
 title: 'Introduction to database replication and its benefits'
-metaTitle: "Database Replication - Types, Benefits, and Strategies"
+metaTitle: 'Database Replication - Types, Benefits, and Strategies'
 metaDescription: 'In this article, we cover what database replication is and its most common benefits. Learn more about the advantages of database replication.'
-metaImage: '/content/database-replication/Data-Replication-V2.png'
+metaImage: '/dataguide-images/database-replication/Data-Replication-V2.png'
 authors: ['alexemerich']
 ---
 
 ## Introduction
 
-![Article header](/content/database-replication/Data-Replication-V2.png)
+![Article header](/dataguide-images/database-replication/Data-Replication-V2.png)
 
-For many modern day applications, their backend is configured using a [distributed database](/intro/database-glossary#distributed-database). Data is stored and processed using an arrangement, or [cluster](/intro/database-glossary#cluster) of database servers, instead of relying on a single database server. The distributed model can ensure that data is still accessible even if one of the database servers suffers a failure. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic of this guide: database replication. 
+For many modern day applications, their backend is configured using a [distributed database](/intro/database-glossary#distributed-database). Data is stored and processed using an arrangement, or [cluster](/intro/database-glossary#cluster) of database servers, instead of relying on a single database server. The distributed model can ensure that data is still accessible even if one of the database servers suffers a failure. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic of this guide: database replication.
 
 In this guide, we will cover what database replication is and discuss the main benefits of having a database replication process in place for your distributed system.
 
 ## What is database replication?
 
-***Database replication*** is the process of maintaining a copy of data on multiple machines that are connected via a network. The process can be visualized like the following, where a lead database is sending its information to followers to replicate:
+**_Database replication_** is the process of maintaining a copy of data on multiple machines that are connected via a network. The process can be visualized like the following, where a lead database is sending its information to followers to replicate:
 
-![Database Replication](/content/database-replication/Full-Data-Replication.png)
+![Database Replication](/dataguide-images/database-replication/Full-Data-Replication.png)
 
 This image displays a specific kind of database replication architecture, but replication can also be done in different ways. The main goal is always the same, and that goal is to keep multiple, identical copies of up to date data in different places.
 
@@ -26,15 +26,15 @@ This image displays a specific kind of database replication architecture, but re
 
 As briefly alluded to in the introduction, there are several reasons why one would want to have a distributed database and therefore implement database replication. Some of the most common benefits include the following:
 
-* improve the availability of data
-* increase the speed of data access
-* enhance server performance
-* accomplish preparation for disaster recovery
-* improve analytics
+- improve the availability of data
+- increase the speed of data access
+- enhance server performance
+- accomplish preparation for disaster recovery
+- improve analytics
 
 ### Improve the availability of data
 
-*Replication* improves the [availability](/intro/database-glossary#availability) of data because it prevents relying on a single point of failure and losing database access. If there were some sort of technical glitch, power outage, or any number of different occurrences that affected that single point, then your application would not be able to access the data needed for its proper function. 
+_Replication_ improves the [availability](/intro/database-glossary#availability) of data because it prevents relying on a single point of failure and losing database access. If there were some sort of technical glitch, power outage, or any number of different occurrences that affected that single point, then your application would not be able to access the data needed for its proper function.
 
 Data replication enhances the resiliency and reliability of systems by storing data across multiple nodes. If one node goes down, there is another one to step up with the exact same data on it to keep operations running smoothly.
 
@@ -57,7 +57,7 @@ While replicas are not backups themselves because they continuously apply change
 
 For instance, if you want to back up your data, you can turn replication off briefly on one of the secondaries to get data in a consistent state, back up the data when there are no more write operations incoming, and then restart replication to catch back up on new updates. The replica gives you a snapshot of consistent data to target for disaster recovery without interrupting operations.
 
-An additional way replication facilitates preparation for disaster recovery is by explicitly configuring a replica to be a lagging follower. This replica would apply operations with a delay of a defined time. This delay allows the database monitoring team to notice an issue and avoid applying changes to the replica from a corrupted primary. They then can turn off the replication and have a mostly up-to-date server ready and running to keep operations going. 
+An additional way replication facilitates preparation for disaster recovery is by explicitly configuring a replica to be a lagging follower. This replica would apply operations with a delay of a defined time. This delay allows the database monitoring team to notice an issue and avoid applying changes to the replica from a corrupted primary. They then can turn off the replication and have a mostly up-to-date server ready and running to keep operations going.
 
 These methods add a level of enhanced data protection that would not be present without database replication.
 
@@ -67,16 +67,14 @@ Similar to the benefits mentioned from enhancing server performance, replication
 
 This makes it so any nodes handling write operations or other heavy reads are not strained also by handling analytics queries from database users. For example, your analytics team that is pulling data to put together user growth reports for the past quarter will have a dedicated node to work with and not strain any of the core nodes. This improves the performance experienced by the analytics team as well as keeping unnecesary load off the primary — all with data that is completely the same and up to date.
 
-
-
 ## Wrapping up
 
 Database replication is an important process to implement for a successful distributed data system. In this article we briefly introduced what database replication is and the benefits it adds to your new or already existing application.
 
-Database replication is not a one size fits all process, so it is important to know what benefits are most important to your team when configuring. We'll take the learned benefits and discuss the most common database replication architectures, methods, and types in additional guides. 
+Database replication is not a one size fits all process, so it is important to know what benefits are most important to your team when configuring. We'll take the learned benefits and discuss the most common database replication architectures, methods, and types in additional guides.
 
 <PrismaOutlinks>
 
-To perform database migrations with [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), use the [Prisma Migrate tool](https://www.prisma.io/docs/concepts/components/prisma-migrate).  Prisma Migrate analyzes your schema files, generates migration files, and applies them to target databases.
+To perform database migrations with [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), use the [Prisma Migrate tool](https://www.prisma.io/docs/concepts/components/prisma-migrate). Prisma Migrate analyzes your schema files, generates migration files, and applies them to target databases.
 
 </PrismaOutlinks>

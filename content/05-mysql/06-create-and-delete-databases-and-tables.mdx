@@ -1,16 +1,16 @@
 ---
 title: 'How to create and delete databases and tables in MySQL'
 metaTitle: 'Create and delete databases and tables in MySQL | Data Guide'
-metaDescription: "Learn how to create new databases and tables and delete them in MySQL."
+metaDescription: 'Learn how to create new databases and tables and delete them in MySQL.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-MySQL maintains the data it manages within tables and databases.  Tables store data within predefined schemas of columns and data types.  Databases are a structure that can hold multiple tables, indexes, procedures, and help define a scope for privileges, customizations, and more.
+MySQL maintains the data it manages within tables and databases. Tables store data within predefined schemas of columns and data types. Databases are a structure that can hold multiple tables, indexes, procedures, and help define a scope for privileges, customizations, and more.
 
-In this guide, we'll show you how to create tables and databases in MySQL.  We'll show you how to manage some features of both structures and then we'll cover how to remove them to clean up if you no longer need them.
+In this guide, we'll show you how to create tables and databases in MySQL. We'll show you how to manage some features of both structures and then we'll cover how to remove them to clean up if you no longer need them.
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ SHOW GRANTS\G
 
 ## How do you create a new database?
 
-The first thing we'll demonstrate how to do is create a new [database](/intro/database-glossary#database).  In MySQL, databases contain [tables](/intro/database-glossary#table), [indexes](/intro/database-glossary#index), [procedures](/intro/database-glossary#stored-procedure), and other resources that are typically related to a single project.  Each of those resources must be created within a database, so learning how to create a new database is a good first step.
+The first thing we'll demonstrate how to do is create a new [database](/intro/database-glossary#database). In MySQL, databases contain [tables](/intro/database-glossary#table), [indexes](/intro/database-glossary#index), [procedures](/intro/database-glossary#stored-procedure), and other resources that are typically related to a single project. Each of those resources must be created within a database, so learning how to create a new database is a good first step.
 
 The basic syntax used to create a new database looks like this:
 
@@ -34,13 +34,13 @@ The basic syntax used to create a new database looks like this:
 CREATE DATABASE <db_name>;
 ```
 
-Replace `<db_name>` with the name you wish to give your database before executing the command.  This command will create a database with the given name and set the current user as the new database's owner.
+Replace `<db_name>` with the name you wish to give your database before executing the command. This command will create a database with the given name and set the current user as the new database's owner.
 
 The database will use the system-wide defaults for the character set, [collation](/intro/database-glossary#collation), and encryption properties:
 
-* **CHARACTER SET:** sets the character set for the new database.  This is a localization option that affects what characters are considered uppercase, lowercase, and digits.
-* **COLLATE:** sets the *collation*, or sort order for the database. This is a localization option that determines how items are organized when they are ordered.
-* **ENCRYPTION:** sets encryption for for the new database.  This is a boolean option that can be either 'Y' for yes, or 'N' for no.
+- **CHARACTER SET:** sets the character set for the new database. This is a localization option that affects what characters are considered uppercase, lowercase, and digits.
+- **COLLATE:** sets the _collation_, or sort order for the database. This is a localization option that determines how items are organized when they are ordered.
+- **ENCRYPTION:** sets encryption for for the new database. This is a boolean option that can be either 'Y' for yes, or 'N' for no.
 
 You can find the character sets available for your installation by typing:
 
@@ -116,7 +116,7 @@ The output will display the command and options used to create the database, pad
 
 Once your database is created, you can either work with it in a few different ways.
 
-The first option is to specify the database as an argument in every command you use.  To save time if you are running multiple commands related to the database's objects though, you can also "switch to" or "use" the database to set your new database as the default context for any database-related commands that you'll be running.
+The first option is to specify the database as an argument in every command you use. To save time if you are running multiple commands related to the database's objects though, you can also "switch to" or "use" the database to set your new database as the default context for any database-related commands that you'll be running.
 
 To change to a different database, type:
 
@@ -132,7 +132,7 @@ USE school;
 
 ## Create tables within databases
 
-Once you have created a database, you can define tables and other objects inside to store and manage you data.  In MySQL, tables consist of a table name, the [column](/intro/database-glossary#column) definitions (these in turn include names, [data types](/intro/database-glossary#data-type), and constraints among others), and table options.
+Once you have created a database, you can define tables and other objects inside to store and manage you data. In MySQL, tables consist of a table name, the [column](/intro/database-glossary#column) definitions (these in turn include names, [data types](/intro/database-glossary#data-type), and constraints among others), and table options.
 
 ### What is the syntax of MySQL's `CREATE TABLE` command?
 
@@ -147,14 +147,14 @@ CREATE TABLE <table_name> (
 
 We can break down above command template into the following components:
 
-* **`CREATE TABLE <table_name>`**: The basic creation statement.  The `<table_name>` placeholder should be replaced with the name of the table you wish to use.
-* **`<column_name> <data_type>`**: Defines a basic column within the table.  The `<column_name>` placeholder should be replaced with the name you wish to use for your column.  The `<data_type>` specifies the [MySQL data type](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) of the column.  Data stored within the table must conform to the column structure and column data types to be accepted.
-* **`<column_constraint>`**: [Column constraints](https://dev.mysql.com/doc/refman/8.0/en/create-table.html#create-table-indexes-keys) are optional restraints add additional requirements for data.  For example, you can require that entries be not null, unique, or positive integers.
-* **`<table_constraint>`**: Table constraints are similar to column constraints but involve the interaction of multiple columns.  For instance, you could have a table constraint that checks that a `DATE_OF_BIRTH` is before `DATE_OF_DEATH` in a table.
+- **`CREATE TABLE <table_name>`**: The basic creation statement. The `<table_name>` placeholder should be replaced with the name of the table you wish to use.
+- **`<column_name> <data_type>`**: Defines a basic column within the table. The `<column_name>` placeholder should be replaced with the name you wish to use for your column. The `<data_type>` specifies the [MySQL data type](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) of the column. Data stored within the table must conform to the column structure and column data types to be accepted.
+- **`<column_constraint>`**: [Column constraints](https://dev.mysql.com/doc/refman/8.0/en/create-table.html#create-table-indexes-keys) are optional restraints add additional requirements for data. For example, you can require that entries be not null, unique, or positive integers.
+- **`<table_constraint>`**: Table constraints are similar to column constraints but involve the interaction of multiple columns. For instance, you could have a table constraint that checks that a `DATE_OF_BIRTH` is before `DATE_OF_DEATH` in a table.
 
 ### How do you create tables only if they don't already exist?
 
-MySQL's default behavior is to raise an error if you try to create a table that already exists.  However, the optional `IF NOT EXISTS` clause can be added to the creation statement to override this behavior.
+MySQL's default behavior is to raise an error if you try to create a table that already exists. However, the optional `IF NOT EXISTS` clause can be added to the creation statement to override this behavior.
 
 You can use the `IF NOT EXISTS` clause by inserting it in the command after the `CREATE TABLE` phrase but before the table name:
 
@@ -165,45 +165,44 @@ CREATE TABLE IF NOT EXISTS table_name (
 );
 ```
 
-This will modify the behavior of the command as follows: If the specified table name already exists, MySQL will raise a warning instead of an error.  The rest of the command behavior remains the same.
+This will modify the behavior of the command as follows: If the specified table name already exists, MySQL will raise a warning instead of an error. The rest of the command behavior remains the same.
 
 ### Creating tables within MySQL databases
 
-The command template given above is enough to create basic tables.  To further our example, we'll create two tables in our `school` database.  One table will be called `supplies` and the other will be called `teachers`:
+The command template given above is enough to create basic tables. To further our example, we'll create two tables in our `school` database. One table will be called `supplies` and the other will be called `teachers`:
 
-![Entity relationship diagrams for supplies and teachers tables](/content/postgresql/creating-and-deleting-databases-and-tables/entity-relationship-diagram.png)
+![Entity relationship diagrams for supplies and teachers tables](/dataguide-images/postgresql/creating-and-deleting-databases-and-tables/entity-relationship-diagram.png)
 
-[comment]: # ( ``` )
-[comment]: # ( @startuml )
-[comment]: # ( entity "supplies" as sup { )
-[comment]: # ( * id : int <<not null, unique>> )
-[comment]: # ( -- )
-[comment]: # ( * name : varchar )
-[comment]: # ( * description : varchar )
-[comment]: # ( * manufacturer : varchar )
-[comment]: # ( * color : varchar )
-[comment]: # ( * inventory : int <<greater than 0>> )
-[comment]: # ( } )
-
-[comment]: # ( entity "teachers" as teach { )
-[comment]: # ( * id : int <<not null, unique>> )
-[comment]: # ( -- )
-[comment]: # ( * first_name : varchar )
-[comment]: # ( * last_name : varchar )
-[comment]: # ( * subject : varchar )
-[comment]: # ( * grade_level : int )
-[comment]: # ( } )
-[comment]: # ( @enduml )
-[comment]: # ( ``` )
+[comment]: # ' ``` '
+[comment]: # ' @startuml '
+[comment]: # ' entity "supplies" as sup { '
+[comment]: # ' * id : int <<not null, unique>> '
+[comment]: # ' -- '
+[comment]: # ' * name : varchar '
+[comment]: # ' * description : varchar '
+[comment]: # ' * manufacturer : varchar '
+[comment]: # ' * color : varchar '
+[comment]: # ' * inventory : int <<greater than 0>> '
+[comment]: # ' } '
+[comment]: # ' entity "teachers" as teach { '
+[comment]: # ' * id : int <<not null, unique>> '
+[comment]: # ' -- '
+[comment]: # ' * first_name : varchar '
+[comment]: # ' * last_name : varchar '
+[comment]: # ' * subject : varchar '
+[comment]: # ' * grade_level : int '
+[comment]: # ' } '
+[comment]: # ' @enduml '
+[comment]: # ' ``` '
 
 In the `supplies` table, we'll include the following fields:
 
-* **id:** A unique ID for each type of school supply.
-* **name:** The name of a specific school item.
-* **description:** A short description of the item.
-* **manufacturer:** The name of the item manufacturer.
-* **color:** The color of the item.
-* **inventory:** The number of items we have for a certain type of school supply.  This should never be less than 0.
+- **id:** A unique ID for each type of school supply.
+- **name:** The name of a specific school item.
+- **description:** A short description of the item.
+- **manufacturer:** The name of the item manufacturer.
+- **color:** The color of the item.
+- **inventory:** The number of items we have for a certain type of school supply. This should never be less than 0.
 
 We can create the `supplies` table with the above qualities using the following SQL:
 
@@ -218,13 +217,14 @@ CREATE TABLE supplies (
 );
 ```
 
-This will create the `supplies` table within the `school` database.  The [`PRIMARY KEY`](/intro/database-glossary#primary-key) column constraint is a special constraint used to indicate columns that can uniquely identify records within the table.  As such, the constraint specifies that the column cannot be null and must be unique.  MySQL creates indexes for primary key columns to increase querying speed.
+This will create the `supplies` table within the `school` database. The [`PRIMARY KEY`](/intro/database-glossary#primary-key) column constraint is a special constraint used to indicate columns that can uniquely identify records within the table. As such, the constraint specifies that the column cannot be null and must be unique. MySQL creates indexes for primary key columns to increase querying speed.
 
 Verify that the new table is present by typing:
 
 ```sql
 SHOW TABLES;
 ```
+
 ```
 +------------------+
 | Tables_in_school |
@@ -239,6 +239,7 @@ You can verify that the [schema](/intro/database-glossary#schema) reflects your 
 ```sql
 SHOW CREATE TABLE supplies\G
 ```
+
 ```
 *************************** 1. row ***************************
        Table: supplies
@@ -257,13 +258,13 @@ Create Table: CREATE TABLE `supplies` (
 
 The columns, data types, and constraints we specified are present in the output, though the ordering and display might be different.
 
-Next, create a `teachers` table.  In this table, the following columns should be present:
+Next, create a `teachers` table. In this table, the following columns should be present:
 
-* **id**: A unique employee identification number.
-* **first_name**: The teacher's first name.
-* **last_name**: The teacher's last name.
-* **subject**: The subject that the teacher is hired to teach.
-* **grade_level**: The grade level of students that the teach is hired to teach.
+- **id**: A unique employee identification number.
+- **first_name**: The teacher's first name.
+- **last_name**: The teacher's last name.
+- **subject**: The subject that the teacher is hired to teach.
+- **grade_level**: The grade level of students that the teach is hired to teach.
 
 Create the `teachers` table with the above schema with the following SQL:
 
@@ -279,11 +280,11 @@ CREATE TABLE teachers (
 
 ### How to create tables with primary keys and foreign keys
 
-You can find information about creating tables with primary and foreign keys in some of our other MySQL guides.  Primary keys and foreign keys are both types of [database constraint](/mysql/column-and-table-constraints) within MySQL.
+You can find information about creating tables with primary and foreign keys in some of our other MySQL guides. Primary keys and foreign keys are both types of [database constraint](/mysql/column-and-table-constraints) within MySQL.
 
-A [primary key](/intro/database-glossary#primary-key) is a special column or column that is guaranteed to be unique across rows within the same table.  All primary keys can be used to uniquely identify a specific row.  Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column.  Often, the primary key in MySQL uses the following format to specify an automatically assigned incrementing primary key: `id INT AUTO_INCREMENT PRIMARY KEY`.
+A [primary key](/intro/database-glossary#primary-key) is a special column or column that is guaranteed to be unique across rows within the same table. All primary keys can be used to uniquely identify a specific row. Primary keys not only ensure that each row has a unique value for the primary key columns, they also ensure that no rows contain `NULL` values for that column. Often, the primary key in MySQL uses the following format to specify an automatically assigned incrementing primary key: `id INT AUTO_INCREMENT PRIMARY KEY`.
 
-[Foreign keys](/intro/database-glossary#foreign-key) are a way to ensure that a column or columns in one table match the values contained within another table.  This helps ensure referential integrity between tables.
+[Foreign keys](/intro/database-glossary#foreign-key) are a way to ensure that a column or columns in one table match the values contained within another table. This helps ensure referential integrity between tables.
 
 ## How to view tables in MySQL
 
@@ -294,6 +295,7 @@ If you'd like to see what tables are available within your database, type:
 ```sql
 SHOW TABLES;
 ```
+
 ```
 +------------------+
 | Tables_in_school |
@@ -309,6 +311,7 @@ You can also check that the schema for the table matches your specifications:
 ```sql
 DESCRIBE teachers;
 ```
+
 ```
 +--------------+--------------+------+-----+---------+----------------+
 | Field        | Type         | Null | Key | Default | Extra          |
@@ -327,7 +330,7 @@ The `teachers` table seems to match our definition.
 
 ## How to change tables with the `ALTER TABLE` command
 
-If you need to change the schema of an existing table in MySQL, you can use the `ALTER TABLE` command.  The `ALTER TABLE` command is very similar to the `CREATE TABLE` command, but operates on an existing table.
+If you need to change the schema of an existing table in MySQL, you can use the `ALTER TABLE` command. The `ALTER TABLE` command is very similar to the `CREATE TABLE` command, but operates on an existing table.
 
 ### Alter table syntax
 
@@ -337,11 +340,11 @@ The basic syntax for modifying tables in MySQL looks like this:
 ALTER TABLE <table_name> <change_command> <change_parameters>;
 ```
 
-The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints.  The `<change_parameters>` part of the command contains any additional information that MySQL needs to complete the change.
+The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints. The `<change_parameters>` part of the command contains any additional information that MySQL needs to complete the change.
 
 ### Adding columns to tables
 
-You can add a column to a MySQL table with the `ADD` change command.  The change parameters will include the column name, type, and options, just as you would specify them in the `CREATE TABLE` command.
+You can add a column to a MySQL table with the `ADD` change command. The change parameters will include the column name, type, and options, just as you would specify them in the `CREATE TABLE` command.
 
 For example, to add a column called `missing_column` of the `text` type to a table called `some_table`, you would type:
 
@@ -351,7 +354,7 @@ ALTER TABLE some_table ADD missing_column text;
 
 ### Removing columns from tables
 
-If, instead, you'd like to remove an existing column, you can use the `DROP COLUMN` command instead.  You need to specify the name of the column you wish to drop as a change parameter:
+If, instead, you'd like to remove an existing column, you can use the `DROP COLUMN` command instead. You need to specify the name of the column you wish to drop as a change parameter:
 
 ```sql
 ALTER TABLE some_table DROP COLUMN useless_column;
@@ -359,7 +362,7 @@ ALTER TABLE some_table DROP COLUMN useless_column;
 
 ### Changing the data type of a column
 
-To change the data type of a column, you can use `ALTER COLUMN` change command with the `MODIFY COLUMN` column command.  The parameters in this context include the column name and its new type:
+To change the data type of a column, you can use `ALTER COLUMN` change command with the `MODIFY COLUMN` column command. The parameters in this context include the column name and its new type:
 
 ```sql
 ALTER TABLE resident MODIFY COLUMN id INT;
@@ -367,11 +370,11 @@ ALTER TABLE resident MODIFY COLUMN id INT;
 
 ### Other table changes
 
-Many other types of changes can be achieved with the `ALTER TABLE` command.  For more information about the options available, check out the official [MySQL documentation for `ALTER TABLE`](https://dev.mysql.com/doc/refman/8.0/en/alter-table.html).
+Many other types of changes can be achieved with the `ALTER TABLE` command. For more information about the options available, check out the official [MySQL documentation for `ALTER TABLE`](https://dev.mysql.com/doc/refman/8.0/en/alter-table.html).
 
 ## Drop tables
 
-If you want to delete a table, you can use the `DROP TABLE` SQL statement.  This will delete the table as well as any data stored within it.
+If you want to delete a table, you can use the `DROP TABLE` SQL statement. This will delete the table as well as any data stored within it.
 
 The basic syntax looks like this:
 
@@ -399,17 +402,18 @@ We will keep the `teachers` database to demonstrate that the statement to delete
 
 ## Drop databases
 
-The `DROP DATABASE` statement tells MySQL to delete the specified database.  The basic syntax looks like this:
+The `DROP DATABASE` statement tells MySQL to delete the specified database. The basic syntax looks like this:
 
 ```sql
 DROP DATABASE <database_name>;
 ```
 
-Replace the `<database_name>` placeholder with the name of the database you wish to remove.  This will delete the database if it is found.  If the database cannot be found, an error will occur:
+Replace the `<database_name>` placeholder with the name of the database you wish to remove. This will delete the database if it is found. If the database cannot be found, an error will occur:
 
 ```sql
 DROP DATABASE some_database;
 ```
+
 ```
 ERROR 1008 (HY000): Can't drop database 'some_database'; database doesn't exist
 ```
@@ -419,6 +423,7 @@ If you wish to delete the database if it exists and otherwise do nothing, includ
 ```sql
 DROP DATABASE IF EXISTS some_database;
 ```
+
 ```sql
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 ```
@@ -430,6 +435,7 @@ To remove the `school` database that we used in this guide, list the existing da
 ```sql
 SHOW DATABASES;
 ```
+
 ```
 +--------------------+
 | Database           |
@@ -454,9 +460,9 @@ This will remove the `school` database along with the `teachers` table defined w
 
 ## Conclusion
 
-This article covered the basics of how to create and delete databases and tables with MySQL.  These are some of the most basic commands required to set up a database system and being defining the structure of your data.
+This article covered the basics of how to create and delete databases and tables with MySQL. These are some of the most basic commands required to set up a database system and being defining the structure of your data.
 
-As mentioned earlier, the SQL statements covered in this MySQL tutorial, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change the system's behavior.  You can find out more about these by checking out the [official MySQL documentation](https://dev.mysql.com/doc/refman/8.0/en/create-table.html).
+As mentioned earlier, the SQL statements covered in this MySQL tutorial, particularly the `CREATE TABLE` statement, have many additional parameters can be used to change the system's behavior. You can find out more about these by checking out the [official MySQL documentation](https://dev.mysql.com/doc/refman/8.0/en/create-table.html).
 
 ## FAQ
 
@@ -464,7 +470,7 @@ As mentioned earlier, the SQL statements covered in this MySQL tutorial, particu
 
 In MySQL Workbench, you start by [creating a new model](https://dev.mysql.com/doc/workbench/en/wb-getting-started-tutorial-creating-a-model.html).
 
-Once you have a model you'll be able to add a new schema which in MySQL is equivalent to a new database. 
+Once you have a model you'll be able to add a new schema which in MySQL is equivalent to a new database.
 
 </details>
 
@@ -476,7 +482,7 @@ The basic syntax for altering a table in MySQL uses `ALTER TABLE` and looks like
 ALTER TABLE <table_name> <change_command> <change_parameters>;
 ```
 
-The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints. 
+The `<change_command>` indicates the exact type of change you would like to make, whether it involves setting different options on the table, adding or removing columns, or changing types or constraints.
 
 The `<change_parameters>` part of the command contains any additional information that MySQL needs to complete the change.
 
@@ -528,4 +534,5 @@ CREATE TEMPORARY TABLE table_name(
    table_constraints
 );
 ```
+
 </details>
