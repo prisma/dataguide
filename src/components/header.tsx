@@ -1,6 +1,5 @@
 import * as React from 'react'
 import styled, { css } from 'styled-components'
-import styledTS from 'styled-components-ts'
 import HeaderLogo from '../icons/Logo'
 import Clear from '../icons/Clear'
 import Search from '../components/search'
@@ -65,7 +64,7 @@ const LogoContainer = styled.div`
     font-size: 18px;
     font-weight: 500;
     ine-height: 18px;
-    color: #2F3747;
+    color: #2f3747;
     margin-left: 10px;
   }
 `
@@ -83,7 +82,7 @@ const DocsMobileButton = styled.div`
   font-weight: 600;
   position: relative;
   z-index: 300;
-  svg path{
+  svg path {
     stroke: white;
   }
   @media (min-width: 0px) and (max-width: 1024px) {
@@ -118,7 +117,7 @@ const PrismaLink = styled.div`
   display: flex;
   align-items: center;
   @media (min-width: 0px) and (max-width: 1024px) {
-    display: none
+    display: none;
   }
 `
 const PrismaButton = styled.a`
@@ -136,11 +135,11 @@ const PrismaButton = styled.a`
   }
 `
 
-const SearchContainer = styledTS<{ isSticky: boolean }>(styled.div)`
+const SearchContainer = styled.div<{ isSticky: boolean }>`
   display: flex;
   justify-content: space-between;
   @media only screen and (min-width: 1024px) {
-    display:none;
+    display: none;
   }
   ${({ isSticky }: any) =>
     isSticky &&
@@ -186,20 +185,24 @@ const Header = ({ headerProps }: HeaderViewProps) => {
           </div>
         </HeaderNav>
         <SearchContainer>
-          {!showMobileNav && <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile/>}
+          {!showMobileNav && (
+            <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile />
+          )}
           <DocsMobileButton onClick={toggleMobileNav}>
             {showMobileNav ? <Clear /> : 'Menu'}
           </DocsMobileButton>
         </SearchContainer>
         {showMobileNav && (
-        <MobileOnlyNav>
-          <Sidebar isMobile={true} />
-        </MobileOnlyNav>
-      )}
-      <PrismaLink>
-        <SearchComponent hitsStatus={changeHitsStatus} location={location} header />
-        <PrismaButton href="https://www.prisma.io" target="_blank">Explore Prisma</PrismaButton>
-      </PrismaLink>
+          <MobileOnlyNav>
+            <Sidebar isMobile={true} />
+          </MobileOnlyNav>
+        )}
+        <PrismaLink>
+          <SearchComponent hitsStatus={changeHitsStatus} location={location} header />
+          <PrismaButton href="https://www.prisma.io" target="_blank">
+            Explore Prisma
+          </PrismaButton>
+        </PrismaLink>
       </div>
     </HeaderWrapper>
   )

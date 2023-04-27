@@ -2,3 +2,5 @@ node_modules/
 public/
 .cache/
 static/
+out/
+history/

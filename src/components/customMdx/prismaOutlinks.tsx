@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import withProps from 'styled-components-ts'
 
 import ListDot from '../../images/blue-list-dot.png'
 import PrismaLogo from '../../icons/PrismaLogo'
@@ -30,12 +29,12 @@ const PrismaOutlinks = ({ children, inner }: PrismaOutlinkProps) => {
 
 export default PrismaOutlinks
 
-const PrismaOutlinksWrapper = withProps<any>(styled.div)`
+const PrismaOutlinksWrapper = styled.div<{ inner?: boolean }>`
   background: #ebf8ff;
   color: #63b3ed;
-  ${p => (!p.inner ? 'padding: 20px 40px;' : 'padding: 24px;')}
-  ${p => (!p.inner ? 'margin: 0 -40px;' : 'margin: 16px 0;')}
-  ${p => (p.inner ? 'border-radius: 4px;' : '')}
+  ${(p) => (!p.inner ? 'padding: 20px 40px;' : 'padding: 24px;')}
+  ${(p) => (!p.inner ? 'margin: 0 -40px;' : 'margin: 16px 0;')}
+  ${(p) => (p.inner ? 'border-radius: 4px;' : '')}
   font-size: 14px;
 
   .list {

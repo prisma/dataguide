@@ -1,17 +1,9 @@
 export interface HeaderProps {
   logoLink: string
-  // links: { name: string; link: string }[] // create interface for this
 }
 
 export interface FooterProps {
-  // logoLink: string
-  // title: string
-  // products: { name: string; link: string }[]
-  // community: { name: string; link: string }[]
-  // resources: { name: string; link: string }[]
-  // company: { name: string; link: string }[]
   newsletter: { text: string }
-  // findus: any
 }
 
 interface SiteMeta {
@@ -24,4 +16,12 @@ interface SiteMeta {
 
 export interface LayoutQueryData {
   site: SiteMeta
+}
+
+export interface CreatePageContext {
+  pageContext: {
+    seoTitle: string
+    seoDescription: string
+    metaImage: string
+  }
 }
