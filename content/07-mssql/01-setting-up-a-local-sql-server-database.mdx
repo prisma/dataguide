@@ -1,6 +1,6 @@
 ---
 title: 'Setting up a local SQL Server database'
-metaTitle: "Install and Set Up a Local SQL Server Database Instance"
+metaTitle: 'Install and Set Up a Local SQL Server Database Instance'
 metaDescription: 'Learn how to install and set up a SQL Server database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
 metaImage: '/social/generic-sql-server.png'
 authors: ['justinellingwood']
@@ -9,7 +9,7 @@ toc: false
 
 ## Overview
 
-In this guide, we'll talk about how to install and configure a [SQL Server instance](https://www.microsoft.com/en-us/sql-server/sql-server-2019) and the [`sqlcmd` command line client](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility).  We will go over how to install and set up these components on your computer for local access.
+In this guide, we'll talk about how to install and configure a [SQL Server instance](https://www.microsoft.com/en-us/sql-server/sql-server-2019) and the [`sqlcmd` command line client](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility). We will go over how to install and set up these components on your computer for local access.
 
 This guide will cover the following platforms:
 
@@ -24,45 +24,45 @@ Navigate to the sections that match the platforms you will be working with.
 
 ## Setting up SQL Server on Windows
 
-Microsoft provides native Windows installers for SQL Server on their site and offers various versions of SQL Server suitable for different purposes.  For the purposes of this guide, we will download and install the free Developer edition.  You can easily upgrade to a paid version from the Developer edition if you want to use it for production.
+Microsoft provides native Windows installers for SQL Server on their site and offers various versions of SQL Server suitable for different purposes. For the purposes of this guide, we will download and install the free Developer edition. You can easily upgrade to a paid version from the Developer edition if you want to use it for production.
 
-To begin, visit [Microsoft's page for SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).  Find the section related to the Developer edition and click **Download now**:
+To begin, visit [Microsoft's page for SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads). Find the section related to the Developer edition and click **Download now**:
 
-![Download SQL Server Developer Edition](/content/mssql/setting-up-a-local-database/windows/download_dev_edition.png)
+![Download SQL Server Developer Edition](/dataguide-images/mssql/setting-up-a-local-database/windows/download_dev_edition.png)
 
 Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer).
 
 On the initial screen of the installer, you will be asked to choose what type of installation you want to perform:
 
-![SQL Server choose installation type](/content/mssql/setting-up-a-local-database/windows/choose_installation_type.png)
+![SQL Server choose installation type](/dataguide-images/mssql/setting-up-a-local-database/windows/choose_installation_type.png)
 
 Choose **Basic** to continue on with a conventional installation using the most common options.
 
 Next, you'll be asked to agree to the Developer Edition licensing terms:
 
-![SQL Server agree to terms](/content/mssql/setting-up-a-local-database/windows/accept_license.png)
+![SQL Server agree to terms](/dataguide-images/mssql/setting-up-a-local-database/windows/accept_license.png)
 
 When you have read the license and agree to the terms, click **Accept** to continue.
 
 Next, confirm or change the installation location:
 
-![SQL Server choose installation location](/content/mssql/setting-up-a-local-database/windows/select_installation_location.png)
+![SQL Server choose installation location](/dataguide-images/mssql/setting-up-a-local-database/windows/select_installation_location.png)
 
 When you are ready, click **Install** to begin the installation process.
 
 The installer will begin to download and install components to set up SQL Server on your computer:
 
-![SQL Server downloading and installing](/content/mssql/setting-up-a-local-database/windows/downloading_and_installing.png)
+![SQL Server downloading and installing](/dataguide-images/mssql/setting-up-a-local-database/windows/downloading_and_installing.png)
 
 When the installation is finished, a screen will appear noting the current installation properties:
 
-![SQL Server installation successful](/content/mssql/setting-up-a-local-database/windows/installation_successful.png)
+![SQL Server installation successful](/dataguide-images/mssql/setting-up-a-local-database/windows/installation_successful.png)
 
 To connect to the new SQL Server instance right away, click **Connect Now** at the bottom.
 
 A new window will `Cmd` window will appear and automatically log you into the SQL Server instance using the `sqlcmd` client:
 
-![SQL Server connect to database](/content/mssql/setting-up-a-local-database/windows/log_in_to_database.png)
+![SQL Server connect to database](/dataguide-images/mssql/setting-up-a-local-database/windows/log_in_to_database.png)
 
 As shown in a comment at the top of the window, you can connect to SQL Server manually at any time with the `sqlcmd` client by typing:
 
@@ -86,11 +86,11 @@ You can also check out our guides to see how to use Prisma with Microsoft SQL Se
 
 ## Setting up SQL Server on macOS
 
-While Microsoft does not provide a native installer for macOS, they do support running SQL Server on macOS through Docker.  The main [SQL Server Docker container](https://hub.docker.com/_/microsoft-mssql-server) is built using a Linux container, allowing any host capable of running Docker containers to run the database server.
+While Microsoft does not provide a native installer for macOS, they do support running SQL Server on macOS through Docker. The main [SQL Server Docker container](https://hub.docker.com/_/microsoft-mssql-server) is built using a Linux container, allowing any host capable of running Docker containers to run the database server.
 
 You'll need at least 2 GB of memory (probably at least a little more) to successfully run the image, however Docker itself requires at least 4 GB of memory.
 
-To begin, make sure you have the Docker on your system.  [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/) includes Docker Engine and other related applications.  If you don't already have Docker installed, follow the instructions included in the above link.
+To begin, make sure you have the Docker on your system. [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/) includes Docker Engine and other related applications. If you don't already have Docker installed, follow the instructions included in the above link.
 
 Once you have Docker up and running, you can pull the SQL Server Docker image from Microsoft Container Registry by typing:
 
@@ -102,50 +102,52 @@ This will download all of the required image layers to your local system, allowi
 
 When you're ready to start the container, type the following command.
 
-Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy.  At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
+Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy. At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
 
 ```bash
 docker run --env "ACCEPT_EULA=Y" --env "SA_PASSWORD=<password>" --publish 1433:1433 --name mssql --hostname mssql --detach mcr.microsoft.com/mssql/server:2019-latest
 ```
 
-The SQL Server container will be started up in the background.  The string of characters displayed is the new container's ID.
+The SQL Server container will be started up in the background. The string of characters displayed is the new container's ID.
 
 You can verify that the container is up and running by typing:
 
 ```bash
 docker ps -a
 ```
+
 ```
 CONTAINER ID   IMAGE                                        COMMAND                  CREATED          STATUS                      PORTS                    NAMES
 ffa9ef357b5c   mcr.microsoft.com/mssql/server:2019-latest   "/opt/mssql/bin/perm…"   2 minutes ago    Up 2 minutes                0.0.0.0:1433->1433/tcp   mssql
 ae00765e36fb   hello-world                                  "/hello"                 24 minutes ago   Exited (0) 24 minutes ago                            dreamy_swanson
 ```
 
-You should see the `mssql` container among the list.  If the container is not running or you have trouble, you can try viewing its logs to see if there are any helpful messages:
+You should see the `mssql` container among the list. If the container is not running or you have trouble, you can try viewing its logs to see if there are any helpful messages:
 
 ```bash
 docker logs mssql
 ```
 
-The SQL Server container not only has the database server installed, it also has some of the common tooling available, including the `sqlcmd` command line client.  To use this client to connect to the database instance, you can use `docker exec` to access the command and authenticate against the database:
+The SQL Server container not only has the database server installed, it also has some of the common tooling available, including the `sqlcmd` command line client. To use this client to connect to the database instance, you can use `docker exec` to access the command and authenticate against the database:
 
 ```bash
 docker exec --interactive --tty mssql /opt/mssql-tools/bin/sqlcmd -U SA -S 127.0.0.1 -P "<password>"
 ```
 
-You will be authenticated to the SQL Server inside the container and dropped into a SQL shell.  You can verify that everything is up and running by typing:
+You will be authenticated to the SQL Server inside the container and dropped into a SQL shell. You can verify that everything is up and running by typing:
 
 ```sql
 SELECT @@VERSION;
 GO
 ```
+
 ```
  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  Microsoft SQL Server 2019 (RTM-CU9) (KB5000642) - 15.0.4102.2 (X64)
  	Jan 25 2021 20:16:12
  	Copyright (C) 2019 Microsoft Corporation
  	Developer Edition (64-bit) on Linux (Ubuntu 18.04.5 LTS) <X64>
- 
+
  (1 rows affected)
 ```
 
@@ -179,7 +181,7 @@ You can also check out our guides to see how to use Prisma with Microsoft SQL Se
 
 ## Setting up SQL Server on Linux
 
-Installation methods differ depending on the Linux distribution you are using. Follow the section below that matches your Linux distribution.  There are also instructions using Docker if you prefer that configuration or want to use a distribution not listed.
+Installation methods differ depending on the Linux distribution you are using. Follow the section below that matches your Linux distribution. There are also instructions using Docker if you prefer that configuration or want to use a distribution not listed.
 
 - [Ubuntu](#ubuntu)
 - [CentOS and Red Hat](#centos-and-red-hat)
@@ -187,7 +189,7 @@ Installation methods differ depending on the Linux distribution you are using. F
 
 ### Ubuntu
 
-The easiest way to install SQL Server on Ubuntu 20.04 is to install from the dedicated repositories provided by Microsoft.  Your machine must have at least 2 GB of memory to successfully install and run the necessary software.
+The easiest way to install SQL Server on Ubuntu 20.04 is to install from the dedicated repositories provided by Microsoft. Your machine must have at least 2 GB of memory to successfully install and run the necessary software.
 
 To begin, add a new repository definition to your system by typing:
 
@@ -213,7 +215,7 @@ With the repository set up, you can install SQL Server and the `sqlcmd` command 
 sudo apt install mssql-server mssql-tools unixodbc-dev
 ```
 
-Once the installation is complete, you need to configure your new database instance.  To do so, run the included `mssql-conf setup` script to set some of the basic properties of your new system:
+Once the installation is complete, you need to configure your new database instance. To do so, run the included `mssql-conf setup` script to set some of the basic properties of your new system:
 
 ```bash
 sudo /opt/mssql/bin/mssql-conf setup
@@ -245,7 +247,7 @@ number of licenses in place to install and run this software.
 Enter your edition(1-8):
 ```
 
-If you have a paid license, you can choose the appropriate version.  If you are using the server in a non-production environment, it is safe to choose the developer edition.
+If you have a paid license, you can choose the appropriate version. If you are using the server in a non-production environment, it is safe to choose the developer edition.
 
 Next, you'll have to accept the license terms again:
 
@@ -267,7 +269,7 @@ Enter the SQL Server system administrator password:
 Confirm the SQL Server system administrator password:
 ```
 
-To use the `sqlcmd` client to connect to your SQL Server instance, it's easiest to add the `mssql-tools` binary directory to your `PATH`.  To configure this, type:
+To use the `sqlcmd` client to connect to your SQL Server instance, it's easiest to add the `mssql-tools` binary directory to your `PATH`. To configure this, type:
 
 ```bash
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
@@ -286,19 +288,20 @@ You can now connect to your database instance by typing:
 sqlcmd -U SA -S 127.0.0.1
 ```
 
-You'll be prompted for the password you set up earlier.  After successfully authenticating, you will be dropped into an SQL shell.  From here, you can verify that everything is working by printing the server's version:
+You'll be prompted for the password you set up earlier. After successfully authenticating, you will be dropped into an SQL shell. From here, you can verify that everything is working by printing the server's version:
 
 ```sql
 SELECT @@VERSION
 GO
 ```
+
 ```
  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  Microsoft SQL Server 2019 (RTM-CU9) (KB5000642) - 15.0.4102.2 (X64)
  	Jan 25 2021 20:16:12
  	Copyright (C) 2019 Microsoft Corporation
  	Developer Edition (64-bit) on Linux (Ubuntu 20.04.2 LTS) <X64>
- 
+
  (1 rows affected)
 ```
 
@@ -318,9 +321,9 @@ You can also check out our guides to see how to use Prisma with Microsoft SQL Se
 
 ### CentOS and Red Hat
 
-The easiest way to get SQL Server installed on CentOS or Red Hat is to use the repositories provided by Microsoft.  Linux hosts must have at least 2 GB of memory to install and run SQL Server.
+The easiest way to get SQL Server installed on CentOS or Red Hat is to use the repositories provided by Microsoft. Linux hosts must have at least 2 GB of memory to install and run SQL Server.
 
-Before installing SQL Server, you need to install and configure its dependencies.  We need both Python 2 and OpenSSL 10 to continue:
+Before installing SQL Server, you need to install and configure its dependencies. We need both Python 2 and OpenSSL 10 to continue:
 
 ```bash
 sudo yum install python2 compat-openssl10
@@ -332,16 +335,16 @@ After Python 2 is installed, configure the system to use it as the default Pytho
 sudo alternatives --config python
 ```
 
-From the list that follows, select the number associated with the Python 2 installation.  In the example below, this will be option 2:
+From the list that follows, select the number associated with the Python 2 installation. In the example below, this will be option 2:
 
 ```
  There are 2 programs which provide 'python'.
- 
+
    Selection    Command
  -----------------------------------------------
  *+ 1           /usr/libexec/no-python
     2           /usr/bin/python2
- 
+
  Enter to keep the current selection[+], or type selection number: 2
 ```
 
@@ -363,7 +366,7 @@ Once the repositories are configured, install SQL Server by typing:
 sudo yum install mssql-server mssql-tools unixODBC-devel
 ```
 
-Once the installation is complete, you need to configure your new database instance.  To do so, run the included `mssql-conf setup` script to set some of the basic properties of your new system:
+Once the installation is complete, you need to configure your new database instance. To do so, run the included `mssql-conf setup` script to set some of the basic properties of your new system:
 
 ```bash
 sudo /opt/mssql/bin/mssql-conf setup
@@ -395,7 +398,7 @@ number of licenses in place to install and run this software.
 Enter your edition(1-8):
 ```
 
-If you have a paid license, you can choose the appropriate version.  If you are using the server in a non-production environment, it is safe to choose the developer edition.
+If you have a paid license, you can choose the appropriate version. If you are using the server in a non-production environment, it is safe to choose the developer edition.
 
 Next, you'll have to accept the license terms again:
 
@@ -417,7 +420,7 @@ Enter the SQL Server system administrator password:
 Confirm the SQL Server system administrator password:
 ```
 
-To use the `sqlcmd` client to connect to your SQL Server instance, it's easiest to add the `mssql-tools` binary directory to your `PATH`.  To configure this, type:
+To use the `sqlcmd` client to connect to your SQL Server instance, it's easiest to add the `mssql-tools` binary directory to your `PATH`. To configure this, type:
 
 ```bash
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
@@ -436,19 +439,20 @@ You can now connect to your database instance by typing:
 sqlcmd -U SA -S 127.0.0.1
 ```
 
-You'll be prompted for the password you set up earlier.  After successfully authenticating, you will be dropped into an SQL shell.  From here, you can verify that everything is working by printing the server's version:
+You'll be prompted for the password you set up earlier. After successfully authenticating, you will be dropped into an SQL shell. From here, you can verify that everything is working by printing the server's version:
 
 ```sql
 SELECT @@VERSION
 GO
 ```
+
 ```
  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  Microsoft SQL Server 2019 (RTM-CU9) (KB5000642) - 15.0.4102.2 (X64)
  	Jan 25 2021 20:16:12
  	Copyright (C) 2019 Microsoft Corporation
  	Developer Edition (64-bit) on Linux (CentOS Linux 8) <X64>
- 
+
  (1 rows affected)
 ```
 
@@ -468,9 +472,9 @@ You can also check out our guides to see how to use Prisma with Microsoft SQL Se
 
 ### With Docker
 
-If you are using a Linux distribution that Microsoft does not provide packages for or if you simply prefer, another option is to run SQL Server with Docker.  You'll need at least 2 GB of memory (probably at least a little more) to successfully run the image.
+If you are using a Linux distribution that Microsoft does not provide packages for or if you simply prefer, another option is to run SQL Server with Docker. You'll need at least 2 GB of memory (probably at least a little more) to successfully run the image.
 
-To begin, make sure you have the Docker Engine on your system.  You can find detailed instructions for various platforms in the [Docker Engine documentation](https://docs.docker.com/engine/install/).
+To begin, make sure you have the Docker Engine on your system. You can find detailed instructions for various platforms in the [Docker Engine documentation](https://docs.docker.com/engine/install/).
 
 Once you have Docker up and running, you can pull the SQL Server Docker image from Microsoft Container Registry by typing:
 
@@ -482,50 +486,52 @@ This will download all of the required image layers to your local system, allowi
 
 When you're ready to start the container, type the following command.
 
-Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy.  At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
+Remember to replace `<password>` with the value of your intended password and choose a value that conforms to the image's password policy. At the time of this writing, the policy is defined as: "The password must be at least 8 characters long and contain characters from three of the following four sets: Uppercase letters, Lowercase letters, Base 10 digits, and Symbols.":
 
 ```bash
 sudo docker run --env "ACCEPT_EULA=Y" --env "SA_PASSWORD=<password>" --publish 1433:1433 --name mssql --hostname mssql --detach mcr.microsoft.com/mssql/server:2019-latest
 ```
 
-The SQL Server container will be started up in the background.  The string of characters displayed is the new container's ID.
+The SQL Server container will be started up in the background. The string of characters displayed is the new container's ID.
 
 You can verify that the container is up and running by typing:
 
 ```bash
 sudo docker ps -a
 ```
+
 ```
 CONTAINER ID   IMAGE                                        COMMAND                  CREATED          STATUS                      PORTS                    NAMES
 ffa9ef357b5c   mcr.microsoft.com/mssql/server:2019-latest   "/opt/mssql/bin/perm…"   2 minutes ago    Up 2 minutes                0.0.0.0:1433->1433/tcp   mssql
 ae00765e36fb   hello-world                                  "/hello"                 24 minutes ago   Exited (0) 24 minutes ago                            dreamy_swanson
 ```
 
-You should see the `mssql` container among the list.  If the container is not running or you have trouble, you can try viewing its logs to see if there are any helpful messages:
+You should see the `mssql` container among the list. If the container is not running or you have trouble, you can try viewing its logs to see if there are any helpful messages:
 
 ```bash
 sudo docker logs mssql
 ```
 
-The SQL Server container not only has the database server installed, it also has some of the common tooling available, including the `sqlcmd` command line client.  To use this client to connect to the database instance, you can use `docker exec` to access the command and authenticate against the database:
+The SQL Server container not only has the database server installed, it also has some of the common tooling available, including the `sqlcmd` command line client. To use this client to connect to the database instance, you can use `docker exec` to access the command and authenticate against the database:
 
 ```bash
 sudo docker exec --interactive --tty mssql /opt/mssql-tools/bin/sqlcmd -U SA -S 127.0.0.1 -P "<password>"
 ```
 
-You will be authenticated to the SQL Server inside the container and dropped into a SQL shell.  You can verify that everything is up and running by typing:
+You will be authenticated to the SQL Server inside the container and dropped into a SQL shell. You can verify that everything is up and running by typing:
 
 ```sql
 SELECT @@VERSION;
 GO
 ```
+
 ```
  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  Microsoft SQL Server 2019 (RTM-CU9) (KB5000642) - 15.0.4102.2 (X64)
  	Jan 25 2021 20:16:12
  	Copyright (C) 2019 Microsoft Corporation
  	Developer Edition (64-bit) on Linux (Ubuntu 18.04.5 LTS) <X64>
- 
+
  (1 rows affected)
 ```
 
@@ -569,7 +575,7 @@ Any of the [listed methods](https://docs.microsoft.com/en-GB/troubleshoot/sql/ge
 
 <details><summary>How can you download SQL Server for free?</summary>
 
-There are two free, specialized editions of SQL Server available for download. The Developer and Express version are available for download at [Microsoft's page for SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads). 
+There are two free, specialized editions of SQL Server available for download. The Developer and Express version are available for download at [Microsoft's page for SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
 
 The Developer version is a full-featured free edition, licensed for use as a development and test database in a non-production environment.
 
@@ -587,7 +593,7 @@ SQL Server 2019 Developer is a full-featured edition, licensed for use as a deve
 
 [Azure SQL](https://docs.microsoft.com/en-us/azure/azure-sql/azure-sql-iaas-vs-paas-what-is-overview) is based on SQL Server, so they share many similarities in functionality and compatibility. However, this does not mean they are the same.
 
-Azure SQL is a family of managed products that use the SQL Server database engine in the Azure cloud. 
+Azure SQL is a family of managed products that use the SQL Server database engine in the Azure cloud.
 
 </details>
 

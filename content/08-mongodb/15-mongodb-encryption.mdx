@@ -1,14 +1,14 @@
 ---
 title: 'How MongoDB encrypts data'
-metaTitle: "MongoDB Encryption at Rest and Data Encryption Types"
-metaDescription: "The need for data encryption is even more paramount for organizations handling sensitive information. Learn how MongoDB encrypts data to ensure security."
+metaTitle: 'MongoDB Encryption at Rest and Data Encryption Types'
+metaDescription: 'The need for data encryption is even more paramount for organizations handling sensitive information. Learn how MongoDB encrypts data to ensure security.'
 metaImage: '/social/generic-mongodb.png'
 authors: ['alexemerich']
 ---
 
-
 ## Introduction
-Today’s world runs on data. The data that an organization creates, stores, and exchanges are its most valuable asset. Data encryption is a critical practice for all organizations for their protection, users’ protection, and compliance with data privacy regulations. An organization should make sure that internal users should be only able to view data relevant to them. Even more so, an organization needs to secure its data against compromise and unauthorized access. 
+
+Today’s world runs on data. The data that an organization creates, stores, and exchanges are its most valuable asset. Data encryption is a critical practice for all organizations for their protection, users’ protection, and compliance with data privacy regulations. An organization should make sure that internal users should be only able to view data relevant to them. Even more so, an organization needs to secure its data against compromise and unauthorized access.
 
 The need for data encryption is even more paramount for organizations handling sensitive information. In this article, we discuss why you should encrypt your data in addition to robust [authentication](/intro/database-glossary#authentication) and [authorization](/intro/database-glossary#authorization) measures, the different types of encryption in [MongoDB](/intro/database-glossary#mongodb), and encryption best practices.
 
@@ -21,73 +21,81 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 </PrismaOutlinks>
 
 ## Why encrypt data?
-[Role-based access control (RBAC)](/intro/database-glossary#role-based-access-control) is an excellent measure for preventing database privilege abuse. However, this feature only covers up some of the vulnerabilities one must consider when securing their systems. RBAC does not address instances of bad actors snooping on your network, outright data theft, or accessing the memory of a database host. 
 
-As recently as 2019, the World Economic Forum projected the amount of data units in the entire digital universe to reach [44 zettabytes by 2020](https://www.weforum.org/agenda/2019/04/how-much-data-is-generated-each-day-cf4bddf29f/). This projected number surpassed the number of observable stars in the universe by 40 times. As of the time of this guide, 2022, that number has undoubtedly grown, making the case for encryption clear. 
+[Role-based access control (RBAC)](/intro/database-glossary#role-based-access-control) is an excellent measure for preventing database privilege abuse. However, this feature only covers up some of the vulnerabilities one must consider when securing their systems. RBAC does not address instances of bad actors snooping on your network, outright data theft, or accessing the memory of a database host.
+
+As recently as 2019, the World Economic Forum projected the amount of data units in the entire digital universe to reach [44 zettabytes by 2020](https://www.weforum.org/agenda/2019/04/how-much-data-is-generated-each-day-cf4bddf29f/). This projected number surpassed the number of observable stars in the universe by 40 times. As of the time of this guide, 2022, that number has undoubtedly grown, making the case for encryption clear.
 
 Simply put, encryption is the act of encoding data to render it unreadable to someone who does not have the authorization to access the data. Only authorized persons who know the encryption “key” can read and understand the data. An effectively implemented encryption method should provide complete security against compromised access leading to stolen data.
 
-Encryption works at its most basic level by an encryptor substituting letters, numbers, and symbols with other characters to create a cipher. For any non-cryptographers or Zodiac fans, a cipher is the set of characters standing in for the original message and, in this case, the original data. The creator of this cipher holds the encryption key, the number that describes the method of encoding the cipher. Modern encryption is much more complex than simple character swapping. Most modern implementations will take plain text and turn it into a ciphertext consisting of chunks or streams of bytes in text, image, and binary blob form. A computer or human cannot read the actual data without this key, and any unauthorized data cannot be rendered correctly. 
+Encryption works at its most basic level by an encryptor substituting letters, numbers, and symbols with other characters to create a cipher. For any non-cryptographers or Zodiac fans, a cipher is the set of characters standing in for the original message and, in this case, the original data. The creator of this cipher holds the encryption key, the number that describes the method of encoding the cipher. Modern encryption is much more complex than simple character swapping. Most modern implementations will take plain text and turn it into a ciphertext consisting of chunks or streams of bytes in text, image, and binary blob form. A computer or human cannot read the actual data without this key, and any unauthorized data cannot be rendered correctly.
 
 ## Types of encryption
+
 Encryption methods usually fall into two categories: symmetric-key encryption and asymmetric encryption. Their definitions are:
+
 - [Symmetric Encryption](https://en.wikipedia.org/wiki/Symmetric-key_algorithm) - A method where the encryption key and the decryption key are the same (symmetrical)
 - [Asymmetric Encryption](https://en.wikipedia.org/wiki/Public-key_cryptography) - A method also known as public key cryptography that creates two different keys, a private key and a public key that are not identical. The public key can be shared with anyone, and the private key only with authorized people. The public key can be used to encrypt data that can only be decrypted by the private key.
 
-Both methods have some inherent vulnerabilities depending on the data status but cover up RBAC missed issues like networking snooping and data theft. This assurance is why MongoDB employs both methods across its databases, depending on the data state.  
+Both methods have some inherent vulnerabilities depending on the data status but cover up RBAC missed issues like networking snooping and data theft. This assurance is why MongoDB employs both methods across its databases, depending on the data state.
 
 ### Encryption in transit
-[Encryption in transit](/intro/database-glossary#encryption-transport) is securing data when it is in motion from one point to another. Before being sent, the data is encrypted for its “journey” and then decrypted and verified at the reception point. The best visualization is to imagine the data as money transported via an armored van from one bank branch to another to replenish the vault. 
 
-[MongoDB Atlas](https://www.prisma.io/dataguide/mongodb/mongodb-atlas-setup) supports [transport layer security (TSL)](https://en.wikipedia.org/wiki/Transport_Layer_Security) and secure socket layer (SSL) for communications between application client and server and within intra-cluster communications by setting certificates for the servers. A certificate is an electronic document used to prove the validity of ownership of a private key. Certificates ensure data is encrypted for transport over a trusted network connection preventing network snooping activities such as packet sniffing or IP/DNS spoofing. 
+[Encryption in transit](/intro/database-glossary#encryption-transport) is securing data when it is in motion from one point to another. Before being sent, the data is encrypted for its “journey” and then decrypted and verified at the reception point. The best visualization is to imagine the data as money transported via an armored van from one bank branch to another to replenish the vault.
+
+[MongoDB Atlas](https://www.prisma.io/dataguide/mongodb/mongodb-atlas-setup) supports [transport layer security (TSL)](https://en.wikipedia.org/wiki/Transport_Layer_Security) and secure socket layer (SSL) for communications between application client and server and within intra-cluster communications by setting certificates for the servers. A certificate is an electronic document used to prove the validity of ownership of a private key. Certificates ensure data is encrypted for transport over a trusted network connection preventing network snooping activities such as packet sniffing or IP/DNS spoofing.
 
 With the inclusion of a public key, we see that MongoDB utilizes asymmetric encryption to secure data in a state of motion. Symmetric encryption would require the encryption key to be communicated between parties over some channel. The single key must remain secure during the transmission and is open to risk at this stage. Asymmetric encryption theoretically solves this insecure transmission problem with its public keys. Encrypted communication can take place without any prior communication.
 
-By encrypting with a public key, the sender’s message can only be decrypted by the intended recipient with their private key. Public key cryptography is advantageous in transit because there is no need to ever share private keys and the use of signatures ensures a recipient can verify that a message comes from a trusted sender. 
+By encrypting with a public key, the sender’s message can only be decrypted by the intended recipient with their private key. Public key cryptography is advantageous in transit because there is no need to ever share private keys and the use of signatures ensures a recipient can verify that a message comes from a trusted sender.
 
-![Asymmetric Encryption](/content/mongodb/mongodb-encryption-assets-asymmetric-encryption.png)
+![Asymmetric Encryption](/dataguide-images/mongodb/mongodb-encryption-assets-asymmetric-encryption.png)
 
 The downside to asymmetric encryption is that is does take longer than symmetric encryption and requires more resource consumption to achieve. If your data is not actively moving from device to device or network-to-network, then these tradeoffs are not necessary to undertake and symmetric encryption provides ample security.
 
 A potential risk of asymmetric encryption is that if your private key falls into the wrong hands, then all of your messages can be read. MongoDB provides additional security through [Forward Secrecy cipher suites](https://www.mongodb.com/docs/manual/core/security-transport-encryption/#forward-secrecy). These create an [ephemeral](/intro/database-glossary#ephemerality) session key that is protected by the server’s private key. This session key is never transmitted, and it ensures that even if a server’s private key is compromised, past sessions cannot be decrypted by the compromised private key. MongoDB supports both [Ephemeral Diffie-Hellman (DHE)](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) and [Ephemeral Elliptic Curve Diffie-Hellman (ECDHE)](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman) algorithms.
 
-MongoDB Atlas uses [Let’s Encrypt](https://letsencrypt.org/) known certificates to authenticate TLS enabled clients once they pass access and authentication controls.  TLS protocol provides integrity and authenticity by using certificates between two or more computer applications. MongoDB can communicate across a network that prevents unwanted eavesdropping and tampering by using this protocol. You can refer to the [official MongoDB documentation](https://www.mongodb.com/docs/manual/tutorial/configure-ssl-clients/?jmp=partners_townsend) for TLS configuration for clients.
+MongoDB Atlas uses [Let’s Encrypt](https://letsencrypt.org/) known certificates to authenticate TLS enabled clients once they pass access and authentication controls. TLS protocol provides integrity and authenticity by using certificates between two or more computer applications. MongoDB can communicate across a network that prevents unwanted eavesdropping and tampering by using this protocol. You can refer to the [official MongoDB documentation](https://www.mongodb.com/docs/manual/tutorial/configure-ssl-clients/?jmp=partners_townsend) for TLS configuration for clients.
 
 ### Encryption at rest
-Encryption at rest secures data that is not in a state of transit but idle. You can best visualize encrypted data at rest like secured money in a vault in a bank branch. It is no longer in transit to another branch but stationary in a single place. This static state avoids the transmission insecurity that asymmetric encryption solves, so symmetric encryption is a strong method. 
 
-![Symmetric Encryption](/content/mongodb/mongodb-encryption-assets-symmetric-encryption.png)
+Encryption at rest secures data that is not in a state of transit but idle. You can best visualize encrypted data at rest like secured money in a vault in a bank branch. It is no longer in transit to another branch but stationary in a single place. This static state avoids the transmission insecurity that asymmetric encryption solves, so symmetric encryption is a strong method.
+
+![Symmetric Encryption](/dataguide-images/mongodb/mongodb-encryption-assets-symmetric-encryption.png)
 
 Encrypted data on disk remains encrypted unless an attacker has access to the encryption key(s). Encryption at rest protects sensitive data in the case of lost or stolen physical drives or an exposed database file.
 
-MongoDB encryption at rest is an [Enterprise feature](https://www.mongodb.com/download-center/enterprise/releases). This adds a protection layer to your database that guarantees that the written files for storage are only accessible once decrypted by an authorized process or application. 
+MongoDB encryption at rest is an [Enterprise feature](https://www.mongodb.com/download-center/enterprise/releases). This adds a protection layer to your database that guarantees that the written files for storage are only accessible once decrypted by an authorized process or application.
 
 MongoDB Atlas has built-in encryption at rest for disks by default with every node in a cluster. However, you can also enable additional encryption from your [WiredTiger storage engine](https://www.mongodb.com/docs/manual/core/wiredtiger/). This feature allows you to use your preferred cloud provider's key management service (KMS). A KMS is a utility that centralizes the management of all of your encryption keys.
 
 MongoDB supports [AWS](https://docs.atlas.mongodb.com/security-aws-kms/#std-label-security-aws-kms), [Azure](https://docs.atlas.mongodb.com/security-azure-kms/#std-label-security-azure-kms), and [Google Cloud Platform](https://docs.atlas.mongodb.com/security-gcp-kms/#std-label-security-gcp-kms) key management services. This is a great feature for those who do not want to rely solely on MongoDB’s encryption keys and take ownership control of generated encryption keys.
 
 ### Encryption in use
-The last type of MongoDB encryption is a feature that provides encryption in use, [Client-Side Field Level Encryption (CSFLE)](https://www.mongodb.com/docs/manual/core/security-client-side-encryption/). CSFLE allows engineers to specify the fields of a [document](/intro/database-glossary#document) that should be kept encrypted. Sensitive data is encrypted/decrypted by the client and only communicated to and from the server in its encrypted form. 
+
+The last type of MongoDB encryption is a feature that provides encryption in use, [Client-Side Field Level Encryption (CSFLE)](https://www.mongodb.com/docs/manual/core/security-client-side-encryption/). CSFLE allows engineers to specify the fields of a [document](/intro/database-glossary#document) that should be kept encrypted. Sensitive data is encrypted/decrypted by the client and only communicated to and from the server in its encrypted form.
 
 This feature ensures the security of encryption required fields on both the server and the network, accessible only by appropriate clients. At all times, sensitive data is encrypted on the database host and in network transit. Security responsibility shifts to the client. CSFLE prevents all of the vulnerabilities described throughout: database privilege abuse, network snooping, data theft, and access memory of a database host.
 
 ## Rotating encryption keys
+
 There is always the risk of the symmetric key becoming compromised for encryption at rest and Client-Side Field Level encryption. Like you should do with your critical internet account passwords, you should also change your encryption keys regularly. This practice is rotating encryption keys.
 
 Encryption key rotation is crucial for database administrators to consider because while it is not surefire protection against a compromised key, it strongly limits the risk. If a key gets compromised, then there is a likely chance that it has already become outdated for accessing sensitive data. It is another task to maintain, but it is a better practice to employ and never need than to be caught without doing it and wishing you had.
 
-MongoDB Atlas encryption at rest and CSFLE have built-in guides to rotate the required keys for each KMS cloud provider you might be using: 
+MongoDB Atlas encryption at rest and CSFLE have built-in guides to rotate the required keys for each KMS cloud provider you might be using:
 
 - [AWS KMS](https://docs.atlas.mongodb.com/tutorial/security-aws-kms-rotate-key/)
 - [Azure Vault](https://docs.atlas.mongodb.com/tutorial/security-azure-kms-rotate-key/)
 - [Google KMS](https://docs.atlas.mongodb.com/tutorial/security-gcp-kms-rotate-key/)
 
-If you are self-hosting MongoDB, there are guides for conducting [manual key rotation](https://docs.mongodb.com/manual/tutorial/rotate-encryption-key/) and also MongoDB's [Ops Manager](https://docs.opsmanager.mongodb.com/current/tutorial/rotate-master-kmip-keys/index.html) and [Cloud Manager](https://docs.cloudmanager.mongodb.com/tutorial/rotate-master-kmip-keys/index.html) platforms. 
+If you are self-hosting MongoDB, there are guides for conducting [manual key rotation](https://docs.mongodb.com/manual/tutorial/rotate-encryption-key/) and also MongoDB's [Ops Manager](https://docs.opsmanager.mongodb.com/current/tutorial/rotate-master-kmip-keys/index.html) and [Cloud Manager](https://docs.cloudmanager.mongodb.com/tutorial/rotate-master-kmip-keys/index.html) platforms.
 
 ## Conclusion
-In this guide, we discussed the every-growing importance of data encryption and the many data security vulnerabilities. Data is encrypted in MongoDB to ensure its safety in any state. This state can be idle, in motion, or in use. 
 
-With more and more data entering the digital universe, more threats are trying to access it. All organizations should take every precaution to secure valuable information. MongoDB provides a suite of encryption security features that are good to know well before you need it.  
+In this guide, we discussed the every-growing importance of data encryption and the many data security vulnerabilities. Data is encrypted in MongoDB to ensure its safety in any state. This state can be idle, in motion, or in use.
+
+With more and more data entering the digital universe, more threats are trying to access it. All organizations should take every precaution to secure valuable information. MongoDB provides a suite of encryption security features that are good to know well before you need it.
 
 <PrismaOutlinks>
 

@@ -1,16 +1,16 @@
 ---
 title: 'Identifying slow queries in MySQL'
-metaTitle: "Finding slow and low performance queries"
-metaDescription: "Learn how to find long running or slow queries within MySQL."
-metaImage: '/content/mysql/finding-slow-queries/header.png'
+metaTitle: 'Finding slow and low performance queries'
+metaDescription: 'Learn how to find long running or slow queries within MySQL.'
+metaImage: '/dataguide-images/mysql/finding-slow-queries/header.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-For websites and applications that incorporate databases into their technology stack, a large part of the user experience can be affected by database performance.  Slow queries can delay data retrieval, page rendering, and any other operations that interact with the data layer.  Because of this potential for heavy impact, it is important know how to identify and fix those issues.
+For websites and applications that incorporate databases into their technology stack, a large part of the user experience can be affected by database performance. Slow queries can delay data retrieval, page rendering, and any other operations that interact with the data layer. Because of this potential for heavy impact, it is important know how to identify and fix those issues.
 
-In this article, we'll discuss various ways to identify poorly performing queries in MySQL databases.  This will set the groundwork for optimizing these queries and improving their performance.
+In this article, we'll discuss various ways to identify poorly performing queries in MySQL databases. This will set the groundwork for optimizing these queries and improving their performance.
 
 ## Checking active queries and processes
 
@@ -23,6 +23,7 @@ To display all current operations that MySQL's processing threads are executing,
 ```sql
 SHOW FULL PROCESSLIST;
 ```
+
 ```
  +----+-----------------+-----------+------+---------+---------+------------------------+-----------------------+
  | Id | User            | Host      | db   | Command | Time    | State                  | Info                  |
@@ -33,9 +34,9 @@ SHOW FULL PROCESSLIST;
  2 rows in set (0.00 sec)
 ```
 
-The output above shows an idle server with only our own query as well as a long running event listener.  An active server would show many more processes, some of which might be long running.  Without the `FULL` modifier, this command will only show the first 100 processes, which may or may not truncate your results depending on your server activity.
+The output above shows an idle server with only our own query as well as a long running event listener. An active server would show many more processes, some of which might be long running. Without the `FULL` modifier, this command will only show the first 100 processes, which may or may not truncate your results depending on your server activity.
 
-Some of the important parts to take a look at are the `Time` and `State` columns.  The `Time` column counts the number of seconds that the thread has been in the `State` mentioned.  If you find processes with a `Time` value that doesn't match your expectations for the given operation, it might be time to investigate further.
+Some of the important parts to take a look at are the `Time` and `State` columns. The `Time` column counts the number of seconds that the thread has been in the `State` mentioned. If you find processes with a `Time` value that doesn't match your expectations for the given operation, it might be time to investigate further.
 
 ### Checking storage engine status
 
@@ -52,6 +53,7 @@ For instance, to show the storage engine that the `mysql.time_zone` table uses, 
 ```sql
 SHOW CREATE TABLE mysql.time_zone`\G
 ```
+
 ```
 *************************** 1. row ***************************
        Table: time_zone
@@ -63,7 +65,7 @@ Create Table: CREATE TABLE `time_zone` (
 1 row in set (0.01 sec)
 ```
 
-The `ENGINE=InnoDB` indicates that the table is using the InnoDB storage engine.  This is the default storage engine in most configurations, so you will likely want to check it's status.
+The `ENGINE=InnoDB` indicates that the table is using the InnoDB storage engine. This is the default storage engine in most configurations, so you will likely want to check it's status.
 
 You can show the InnoDB engine's status by typing:
 
@@ -189,27 +191,28 @@ SHOW ENGINE INNODB STATUS\G
  ----------------------------
  END OF INNODB MONITOR OUTPUT
  ============================
- 
+
  1 row in set (0.00 sec)
 ```
 
 </details>
 
-The output will contain a large amount of information about the resources the engine is using, the processes being executed, and more.  You can use this to get an idea of whether there is a bottleneck in execution or whether the number of processes in contention are causing performance issues.
+The output will contain a large amount of information about the resources the engine is using, the processes being executed, and more. You can use this to get an idea of whether there is a bottleneck in execution or whether the number of processes in contention are causing performance issues.
 
 ## Enable slow query logging
 
-One way to get more information about long running or slowly executing queries is with slow query logging.  Slow query logging tells MySQL to record whenever a query passes a certain execution threshold.  It can be very useful in pinpointing specific queries that are running poorly without having to catch it in the process list in real time.
+One way to get more information about long running or slowly executing queries is with slow query logging. Slow query logging tells MySQL to record whenever a query passes a certain execution threshold. It can be very useful in pinpointing specific queries that are running poorly without having to catch it in the process list in real time.
 
 ### Check if MySQL is logging slow queries
 
-The first thing you should do is verify the current state of slow query logging.  If slow query logging is already enabled, you don't have to do anything.
+The first thing you should do is verify the current state of slow query logging. If slow query logging is already enabled, you don't have to do anything.
 
 You can check if slow query logging is enabled by typing:
 
 ```sql
 SHOW GLOBAL VARIABLES LIKE 'slow_query_log%';
 ```
+
 ```
  +---------------------+------------------------------------+
  | Variable_name       | Value                              |
@@ -238,13 +241,13 @@ Now that you know the current state, you can change it as necessary.
 
 ### Configure MySQL to log slow queries
 
-Before we move on, it is important to note that while slow query logging is incredibly useful, it can potentially have an additional performance impact.  MySQL must perform additional operations to time each query and to record the results to a log.  This can impact performance and fill up hard drive space unexpectedly.
+Before we move on, it is important to note that while slow query logging is incredibly useful, it can potentially have an additional performance impact. MySQL must perform additional operations to time each query and to record the results to a log. This can impact performance and fill up hard drive space unexpectedly.
 
-It may not be a good idea to log slow queries at all times.  Instead, enable the functionality when you are actively investigating an issue and disable it when you are finished.
+It may not be a good idea to log slow queries at all times. Instead, enable the functionality when you are actively investigating an issue and disable it when you are finished.
 
-With that in mind, you can configure slow query logging by modifying the MySQL server's configuration file.  You can also modify these values interactively, but setting good defaults in the configuration will make it easier to tweak interactively later.
+With that in mind, you can configure slow query logging by modifying the MySQL server's configuration file. You can also modify these values interactively, but setting good defaults in the configuration will make it easier to tweak interactively later.
 
-Open MySQL's configuration file.  On most Debian Linux-based systems, the configuration file will be located at `/etc/mysql/mysql.conf.d/mysqld.conf`:
+Open MySQL's configuration file. On most Debian Linux-based systems, the configuration file will be located at `/etc/mysql/mysql.conf.d/mysqld.conf`:
 
 ```shell
 sudo vim /etc/mysql/mysql.conf.d/mysqld.conf
@@ -252,20 +255,19 @@ sudo vim /etc/mysql/mysql.conf.d/mysqld.conf
 
 We will want to modify or potentially add the following settings:
 
-| Variable                        | Setting                         | Description                                                                                                                                                                                                                            |
-|---------------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `slow_query_log`                | `ON`                            | Toggles whether slow querying is enabled.                                                                                                                                                                                              |
-| `slow_query_log_file`           | `/var/log/mysql/mysql-slow.log` | The log file where slow queries will be recorded.                                                                                                                                                                                      |
-| `long_query_time`               | (time in seconds)               | The threshold, in seconds, that a query must pass before being considered a "slow" query.                                                                                                                                              |
-| `min_examined_row_limit`        | (number of rows)                | The number of rows a query must consider before it is a slow query candidate.                                                                                                                                                   |
-| `log_slow_admin_statements`     | `ON`                            | Toggles whether administrative commands are also subject to logging.                                                                                                                                                                   |
-| `log_queries_not_using_indexes` | `ON`                            | Toggles whether queries will be recorded if they are not consulting an index.                                                                                                                                                       |
-| `log_slow_extra`                | `ON`                            | For MySQL servers version 8.0.14 or later, this toggles whether to log additional information about the query.                                                                                                                      |
-| `log_slow_replica_statements`   | `ON`                            | For MySQL servers version 8.0.26 or later, this toggles whether to log slow statements that have been executed on the replica.  This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`.
-| `log_slow_slave_statements`     | `ON`                            | For MySQL servers version 8.0.25 or earlier, this toggles whether to log slow statements that have been executed on the replica.  This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`.
+| Variable                        | Setting                         | Description                                                                                                                                                                                                              |
+| ------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `slow_query_log`                | `ON`                            | Toggles whether slow querying is enabled.                                                                                                                                                                                |
+| `slow_query_log_file`           | `/var/log/mysql/mysql-slow.log` | The log file where slow queries will be recorded.                                                                                                                                                                        |
+| `long_query_time`               | (time in seconds)               | The threshold, in seconds, that a query must pass before being considered a "slow" query.                                                                                                                                |
+| `min_examined_row_limit`        | (number of rows)                | The number of rows a query must consider before it is a slow query candidate.                                                                                                                                            |
+| `log_slow_admin_statements`     | `ON`                            | Toggles whether administrative commands are also subject to logging.                                                                                                                                                     |
+| `log_queries_not_using_indexes` | `ON`                            | Toggles whether queries will be recorded if they are not consulting an index.                                                                                                                                            |
+| `log_slow_extra`                | `ON`                            | For MySQL servers version 8.0.14 or later, this toggles whether to log additional information about the query.                                                                                                           |
+| `log_slow_replica_statements`   | `ON`                            | For MySQL servers version 8.0.26 or later, this toggles whether to log slow statements that have been executed on the replica. This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`.   |
+| `log_slow_slave_statements`     | `ON`                            | For MySQL servers version 8.0.25 or earlier, this toggles whether to log slow statements that have been executed on the replica. This only applies to statements where `binlog_format` is set to `STATEMENT` or `MIXED`. |
 
 So, for example, if we wanted to turn all of the optional logging on and log any statement that examines at least 100 rows and takes 2 seconds or longer to execute, we could use these settings:
-
 
 ```ini
 ; enable MySQL to log slow queries
@@ -303,7 +305,7 @@ After saving and closing the file, you can validate your configuration changes b
 sudo mysqld --validate-config
 ```
 
-If no errors are returned, your MySQL server configuration file is syntactically valid.  You can restart the MySQL server process by typing:
+If no errors are returned, your MySQL server configuration file is syntactically valid. You can restart the MySQL server process by typing:
 
 ```shell
 sudo systemctl restart mysql
@@ -315,7 +317,7 @@ You can validate that slow querying is enabled now by re-running the original di
 SHOW GLOBAL VARIABLES LIKE 'slow_query_log%';
 ```
 
-Once you have slow querying configured how you want, you can enable and disable it as needed within MySQL itself.  The syntax for adjusting the values looks like this:
+Once you have slow querying configured how you want, you can enable and disable it as needed within MySQL itself. The syntax for adjusting the values looks like this:
 
 ```sql
 SET GLOBAL slow_query_log = 'OFF';
@@ -325,26 +327,27 @@ SET GLOBAL slow_query_log = 'OFF';
 
 Once you have the log that slow query logging produces, you can analyze it in a few different ways to find out where exactly the problems are.
 
-The simplest way to analyze the log is using the `mysqldumpslow` utility because it is included in MySQL server installations.  To use it, you can point it at the slow query log you generated:
+The simplest way to analyze the log is using the `mysqldumpslow` utility because it is included in MySQL server installations. To use it, you can point it at the slow query log you generated:
 
 ```shell
 sudo mysqldumpslow /var/log/mysql/mysql-slow.log
 ```
+
 ```
 Reading mysql slow query log from /var/log/mysql/mysql-slow.log
 Count: 4  Time=4.25s (17s)  Lock=0.00s (0s)  Rows=1.0 (4), root[root]@localhost
   select sleep(N)
 ```
 
-The above output shows that we have had four queries that were deemed "slow" according to our criteria.  They're all variations of the `SELECT SLEEP();` query with different numbers (indicated by the `N` placeholder) in the command (if you want to test this, make sure `min_examined_row_limit` is unset).  The real time taken to execute the statements was around 17 seconds.
+The above output shows that we have had four queries that were deemed "slow" according to our criteria. They're all variations of the `SELECT SLEEP();` query with different numbers (indicated by the `N` placeholder) in the command (if you want to test this, make sure `min_examined_row_limit` is unset). The real time taken to execute the statements was around 17 seconds.
 
-The `mysqldumpslow` command includes a few options to control the sorting and display of the output.  For example, you can use the `-t` option to limit the results to the top "N" results.  For example, the following shows the top five results:
+The `mysqldumpslow` command includes a few options to control the sorting and display of the output. For example, you can use the `-t` option to limit the results to the top "N" results. For example, the following shows the top five results:
 
 ```shell
 sudo mysqldumpslow -t 5 /var/log/mysql/mysql-slow.log
 ```
 
-You can change the sort order using the `-s` options.  You can sort by query time (`t`), lock time (`l`), rows sent (`r`), or by the averages of those metrics (`at`, `al`, and `ar` respectively).  By default, `mysqldumpslow` sorts by average query time (`at`).
+You can change the sort order using the `-s` options. You can sort by query time (`t`), lock time (`l`), rows sent (`r`), or by the averages of those metrics (`at`, `al`, and `ar` respectively). By default, `mysqldumpslow` sorts by average query time (`at`).
 
 To display the top three queries by their amount of lock time, you could type:
 
@@ -354,9 +357,9 @@ sudo mysqldumpslow -t 3 -s l /var/log/mysql/mysql-slow.log
 
 ## Using `pt-query-digest` to analyze the slow query log
 
-Another popular utility to analyze slow query logs is the `pt-query-digest` tool developed by [Percona](https://www.percona.com/).  The `pt-query-digest` tool is part of the [Percona Toolkit](https://www.percona.com/software/database-tools/percona-toolkit), a set of open-source command line tools created to help database administrators manage databases easier.
+Another popular utility to analyze slow query logs is the `pt-query-digest` tool developed by [Percona](https://www.percona.com/). The `pt-query-digest` tool is part of the [Percona Toolkit](https://www.percona.com/software/database-tools/percona-toolkit), a set of open-source command line tools created to help database administrators manage databases easier.
 
-The first step is to download the Percona Toolkit to your server.  You can find the appropriate file by selecting the version of the toolkit you'd like and the platform where you'll be using it on the [Percona Toolkit download page](https://www.percona.com/downloads/percona-toolkit/LATEST/).
+The first step is to download the Percona Toolkit to your server. You can find the appropriate file by selecting the version of the toolkit you'd like and the platform where you'll be using it on the [Percona Toolkit download page](https://www.percona.com/downloads/percona-toolkit/LATEST/).
 
 After downloading and installing the version of the toolkit appropriate for your platform, you should have access to the `pt-query-digest` tool.
 
@@ -454,17 +457,16 @@ select sleep(8)\G
 
 </details>
 
-The output shows execution time, query size, lock time, rows examined and sent, and more.  The `pt-query-digest` command has a lot of different options for shaping the output and displaying only the items that you are interested in.  Explore the [manual page](https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html) to get an idea of what is possible.
+The output shows execution time, query size, lock time, rows examined and sent, and more. The `pt-query-digest` command has a lot of different options for shaping the output and displaying only the items that you are interested in. Explore the [manual page](https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html) to get an idea of what is possible.
 
 ## Conclusion
 
-Being able to discover the bottlenecks in your query executions is invaluable in being able to maintain your database and applications' performance.  When slowdowns occur, it is important to have strategies to locate these problem areas and find out the extent of their impact.
+Being able to discover the bottlenecks in your query executions is invaluable in being able to maintain your database and applications' performance. When slowdowns occur, it is important to have strategies to locate these problem areas and find out the extent of their impact.
 
-The MySQL ecosystem has a lot of tooling built to make these tasks easier.  Looking at the active process and storage engine status and enabling and analyzing slow query log information give you the information you need to target the most costly queries.  In our next guide, we'll discuss how to actually [optimize the queries you discover](/mysql/reading-and-querying-data/optimizing-slow-queries) and what things to keep in mind to keep your performance optimal.
+The MySQL ecosystem has a lot of tooling built to make these tasks easier. Looking at the active process and storage engine status and enabling and analyzing slow query log information give you the information you need to target the most costly queries. In our next guide, we'll discuss how to actually [optimize the queries you discover](/mysql/reading-and-querying-data/optimizing-slow-queries) and what things to keep in mind to keep your performance optimal.
 
 <PrismaOutlinks>
 
-If you are using Prisma with your MySQL database, you can read about ways to optimize your queries in the [query optimization section of the docs](https://www.prisma.io/docs/guides/performance-and-optimization/query-optimization-performance).  This will help you understand how various query constructions can impact your database performance when using Prisma.
+If you are using Prisma with your MySQL database, you can read about ways to optimize your queries in the [query optimization section of the docs](https://www.prisma.io/docs/guides/performance-and-optimization/query-optimization-performance). This will help you understand how various query constructions can impact your database performance when using Prisma.
 
 </PrismaOutlinks>
-

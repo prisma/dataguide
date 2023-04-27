@@ -1,7 +1,7 @@
 ---
 title: 'Functional units'
-metaTitle: "Functional Units: Functions vs Procedures, Workflows, and More"
-metaDescription: "Databases are, by definition, very good at processing and manipulating information. Learn more about functional units, workflows, and more."
+metaTitle: 'Functional Units: Functions vs Procedures, Workflows, and More'
+metaDescription: 'Databases are, by definition, very good at processing and manipulating information. Learn more about functional units, workflows, and more.'
 authors: ['dianfay']
 ---
 
@@ -17,7 +17,7 @@ Find out [how to use functions with Prisma](https://www.prisma.io/docs/concepts/
 
 </PrismaOutlinks>
 
-## Here's why you might *not* want to program your database!
+## Here's why you might _not_ want to program your database!
 
 - Database functionality has a tendency to become invisible -- triggers especially. This weakness scales approximately with the size of teams and/or applications interacting with the database, as fewer people remember or are aware of the in-database programming. Documentation helps, but only so much.
 - SQL is a language purpose-built for manipulating data sets. It isn't especially good at things that aren't manipulating data sets, and it's less good the more complicated those other things get.
@@ -28,7 +28,7 @@ Find out [how to use functions with Prisma](https://www.prisma.io/docs/concepts/
 
 On the other hand, for those tasks to which it's suited, SQL offers speed, concision, durability, and the opportunity to "canonize" automated workflows. Data modeling is more than pinning entities down like insects to cardboard, and the distinction between data in motion and data at rest is a tricky one. Rest is really slower motion in finer grade; information is always flowing from here to there, and database programmability is a powerful tool for managing and directing those flows.
 
-Some database engines split the difference between SQL and other programming languages by accommodating those other programming languages as well. SQL Server supports functions written in [any .NET Framework language](https://docs.microsoft.com/en-us/sql/relational-databases/clr-integration-database-objects-user-defined-functions/clr-user-defined-functions); Oracle has [Java stored procedures](https://docs.oracle.com/cd/B19306_01/java.102/b14187/chfive.htm); PostgreSQL allows [extensions with C](https://www.postgresql.org/docs/current/extend-extensions.html) and is user-programmable in [Python](https://www.postgresql.org/docs/current/plpython.html), [Perl](https://www.postgresql.org/docs/current/plperl.html), and [Tcl](https://www.postgresql.org/docs/current/pltcl.html), with [plugins](https://www.postgresql.org/docs/current/external-pl.html) adding shell scripts, R, JavaScript, and more. Rounding out the usual suspects, it's SQL or nothing for MySQL and MariaDB, MS Access is *only* programmable in VBA, and SQLite is not user-programmable at all.
+Some database engines split the difference between SQL and other programming languages by accommodating those other programming languages as well. SQL Server supports functions written in [any .NET Framework language](https://docs.microsoft.com/en-us/sql/relational-databases/clr-integration-database-objects-user-defined-functions/clr-user-defined-functions); Oracle has [Java stored procedures](https://docs.oracle.com/cd/B19306_01/java.102/b14187/chfive.htm); PostgreSQL allows [extensions with C](https://www.postgresql.org/docs/current/extend-extensions.html) and is user-programmable in [Python](https://www.postgresql.org/docs/current/plpython.html), [Perl](https://www.postgresql.org/docs/current/plperl.html), and [Tcl](https://www.postgresql.org/docs/current/pltcl.html), with [plugins](https://www.postgresql.org/docs/current/external-pl.html) adding shell scripts, R, JavaScript, and more. Rounding out the usual suspects, it's SQL or nothing for MySQL and MariaDB, MS Access is _only_ programmable in VBA, and SQLite is not user-programmable at all.
 
 Using non-SQL languages is an option if SQL is inadequate for some task or if you want to reuse other code, but it won't get you around the other issues that make database programming a many-edged sword. If anything, resorting to these complicates deployment and interoperability further. Caveat scriptor: let the writer beware.
 
@@ -45,6 +45,7 @@ As with other aspects of implementing the SQL standard, the exact details vary a
 More specifically, MySQL also disallows recursion and some additional SQL statements in functions. SQL Server prohibits functions from modifying data, executing dynamic SQL, and handling errors. PostgreSQL didn't separate stored procedures from functions at all until 2017 with version 11, so Postgres functions can do almost everything procedures can, barring transaction control.
 
 So, which to use when? Functions are best suited to logic which applies record by record as data are stored and retrieved. More complex workflows which are invoked by themselves and move data around internally are better as procedures.
+
 </details>
 
 ## Defaults and generation
@@ -67,9 +68,6 @@ Most RDBMSs offer a choice between "stored" and "virtual" generated columns. In 
 Generated columns are a specialized tool. More often, all that's needed is a default in case a value isn't supplied on insert. Functions like `now()` show up frequently as column defaults, but most databases allow custom as well as built-in functions (except MySQL, where only `current_timestamp` may be a default value).
 
 Let's take the rather dry but simple example of a lot number in the format YYYYXXX, where the first four digits represent the current year and the latter three an incrementing counter: the first lot produced this year is 2020001, the second 2020002, and so on. There's no default type or built-in function which generates a value like this, but a user-defined function can number each lot <footnote> <note> If you are more familiar with a C-family language than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> as it's created </text> </footnote>:
-
-
-
 
 ```
 CREATE SEQUENCE lot_counter;
@@ -98,7 +96,6 @@ CREATE TABLE lots (
 If you're using Prisma, our documentation covers the equivalent method of [defining default values for your fields](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-a-default-value). Prisma Client also supports [aggregation](https://www.prisma.io/docs/concepts/components/prisma-client/aggregation-grouping-summarizing), which allows you to perform count, average, and similar operations on data without separate storage.
 
 </PrismaOutlinks>
-
 
 ## Referencing data in functions
 
@@ -135,13 +132,13 @@ As mentioned above, this is an area where differences between RDBMS flavors and 
 
 So far we've looked at using functions to store and modify data, whether bound to table definitions or managing multi-table workflows. In one sense, that's the more powerful use to which they can be put, but functions have a place in data retrieval as well. Many tools you may already use in your queries are implemented as functions, from standard built-ins like `count` to extensions such as Postgres' `jsonb_build_object`, PostGIS' `ST_SnapToGrid`, and more. Of course, since those are more tightly integrated with the database itself they're mostly written in languages other than SQL (e.g. C in the case of PostgreSQL and PostGIS).
 
-If you often find yourself (or think you might find yourself) needing to retrieve data and then perform some operation on each record before it's *really* ready, consider transforming them on the way out of the database instead! [Projecting some number of business days out from a date](https://dba.stackexchange.com/questions/172511/add-business-days-in-postgresql)? [Generating a diff between two `JSONB` fields](https://stackoverflow.com/questions/36041784/postgresql-compare-two-jsonb-objects)? Practically any calculation that depends only on the information you're querying can be done in SQL. And what's done in the database -- as long as it's accessed consistently -- is canonical as far as anything built on top of the database is concerned.
+If you often find yourself (or think you might find yourself) needing to retrieve data and then perform some operation on each record before it's _really_ ready, consider transforming them on the way out of the database instead! [Projecting some number of business days out from a date](https://dba.stackexchange.com/questions/172511/add-business-days-in-postgresql)? [Generating a diff between two `JSONB` fields](https://stackoverflow.com/questions/36041784/postgresql-compare-two-jsonb-objects)? Practically any calculation that depends only on the information you're querying can be done in SQL. And what's done in the database -- as long as it's accessed consistently -- is canonical as far as anything built on top of the database is concerned.
 
 It has to be said: if you're working with an application backend, its data access toolkit may limit how much mileage you get out of augmenting query results with functions. Most such libraries can execute arbitrary SQL, but those which generate common SQL statements based on model classes may or may not allow customizing query `SELECT` lists. Generated columns or views can be an answer here.
 
 ## Triggers and consequences
 
-Functions and procedures are contentious enough among database designers and users, but things *really* take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
+Functions and procedures are contentious enough among database designers and users, but things _really_ take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
 
 The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or <footnote> <note> Data Definition Language: the structural half of SQL with the <inlineCode>DROP TABLE</inlineCode>s and the <inlineCode>CREATE OR REPLACE FUNCTION</inlineCode>s and so forth.</note> <text>DDL</text> </footnote> trigger which can react to changes in the database structure.
 
@@ -176,13 +173,13 @@ Once you start executing <footnote> <note> Data Manipulation Language: the other
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
-![Triggers and consequent chaos](/content/modeling/chaos.png)
+![Triggers and consequent chaos](/dataguide-images/modeling/chaos.png)
 
 The trigger-action-trigger-action call stack can become arbitrarily long, although true recursion in the form of modifying the same tables or records multiple times in any such flow is illegal on some platforms and more generally a bad idea in almost all circumstances. Trigger nesting rapidly outstrips our ability to comprehend its extent and effects. Databases making heavy use of nested triggers begin to drift from the realm of the complicated toward that of the complex, becoming difficult or impossible to analyze, debug, and predict.
 
 <PrismaOutlinks>
 
-In Prisma Client, you can achieve similar results with TypeScript at the client level instead of SQL by using [middleware](https://www.prisma.io/docs/concepts/components/prisma-client/middleware).  Middleware allows you to perform an action before and after every query (e.g., turn a `delete` query into a "soft" delete which toggles a record's visibility instead).
+In Prisma Client, you can achieve similar results with TypeScript at the client level instead of SQL by using [middleware](https://www.prisma.io/docs/concepts/components/prisma-client/middleware). Middleware allows you to perform an action before and after every query (e.g., turn a `delete` query into a "soft" delete which toggles a record's visibility instead).
 
 </PrismaOutlinks>
 
@@ -204,7 +201,7 @@ You can also learn about the specific data model component of a Prisma schema in
 
 <details><summary>What is a stored procedure in a database?</summary>
 
-A stored procedure is a prepared piece of SQL code that you can save and reference to be used when needed. 
+A stored procedure is a prepared piece of SQL code that you can save and reference to be used when needed.
 
 It is particularly useful for SQL queries that you are writing often because you can just call the stored procedure and execute it rather than re-writing the query.
 
@@ -226,7 +223,7 @@ EXEC procedute_name
 
 <details><summary>What are database functions?</summary>
 
-Database functions are a set of SQL statements that perform a specific task. They are efficient ways to packages lines of SQL code  that you can reference rather than rewriting the actual SQL. 
+Database functions are a set of SQL statements that perform a specific task. They are efficient ways to packages lines of SQL code that you can reference rather than rewriting the actual SQL.
 
 Database functions are a good way to promote reusability in your code. [Functions and procedures](https://www.prisma.io/dataguide/datamodeling/functional-units#functions-vs-procedures) both allow for better reusability in code, but they have some differences that are good to know when modelling your database.
 
@@ -242,7 +239,7 @@ It is a way of storing data without actually sending it through the `INSERT` or 
 
 <details><summary>What are the default databases in SQL?</summary>
 
-Depending on your choice of database provider, you will notice default databases that come with your instance. 
+Depending on your choice of database provider, you will notice default databases that come with your instance.
 
 Most RDBMs ship default databases that store required information by the server. These can include metadata tables, other system information, or templates.
 

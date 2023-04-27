@@ -25,6 +25,7 @@
     "gatsby-plugin-styled-components": "5.22.0",
     "gatsby-remark-autolink-headers": "5.22.0",
     "gatsby-remark-copy-linked-files": "5.22.0",
+    "gatsby-remark-images": "6.22.0",
     "gatsby-remark-normalize-paths": "1.1.0",
     "gatsby-remark-rewrite-relative-links": "1.0.8",
     "gatsby-remark-sectionize": "1.0.0",
@@ -44,6 +45,7 @@
     "react-select": "5.4.0",
     "react-sticky-box": "1.0.2",
     "react-toastify": "9.0.8",
+    "sharp": "^0.32.1",
     "styled-components": "5.3.5",
     "write": "2.0.0"
   },

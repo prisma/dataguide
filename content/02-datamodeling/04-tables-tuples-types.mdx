@@ -1,16 +1,17 @@
 ---
 title: 'Tables, tuples, types'
 metaTitle: "Data Modeling | Tables, Tuples, Types | Prisma's Data Guide"
-metaDescription: "Calling tables the \"basic building block\" of relational databases is a little reductive. While it's hard to miss the mark by much in drawing up a list of each datum you're interested in and declaring this an integer, that a date, and so forth, effective relational database design depends first and foremost on well-thought-out and well-formulated table designs. "
+metaDescription: 'Calling tables the "basic building block" of relational databases is a little reductive. While it''s hard to miss the mark by much in drawing up a list of each datum you''re interested in and declaring this an integer, that a date, and so forth, effective relational database design depends first and foremost on well-thought-out and well-formulated table designs. '
 authors: ['dianfay']
 ---
+
 ## Introduction
 
 Calling tables the "basic building block" of relational databases is a little reductive. While it's hard to miss the mark by much in drawing up a list of each datum you're interested in and declaring this an integer, that a date, and so forth, effective relational database design depends first and foremost on well-thought-out and well-formulated table designs. Tables must be legible to users and developers, with their schemas making sense out of the information they represent. And while databases go to considerable lengths to handle physical storage unsupervised, understanding how this process works and designing for it is especially important for "wide" tables with records containing many large values.
 
-One table generally, but not always, groups aspects of a single concept: a person's name and password, a hotel reservation's check-in and check-out dates, or a shipment's source, destination, status, and tracking number. The art and science of determining where one table should leave off and another pick up is called *normalization*, which we'll cover in a future installment.
+One table generally, but not always, groups aspects of a single concept: a person's name and password, a hotel reservation's check-in and check-out dates, or a shipment's source, destination, status, and tracking number. The art and science of determining where one table should leave off and another pick up is called _normalization_, which we'll cover in a future installment.
 
-*Ineffective* table designs come in myriad forms. They may fail to capture important characteristics of the subject the table represents, restrict too far or not enough what values are considered valid in a <footnote><note>Also "attribute", most often in database internals.</note><text>column</text></footnote> or record, "split the datum" across multiple columns, or combine or concatenate aspects which are treated separately outside the database. Even tables with no major omissions or structural faults can have problems with confusing, misleading, or outdated column names.
+_Ineffective_ table designs come in myriad forms. They may fail to capture important characteristics of the subject the table represents, restrict too far or not enough what values are considered valid in a <footnote><note>Also "attribute", most often in database internals.</note><text>column</text></footnote> or record, "split the datum" across multiple columns, or combine or concatenate aspects which are treated separately outside the database. Even tables with no major omissions or structural faults can have problems with confusing, misleading, or outdated column names.
 
 ## Naming things
 
@@ -19,19 +20,20 @@ One table generally, but not always, groups aspects of a single concept: a perso
 Opinions about how to approach [the nuts and bolts](https://www.sqlstyle.guide/#naming-conventions) of naming [in a database](https://launchbylunch.com/posts/2014/Feb/16/sql-naming-conventions/) are a [dime a dozen](https://www.red-gate.com/simple-talk/blogs/sql-naming-conventions/). No two people agree on all points, and one's allegiance to singular or plural table names (or, for that matter, uppercasing or lowercasing keywords) is largely a function of habit. RDBMS flavor also plays a role, with PostgreSQL heavily favoring `snake_case` names while `UpperCamelCase` is a telltale sign of SQL Server.
 
 For my part, I use `snake_case`, prefix booleans with `is_` and suffix dates with `_at`, use plural for tables and singular for columns, and name junction tables `leader_followers`. But as any guide worth listening to will tell you: the single most important thing isn't that you do what I do, it's that you be consistent, either with your own preferences or with the conventions of an existing database you're working in.
+
 </details>
 
 ## Storage: making records out of ones and zeroes
 
-Modern RDBMSs abstract most of the intricate details of how data are arranged and stored, most of the time. The basic unit of storage is the *page*, a uniformly-sized logical block of records and metadata corresponding to a segment of physical storage space: 2kb in Oracle, 4 in DB2, 8 in SQL Server and PostgreSQL, 16 with MySQL's InnoDB. When the database reads or writes data, it does so page by page rather than record by record.
+Modern RDBMSs abstract most of the intricate details of how data are arranged and stored, most of the time. The basic unit of storage is the _page_, a uniformly-sized logical block of records and metadata corresponding to a segment of physical storage space: 2kb in Oracle, 4 in DB2, 8 in SQL Server and PostgreSQL, 16 with MySQL's InnoDB. When the database reads or writes data, it does so page by page rather than record by record.
 
-![Layout of metadata and multiple rows on a database page.](/content/modeling/pages.png)
+![Layout of metadata and multiple rows on a database page.](/dataguide-images/modeling/pages.png)
 
-It's possible for a <footnote><note>The "tupple", "toople", and "tyoople" camps are eternally at, if not war, at least polite sparring in comment sections around the internet. CJ Date, an early authority on relational databases, gives the first ("rhymes with couple").</note><text>*tuple*</text></footnote>, i.e. the attribute-value pairs representing a given record or row, to exceed the available space in a page less the metadata. Only Oracle and SQL Server can distribute a single tuple across multiple pages, while MySQL and DB2 make page size configurable. PostgreSQL allows configuration of page size only at compile time, but uses ["The Oversized Attribute Storage Technique" or TOAST](https://wiki.postgresql.org/wiki/TOAST) to move long values off-page and record pointers in their place.
+It's possible for a <footnote><note>The "tupple", "toople", and "tyoople" camps are eternally at, if not war, at least polite sparring in comment sections around the internet. CJ Date, an early authority on relational databases, gives the first ("rhymes with couple").</note><text>_tuple_</text></footnote>, i.e. the attribute-value pairs representing a given record or row, to exceed the available space in a page less the metadata. Only Oracle and SQL Server can distribute a single tuple across multiple pages, while MySQL and DB2 make page size configurable. PostgreSQL allows configuration of page size only at compile time, but uses ["The Oversized Attribute Storage Technique" or TOAST](https://wiki.postgresql.org/wiki/TOAST) to move long values off-page and record pointers in their place.
 
-All these techniques incur a performance cost, since SQL statements are faster the fewer pages have to be read or written, or pointers followed. But there's another way ineffective allocation of pages can hurt performance: when most or all of a table's tuples take up just over half a page, the remaining space goes unused. Because it's still allocated, it bloats the table's disk usage, and a query that retrieves or affects *n* rows must load all *n* pages.
+All these techniques incur a performance cost, since SQL statements are faster the fewer pages have to be read or written, or pointers followed. But there's another way ineffective allocation of pages can hurt performance: when most or all of a table's tuples take up just over half a page, the remaining space goes unused. Because it's still allocated, it bloats the table's disk usage, and a query that retrieves or affects _n_ rows must load all _n_ pages.
 
-Most enterprise relational databases, Postgres excepted, also manage pages in groups called *extents* and group extents in turn under *segments*. This more complicated strategy helps keep rows in order, which can speed up searches. Postgres has its own tricks here, such as using [visibility maps](https://www.postgresql.org/docs/current/storage-vm.html) to support "[index-only queries](https://www.postgresql.org/docs/current/indexes-index-only-scans.html)" which skip looking at the table's pages entirely. Indexes themselves are also stored in pages, although these have their own organization.
+Most enterprise relational databases, Postgres excepted, also manage pages in groups called _extents_ and group extents in turn under _segments_. This more complicated strategy helps keep rows in order, which can speed up searches. Postgres has its own tricks here, such as using [visibility maps](https://www.postgresql.org/docs/current/storage-vm.html) to support "[index-only queries](https://www.postgresql.org/docs/current/indexes-index-only-scans.html)" which skip looking at the table's pages entirely. Indexes themselves are also stored in pages, although these have their own organization.
 
 The chief innovation of column-oriented databases like Cassandra and HBase is in abandoning the tuple-by-tuple physical page layout to speed up retrieval of huge amounts of data column by column. This is by no means a free lunch, however, as many basic RDBMS capabilities depend on tuples in themselves.
 
@@ -39,7 +41,7 @@ The chief innovation of column-oriented databases like Cassandra and HBase is in
 
 Types serve multiple purposes for relational databases. Like types anywhere else, they establish a contract: `books.title` is text and always text, `recipients.postcode` is a number and always a number -- which latter assumption fails the moment a recipient lives in the UK, Canada, or any of several other countries (postcodes are properly text).
 
-But equally important to an RDBMS is that types define sizes, and therefore determine page layout. The SQL standard defines an integer as four bytes, whether a specific four bytes represents an undetermined value (`NULL`), zero, or two billion. Text declared as a `CHAR` of a fixed length *n* always takes up *n* bytes, and shorter values are padded with spaces until they're long enough. Sometimes the spaces are even returned in `SELECT`s, as in SQL Server.
+But equally important to an RDBMS is that types define sizes, and therefore determine page layout. The SQL standard defines an integer as four bytes, whether a specific four bytes represents an undetermined value (`NULL`), zero, or two billion. Text declared as a `CHAR` of a fixed length _n_ always takes up _n_ bytes, and shorter values are padded with spaces until they're long enough. Sometimes the spaces are even returned in `SELECT`s, as in SQL Server.
 
 Not all types define a fixed length, however. The standard `VARCHAR` type establishes a maximum length instead, and values are not padded in the manner of `CHAR`. Variable-length types mean variable-length tuples, which in turn allow the database more flexibility in fitting those tuples into pages.
 
@@ -53,7 +55,7 @@ The major complication is text. The ISO-standard variable-length character type 
 
 Space is cheap, unused space doesn't count with `VARCHAR`s, and most tables are unlikely even to get close to a single tuple per page. It's rarely worth haggling over length byte for byte instead of choosing a nice round number like the next order of magnitude (here, 100) or approximate power of 2 (255 is notably also a built-in limit in older database software) above the longest plausible value.
 
-PostgreSQL is a special case: both `CHAR(n)` and `VARCHAR(n)` are recommended *against*, unless a length limit is specifically desired. Instead, the nonstandard `TEXT` type, powered by the [*varlena* (**var**iable-**len**gth **a**rray)](http://varlena.com/varlena.php) data structure, offers unbounded text storage.
+PostgreSQL is a special case: both `CHAR(n)` and `VARCHAR(n)` are recommended _against_, unless a length limit is specifically desired. Instead, the nonstandard `TEXT` type, powered by the [_varlena_ (**var**iable-**len**gth **a**rray)](http://varlena.com/varlena.php) data structure, offers unbounded text storage.
 
 "Large object" types in most RDBMSs are a class of binary and text data types useful for such values as images and documents, which are frequently long enough to make on-page storage impractical. Reading from or writing to large object storage is an extra step on top of reading or writing the page, so inline storage remains preferable at the scale of names, serial numbers, and summaries. The binary sort are collectively referred to as `BLOB`s (**b**inary **l**arge **ob**ject) in most RDBMSs, although Postgres' sole varlena-enabled binary type is `BYTEA`. Large text types may go by `TEXT` or `CLOB`, or in SQL Server [`VARCHAR(MAX)`](https://docs.microsoft.com/en-us/sql/t-sql/data-types/char-and-varchar-transact-sql?view=sql-server-ver15).
 
@@ -77,9 +79,9 @@ User-defined types in SQL Server or Oracle, composite types in PostgreSQL: they 
 
 ## More than complete
 
-A list of each datum you're interested in, this an integer, that a date, and so forth. Types and tuples, columns and rows, make a table functionally complete. But there's more than completeness to think about: how can a table ensure that the information it records is *correct*?
+A list of each datum you're interested in, this an integer, that a date, and so forth. Types and tuples, columns and rows, make a table functionally complete. But there's more than completeness to think about: how can a table ensure that the information it records is _correct_?
 
-Coming up in [*Correctness and Constraints*](correctness-constraints), we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
+Coming up in [_Correctness and Constraints_](correctness-constraints), we'll cover the tools relational databases use to define and enforce correctness at all levels of data storage.
 
 <PrismaOutlinks>
 

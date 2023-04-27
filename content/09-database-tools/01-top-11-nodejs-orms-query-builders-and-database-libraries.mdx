@@ -13,7 +13,7 @@ This article is meant as a jumping-off point for choosing a library and summariz
 
 It does not attempt to choose "one best library" or rank packages in an opinionated fashion. Instead, it summarizes the most popular Node.js query builders, ORMs, and database toolkits and describes their project health. This is done using criteria like popularity, repo activity, developer support, and project maturity.
 
-**Note:** This article was originally published on September 18, 2020.  It was most recently updated on February 15, 2022.
+**Note:** This article was originally published on September 18, 2020. It was most recently updated on February 15, 2022.
 
 ## Criteria: evaluating database libraries
 
@@ -95,7 +95,7 @@ Prisma 2.0 is an open-source JavaScript ORM being maintained, supported, and act
 
 ### Database support
 
-Prisma currently supports **PostgreSQL, MySQL, MSSQL, and SQLite**.  Additionally, MongoDB, PlanetScale, and CockroachDB are currently in Preview support.
+Prisma currently supports **PostgreSQL, MySQL, MSSQL, and SQLite**. Additionally, MongoDB, PlanetScale, and CockroachDB are currently in Preview support.
 
 ### Notable features
 
@@ -114,7 +114,9 @@ For a full list of features consult [Database Features](https://www.prisma.io/do
 Relation query (fetch all posts by a given user, given user’s email):
 
 ```js
-const postsByUser = await prisma.user.findOne({ where: { email: 'alice@prisma.io' } }).posts()
+const postsByUser = await prisma.user
+  .findOne({ where: { email: 'alice@prisma.io' } })
+  .posts()
 ```
 
 ### Summary
@@ -348,7 +350,9 @@ For a full list of features, consult the Mongoose [official documentation](https
 Relation query (fetch all posts by a given user, given user’s email):
 
 ```js
-const userWithPosts = await User.findOne({ email: 'alice@mongoose.com' }).populate('posts')
+const userWithPosts = await User.findOne({
+  email: 'alice@mongoose.com',
+}).populate('posts')
 ```
 
 ### Summary
@@ -564,7 +568,9 @@ For a full list of features, consult the [Waterline ORM GitHub README](https://g
 Relation query (fetch all posts by a given user, given user’s email):
 
 ```js
-const userWithPosts = await User.find({ email: 'alice@waterline.js' }).populate('posts')
+const userWithPosts = await User.find({ email: 'alice@waterline.js' }).populate(
+  'posts'
+)
 ```
 
 ### Summary
@@ -634,7 +640,10 @@ JOIN query (fetch all posts by a given user, given user’s email):
 
 ```js
 const posts = await knex('posts')
-  .join('users', { 'users.id': 'posts.user_id', 'users.email': 'alice@knex.js' })
+  .join('users', {
+    'users.id': 'posts.user_id',
+    'users.email': 'alice@knex.js',
+  })
   .select('*')
 ```
 
@@ -682,18 +691,18 @@ At the lowest level of the abstraction spectrum sit database drivers, which can 
 
 ## Summary
 
-<!-- ![Summary Infographic](/content/database-tools/top-nodejs-orms-2020/orm_infographic.png) -->
+<!-- ![Summary Infographic](/dataguide-images/database-tools/top-nodejs-orms-2020/orm_infographic.png) -->
 
-| Library          | Type                          | Popularity | Activity | Support  | Maturity and Stability                                       | Officially Supported Databases                                         |
-| ---------------- | ----------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| **Prisma**       | ORM + Query Builder           | 💜💜       | 🌳🌳🌳🌳 | 🔵🔵🔵🔵 | Newer, backed by the company Prisma                          | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL (MongoDB, CockroachDB, and PlanetScale in Preview)
-| **Sequelize**    | ORM                           | 💜💜💜     | 🌳🌳     | 🔵🔵     | Mature, no Funding                                           | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL                              |
-| **TypeORM**      | ORM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$15k)                        | PostgreSQL, MySQL, MariaDB SQLite, MSSQL, CockroachDB, Oracle, Sap Hana |
-| **Mongoose**     | ODM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$67k), backed by Automattic | MongoDB                                                                |
-| **Bookshelf.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳       | 🔵🔵     | Mature, no Funding                                           | PostgreSQL, MySQL, SQLite                                              |
-| **Objection.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳🌳     | 🔵🔵🔵   | Mature, no Funding                                           | PostgreSQL, MySQL, SQLite                                              |
-| **Waterline**    | ORM                           | 💜         | 🌳       | 🔵🔵     | Mature, backed by Sails Company                              | PostgreSQL, MySQL, MongoDB                                             |
-| **Knex.js**      | Query Builder                 | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, no Funding                                           | PostgreSQL, MySQL, MariaDB, SQlite, MSSQL, Oracle, Amazon Redshift     |
+| Library          | Type                          | Popularity | Activity | Support  | Maturity and Stability                                      | Officially Supported Databases                                                               |
+| ---------------- | ----------------------------- | ---------- | -------- | -------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Prisma**       | ORM + Query Builder           | 💜💜       | 🌳🌳🌳🌳 | 🔵🔵🔵🔵 | Newer, backed by the company Prisma                         | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL (MongoDB, CockroachDB, and PlanetScale in Preview) |
+| **Sequelize**    | ORM                           | 💜💜💜     | 🌳🌳     | 🔵🔵     | Mature, no Funding                                          | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL                                                    |
+| **TypeORM**      | ORM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$15k)                       | PostgreSQL, MySQL, MariaDB SQLite, MSSQL, CockroachDB, Oracle, Sap Hana                      |
+| **Mongoose**     | ODM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$67k), backed by Automattic | MongoDB                                                                                      |
+| **Bookshelf.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳       | 🔵🔵     | Mature, no Funding                                          | PostgreSQL, MySQL, SQLite                                                                    |
+| **Objection.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳🌳     | 🔵🔵🔵   | Mature, no Funding                                          | PostgreSQL, MySQL, SQLite                                                                    |
+| **Waterline**    | ORM                           | 💜         | 🌳       | 🔵🔵     | Mature, backed by Sails Company                             | PostgreSQL, MySQL, MongoDB                                                                   |
+| **Knex.js**      | Query Builder                 | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, no Funding                                          | PostgreSQL, MySQL, MariaDB, SQlite, MSSQL, Oracle, Amazon Redshift                           |
 
 ## Conclusion
 
