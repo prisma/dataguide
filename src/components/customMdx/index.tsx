@@ -40,8 +40,8 @@ export default {
   AnchorItem,
   img: ({ src, ...props }: any) => {
     return (
-      <a href={withPrefix(src)} target="_blank">
-        <img src={withPrefix(src)} {...props} />
+      <a href={withPrefix(src.replace('../../', ''))} target="_blank">
+        <img src={withPrefix(src.replace('../../', ''))} {...props} />
       </a>
     )
   },
