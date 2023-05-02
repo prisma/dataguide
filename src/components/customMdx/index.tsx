@@ -39,11 +39,10 @@ export default {
   Sidenote,
   AnchorItem,
   img: ({ src, ...props }: any) => {
-    console.log(withPrefix('/'))
     return (
       <a href={withPrefix(src)} target="_blank">
         <img src={withPrefix(src)} {...props} />
       </a>
     )
-  }
+  },
 }
