@@ -38,12 +38,12 @@ export default {
   footnote: Footnote,
   Sidenote,
   AnchorItem,
-  img: ({ src, ...props }: any) => {
-    console.log(withPrefix('/'))
-    return (
-      <a href={withPrefix(src)} target="_blank">
-        <img src={withPrefix(src)} {...props} />
+  img: (props: any) =>
+    /^https?:\/\//i.test(props.src) ? (
+      <a href={props.src} target="_blank">
+        <img {...props} />
       </a>
-    )
-  }
+    ) : (
+      <img {...props} />
+    ),
 }
