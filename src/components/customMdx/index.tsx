@@ -39,9 +39,10 @@ export default {
   Sidenote,
   AnchorItem,
   img: ({ src, ...props }: any) => {
+    const newSrc = withPrefix('/' + src.replace(/(\..\/)/g, ''))
     return (
-      <a href={withPrefix(src.replace('../../', ''))} target="_blank">
-        <img src={withPrefix(src.replace('../../', ''))} {...props} />
+      <a href={newSrc} target="_blank">
+        <img src={newSrc} {...props} />
       </a>
     )
   },
