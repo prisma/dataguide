@@ -23,7 +23,7 @@ Navigate to the sections that match the platforms you will be working with.
 
 <PrismaOutlinks>
 
-Once you have a PostgreSQL database, you can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage it from within your JavaScript or TypeScript applications. Try our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres) to get started.
+Once you have a PostgreSQL database, you can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage it from within your JavaScript or TypeScript applications. Try our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql) to get started.
 
 </PrismaOutlinks>
 
@@ -33,65 +33,65 @@ The PostgreSQL project provides a native Windows installer to install and config
 
 Visit the [PostgreSQL Windows installation page](https://www.postgresql.org/download/windows/) to find a link to the installer. Click **Download the installer** at the start of the page:
 
-![PostgreSQL initial download page](/dataguide-images/postgresql/setting-up-a-local-database/windows/initial_download_page.png)
+![PostgreSQL initial download page](../dataguide-images/postgresql/setting-up-a-local-database/windows/initial_download_page.png)
 
 On the page that follows, in the Windows x86-64 or Windows x86-32 columns (depending on your computer's architecture), choose the PostgreSQL version you'd like to install:
 
-![PostgreSQL available versions](/dataguide-images/postgresql/setting-up-a-local-database/windows/installer_download.png)
+![PostgreSQL available versions](../dataguide-images/postgresql/setting-up-a-local-database/windows/installer_download.png)
 
 Click **Download** on your chosen version and save the file to a convenient location.
 
 Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
 
-![PostgreSQL installer greeting](/dataguide-images/postgresql/setting-up-a-local-database/windows/installer_greeting.png)
+![PostgreSQL installer greeting](../dataguide-images/postgresql/setting-up-a-local-database/windows/installer_greeting.png)
 
 Click **Next** on the initial page to begin configuring your installation.
 
 On the next page, choose your installation directory:
 
-![PostgreSQL installation directory](/dataguide-images/postgresql/setting-up-a-local-database/windows/installation_directory.png)
+![PostgreSQL installation directory](../dataguide-images/postgresql/setting-up-a-local-database/windows/installation_directory.png)
 
 Click **Next** to accept the default location.
 
 The next page allows you to choose which components you wish to install. You need the **PostgreSQL Server** and **Command Line Tools** selected at a minimum:
 
-![PostgreSQL choose components](/dataguide-images/postgresql/setting-up-a-local-database/windows/choose_components.png)
+![PostgreSQL choose components](../dataguide-images/postgresql/setting-up-a-local-database/windows/choose_components.png)
 
 Click **Next** to continue.
 
 Now, choose the location where the database data files will be stored:
 
-![PostgreSQL data directory](/dataguide-images/postgresql/setting-up-a-local-database/windows/data_directory.png)
+![PostgreSQL data directory](../dataguide-images/postgresql/setting-up-a-local-database/windows/data_directory.png)
 
 Click **Next** to accept the default location.
 
 Next, select and confirm an administrative password for the PostgreSQL superuser (called `postgres`):
 
-![PostgreSQL set password](/dataguide-images/postgresql/setting-up-a-local-database/windows/set_password.png)
+![PostgreSQL set password](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_password.png)
 
 Click **Next** when you are finished.
 
 Choose the port that the server will listen to:
 
-![PostgreSQL set port](/dataguide-images/postgresql/setting-up-a-local-database/windows/set_port.png)
+![PostgreSQL set port](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_port.png)
 
 Click **Next** to accept the default 5432 port.
 
 Now, pick the locale that your database will use:
 
-![PostgreSQL locale](/dataguide-images/postgresql/setting-up-a-local-database/windows/set_locale.png)
+![PostgreSQL locale](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_locale.png)
 
 Click **Next** to use the default locale of your computer.
 
 The configuration portion of the installation is now complete. You can review a summary of the choices you've made:
 
-![PostgreSQL installation summary](/dataguide-images/postgresql/setting-up-a-local-database/windows/installation_summary.png)
+![PostgreSQL installation summary](../dataguide-images/postgresql/setting-up-a-local-database/windows/installation_summary.png)
 
 If everything looks correct, click **Next**.
 
 Finally, PostgreSQL is ready to be installed:
 
-![PostgreSQL ready to install](/dataguide-images/postgresql/setting-up-a-local-database/windows/ready_to_install.png)
+![PostgreSQL ready to install](../dataguide-images/postgresql/setting-up-a-local-database/windows/ready_to_install.png)
 
 Click **Next** to begin the installation process.
 
@@ -99,7 +99,7 @@ Once the installation is complete, you can verify the installation using the `ps
 
 In your start menu, type `psql` and click on the tool to launch the program. You will be prompted to enter the connection details that you wish to use.
 
-![Running psql client](/dataguide-images/postgresql/setting-up-a-local-database/windows/psql.png)
+![Running psql client](../dataguide-images/postgresql/setting-up-a-local-database/windows/psql.png)
 
 Press **Enter** to accept the default choices given in the square brackets. The final prompt will be for the password for the `postgres` user that you configured during setup.
 
@@ -117,79 +117,79 @@ The PostgreSQL project provides a native macOS installer to install and configur
 
 Visit the [PostgreSQL macOS installation page](https://www.postgresql.org/download/macosx/) to find a link to the installer. Click **Download the installer** at the start of the **Interactive Installer by EnterpriseDB** section:
 
-![PostgreSQL initial download page](/dataguide-images/postgresql/setting-up-a-local-database/macos/initial_download_page.png)
+![PostgreSQL initial download page](../dataguide-images/postgresql/setting-up-a-local-database/macos/initial_download_page.png)
 
 On the page that follows, in the Mac OS X column, choose the PostgreSQL version you'd like to install:
 
-![PostgreSQL available versions](/dataguide-images/postgresql/setting-up-a-local-database/macos/installer_download.png)
+![PostgreSQL available versions](../dataguide-images/postgresql/setting-up-a-local-database/macos/installer_download.png)
 
 Click **Download** on your chosen version and save the file to a convenient location.
 
 Once the download completes, find the PostgreSQL installer DMG in the Downloads folder. Double click on the downloaded DMG file to mount the installer archive:
 
-![PostgreSQL DMG file](/dataguide-images/postgresql/setting-up-a-local-database/macos/dmg_file.png)
+![PostgreSQL DMG file](../dataguide-images/postgresql/setting-up-a-local-database/macos/dmg_file.png)
 
 In the mounted archive, click on the PostgreSQL installer package (you may be prompted to confirm that you want the package to be able to make changes to your computer):
 
-![PostgreSQL installer package](/dataguide-images/postgresql/setting-up-a-local-database/macos/installer_package.png)
+![PostgreSQL installer package](../dataguide-images/postgresql/setting-up-a-local-database/macos/installer_package.png)
 
 The PostgreSQL installer will open to the welcome screen:
 
-![PostgreSQL installer welcome](/dataguide-images/postgresql/setting-up-a-local-database/macos/welcome.png)
+![PostgreSQL installer welcome](../dataguide-images/postgresql/setting-up-a-local-database/macos/welcome.png)
 
 Click **Next** on the initial page to begin configuring your installation.
 
 On the next page, choose your installation directory:
 
-![PostgreSQL installation directory](/dataguide-images/postgresql/setting-up-a-local-database/macos/installation_directory.png)
+![PostgreSQL installation directory](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_directory.png)
 
 Click **Next** to accept the default location.
 
 The next page allows you to choose which components you wish to install. You need the **PostgreSQL Server** and **Command Line Tools** selected at a minimum:
 
-![PostgreSQL choose components](/dataguide-images/postgresql/setting-up-a-local-database/macos/choose_components.png)
+![PostgreSQL choose components](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_components.png)
 
 Click **Next** to continue.
 
 Now, choose the location where the database data files will be stored:
 
-![PostgreSQL data directory](/dataguide-images/postgresql/setting-up-a-local-database/macos/choose_data_directory.png)
+![PostgreSQL data directory](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_data_directory.png)
 
 Click **Next** to accept the default location.
 
 On the next page, select and confirm an administrative password for the PostgreSQL superuser (called `postgres`):
 
-![PostgreSQL set password](/dataguide-images/postgresql/setting-up-a-local-database/macos/set_password.png)
+![PostgreSQL set password](../dataguide-images/postgresql/setting-up-a-local-database/macos/set_password.png)
 
 Click **Next** when you are finished.
 
 The following page lets you choose the port that the server will listen to:
 
-![PostgreSQL set port](/dataguide-images/postgresql/setting-up-a-local-database/macos/choose_port.png)
+![PostgreSQL set port](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_port.png)
 
 Click **Next** to accept the default 5432 port.
 
 Now, pick the locale that your database will use:
 
-![PostgreSQL locale](/dataguide-images/postgresql/setting-up-a-local-database/macos/choose_locale.png)
+![PostgreSQL locale](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_locale.png)
 
 Click **Next** to use the default locale of your computer.
 
 The configuration portion of the installation is now complete. You can review a summary of the choices you've made:
 
-![PostgreSQL installation summary](/dataguide-images/postgresql/setting-up-a-local-database/macos/installation_summary.png)
+![PostgreSQL installation summary](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_summary.png)
 
 If everything looks correct, click **Next**.
 
 PostgreSQL is ready to be installed:
 
-![PostgreSQL ready to install](/dataguide-images/postgresql/setting-up-a-local-database/macos/ready_to_install.png)
+![PostgreSQL ready to install](../dataguide-images/postgresql/setting-up-a-local-database/macos/ready_to_install.png)
 
 Click **Next** to begin the installation process.
 
 The installer will confirm completion when the process completes:
 
-![PostgreSQL installation complete](/dataguide-images/postgresql/setting-up-a-local-database/macos/installation_complete.png)
+![PostgreSQL installation complete](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_complete.png)
 
 Now that PostgreSQL is installed, you can verify the installation using the `psql` command line tool. While this client is installed, we need to modify our terminal's `PATH` variable to access it easily.
 
@@ -213,11 +213,11 @@ sudo nano /etc/paths
 
 You will be prompted for your computer's administrative password to continue:
 
-![PostgreSQL open paths file](/dataguide-images/postgresql/setting-up-a-local-database/macos/open_paths_file.png)
+![PostgreSQL open paths file](../dataguide-images/postgresql/setting-up-a-local-database/macos/open_paths_file.png)
 
 Add the path to `bin` directory that you found to the bottom of the file:
 
-![PostgreSQL edit paths file](/dataguide-images/postgresql/setting-up-a-local-database/macos/edit_paths_file.png)
+![PostgreSQL edit paths file](../dataguide-images/postgresql/setting-up-a-local-database/macos/edit_paths_file.png)
 
 When you are finished, save and close the file by typing <kbd>CTL-X</kbd>, <kbd>Y</kbd>, and hitting <kbd>ENTER</kbd>.
 
@@ -229,7 +229,7 @@ psql -U postgres
 
 You will be prompted for the `postgres` user's administrative password that you set during the PostgreSQL configuration process:
 
-![PostgreSQL psql authentication](/dataguide-images/postgresql/setting-up-a-local-database/macos/psql_authentication.png)
+![PostgreSQL psql authentication](../dataguide-images/postgresql/setting-up-a-local-database/macos/psql_authentication.png)
 
 Upon successfully authenticating, you will be dropped into an interactive `psql` session with your database.
 

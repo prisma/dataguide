@@ -28,11 +28,11 @@ If you do not already have a MongoDB account, to begin setting up your new Atlas
 
 If you already have a MongoDB account registered, you can login from the registration page. Once logged in, you will want to click on the green "+ Create" button pictured below. This will take you to the same page for creating a cluster as if you were creating a cluster for the first time.
 
-![Create Cluster](/dataguide-images/mdb-atlas-setup/create-cluster-button.png)
+![Create Cluster](../dataguide-images/mdb-atlas-setup/create-cluster-button.png)
 
 The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: [Serverless](/serverless/serverless-glossary#serverless-databases) (Preview), Dedicated, and Shared.
 
-![Cluster Type](/dataguide-images/mdb-atlas-setup/cluster-type.png)
+![Cluster Type](../dataguide-images/mdb-atlas-setup/cluster-type.png)
 
 The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with the cost matching your actual usage.
 
@@ -44,7 +44,7 @@ Lastly, is the shared cluster instance. This cluster type is for learning and ex
 
 The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write [latency](/serverless/serverless-glossary#latency) of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
 
-![Global Cluster](/dataguide-images/mdb-atlas-setup/global-cluster.png)
+![Global Cluster](../dataguide-images/mdb-atlas-setup/global-cluster.png)
 
 They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters. For the purpose of this guide, we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
 
@@ -52,7 +52,7 @@ They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cl
 
 The next section provides you the option to pick which of the three major cloud providers you would like to use and their respective regions.
 
-![Cloud Provider & Region](/dataguide-images/mdb-atlas-setup/cloud-provider-region.png)
+![Cloud Provider & Region](../dataguide-images/mdb-atlas-setup/cloud-provider-region.png)
 
 It is up to you which provider is best for you. One consideration is making sure that the region you need is supported and recommended. For example, in the screenshot above, we can see that the desired Frankfurt region is available on AWS and recommended by MongoDB.
 
@@ -77,11 +77,11 @@ After selecting your cloud provider and region, the next step is selecting your 
 
 The first category includes M10 and M20 clusters while the second category ranges from M30 to M700. Each tier displays its RAM, Storage, vCPU, and its Base Price per hour.
 
-![Cluster Tier](/dataguide-images/mdb-atlas-setup/cluster-tier.png)
+![Cluster Tier](../dataguide-images/mdb-atlas-setup/cluster-tier.png)
 
 When a tier is selected, the configuration options are available to edit if needed. You are able to adjust the storage with a slider. This increases the Base Price per hour which updates at the bottom of the screen.
 
-![Base Price](/dataguide-images/mdb-atlas-setup/base-price.png)
+![Base Price](../dataguide-images/mdb-atlas-setup/base-price.png)
 
 The Auto-scale option has [Cluster Tier Scaling](https://docs.atlas.mongodb.com/cluster-autoscaling/) selected by default. This feature enables you to configure your cluster to auto scale up or down based on traffic. You can set a minimum cluster size and a maximum depending on your limits.
 
@@ -99,7 +99,7 @@ to get started working with MongoDB and Prisma, checkout our [getting started fr
 
 Now that you have your cluster tier picked out, there are some additional settings to consider.
 
-![Additional Settings](/dataguide-images/mdb-atlas-setup/additional-settings.png)
+![Additional Settings](../dataguide-images/mdb-atlas-setup/additional-settings.png)
 
 #### Version
 
@@ -129,7 +129,7 @@ Lastly, there is the ability to toggle on the ability to manage your own encrypt
 
 Now that we have crafted our cluster to our desired configuration, we can name it.
 
-![Create Name](/dataguide-images/mdb-atlas-setup/cluster-name.png)
+![Create Name](../dataguide-images/mdb-atlas-setup/cluster-name.png)
 
 It is important to make note that a cluster cannot be renamed. Additionally, cluster names can only contain ASCII letters, numbers, and hyphens. You can now click on the Create Cluster button, wait for your replica set to spin up, and get to work with your new MongoDB instance.
 

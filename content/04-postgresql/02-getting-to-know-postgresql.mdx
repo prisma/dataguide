@@ -8,46 +8,46 @@ authors: ['justinellingwood']
 
 ## Overview
 
-[PostgreSQL](/intro/database-glossary#postgresql) is a powerful relational database, capable of serving many different use cases.  Before using it for your projects, it's a good idea to get an overview of how PostgreSQL works, how it may differ from other relational databases, what features are available to help you model and manage your data.
+[PostgreSQL](/intro/database-glossary#postgresql) is a powerful relational database, capable of serving many different use cases. Before using it for your projects, it's a good idea to get an overview of how PostgreSQL works, how it may differ from other relational databases, what features are available to help you model and manage your data.
 
-This guide will go over PostgreSQL's architecture and attributes to give you a general understanding of how your database system works.  This overview will help you understand the application architecture, the way users typically interact with it, and how it supports data integrity and growth through scaling and safety features.
+This guide will go over PostgreSQL's architecture and attributes to give you a general understanding of how your database system works. This overview will help you understand the application architecture, the way users typically interact with it, and how it supports data integrity and growth through scaling and safety features.
 
 ## PostgreSQL's client / server architecture
 
 Like many relational database systems, PostgreSQL's basic architecture follows the client-server model.
 
-The main PostgreSQL program runs as a [service](https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database) that is responsible for defining data structures, storing data, and responding to queries.  This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server.  The server responds with messages indicating success, failure, query results, or other appropriate information.
+The main PostgreSQL program runs as a [service](https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database) that is responsible for defining data structures, storing data, and responding to queries. This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server. The server responds with messages indicating success, failure, query results, or other appropriate information.
 
-This architecture allows a PostgreSQL system to serve many different clients who can connect locally or over the network.  The master PostgreSQL process forks a new process for each client connection it receives.  Because of this, each fork is dedicated to a single client connection, so the number of connections, forks, and database sessions align with one another.
+This architecture allows a PostgreSQL system to serve many different clients who can connect locally or over the network. The master PostgreSQL process forks a new process for each client connection it receives. Because of this, each fork is dedicated to a single client connection, so the number of connections, forks, and database sessions align with one another.
 
 Concepts:
 
-* **server**: In client-server architecture, a server is a piece of software that accepts connections from an external client to perform work.  It listens for requests, processes the appropriate information, and returns any relevant results to the user.
-* **client**: In client-server architecture, a client is a piece of software that users interact with to connect to and communicate with a server.  Clients relay requests from the user to the server and pass back any relevant information.
-* **fork**: A fork is a clone of a running process, often used to help control resource usage, privilege level, and create a new execution environment.
-* **database session**: A database session is a single, continuous connection between a database server and client.  Sessions have their own context that persists for the life of the session, allowing for some level of state and configuration on a per-session basis.
+- **server**: In client-server architecture, a server is a piece of software that accepts connections from an external client to perform work. It listens for requests, processes the appropriate information, and returns any relevant results to the user.
+- **client**: In client-server architecture, a client is a piece of software that users interact with to connect to and communicate with a server. Clients relay requests from the user to the server and pass back any relevant information.
+- **fork**: A fork is a clone of a running process, often used to help control resource usage, privilege level, and create a new execution environment.
+- **database session**: A database session is a single, continuous connection between a database server and client. Sessions have their own context that persists for the life of the session, allowing for some level of state and configuration on a per-session basis.
 
 ## PostgreSQL's default client: `psql`
 
-Users can connect to PostgreSQL servers using a variety of clients.  The default command line client that is implemented as part of the PostgreSQL distribution is called `psql`.
+Users can connect to PostgreSQL servers using a variety of clients. The default command line client that is implemented as part of the PostgreSQL distribution is called `psql`.
 
-The [`psql` client](https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases) operates can connect to local or remote databases and either process queries as a batch or interactively.  For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
+The [`psql` client](https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases) operates can connect to local or remote databases and either process queries as a batch or interactively. For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
 
-Interactive `psql` sessions drop the user at a PostgreSQL command prompt upon authenticating.  From there, you can send SQL to the client and either view the results in your terminal window or pipe them to an output file.
+Interactive `psql` sessions drop the user at a PostgreSQL command prompt upon authenticating. From there, you can send SQL to the client and either view the results in your terminal window or pipe them to an output file.
 
-You can also modify your databases and manage PostgreSQL itself through a series of meta-commands implemented within the `psql` client.  Meta-commands are non-SQL "quality of life" shortcuts that start with a "`\`", that allow you to query information about your data structures and the system.
+You can also modify your databases and manage PostgreSQL itself through a series of meta-commands implemented within the `psql` client. Meta-commands are non-SQL "quality of life" shortcuts that start with a "`\`", that allow you to query information about your data structures and the system.
 
-For example, you can use the `\dt` meta-command to list all of the available tables or use the `\conninfo` meta-command to display information about your current connection.  You can use the `\h` and `\?` meta-commands during `psql` sessions to get information about SQL or meta-commands, respectively.
+For example, you can use the `\dt` meta-command to list all of the available tables or use the `\conninfo` meta-command to display information about your current connection. You can use the `\h` and `\?` meta-commands during `psql` sessions to get information about SQL or meta-commands, respectively.
 
 Concepts:
 
-* **batch processing**: Batch processing is a strategy of performing a bundle of operations in a group rather than one by one.  Batch processing is usually a component of automated workflows since it allows scripts and other processes to send compound requests.
-* **interactive session**: An interactive session is a database session where a user interacts with the database interface using ad-hoc commands.  This is in contrast to non-interactive modes, where a complete set of instructions are sent to the server without user intervention.
-* **meta-command**: In `psql`, a meta-command is a command that is intercepted and processed by `psql` itself rather than by the database system as an SQL statement.  These are mostly quality-of-life improvements that allow users to get information about the database server, the connection, and the structure of database objects without having to remember complex queries.
+- **batch processing**: Batch processing is a strategy of performing a bundle of operations in a group rather than one by one. Batch processing is usually a component of automated workflows since it allows scripts and other processes to send compound requests.
+- **interactive session**: An interactive session is a database session where a user interacts with the database interface using ad-hoc commands. This is in contrast to non-interactive modes, where a complete set of instructions are sent to the server without user intervention.
+- **meta-command**: In `psql`, a meta-command is a command that is intercepted and processed by `psql` itself rather than by the database system as an SQL statement. These are mostly quality-of-life improvements that allow users to get information about the database server, the connection, and the structure of database objects without having to remember complex queries.
 
 <PrismaOutlinks>
 
-[Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/concepts/database-connectors/postgresql).  You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres)
+[Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/concepts/database-connectors/postgresql). You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql)
 
 </PrismaOutlinks>
 
@@ -55,38 +55,38 @@ Concepts:
 
 PostgreSQL uses [roles and privileges](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management) to validate who is connecting to the system and to determine what actions they are allowed to perform.
 
-In PostgreSQL, a role is a grouping of a specific set of capabilities, permissions, and "owned" entities.  Instead of having distinct concepts of "users" and "groups", PostgreSQL uses roles to represent both of these ideas.  A role can correspond to an individual person in the real world, or it can operate as a group with certain access that other roles can become members of.
+In PostgreSQL, a role is a grouping of a specific set of capabilities, permissions, and "owned" entities. Instead of having distinct concepts of "users" and "groups", PostgreSQL uses roles to represent both of these ideas. A role can correspond to an individual person in the real world, or it can operate as a group with certain access that other roles can become members of.
 
-This system provides a great deal of flexibility in organizing levels of access.  [Authentication methods](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/configuring-user-authentication) can be defined according to role and authorization to specific database entities can be given to specific roles.  Roles that are members of other roles will inherit access privileges from those roles.
+This system provides a great deal of flexibility in organizing levels of access. [Authentication methods](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/configuring-user-authentication) can be defined according to role and authorization to specific database entities can be given to specific roles. Roles that are members of other roles will inherit access privileges from those roles.
 
-PostgreSQL has some important defaults that affect the out-of-the-box behavior with regard to user logins and privileges.  New installations are typically configured with [peer authentication](https://www.postgresql.org/docs/current/auth-peer.html), which allows users to automatically authenticate to any PostgreSQL role that matches their operating system user.  Basically, this offloads user authentication to the operating system.  Any operating system user with a matching PostgreSQL role name is assumed to be trusted with that identity.  Authorization to do useful work on a database must be granted separately.
+PostgreSQL has some important defaults that affect the out-of-the-box behavior with regard to user logins and privileges. New installations are typically configured with [peer authentication](https://www.postgresql.org/docs/current/auth-peer.html), which allows users to automatically authenticate to any PostgreSQL role that matches their operating system user. Basically, this offloads user authentication to the operating system. Any operating system user with a matching PostgreSQL role name is assumed to be trusted with that identity. Authorization to do useful work on a database must be granted separately.
 
 Concepts:
 
-* **roles**: In PostgreSQL, roles are a replacement for, and a combination of, both individual users and groups of users.  Users can authenticate to a role to gain access to its privileges.  Roles can be made members of other roles to inherit their privileges.
-* **peer authentication**: Peer authentication is the default authentication mechanism configured for most PostgreSQL installations by default.  Peer authentication allows users to authenticate with no further credentials to a PostgreSQL role that matches their operating system username.  Peer authentication is based on the assumption that the system administrator is also the database administrator.
-* **grants**: A grant in PostgreSQL is a declaration of privileges to perform a specific operation assigned to a role.  Roles can also be "granted" membership into another role, causing them to inherit any of the grants of the parent role.
+- **roles**: In PostgreSQL, roles are a replacement for, and a combination of, both individual users and groups of users. Users can authenticate to a role to gain access to its privileges. Roles can be made members of other roles to inherit their privileges.
+- **peer authentication**: Peer authentication is the default authentication mechanism configured for most PostgreSQL installations by default. Peer authentication allows users to authenticate with no further credentials to a PostgreSQL role that matches their operating system username. Peer authentication is based on the assumption that the system administrator is also the database administrator.
+- **grants**: A grant in PostgreSQL is a declaration of privileges to perform a specific operation assigned to a role. Roles can also be "granted" membership into another role, causing them to inherit any of the grants of the parent role.
 
 ## Understanding PostgreSQL object hierarchies: databases, schemas, and tables
 
-For the most part, PostgreSQL follows traditional relational database naming conventions in regard to database objects.  However, one point where PostgreSQL diverges from common definitions is the way it defines *schema*.
+For the most part, PostgreSQL follows traditional relational database naming conventions in regard to database objects. However, one point where PostgreSQL diverges from common definitions is the way it defines _schema_.
 
-Most databases use the word schema to refer to the general database structure or table definitions within a database.  For example, you might see the or SQL that defines `product` table with a product ID, description, and count fields with relevant constraints referred to as the schema of the `product` table.
+Most databases use the word schema to refer to the general database structure or table definitions within a database. For example, you might see the or SQL that defines `product` table with a product ID, description, and count fields with relevant constraints referred to as the schema of the `product` table.
 
-A [PostgreSQL schema](https://www.postgresql.org/docs/current/ddl-schemas.html), however, is a specific database object that can be created and managed within the system.  Understanding the hierarchy of objects within PostgreSQL can help you avoid confusion as you get to know the system and read up on documentation.
+A [PostgreSQL schema](https://www.postgresql.org/docs/current/ddl-schemas.html), however, is a specific database object that can be created and managed within the system. Understanding the hierarchy of objects within PostgreSQL can help you avoid confusion as you get to know the system and read up on documentation.
 
-PostgreSQL's main "global" object is a [database cluster](https://www.postgresql.org/docs/current/creating-cluster.html), which is just the name given to the collection of databases managed by the PostgreSQL server.  A database cluster contains databases, roles, and other "global" entities.
+PostgreSQL's main "global" object is a [database cluster](https://www.postgresql.org/docs/current/creating-cluster.html), which is just the name given to the collection of databases managed by the PostgreSQL server. A database cluster contains databases, roles, and other "global" entities.
 
-Schemas are defined within databases as a container for tables, functions, data types, and operators.  Object names must be unique *within* a schema, but can be reused in different schemas, which allows users to share databases without naming collisions.  They also help with grouping objects or managing third-party applications by segmenting and isolating objects with the database.
+Schemas are defined within databases as a container for tables, functions, data types, and operators. Object names must be unique _within_ a schema, but can be reused in different schemas, which allows users to share databases without naming collisions. They also help with grouping objects or managing third-party applications by segmenting and isolating objects with the database.
 
-Tables and other objects are created within schemas.  By default, a schema called ["public"](https://www.postgresql.org/docs/current/ddl-schemas.html#DDL-SCHEMAS-PUBLIC) is used when defining tables and other objects if an alternative schema is not named.  In practice, this makes segmentation using schemas an optional practice.  It is helpful to use PostgreSQL schemas in many cases, but you can ignore them if you do not need them.
+Tables and other objects are created within schemas. By default, a schema called ["public"](https://www.postgresql.org/docs/current/ddl-schemas.html#DDL-SCHEMAS-PUBLIC) is used when defining tables and other objects if an alternative schema is not named. In practice, this makes segmentation using schemas an optional practice. It is helpful to use PostgreSQL schemas in many cases, but you can ignore them if you do not need them.
 
 Concepts:
 
-* **database cluster**: In PostgreSQL terminology, a database cluster is a collection of databases and related objects managed by a single PostgreSQL server.  A database cluster is the environment managed by a PostgreSQL server.
-* **database**: A database is an object within a database cluster that defines schemas, roles, and other objects.  Since roles are defined within databases, databases are the object that users authenticate against.
-* **schema**: In PostgreSQL, a schema is a namespace object within a database.  Schemas contain tables, data types, functions, and operators.  Object names must be unique within a schema, but the same name may exist in different schemas.
-* **table**: Tables are the primary data definition structure within PostgreSQL.  Tables define fields and constraints to control the type of data that may be entered.  Tables store data within the structure they define as records.
+- **database cluster**: In PostgreSQL terminology, a database cluster is a collection of databases and related objects managed by a single PostgreSQL server. A database cluster is the environment managed by a PostgreSQL server.
+- **database**: A database is an object within a database cluster that defines schemas, roles, and other objects. Since roles are defined within databases, databases are the object that users authenticate against.
+- **schema**: In PostgreSQL, a schema is a namespace object within a database. Schemas contain tables, data types, functions, and operators. Object names must be unique within a schema, but the same name may exist in different schemas.
+- **table**: Tables are the primary data definition structure within PostgreSQL. Tables define fields and constraints to control the type of data that may be entered. Tables store data within the structure they define as records.
 
 <PrismaOutlinks>
 
@@ -96,39 +96,39 @@ When working with Prisma Client, [data models](https://www.prisma.io/docs/concep
 
 ## Concurrency and isolation control
 
-Database concurrency and isolation control help systems manage instances where more than one user tries to access the same data concurrently.  It is important for databases to have a strategy for dealing with this to avoid inconsistent reads, committing conflicting changes, and race conditions.
+Database concurrency and isolation control help systems manage instances where more than one user tries to access the same data concurrently. It is important for databases to have a strategy for dealing with this to avoid inconsistent reads, committing conflicting changes, and race conditions.
 
-PostgreSQL uses a strategy called [multiversion concurrency control (MVCC)](/intro/database-glossary#multiversion-concurrency-control) to handle these scenarios.  MVCC works by performing SQL statements on a snapshot of the associated data.  This data snapshot provides [*transaction isolation*](/intro/database-glossary#isolation), which ensures that each transaction can be applied or rolled back independently and that they operate on a consistent set of data.
+PostgreSQL uses a strategy called [multiversion concurrency control (MVCC)](/intro/database-glossary#multiversion-concurrency-control) to handle these scenarios. MVCC works by performing SQL statements on a snapshot of the associated data. This data snapshot provides [_transaction isolation_](/intro/database-glossary#isolation), which ensures that each transaction can be applied or rolled back independently and that they operate on a consistent set of data.
 
-This concurrency management lets PostgreSQL avoid [locking](/intro/database-glossary#lock), a technique that gives exclusive access to data for the duration of an operation to one process.  While helping with isolation control, locking prevents concurrent access and affects performance as queries wait for the lock to be freed to access data.
+This concurrency management lets PostgreSQL avoid [locking](/intro/database-glossary#lock), a technique that gives exclusive access to data for the duration of an operation to one process. While helping with isolation control, locking prevents concurrent access and affects performance as queries wait for the lock to be freed to access data.
 
-PostgreSQL's MVCC implementation allows read and write statements to never block one another, which can have a profound performance impact.  [Multiple levels of transaction isolation are available](https://www.postgresql.org/docs/current/transaction-iso.html) depending on your tolerance for different types of isolation problems.  Table and row level locking are also available if you want to manage a more fine-tuned scope for concurrency with your own system.
+PostgreSQL's MVCC implementation allows read and write statements to never block one another, which can have a profound performance impact. [Multiple levels of transaction isolation are available](https://www.postgresql.org/docs/current/transaction-iso.html) depending on your tolerance for different types of isolation problems. Table and row level locking are also available if you want to manage a more fine-tuned scope for concurrency with your own system.
 
 Concepts:
 
-* **Transaction isolation**: Transaction isolation is a quality that ensures that transactions are atomic and consistent.  This means that the operations within a transaction are either all applied to the data or all rolled back.  Transaction isolation also guarantees that external processes cannot alter the data that the transaction is operating on for the duration of the transaction.
-* **MVCC**: MVCC, or multiversion concurrency control, is a strategy for achieving transaction isolation by performing operations on consistent snapshots of the data.  Each transaction will receive its own copy of the data for use within the transaction.
-* **Locking**: Database, table, or row locking is a strategy to prevent inaccurate reads and avoid conflicting writes by giving processes exclusive access to a certain scope of data for the life of a transaction.  Locking is effective, but severely impacts performance since concurrent access is not allowed.
+- **Transaction isolation**: Transaction isolation is a quality that ensures that transactions are atomic and consistent. This means that the operations within a transaction are either all applied to the data or all rolled back. Transaction isolation also guarantees that external processes cannot alter the data that the transaction is operating on for the duration of the transaction.
+- **MVCC**: MVCC, or multiversion concurrency control, is a strategy for achieving transaction isolation by performing operations on consistent snapshots of the data. Each transaction will receive its own copy of the data for use within the transaction.
+- **Locking**: Database, table, or row locking is a strategy to prevent inaccurate reads and avoid conflicting writes by giving processes exclusive access to a certain scope of data for the life of a transaction. Locking is effective, but severely impacts performance since concurrent access is not allowed.
 
 ## Replication, load balancing, and high availability
 
 PostgreSQL offers a variety of solutions for spreading workloads over multiple servers or switching to a secondary server if there are problems with the primary server.
 
-*Load balancing* is a strategy that involves duplicating data on multiple database servers and alternating requests between them to increase the amount of work that can be performed concurrently.  Similarly, *high availability* is a strategy that allows a secondary database server to take over the responsibilities of the first if there are problems, decreasing the amount of time that the data is unavailable.  Both of these strategies are possible in PostgreSQL through a combination of [Write-Ahead Logging (WAL)](https://www.postgresql.org/docs/current/wal-intro.html) and [replication](https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling).
+_Load balancing_ is a strategy that involves duplicating data on multiple database servers and alternating requests between them to increase the amount of work that can be performed concurrently. Similarly, _high availability_ is a strategy that allows a secondary database server to take over the responsibilities of the first if there are problems, decreasing the amount of time that the data is unavailable. Both of these strategies are possible in PostgreSQL through a combination of [Write-Ahead Logging (WAL)](https://www.postgresql.org/docs/current/wal-intro.html) and [replication](https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling).
 
-[Write-Ahead Logging](/intro/database-glossary#wal) is a technique used to guarantee data integrity by writing all changes to a log file *before* actually applying them to the database.  In the event of a failure during a transaction, PostgreSQL can determine exactly what operations were applied to the database by checking the log.  Any partially applied transactions can then be rolled back since the system knows exactly what change was intended.
+[Write-Ahead Logging](/intro/database-glossary#wal) is a technique used to guarantee data integrity by writing all changes to a log file _before_ actually applying them to the database. In the event of a failure during a transaction, PostgreSQL can determine exactly what operations were applied to the database by checking the log. Any partially applied transactions can then be rolled back since the system knows exactly what change was intended.
 
-The WAL is important for load balancing and high availability because of its relationship with replication.  *Replication* is a process of mirroring the data and all database operations between two or more database servers.  It is the primary method of implementing both load balancing and high availability by providing a means to duplicate data between servers.
+The WAL is important for load balancing and high availability because of its relationship with replication. _Replication_ is a process of mirroring the data and all database operations between two or more database servers. It is the primary method of implementing both load balancing and high availability by providing a means to duplicate data between servers.
 
-PostgreSQL can support [many different types of replication](https://www.postgresql.org/docs/current/different-replication-solutions.html), each with trade-offs with regards to granularity, data loss protection, performance, and complexity.  Replication architectures can be straightforward, like copying data to a single standby server, or complex, with architectures that relay replication through multiple hosts with varying degrees of delay.  These choices give you flexibility in configuring your environment to match your needs for performance, scaling, and data availability.
+PostgreSQL can support [many different types of replication](https://www.postgresql.org/docs/current/different-replication-solutions.html), each with trade-offs with regards to granularity, data loss protection, performance, and complexity. Replication architectures can be straightforward, like copying data to a single standby server, or complex, with architectures that relay replication through multiple hosts with varying degrees of delay. These choices give you flexibility in configuring your environment to match your needs for performance, scaling, and data availability.
 
 Concepts:
 
-* **Write-Ahead Logging**: Write-Ahead Logging, or WAL, is a strategy for preventing data lose during server failures by writing an intended database operation to a persistent log before executing that operation on the database.  WAL allows the database to recover from failures by rolling back partially applied operations.  This helps ensure that the data within the system is in a consistent state.
-* **Replication**: Replication is a process that involves copying data and data operations from one server to another.  This allows separate servers to maintain synchronized sets of data.  Different types of replication is available to balance differing levels of availability, failure tolerance, performance, and complexity.
-* **Primary server**: When replicating data, the primary server (called the master server in some contexts) is a designation for the "main" server that can accept write queries and maintains the initial set of data and operations.
-* **Secondary server**: When replicating data, a secondary server (called a standby server in some contexts) is a server that synchronizes their data to the primary server by replicating each operation that is performed.
+- **Write-Ahead Logging**: Write-Ahead Logging, or WAL, is a strategy for preventing data lose during server failures by writing an intended database operation to a persistent log before executing that operation on the database. WAL allows the database to recover from failures by rolling back partially applied operations. This helps ensure that the data within the system is in a consistent state.
+- **Replication**: Replication is a process that involves copying data and data operations from one server to another. This allows separate servers to maintain synchronized sets of data. Different types of replication is available to balance differing levels of availability, failure tolerance, performance, and complexity.
+- **Primary server**: When replicating data, the primary server (called the master server in some contexts) is a designation for the "main" server that can accept write queries and maintains the initial set of data and operations.
+- **Secondary server**: When replicating data, a secondary server (called a standby server in some contexts) is a server that synchronizes their data to the primary server by replicating each operation that is performed.
 
 ## Conclusion
 
-PostgreSQL is an incredibly powerful database that's flexible enough to excel at many different tasks.  The client-server model, user management system, object hierarchy, and concurrency and replication features are fundamental parts of what makes PostgreSQL function as well as it does.  Understanding the foundational design choices that PostgreSQL developers have made can ease your journey to being productive with the system.
+PostgreSQL is an incredibly powerful database that's flexible enough to excel at many different tasks. The client-server model, user management system, object hierarchy, and concurrency and replication features are fundamental parts of what makes PostgreSQL function as well as it does. Understanding the foundational design choices that PostgreSQL developers have made can ease your journey to being productive with the system.

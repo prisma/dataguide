@@ -11,7 +11,7 @@ Databases are never alone. Users, applications, scripts, and even other database
 
 The classic ecological division can be applied too to the role of a database in an information system: animal, vegetable, or mineral? Identifying which mode is appropriate for a given data model requires understanding, as best possible, the context it inhabits.
 
-![Animal, vegetable, and mineral modes](/dataguide-images/modeling/animal-vegetable-mineral.png)
+![Animal, vegetable, and mineral modes](../dataguide-images/modeling/animal-vegetable-mineral.png)
 
 "Animal" seems to describe an active organizing principle, embedded (or less kindly, entangled) in operational processes and workflows, adapted, programmed -- in a word, [specialized](functional-units). An "animal" approach does very well in a tightly-focused system or subsystem explicitly built around a single database as the collector of information flows and single source of truth. Lose this focus, and an "animal" database risks becoming more of a giant panda: sluggish, high-maintenance, and a logistical and bureaucratic nightmare.
 
@@ -81,7 +81,7 @@ Information rarely circulates between a system's database or databases and its u
 
 The process of bulk data ingestion is commonly referred to by the acronym ETL, for Extract-Transform-Load, even informally in cases where no extraction or transformation occurs. The archetypal ETL procedure is a cron job or scheduled task which downloads archived data exports, often a flat delimited format like CSV or TSV, from the external system. Records may be transformed by the ETL task as it writes them to the database, or, contravening the acronym, transformed en masse afterwards. Bulk transformation is especially helpful when joins to existing data are involved, since the database can optimize a join for thousands of rows one time much more effectively than it can a single-row join thousands of times.
 
-![Integrating external information](/dataguide-images/modeling/external-internal.png)
+![Integrating external information](../dataguide-images/modeling/external-internal.png)
 
 First-party tooling for data import varies. Proprietary RDBMSs often include specialized ETL management programs, such as SQL Server Integration Services or Oracle Data Integrator, while the major open source and NoSQL options generally stop at basic file loading with applications like `mysqlimport` and `mongoimport`, or server-side `COPY` commands in PostgreSQL and Cassandra (Postgres also offers a client-side `\copy` instruction in the psql client).
 

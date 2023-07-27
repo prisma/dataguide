@@ -9,7 +9,7 @@ authors: ['dianfay']
 
 Foreign keys describe relationships, and the entity-relationship diagrams (ERDs) introduced in _[Correctness and Constraints](correctness-constraints#on-the-database-foreign-keys)_ map networks or graphs of those foreign keys. In these examples, there are only a few tables and relationships among them, but a visual layout is still a useful reference when it comes time to make sure every required relationship is accounted for. With larger databases, ERDs are invaluable, full stop. Many database clients have built-in tools to generate diagrams, although manual adjustment is usually required to make them readable.
 
-![The first steps toward a database schema design for tracking books and patrons in a library system.](/dataguide-images/modeling/libraries-initial.png)
+![The first steps toward a database schema design for tracking books and patrons in a library system.](../dataguide-images/modeling/libraries-initial.png)
 
 Several ERD notations exist. The full ["crow's foot"](http://www2.cs.uregina.ca/~bernatja/crowsfoot.html) notation, one of the oldest and most influential, defines symbols for 0 (a ring), 1 (a dash), or many (the eponymous crow's foot, as above) records. Each line represents a relationship between two tables and has not just one but two of these symbols on each end, with each pair establishing the minimum and maximum for that side.
 
@@ -46,7 +46,7 @@ Both libraries and authors preexist any useful record of the books they lend and
 
 Other cases aren't so clear. Imagine that some books are themselves on loan to libraries from outside collections, and that their original <footnote><note><a href="https://en.wikipedia.org/wiki/Provenance">Provenance</a> is the term used in archiving to describe who had an item before you did. Tracking provenance matters for rare books, museum artifacts, works of art, fine wines, data sets, and other less-than-building-sized things of value which change owners or holders.</note><text>provenances</text></footnote> are tracked separately. Should all `books` have a `provenance_id`, or should the `provenances` table have a `book_id` column?
 
-![Expanding the libraries schema to begin tracking provenance for individual books.](/dataguide-images/modeling/libraries-provenances.png)
+![Expanding the libraries schema to begin tracking provenance for individual books.](../dataguide-images/modeling/libraries-provenances.png)
 
 Both solutions will serve the purpose of tracking provenance. However, in the case of `books.provenance_id`, there's no way to follow the link back to a book from its provenance -- one would have to search `books` for a matching `provenance_id`. And since most books have no special provenance, most values for `provenance_id` will be `NULL`.
 
@@ -88,7 +88,7 @@ Elsewhere in the example schema, `patrons` have a `library_id` value. This expre
 
 There's a second problem with a similar solution: we aren't yet tracking who's checked a book out. A single patron can borrow many books, while a single book can be checked out many times. Structurally, this is nearly identical to the case of a single library having many patrons, who themselves may borrow from multiple libraries.
 
-![Adding junction tables to the model allows the relationships between patrons and books, and patrons and libraries, to be fully represented.](/dataguide-images/modeling/libraries-full.png)
+![Adding junction tables to the model allows the relationships between patrons and books, and patrons and libraries, to be fully represented.](../dataguide-images/modeling/libraries-full.png)
 
 A "many-to-many" relationship has to be represented in a dedicated table, often called a _junction_ or _bridge_ table, among [other names](https://en.wikipedia.org/wiki/Associative_entity). The junction table maintains foreign keys to each table it mediates, making it the "many" side of its relationships to those tables. A primary key across each foreign key prevents duplicates of the same relationship.
 

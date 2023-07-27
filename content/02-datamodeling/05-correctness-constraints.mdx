@@ -79,7 +79,7 @@ An autoincrementing numeric counter is not without drawbacks: adding in records 
 
 Relational databases implement only one class of multi-table constraint, the <footnote><note>We'll be talking more about some set theory concepts later on, but <a href='[https://www.apress.com/gp/book/9781430242840](https://www.apress.com/gp/book/9781430242840)'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></footnote> or foreign key. This sole constraint type is the guarantor of _referential integrity_, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
 
-![The first steps toward a database schema design for tracking books and patrons in a library system.](/dataguide-images/modeling/libraries-initial.png)
+![The first steps toward a database schema design for tracking books and patrons in a library system.](../dataguide-images/modeling/libraries-initial.png)
 
 This informal "entity-relationship diagram" or ERD shows the beginnings of a schema for a database of libraries and their collections and patrons. Each edge represents a relationship between the tables it connects. The | glyph indicates a single record on its side, while the "crow's foot" glyph represents multiple: a library holds many books and has many patrons.
 

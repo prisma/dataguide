@@ -1,6 +1,6 @@
 ---
 title: 'How to export database and table schemas in PostgreSQL'
-metaTitle: "Export schemas for PostgreSQL databases and tables"
+metaTitle: 'Export schemas for PostgreSQL databases and tables'
 metaDescription: 'Learn how to export your database objects from PostgreSQL for analysis, migrating, backups, and more.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
+In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes. Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
 
-In this short guide, we'll discuss how to export PostgreSQL database schemas using the `pg_dump` command.  While this utility can export many types of data from PostgreSQL, we'll focus on extracting the data structures themselves in this guide.
+In this short guide, we'll discuss how to export PostgreSQL database schemas using the `pg_dump` command. While this utility can export many types of data from PostgreSQL, we'll focus on extracting the data structures themselves in this guide.
 
 <PrismaOutlinks>
 
-You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications.  Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgres) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
+You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications. Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql).
 
 </PrismaOutlinks>
 
@@ -28,14 +28,14 @@ pg_dump --schema-only DATABASE > schema.sql
 
 Depending on your PostgreSQL configuration, you may need to also include some of the following options:
 
-* `--username=` / `-U`: The database username that you want to authenticate with
-* `--password` / `-W`: Force `pg_dump` to prompt for a password to authenticate
-* `--host=` / `-h`: The hostname or IP address of where PostgreSQL is located
-* `--port=` / `-p`: The port number where PostgreSQL is listening
+- `--username=` / `-U`: The database username that you want to authenticate with
+- `--password` / `-W`: Force `pg_dump` to prompt for a password to authenticate
+- `--host=` / `-h`: The hostname or IP address of where PostgreSQL is located
+- `--port=` / `-p`: The port number where PostgreSQL is listening
 
 The option responsible for telling `pg_dump` to only include the database structures, not the data itself, is `--schema-only`:
 
-* `--schema-only`: `-s`: Export only the object definitions, not the data itself.
+- `--schema-only`: `-s`: Export only the object definitions, not the data itself.
 
 Additionally, the first non-option argument (represented here by the word "DATABASE") indicates the exact database to export.
 
@@ -47,11 +47,11 @@ pg_dump --username=sales_reporter --password --schema-only SALES > sales_databas
 
 ## Modifying the export behavior
 
-The basic usage discussed above will output every structure related to the database in question.  We can modify this behavior with a number of additional options and in some cases, with the related `pg_dumpall` command.
+The basic usage discussed above will output every structure related to the database in question. We can modify this behavior with a number of additional options and in some cases, with the related `pg_dumpall` command.
 
 ### Targeting more than one database
 
-The `pg_dump` command is designed to export information related to a single database.  To target more than one database at a time, you can instead substitute the `pg_dumpall` command, which follows a similar syntax.
+The `pg_dump` command is designed to export information related to a single database. To target more than one database at a time, you can instead substitute the `pg_dumpall` command, which follows a similar syntax.
 
 To dump all of the database schemas in a PostgreSQL cluster, type:
 
@@ -59,7 +59,7 @@ To dump all of the database schemas in a PostgreSQL cluster, type:
 pg_dumpall --schema-only > all_schemas.sql
 ```
 
-If you want to limit the databases that are dumped, you can optionally include the `--exclude-database=` option.  This can be used multiple times to target individual databases:
+If you want to limit the databases that are dumped, you can optionally include the `--exclude-database=` option. This can be used multiple times to target individual databases:
 
 ```command
 pg_dumpall --schema-only --exclude-database=FIRST --exclude-database=SECOND > almost_all_schemas.sql
@@ -75,8 +75,8 @@ pg_dumpall --schema-only --exclude-database='SALES_*'  > all_schemas_except_sale
 
 You can also reduce the structures exported by naming specific tables to export:
 
-* `--table=` / `-t`: Dump only the tables that match the given pattern.  Can be provided multiple times.
-* `--exclude-table=` / `-T`: Exclude the tables that match the given pattern.  Can be provided multiple times.
+- `--table=` / `-t`: Dump only the tables that match the given pattern. Can be provided multiple times.
+- `--exclude-table=` / `-T`: Exclude the tables that match the given pattern. Can be provided multiple times.
 
 For example, if three of the tables in your `SALES` database are called `EMPLOYEE`, `STORE`, and `INVENTORY`, all defined in the default `public` schema, you can export only those structures by typing:
 
@@ -86,7 +86,7 @@ pg_dump --schema-only --table='public."EMPLOYEE"' --table='public."STORE"' --tab
 
 > **Note:** You can find out more about how PostgreSQL interprets different types of quotation marks in our guide on [how to use single and double quotes in PostgreSQL](https://www.prisma.io/dataguide/postgresql/short-guides/quoting-rules).
 
-If you want all of the sales data *except* for these three tables, you would instead use:
+If you want all of the sales data _except_ for these three tables, you would instead use:
 
 ```command
 pg_dump --schema-only --exclude-table='public."EMPLOYEE"' --exclude-table='public."STORE"' --exclude-table='public."INVENTORY"' SALES > some_sales_tables.sql
@@ -96,9 +96,9 @@ pg_dump --schema-only --exclude-table='public."EMPLOYEE"' --exclude-table='publi
 
 Some additional options that can be useful depending on your goals include:
 
-* `--create` / `-C`: Include the command to create the database itself before dumping the structures it holds.
-* `--clean` / `-c`: Output command to drop database objects prior to creating them.
-* `--if-exists`: Only relevant when used with `--clean`, will cause `pg_dump` to only attempt to drop database objects that already exist within the database.
+- `--create` / `-C`: Include the command to create the database itself before dumping the structures it holds.
+- `--clean` / `-c`: Output command to drop database objects prior to creating them.
+- `--if-exists`: Only relevant when used with `--clean`, will cause `pg_dump` to only attempt to drop database objects that already exist within the database.
 
 For example, if you want to include a command to create the database itself within the schema export, you can type:
 
@@ -114,10 +114,10 @@ pg_dump --schema-only --clean --if-exists SALES > sales_db_schema.sql
 
 ## Conclusion
 
-Being able to export your schemas allows you to save your database structures outside of the database itself.  This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
+Being able to export your schemas allows you to save your database structures outside of the database itself. This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
 
 <PrismaOutlinks>
 
-You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications.  Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgres) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
+You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications. Learn how to add Prisma to an [existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql) or how to [start with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql).
 
 </PrismaOutlinks>
