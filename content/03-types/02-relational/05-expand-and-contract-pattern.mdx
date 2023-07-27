@@ -2,12 +2,12 @@
 title: 'Using the expand and contract pattern for schema changes'
 metaTitle: "Using the expand and contract pattern | Prisma's Data Guide"
 metaDescription: 'In this article, we introduce the expand and contract pattern to help migrate data and clients to a new schema.'
-metaImage: '/dataguide-images/types/relational/expand-and-contract-pattern/header-image.png'
+metaImage: '../../dataguide-images/types/relational/expand-and-contract-pattern/header-image.png'
 ---
 
 ## Introduction
 
-![Expand and contract header image](/dataguide-images/types/relational/expand-and-contract-pattern/header-image.png)
+![Expand and contract header image](../../dataguide-images/types/relational/expand-and-contract-pattern/header-image.png)
 
 [Database schema](/intro/database-glossary#schema) designs inevitably evolve over time as the software that interacts with the database change. It is important to be able to transition your schemas to incorporate new requirements as they arise in a safe and reliable manner.
 
@@ -29,7 +29,7 @@ In this section, we'll outline how you actually use the expand and contract patt
 
 ### Step 1: Build and deploy the new schema
 
-![build and deploy new schema](/dataguide-images/types/relational/expand-and-contract-pattern/step-1.png)
+![build and deploy new schema](../../dataguide-images/types/relational/expand-and-contract-pattern/step-1.png)
 
 The first step in the expand and contract pattern is to design a new schema that satisfies your new requirements. Ideally, this should involve small changes to the existing structure. Larger changes should be broken up into smaller, isolated steps which can each run through this process in succession.
 
@@ -43,7 +43,7 @@ At this point, the database clients should be able to access the original struct
 
 ### Step 2: Expand the interface
 
-![expand the interface](/dataguide-images/types/relational/expand-and-contract-pattern/step-2.png)
+![expand the interface](../../dataguide-images/types/relational/expand-and-contract-pattern/step-2.png)
 
 After deploying the new database schema alongside the original schema, the next step is to expand the interface of the clients to recognize the new columns and tables. The client code will still read all of its values from the original data structure. However, when performing [write operations](/intro/database-glossary#write-operation), the client will now add or modify data in both the original structure and in the new structure.
 
@@ -51,7 +51,7 @@ The client is now actively inserting data into the new structure alongside the o
 
 ### Step 3: Migrate existing data to the new schema
 
-![migrate existing data](/dataguide-images/types/relational/expand-and-contract-pattern/step-3.png)
+![migrate existing data](../../dataguide-images/types/relational/expand-and-contract-pattern/step-3.png)
 
 The new data schema is in place within the database, but it does not yet have any of the actual data that the original schema holds. To prepare the new schema for actual use, you need to migrate the data from the existing columns or tables to the new ones.
 
@@ -69,7 +69,7 @@ To perform migrations with [Prisma](https://github.com/prisma/prisma), you can u
 
 ### Step 4: Test the new interface
 
-![test the new interface](/dataguide-images/types/relational/expand-and-contract-pattern/step-4.png)
+![test the new interface](../../dataguide-images/types/relational/expand-and-contract-pattern/step-4.png)
 
 Once your data has been migrated and your client is writing to both the original and new structures, you have the opportunity to test the new interface. While the production clients are still using the original data structure as their source of truth, you can run queries and clients in parallel to validate that the new structure works as intended.
 
@@ -79,7 +79,7 @@ This is your last opportunity to validate the behavior of the new interface befo
 
 ### Step 5: Cut reads over to the new interface
 
-![read from new schema](/dataguide-images/types/relational/expand-and-contract-pattern/step-5.png)
+![read from new schema](../../dataguide-images/types/relational/expand-and-contract-pattern/step-5.png)
 
 At this point, you are ready to actually begin transitioning production traffic to the new database structure. This means modifying the client behavior to use the new schema for reads instead of the original schema.
 
@@ -91,7 +91,7 @@ In practice this step is usually performed in stages to transition multiple clie
 
 ### Step 6: Discontinue writing to the original structure
 
-![stop writing to original](/dataguide-images/types/relational/expand-and-contract-pattern/step-6.png)
+![stop writing to original](../../dataguide-images/types/relational/expand-and-contract-pattern/step-6.png)
 
 Once you've confirmed that your new structure is working as intended, you can stop writing to the original structure by once again updating the database clients.
 
@@ -99,7 +99,7 @@ The new schema exclusively is now used by the clients.
 
 ### Step 7: Remove the original structure from the system
 
-![remove original schema](/dataguide-images/types/relational/expand-and-contract-pattern/step-7.png)
+![remove original schema](../../dataguide-images/types/relational/expand-and-contract-pattern/step-7.png)
 
 Once all clients have been updated to stop writing to the original schema, you can safely delete the original data structure. This is the last step of the expand and contract pattern that completes the migration to the new structure.
 

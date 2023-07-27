@@ -2,13 +2,13 @@
 title: 'Introduction to database replication and its benefits'
 metaTitle: 'Database Replication - Types, Benefits, and Strategies'
 metaDescription: 'In this article, we cover what database replication is and its most common benefits. Learn more about the advantages of database replication.'
-metaImage: '/dataguide-images/database-replication/Data-Replication-V2.png'
+metaImage: '../dataguide-images/database-replication/Data-Replication-V2.png'
 authors: ['alexemerich']
 ---
 
 ## Introduction
 
-![Article header](/dataguide-images/database-replication/Data-Replication-V2.png)
+![Article header](../dataguide-images/database-replication/Data-Replication-V2.png)
 
 For many modern day applications, their backend is configured using a [distributed database](/intro/database-glossary#distributed-database). Data is stored and processed using an arrangement, or [cluster](/intro/database-glossary#cluster) of database servers, instead of relying on a single database server. The distributed model can ensure that data is still accessible even if one of the database servers suffers a failure. However, the distributed approach introduces the issue of making sure that all of the actors in the distributed system are up to date with the information that the end user is expecting to have returned to them. This introduces us to the topic of this guide: database replication.
 
@@ -18,7 +18,7 @@ In this guide, we will cover what database replication is and discuss the main b
 
 **_Database replication_** is the process of maintaining a copy of data on multiple machines that are connected via a network. The process can be visualized like the following, where a lead database is sending its information to followers to replicate:
 
-![Database Replication](/dataguide-images/database-replication/Full-Data-Replication.png)
+![Database Replication](../dataguide-images/database-replication/Full-Data-Replication.png)
 
 This image displays a specific kind of database replication architecture, but replication can also be done in different ways. The main goal is always the same, and that goal is to keep multiple, identical copies of up to date data in different places.
 

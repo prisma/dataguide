@@ -2,7 +2,7 @@
 title: 'How to configure a PostgreSQL database on RDS'
 metaTitle: 'Configure production-ready PostgreSQL on AWS RDS'
 metaDescription: "Learn how to configure PostgreSQL on Amazon's RDS with production-capable settings."
-metaImage: '/dataguide-images/postgresql/rds/header.png'
+metaImage: '../dataguide-images/postgresql/rds/header.png'
 authors: ['justinellingwood']
 ---
 
@@ -33,19 +33,19 @@ To begin, log into your [Amazon Web Services console](https://console.aws.amazon
 
 From the AWS console home, type _rds_ in the service search bar to locate the RDS service:
 
-![Search for AWS RDS](/dataguide-images/postgresql/rds/search-rds.png)
+![Search for AWS RDS](../dataguide-images/postgresql/rds/search-rds.png)
 
 Click **RDS** under **Services** to go to the main Amazon RDS page:
 
-![Main RDS page](/dataguide-images/postgresql/rds/main-rds-page.png)
+![Main RDS page](../dataguide-images/postgresql/rds/main-rds-page.png)
 
 Scroll down until you can see the **Create database** section and click **Create database**:
 
-![Create database button](/dataguide-images/postgresql/rds/create-database-button.png)
+![Create database button](../dataguide-images/postgresql/rds/create-database-button.png)
 
 You will be taken to the database creation page where you can select your desired configuration.
 
-![Database creation page](/dataguide-images/postgresql/rds/database-creation-page.png)
+![Database creation page](../dataguide-images/postgresql/rds/database-creation-page.png)
 
 We will be spending the rest of the guide covering the different options available and offering suggestions for production-capable configurations.
 
@@ -57,7 +57,7 @@ The first part of RDS creation process determines _how_ you want configure your 
 
 The first step in provisioning a new database on RDS is to **choose the creation method**:
 
-![Choose standard create](/dataguide-images/postgresql/rds/choose-standard-create.png)
+![Choose standard create](../dataguide-images/postgresql/rds/choose-standard-create.png)
 
 While the _Easy create_ method can help you choose some reasonable defaults, it doesn't provide the level of flexibility that you probably want when configuring an important database for your environment. The _Standard create_ option offers additional options and is still a relatively short process.
 
@@ -67,7 +67,7 @@ Choose the _Standard create_ so that you have full control over the creation pro
 
 Next, choose the **Database Engine**:
 
-![Choose PostgreSQL engine](/dataguide-images/postgresql/rds/choose-postgresql-engine.png)
+![Choose PostgreSQL engine](../dataguide-images/postgresql/rds/choose-postgresql-engine.png)
 
 For this guide, we will be configuring a PostgreSQL database, so we will choose the **PostgreSQL** option. Amazon's Aurora is an alternative PostgreSQL-compatible option that provides Amazon's own scaling and management features. For this guide, however, we will focus on a PostgreSQL native deployment.
 
@@ -77,7 +77,7 @@ Choose the version of PostgreSQL that you wish to use. The default selected vers
 
 Next, you will be asked to choose a **Template**:
 
-![Choose production template](/dataguide-images/postgresql/rds/choose-production-template.png)
+![Choose production template](../dataguide-images/postgresql/rds/choose-production-template.png)
 
 Templates are meant to provide preselected options that match typical deployment scenarios. Since we are provisioning a production database, select the _Production_ template.
 
@@ -85,7 +85,7 @@ Templates are meant to provide preselected options that match typical deployment
 
 The next section includes the first major decision you'll need to make in regards to your deployment: the database's **availability and durability**:
 
-![Choose single DB instance](/dataguide-images/postgresql/rds/choose-single-db-instance.png)
+![Choose single DB instance](../dataguide-images/postgresql/rds/choose-single-db-instance.png)
 
 This section determines exactly how your database will be deployed within AWS's environment. This has implications on how resistant your setup is to failure and outages, both of your specific instance and of regional disruptions in Amazon's infrastructure.
 
@@ -123,7 +123,7 @@ For this guide, we will be choosing a single DB instance because it is often suf
 
 The next section allows you to configure your deployment's basic **settings**:
 
-![Configure basic settings](/dataguide-images/postgresql/rds/configure-basic-settings.png)
+![Configure basic settings](../dataguide-images/postgresql/rds/configure-basic-settings.png)
 
 First, you have the opportunity to name your database instance by setting the _DB instance identifier_. Select something unique that will help you understand the role and purpose of the database when displayed within the AWS console.
 
@@ -139,7 +139,7 @@ If you select your own password, save your password somewhere secure as you will
 
 The next major decision you'll need to make is your **DB instance class**:
 
-![Choose instance class](/dataguide-images/postgresql/rds/choose-instance-class.png)
+![Choose instance class](../dataguide-images/postgresql/rds/choose-instance-class.png)
 
 Essentially, the instance class of your database dictates the size of virtual machine your database will be deployed to and the resources available to it. You have a few different options for the type of instance you want to choose as well as combination of resources within each type.
 
@@ -165,7 +165,7 @@ Memory optimized database instances are primarily useful if you know that you wi
 
 Next, you'll need to configure the **storage** for your database instance:
 
-![Choose storage options](/dataguide-images/postgresql/rds/choose-storage-options.png)
+![Choose storage options](../dataguide-images/postgresql/rds/choose-storage-options.png)
 
 ### Choosing the storage type
 
@@ -193,7 +193,7 @@ In general, it is often enough to start with anywhere from 20 to 100 GiB as your
 
 After configuring your storage, the next major decision you'll have to make is in regards to your database's **connectivity**:
 
-![Choose connectivity strategy](/dataguide-images/postgresql/rds/choose-connectivity-strategy.png)
+![Choose connectivity strategy](../dataguide-images/postgresql/rds/choose-connectivity-strategy.png)
 
 This section includes a number of different options that can be confusing if you aren't intimately familiar with AWS's security and networking models.
 
@@ -233,7 +233,7 @@ If you open the "Additional configuration" options, you can optionally change th
 
 Next, you'll need to choose the type of **authentication** you want to use for your database instance:
 
-![Choose database authentication](/dataguide-images/postgresql/rds/choose-database-authentication.png)
+![Choose database authentication](../dataguide-images/postgresql/rds/choose-database-authentication.png)
 
 The choices are:
 
@@ -251,7 +251,7 @@ If you expand the **Additional configuration** section, you have the opportunity
 
 The first additional section allows you to configure some additional options for PostgreSQL:
 
-![Configure database options](/dataguide-images/postgresql/rds/configure-database-options.png)
+![Configure database options](../dataguide-images/postgresql/rds/configure-database-options.png)
 
 If you'd like, you can choose to have RDS automatically create an _initial database_ for your deployment. This is usually unnecessary as any migrations you run or other setup scripts you might have typically create the necessary database structures within the instance.
 
@@ -263,7 +263,7 @@ PostgreSQL does not support option groups, so that drop down will not be active.
 
 Next you can configure the options associated with automatic database backups:
 
-![Configure backups](/dataguide-images/postgresql/rds/configure-backups.png)
+![Configure backups](../dataguide-images/postgresql/rds/configure-backups.png)
 
 If you want to enable automatic backups, select the _enable automatic backups_ box. This will tell AWS to automatically take daily point-in-time snapshots of your database instances that you can use to restore from. It is worth noting that, while not mentioned on this page, backups will be stored in AWS's Simple Storage Service (S3) and that you will be charged for the space they consume.
 
@@ -279,7 +279,7 @@ If you want additional protection, you can also select _Backup replication_ to r
 
 Next, you can configure the on-disk **encryption** for your database instance:
 
-![Configure encryption](/dataguide-images/postgresql/rds/configure-encryption.png)
+![Configure encryption](../dataguide-images/postgresql/rds/configure-encryption.png)
 
 It is almost always a good idea to enable encryption for your instance for additional security.
 
@@ -289,7 +289,7 @@ In general, you can use the default AWS KMS Key for this unless you have additio
 
 Next, configure the **performance insights** for your instance:
 
-![Configure performance insights](/dataguide-images/postgresql/rds/configure-performance-insights.png)
+![Configure performance insights](../dataguide-images/postgresql/rds/configure-performance-insights.png)
 
 Performance insights are a feature that helps you debug performance issues in your RDS instances. By default, the insight data will be retained for 7 days for free. You can alternatively choose long term storage of 2 years for an [additional cost](https://aws.amazon.com/rds/performance-insights/pricing/) depending on your CPU instance types.
 
@@ -299,7 +299,7 @@ Again, you can leave the default AWS KMS Key selected for this encryption unless
 
 Next, you can configure the **monitoring** and **logs** for the database:
 
-![Configure monitoring](/dataguide-images/postgresql/rds/configure-monitoring.png)
+![Configure monitoring](../dataguide-images/postgresql/rds/configure-monitoring.png)
 
 In general, it is helpful to enable monitoring to give you better visibility into your database instance and how it is performing.
 
@@ -309,7 +309,7 @@ As for exporting logs, it is typically safe to disable this by default unless yo
 
 The **maintenance** and **deletion protection** sections finish off the additional configuration:
 
-![Configure maintenance](/dataguide-images/postgresql/rds/configure-maintenance.png)
+![Configure maintenance](../dataguide-images/postgresql/rds/configure-maintenance.png)
 
 It is typically considered safe to automatically upgrade minor versions of PostgreSQL automatically. Minor versions should have no breaking changes and upgrades should be performed relatively seamlessly. Select an upgrade window if you have a preference.
 
@@ -319,29 +319,29 @@ It is always a good idea to enable deletion protection for your production datab
 
 We've finally reached the end of the configuration process. At the bottom of the page, you can see an estimate for the monthly cost of your configured database instance:
 
-![Estimated cost](/dataguide-images/postgresql/rds/estimated-cost.png)
+![Estimated cost](../dataguide-images/postgresql/rds/estimated-cost.png)
 
 Take special note of the text beneath the estimate that reiterates that the cost calculation displayed does not include the cost of backup storage, IO, or data transfer. These additional costs can be substantial if not accounted for and limited, so ensure that you are comfortable with the idea of additional charges before proceeding.
 
 When you are ready, click **Create Database** at the bottom of the page:
 
-![Create the database](/dataguide-images/postgresql/rds/create-the-database.png)
+![Create the database](../dataguide-images/postgresql/rds/create-the-database.png)
 
 Your database instance will be provisioned according to your configuration. This may take a few minutes to complete depending on the size of the instance you selected and the options you enabled.
 
 When your instance is ready, it will be displayed in the **Databases** section of the RDS dashboard:
 
-![New database instance](/dataguide-images/postgresql/rds/new-database-instance.png)
+![New database instance](../dataguide-images/postgresql/rds/new-database-instance.png)
 
 ### Viewing auto generated password
 
 If you configured AWS to auto generate a password, you will see a notice like this at the top of the screen:
 
-![Auto generate notice](/dataguide-images/postgresql/rds/auto-generate-notice.png)
+![Auto generate notice](../dataguide-images/postgresql/rds/auto-generate-notice.png)
 
 Click _View credential details_ to get see the password:
 
-![View password](/dataguide-images/postgresql/rds/view-password.png)
+![View password](../dataguide-images/postgresql/rds/view-password.png)
 
 Note that this is the only time you'll have access to this password and you'll have to regenerate it if you lose it.
 
@@ -351,13 +351,13 @@ For the rest of the connection information, click on the instance name.
 
 In the _Connectivity & security_ tab, you can find your database's endpoint and port number on the left-hand side:
 
-![Endpoint and port](/dataguide-images/postgresql/rds/endpoint-and-port.png)
+![Endpoint and port](../dataguide-images/postgresql/rds/endpoint-and-port.png)
 
 In this example, our endpoint name (URL for the host) is `production-db1.cddm7tgh3j5j.us-east-1.rds.amazonaws.com` and our database is listening on PostgreSQL's standard port: 5432.
 
 To find the master username that you configured (this will be `postgres` if you didn't modify it), visit the _Configuration_ tab and look for the _Master username_ field under the _Availability_ heading:
 
-![Master username](/dataguide-images/postgresql/rds/master-username.png)
+![Master username](../dataguide-images/postgresql/rds/master-username.png)
 
 You can also find the name of the initial database on the left-hand side of this same tab, if you configured one.
 

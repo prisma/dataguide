@@ -49,7 +49,7 @@ With the inclusion of a public key, we see that MongoDB utilizes asymmetric encr
 
 By encrypting with a public key, the sender’s message can only be decrypted by the intended recipient with their private key. Public key cryptography is advantageous in transit because there is no need to ever share private keys and the use of signatures ensures a recipient can verify that a message comes from a trusted sender.
 
-![Asymmetric Encryption](/dataguide-images/mongodb/mongodb-encryption-assets-asymmetric-encryption.png)
+![Asymmetric Encryption](../dataguide-images/mongodb/mongodb-encryption-assets-asymmetric-encryption.png)
 
 The downside to asymmetric encryption is that is does take longer than symmetric encryption and requires more resource consumption to achieve. If your data is not actively moving from device to device or network-to-network, then these tradeoffs are not necessary to undertake and symmetric encryption provides ample security.
 
@@ -61,7 +61,7 @@ MongoDB Atlas uses [Let’s Encrypt](https://letsencrypt.org/) known certificate
 
 Encryption at rest secures data that is not in a state of transit but idle. You can best visualize encrypted data at rest like secured money in a vault in a bank branch. It is no longer in transit to another branch but stationary in a single place. This static state avoids the transmission insecurity that asymmetric encryption solves, so symmetric encryption is a strong method.
 
-![Symmetric Encryption](/dataguide-images/mongodb/mongodb-encryption-assets-symmetric-encryption.png)
+![Symmetric Encryption](../dataguide-images/mongodb/mongodb-encryption-assets-symmetric-encryption.png)
 
 Encrypted data on disk remains encrypted unless an attacker has access to the encryption key(s). Encryption at rest protects sensitive data in the case of lost or stolen physical drives or an exposed database file.
 

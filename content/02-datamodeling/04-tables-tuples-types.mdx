@@ -27,7 +27,7 @@ For my part, I use `snake_case`, prefix booleans with `is_` and suffix dates wit
 
 Modern RDBMSs abstract most of the intricate details of how data are arranged and stored, most of the time. The basic unit of storage is the _page_, a uniformly-sized logical block of records and metadata corresponding to a segment of physical storage space: 2kb in Oracle, 4 in DB2, 8 in SQL Server and PostgreSQL, 16 with MySQL's InnoDB. When the database reads or writes data, it does so page by page rather than record by record.
 
-![Layout of metadata and multiple rows on a database page.](/dataguide-images/modeling/pages.png)
+![Layout of metadata and multiple rows on a database page.](../dataguide-images/modeling/pages.png)
 
 It's possible for a <footnote><note>The "tupple", "toople", and "tyoople" camps are eternally at, if not war, at least polite sparring in comment sections around the internet. CJ Date, an early authority on relational databases, gives the first ("rhymes with couple").</note><text>_tuple_</text></footnote>, i.e. the attribute-value pairs representing a given record or row, to exceed the available space in a page less the metadata. Only Oracle and SQL Server can distribute a single tuple across multiple pages, while MySQL and DB2 make page size configurable. PostgreSQL allows configuration of page size only at compile time, but uses ["The Oversized Attribute Storage Technique" or TOAST](https://wiki.postgresql.org/wiki/TOAST) to move long values off-page and record pointers in their place.
 

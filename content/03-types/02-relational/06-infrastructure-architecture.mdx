@@ -14,7 +14,7 @@ In this guide, we'll introduce some of the most common patterns for relational d
 
 ## Scaling vertically
 
-![Scaling vertically diagram](/dataguide-images/types/relational/infrastructure-architecture/scaling-vertically.png)
+![Scaling vertically diagram](../../dataguide-images/types/relational/infrastructure-architecture/scaling-vertically.png)
 
 The simplest way to scale a database system is vertical scaling. _Scaling vertically_, also called _scaling up_, means adding capacity to the server that manages your database. By increasing the processing power, memory allocation, or storage capacity, you can increase the performance and volume that a database system can handle without increasing the complexity of the system as a whole.
 
@@ -26,7 +26,7 @@ Scaling up has its limitations however because the amount of resources that can 
 
 The other primary way of scaling your database infrastructure is to scale out. _Scaling out_ means that instead of increasing the capacity of a single server, you increase the number of servers dedicated to serving a specific need. So you add capacity by adding additional machines to your infrastructure.
 
-![CQRS with read-only replicas diagram](/dataguide-images/types/relational/infrastructure-architecture/cqrs.png)
+![CQRS with read-only replicas diagram](../../dataguide-images/types/relational/infrastructure-architecture/cqrs.png)
 
 _Command query responsibility segregation_ (CQRS) is a term used to describe adding logic to separate out queries that mutate data ([write queries](/intro/database-glossary#write-operation)) from those that do not ([read queries](/intro/database-glossary#read-operation)). This allows you to route these different categories of requests to different hosts to help distribute the load.
 
@@ -38,7 +38,7 @@ Additionally, this system provides some redundancy to your architecture as the s
 
 While using CQRS with read-only replicas helps you address a higher number of read requests, it does not significantly impact the write performance of your infrastructure. To increase the number of writes your architecture can handle, you need to consider if you can adopt a multi-primary replication design.
 
-![Multi-primary replication diagram](/dataguide-images/types/relational/infrastructure-architecture/multi-primary.png)
+![Multi-primary replication diagram](../../dataguide-images/types/relational/infrastructure-architecture/multi-primary.png)
 
 _Multi-primary replication_ is a form of replication where multiple servers can accept write requests. Some systems are configured so that any server can process write requests, while others are designed so that a core group of primary servers handle writes with a larger number of read-only followers. Regardless of the implementation, multi-primary replication increases the number of servers who are responsible for write queries.
 
@@ -50,7 +50,7 @@ Each system chooses their own approach to handle these challenges. This is a dem
 
 While using read-only replicas is a way to increase the available databases that can respond to read requests, it does not improve the basic query performance of complex read operations. One of the servers is still expected to execute the read operation each time a request is made, even if the results are identical to the previous lookup.
 
-![Adding a read cache diagram](/dataguide-images/types/relational/infrastructure-architecture/read-cache.png)
+![Adding a read cache diagram](../../dataguide-images/types/relational/infrastructure-architecture/read-cache.png)
 
 To decrease response times, a _read query caching_ layer can be introduced. Adding a [cache](/intro/database-glossary#cache) between your database clients and the databases themselves can reduce query time for common requests significantly. The application can request read results from the cache and receive them almost immediately if available. For cases where the results are not found in the cache, they are fetched from the database itself and added to the cache for next time.
 
@@ -62,7 +62,7 @@ In cases where data is changing more rapidly, a read cache may not help nearly a
 
 So far, the designs we've discussed have segmented database components based on whether they respond to write requests or not. However, another way of dividing responsibility is to split up the actual data set into multiple parts.
 
-![Data sharding diagram](/dataguide-images/types/relational/infrastructure-architecture/data-sharding.png)
+![Data sharding diagram](../../dataguide-images/types/relational/infrastructure-architecture/data-sharding.png)
 
 **Sharding** is the process of breaking a logical data set into smaller subsets to distribute their management to different machines. Each database server only handles a portion of the data and a routing mechanic is introduced that understands which machines are responsible for what pieces of data.
 
@@ -74,7 +74,7 @@ Sharding introduces quite a bit of complexity into data systems and isn't approp
 
 Rather than splitting the values of a dataset into multiple segments, in many cases, it makes more sense to use different databases for different functional purposes. For instance, if you have an accounts service and a products service, having dedicated databases that coincide with each concern can help you scale different components independently.
 
-![Functional data management diagram](/dataguide-images/types/relational/infrastructure-architecture/functional-separation.png)
+![Functional data management diagram](../../dataguide-images/types/relational/infrastructure-architecture/functional-separation.png)
 
 Functional data management allows you to break up your database infrastructure and manage each part according to the needs of its clients. Each functional part can be scaled using whatever strategy makes the most sense. It allows you to design the database schema and deploy it to a location that best matches the patterns of a specific use case instead of requiring it to serve the entire organization.
 
@@ -84,7 +84,7 @@ For many organizations, this strategy has important advantages that go beyond th
 
 The different trade-offs that you must evaluate and the amount of infrastructure you may be expected to manage for proper scaling can be overwhelming for many people. One option for offloading this complexity is to take advantage of database services that manage infrastructure and scale for you.
 
-![Serverless database architecture diagram](/dataguide-images/types/relational/infrastructure-architecture/serverless-databases.png)
+![Serverless database architecture diagram](../../dataguide-images/types/relational/infrastructure-architecture/serverless-databases.png)
 
 _Serverless databases_ are a category of services that decouple data storage from data processing to easily scale resources in response to changes in demand.
 

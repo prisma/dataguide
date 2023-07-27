@@ -173,7 +173,7 @@ Once you start executing <footnote> <note> Data Manipulation Language: the other
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
-![Triggers and consequent chaos](/dataguide-images/modeling/chaos.png)
+![Triggers and consequent chaos](../dataguide-images/modeling/chaos.png)
 
 The trigger-action-trigger-action call stack can become arbitrarily long, although true recursion in the form of modifying the same tables or records multiple times in any such flow is illegal on some platforms and more generally a bad idea in almost all circumstances. Trigger nesting rapidly outstrips our ability to comprehend its extent and effects. Databases making heavy use of nested triggers begin to drift from the realm of the complicated toward that of the complex, becoming difficult or impossible to analyze, debug, and predict.
 
