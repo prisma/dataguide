@@ -14,7 +14,7 @@ While [serverless computing has many benefits](https://www.prisma.io/dataguide/s
 
 <PrismaOutlinks>
 
-[Prisma's Data Proxy](https://www.prisma.io/docs/data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+[Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) provides one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
 
 </PrismaOutlinks>
 
@@ -52,7 +52,7 @@ Serverless functions are, by design, stateless.  That means that, while some inf
 
 You must design your functions to have all of the information they need to execute internally.  Any external state must be fetched at the beginning of invocation and exported before finishing.  Since functions may be executed in parallel, this also limits what type of state may reasonable be acted upon.  In general, the less state that your functions have to manage, the faster and cheaper they will be to execute and the less complexity you will have to manage.
 
-There are other side effects of the function's ephemeral nature as well.  If your functions need to reach out to a database system, there is a good chance you may quickly exhaust your database's connection pool.  Since each invocation of your functions can be executed in a different context, your database's connection pool can quickly drain as it responds to different invocations or tries to return resources to its pool.  Solutions like [Prism's Data Proxy](https://www.prisma.io/docs/data-platform#prisma-data-proxy) help mitigate these issues by managing the connection resources for the serverless instances in front of whatever connection pooling is in place.
+There are other side effects of the function's ephemeral nature as well.  If your functions need to reach out to a database system, there is a good chance you may quickly exhaust your database's connection pool.  Since each invocation of your functions can be executed in a different context, your database's connection pool can quickly drain as it responds to different invocations or tries to return resources to its pool.  Solutions like [Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) help mitigate these issues by managing the connection resources for the serverless instances in front of whatever connection pooling is in place.
 
 ## Provider lock-in concerns
 
@@ -101,6 +101,6 @@ By gaining familiarity with the different obstacles that you might face, you can
 
 <PrismaOutlinks>
 
-[Prisma's Data Proxy](https://www.prisma.io/docs/data-platform#prisma-data-proxy), now in early access, is one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
+[Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) provides one way to handle connection issues between your serverless applications and backend databases.  It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool.  Check it out now!
 
 </PrismaOutlinks>
