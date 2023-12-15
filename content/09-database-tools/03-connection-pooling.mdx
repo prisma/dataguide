@@ -1,21 +1,21 @@
 ---
 title: 'What is connection pooling and how does it work?'
 metaTitle: 'What is connection pooling in database management?'
-metaDescription: "Learn how connection pooling helps databases handle more clients with the same resources."
+metaDescription: 'Learn how connection pooling helps databases handle more clients with the same resources.'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-While development and staging environments can help you anticipate many of the conditions you'll face in production, some challenges only begin to surface at scale.  Database connection management falls squarely in this category: the number of requests from client instances can quickly scale beyond the connection limit supported by the database software.
+While development and staging environments can help you anticipate many of the conditions you'll face in production, some challenges only begin to surface at scale. Database connection management falls squarely in this category: the number of requests from client instances can quickly scale beyond the connection limit supported by the database software.
 
-Connection management policies and tooling are required to address this resource contention in order to prevent long queue times, failed requests, and user-impacting errors.  **Connection pooling**, a strategy based around deploying an intermediary queuing system to manage and recycle database connections, is often successfully employed to mitigate these problems.
+Connection management policies and tooling are required to address this resource contention in order to prevent long queue times, failed requests, and user-impacting errors. **Connection pooling**, a strategy based around deploying an intermediary queuing system to manage and recycle database connections, is often successfully employed to mitigate these problems.
 
-In this guide, we'll talk about what connection pooling is, what specific conditions it seeks to address, and how it works.  We'll introduce a few popular implementations to act as representative examples, and we'll discuss how they alter the way that clients behave when client requests outstrip the database's available connections.
+In this guide, we'll talk about what connection pooling is, what specific conditions it seeks to address, and how it works. We'll introduce a few popular implementations to act as representative examples, and we'll discuss how they alter the way that clients behave when client requests outstrip the database's available connections.
 
 <PrismaOutlinks>
 
-Connection pooling is one of the core features offered by [Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) on the [Prisma Data Platform](https://console.prisma.io/).  If you are using Prisma to work with your database, start a free project to easily manage your connections and browse your data.
+Connection pooling is one of the core features offered by [Prisma Accelerate](https://www.prisma.io/docs/accelerate) on the [Prisma Data Platform](https://console.prisma.io/). If you are using Prisma to work with your database, start a free project to easily manage your connections and browse your data.
 
 </PrismaOutlinks>
 
@@ -23,101 +23,101 @@ Connection pooling is one of the core features offered by [Prisma Accelerate](ht
 
 Before we talk about connection management generally and connection pooling specifically, it may be helpful to take a close look at what goes on during a database connection.
 
-For a client application to open a connection to a database, a surprising number of steps must occur.  For each connection, some or all of the following steps must occur:
+For a client application to open a connection to a database, a surprising number of steps must occur. For each connection, some or all of the following steps must occur:
 
-* Any DNS lookups required to locate the IP address of the database server
-* Conduct the [three-way handshake](https://en.wikipedia.org/wiki/Handshaking#TCP_three-way_handshake) required to establish a TCP connection to the server
-* Negotiate and enable encryption for the connection through a [TLS handshake](https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/)
-* Exchange preferences and requirements with the database software to establish the session parameters
-* Perform database authentication checks to establish the client's identity
-* Perform initial authorization checks to establish that the client has access to the requested database objects
-* Perform the actual query and return the results
-* Tear down the database session, TLS encryption, and TCP connection
+- Any DNS lookups required to locate the IP address of the database server
+- Conduct the [three-way handshake](https://en.wikipedia.org/wiki/Handshaking#TCP_three-way_handshake) required to establish a TCP connection to the server
+- Negotiate and enable encryption for the connection through a [TLS handshake](https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/)
+- Exchange preferences and requirements with the database software to establish the session parameters
+- Perform database authentication checks to establish the client's identity
+- Perform initial authorization checks to establish that the client has access to the requested database objects
+- Perform the actual query and return the results
+- Tear down the database session, TLS encryption, and TCP connection
 
 ## How does the number of connections affect database server resources?
 
-Beyond the time required to complete all of the above, each connection also requires resources to establish and maintain.  In PostgreSQL, for instance, [some tested workloads resulted in 1.5-14.5MB of memory used per connection](https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/#:~:text=The%20amount%20of%20memory%20consumed,1.5%E2%80%9314.5%20MB%20per%20connection.).
+Beyond the time required to complete all of the above, each connection also requires resources to establish and maintain. In PostgreSQL, for instance, [some tested workloads resulted in 1.5-14.5MB of memory used per connection](https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/#:~:text=The%20amount%20of%20memory%20consumed,1.5%E2%80%9314.5%20MB%20per%20connection.).
 
-CPU usage also rises with the number of connections as the server has to manage the state of each new connection.  As more memory and CPU are used for managing connections, they can begin to affect other things like [the rate that transactions can be executed](https://aws.amazon.com/blogs/database/performance-impact-of-idle-postgresql-connections/#:~:text=Transaction%20rate%20impact).  The overhead of managing a large number of connections starts to interfere with the database system's ability to optimally cache results and decreases its ability to perform useful work.
+CPU usage also rises with the number of connections as the server has to manage the state of each new connection. As more memory and CPU are used for managing connections, they can begin to affect other things like [the rate that transactions can be executed](https://aws.amazon.com/blogs/database/performance-impact-of-idle-postgresql-connections/#:~:text=Transaction%20rate%20impact). The overhead of managing a large number of connections starts to interfere with the database system's ability to optimally cache results and decreases its ability to perform useful work.
 
 ## How does the number of connections affect client applications?
 
-While above paragraph describes the cost of connections that the database server must pay, there are also direct impacts on clients.  Database servers can only be configured to accept a certain number of connections.  When that limit is reached, additional connection requests are rejected.
+While above paragraph describes the cost of connections that the database server must pay, there are also direct impacts on clients. Database servers can only be configured to accept a certain number of connections. When that limit is reached, additional connection requests are rejected.
 
-This means that, by default, your client code needs to implement logic to repeat requests with an exponential backoff algorithm to handle these failures.  More importantly, however, is that your client may be forced to use that functionality frequently, leading to stalled queries, delays, and problems that can quickly bubble up to your users.
+This means that, by default, your client code needs to implement logic to repeat requests with an exponential backoff algorithm to handle these failures. More importantly, however, is that your client may be forced to use that functionality frequently, leading to stalled queries, delays, and problems that can quickly bubble up to your users.
 
 Without a mediating middle component, you would be forced consider:
 
-* increasing the database server's connection limit (affecting the memory and CPU usage as well as transaction rate of the database server),
-* scaling up your database to allocate more memory, CPU, or network capacity, or
-* scaling out your database to distribute the requests across a greater number of machines
+- increasing the database server's connection limit (affecting the memory and CPU usage as well as transaction rate of the database server),
+- scaling up your database to allocate more memory, CPU, or network capacity, or
+- scaling out your database to distribute the requests across a greater number of machines
 
-These choices are not necessarily negative in their own right, but they can be overkill for the type of congestion we're describing here.  Connection pooling is an alternative that offers to help you do more with the resources you currently have.
+These choices are not necessarily negative in their own right, but they can be overkill for the type of congestion we're describing here. Connection pooling is an alternative that offers to help you do more with the resources you currently have.
 
 ## What is connection pooling?
 
-Connection pooling is a strategy that involves recycling database connections for multiple requests instead of closing them immediately when a query has been resolved.  Typically, this is done by introducing a piece of software called a connection pooler between the database server and its client applications that is responsible for managing the connections between the two.
+Connection pooling is a strategy that involves recycling database connections for multiple requests instead of closing them immediately when a query has been resolved. Typically, this is done by introducing a piece of software called a connection pooler between the database server and its client applications that is responsible for managing the connections between the two.
 
-As discussed earlier, when forming a connection, a fairly long series of operations must execute before a query is actually run by the database server.  The connection pooler attempts to amortize the cost of these operations by keeping the connection open after its initial query and reusing it to run additional queries.
+As discussed earlier, when forming a connection, a fairly long series of operations must execute before a query is actually run by the database server. The connection pooler attempts to amortize the cost of these operations by keeping the connection open after its initial query and reusing it to run additional queries.
 
-In this system, clients connect to the connection pooler instead of directly to the database.  The client treats the pooler as if it were the database itself and the pooler interprets queries to hand an appropriate connection to the client.  One thing to notice is that there is still overhead involved in opening and closing connections between the clients and the pooler.  These connections, however, typically have lower overhead because the majority of the heavy processes occur when establishing connections to the database itself.
+In this system, clients connect to the connection pooler instead of directly to the database. The client treats the pooler as if it were the database itself and the pooler interprets queries to hand an appropriate connection to the client. One thing to notice is that there is still overhead involved in opening and closing connections between the clients and the pooler. These connections, however, typically have lower overhead because the majority of the heavy processes occur when establishing connections to the database itself.
 
 ## How does connection pooling work?
 
-A connection pooler is responsible for opening, closing and maintaining connections to the database on behalf of clients.  It does so by following algorithms similar to that which a caching system might use.
+A connection pooler is responsible for opening, closing and maintaining connections to the database on behalf of clients. It does so by following algorithms similar to that which a caching system might use.
 
-When a client connects to the connection pooler and requests a connection, the pooler performs a quick assessment of the request characteristics.  It might look at information such as the database user, the specific operations that will be performed, the type of encryption, or the database objects accessed.
+When a client connects to the connection pooler and requests a connection, the pooler performs a quick assessment of the request characteristics. It might look at information such as the database user, the specific operations that will be performed, the type of encryption, or the database objects accessed.
 
-Once it has this information, it looks at its pool of available connections to see if there are any existing connections that could be used to run the new request.  If it finds a suitable, available connection, it hands it to the client and allows it to run its query through the connection.  If no connections appropriate for running the new request exist in the pool, it will open a new connection to the database using the required parameters and hand that to the client instead.
+Once it has this information, it looks at its pool of available connections to see if there are any existing connections that could be used to run the new request. If it finds a suitable, available connection, it hands it to the client and allows it to run its query through the connection. If no connections appropriate for running the new request exist in the pool, it will open a new connection to the database using the required parameters and hand that to the client instead.
 
-The client executes its query using the connection as usual.  When the query is complete, instead of terminating the connection, the pooler places the connection back in the pool so that it can potentially be reused by a subsequent query.  The pooler can garbage collect connections within its pool asynchronously using whatever algorithm it chooses (time since establishment, time since last use, etc.).
+The client executes its query using the connection as usual. When the query is complete, instead of terminating the connection, the pooler places the connection back in the pool so that it can potentially be reused by a subsequent query. The pooler can garbage collect connections within its pool asynchronously using whatever algorithm it chooses (time since establishment, time since last use, etc.).
 
 ## What is the difference between internal and external pooling?
 
-Broadly speaking, connection pooling refers to the algorithm that maintains connections over the course of multiple requests.  This can be implemented either internally in a client application or externally, using an external tool or service.
+Broadly speaking, connection pooling refers to the algorithm that maintains connections over the course of multiple requests. This can be implemented either internally in a client application or externally, using an external tool or service.
 
-Internal implementations of connection pooling are often a function of a database driver, ORM (object relational mapper), or other database client that might be incorporated into a client application.  These solutions provide some of the benefits of connection pooling by maintaining long running connections to the database server and reusing them for multiple queries within the codebase.
+Internal implementations of connection pooling are often a function of a database driver, ORM (object relational mapper), or other database client that might be incorporated into a client application. These solutions provide some of the benefits of connection pooling by maintaining long running connections to the database server and reusing them for multiple queries within the codebase.
 
-While internal connection pooling is useful, it does have some practical limitations.  Each instance of the application that is being executed must generally maintain its own pool.  This impacts how broadly the connections can be shared and reused between queries since each pool only serves a single application instance.
+While internal connection pooling is useful, it does have some practical limitations. Each instance of the application that is being executed must generally maintain its own pool. This impacts how broadly the connections can be shared and reused between queries since each pool only serves a single application instance.
 
-The alternative solution is to implement external connection pooling.  This approach deploys a separate piece of software that can communicate with and pool connections for multiple client instances.  While this deployment scenario does introduce an additional network hop, it generally provides additional scalability and flexibility.  The connection pooler can be deployed alongside the database server to serve many different clients or deployed alongside the client applications to serve whatever application instances are running on a single server.
+The alternative solution is to implement external connection pooling. This approach deploys a separate piece of software that can communicate with and pool connections for multiple client instances. While this deployment scenario does introduce an additional network hop, it generally provides additional scalability and flexibility. The connection pooler can be deployed alongside the database server to serve many different clients or deployed alongside the client applications to serve whatever application instances are running on a single server.
 
 ## What are some common external connection poolers?
 
-There are a number of connection poolers available for different database systems.  We can look at a few implementations available for PostgreSQL to get a better understanding of how different solutions approach the problem.
+There are a number of connection poolers available for different database systems. We can look at a few implementations available for PostgreSQL to get a better understanding of how different solutions approach the problem.
 
 ### `pgbouncer`
 
 Perhaps the most well-known connection pooler for PostgreSQL is [`pgbouncer`](https://www.pgbouncer.org/).
 
-Created in 2007, `pgbouncer` is focused on providing a lightweight pooling mechanism for managing PostgreSQL connections.  It offers a good deal of flexibility both in terms of where it can be deployed and how exactly it performs pooling.
+Created in 2007, `pgbouncer` is focused on providing a lightweight pooling mechanism for managing PostgreSQL connections. It offers a good deal of flexibility both in terms of where it can be deployed and how exactly it performs pooling.
 
-For situations where connections from clients are short-lived, the [project recommends deploying `pgbouncer` on the web server](https://www.pgbouncer.org/faq.html#should-pgbouncer-be-installed-on-the-web-server-or-database-server) where the client code will execute.  Putting the pooler with the client software allows for connections between the two to use lighter weight mechanisms than TCP, reducing latency.  For scenarios where connections from many different clients need to be pooled together, you can deploy alongside the database server instead.
+For situations where connections from clients are short-lived, the [project recommends deploying `pgbouncer` on the web server](https://www.pgbouncer.org/faq.html#should-pgbouncer-be-installed-on-the-web-server-or-database-server) where the client code will execute. Putting the pooler with the client software allows for connections between the two to use lighter weight mechanisms than TCP, reducing latency. For scenarios where connections from many different clients need to be pooled together, you can deploy alongside the database server instead.
 
-One of the most important decisions when using `pgbouncer` is to choose which pooling mode you wish to use.  The three available options are:
+One of the most important decisions when using `pgbouncer` is to choose which pooling mode you wish to use. The three available options are:
 
-* **transaction pooling**: connections are revoked after every transaction by a client.  For any subsequent transactions, a connection will allocated again.  This allows `pgbouncer` to quickly reclaim connections while the client might be performing other operations between transactions.
-* **session pooling**: connections are assigned to clients for the duration of the client's connection with the pooler.  This means that each client connection is paired with a dedicated connection to the database.  The connection is still reused once the client session ends, but the number of clients that can use the pooler at one time is greatly reduced.
-* **statement pooling**: connections are assigned to execute individual statements.  This results in rapid allocation and deallocation of connections, which allows for many clients to use a limited number of connections but can break transaction semantics and lead to unexpected behavior in some cases.
+- **transaction pooling**: connections are revoked after every transaction by a client. For any subsequent transactions, a connection will allocated again. This allows `pgbouncer` to quickly reclaim connections while the client might be performing other operations between transactions.
+- **session pooling**: connections are assigned to clients for the duration of the client's connection with the pooler. This means that each client connection is paired with a dedicated connection to the database. The connection is still reused once the client session ends, but the number of clients that can use the pooler at one time is greatly reduced.
+- **statement pooling**: connections are assigned to execute individual statements. This results in rapid allocation and deallocation of connections, which allows for many clients to use a limited number of connections but can break transaction semantics and lead to unexpected behavior in some cases.
 
 In most cases, transaction pooling provides the best balance in terms of recycling idle connections, managing a fair number of clients, and maintaining expected behavior regarding the database session and transaction semantics.
 
 ### `pgpool`
 
-Another PostgreSQL connection pooler is `pgpool-II`, often just referred to as `pgpool`.  While `pgbouncer` is a lightweight tool focused exclusively on connection pooling, `pgpool` offers a larger selection of related functionality.
+Another PostgreSQL connection pooler is `pgpool-II`, often just referred to as `pgpool`. While `pgbouncer` is a lightweight tool focused exclusively on connection pooling, `pgpool` offers a larger selection of related functionality.
 
-Besides connection pooling, `pgpool` supports load balancing queries between a number of backend database instances and has a watchdog service to enable high availability operation for automatic failover.  Additionally, it provides a management GUI that can be very useful for certain deployment scenarios.
+Besides connection pooling, `pgpool` supports load balancing queries between a number of backend database instances and has a watchdog service to enable high availability operation for automatic failover. Additionally, it provides a management GUI that can be very useful for certain deployment scenarios.
 
-Despite these advanced features, `pgpool` is usually considered a bit more limited when it comes to actually managing connection pooling.  While `pgbouncer` allows three pooling modes, `pgpool` can only operate with the equivalent of session mode, meaning that connections are only reassigned when the client disconnects.  This decreases the number of clients that `pgpool` can handle in comparison.
+Despite these advanced features, `pgpool` is usually considered a bit more limited when it comes to actually managing connection pooling. While `pgbouncer` allows three pooling modes, `pgpool` can only operate with the equivalent of session mode, meaning that connections are only reassigned when the client disconnects. This decreases the number of clients that `pgpool` can handle in comparison.
 
 ## Conclusion
 
-In this guide, we took a look at the idea of connection pooling and how it can be used to help reduce database load and resource consumption.  We outlined some of the reasons that connections can be expensive to establish between clients and databases and described how reusing connections can reduce that cost on subsequent queries.  Afterwards, we discussed how connection poolers actually work and took a look at some representative examples of poolers from the PostgreSQL ecosystem.
+In this guide, we took a look at the idea of connection pooling and how it can be used to help reduce database load and resource consumption. We outlined some of the reasons that connections can be expensive to establish between clients and databases and described how reusing connections can reduce that cost on subsequent queries. Afterwards, we discussed how connection poolers actually work and took a look at some representative examples of poolers from the PostgreSQL ecosystem.
 
-Database connection limits can quickly cause problems as your application scales and the querying load becomes more complex.  While it's impossible to completely remove the overhead associated with connection management, connection poolers are an invaluable tool for maintaining performance and increasing the number of clients a database can serve.
+Database connection limits can quickly cause problems as your application scales and the querying load becomes more complex. While it's impossible to completely remove the overhead associated with connection management, connection poolers are an invaluable tool for maintaining performance and increasing the number of clients a database can serve.
 
 <PrismaOutlinks>
 
-Connection pooling is one of the core features offered by [Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) on the [Prisma Data Platform](https://console.prisma.io/).  If you are using Prisma to work with your database, start a free project to easily manage your connections and browse your data.
+Connection pooling is one of the core features offered by [Prisma Accelerate](https://www.prisma.io/docs/accelerate) on the [Prisma Data Platform](https://console.prisma.io/). If you are using Prisma to work with your database, start a free project to easily manage your connections and browse your data.
 
 </PrismaOutlinks>
