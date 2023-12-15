@@ -1,6 +1,6 @@
 ---
 title: 'How to export database and table schemas in SQLite'
-metaTitle: "Export schemas for SQLite databases and tables"
+metaTitle: 'Export schemas for SQLite databases and tables'
 metaDescription: 'Learn how to export your database objects from SQLite for analysis, migrating, backups, and more.'
 metaImage: '/social/generic-sqlite.png'
 authors: ['justinellingwood']
@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
+In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes. Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
 
-In this short guide, we'll discuss how to export SQLite database schemas using the `sqlite3` command.  The same command that you can use to manage your databases can be used to export database data and structures.  We'll focus on extracting the data structures themselves in this guide.
+In this short guide, we'll discuss how to export SQLite database schemas using the `sqlite3` command. The same command that you can use to manage your databases can be used to export database data and structures. We'll focus on extracting the data structures themselves in this guide.
 
 <PrismaOutlinks>
 
-You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications.  To learn how to use Prisma with SQLite, check out [Prisma's SQLite database connector page](https://www.prisma.io/docs/concepts/database-connectors/sqlite).
+You can use [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications. To learn how to use Prisma with SQLite, check out [Prisma's SQLite database connector page](https://www.prisma.io/docs/orm/overview/databases/sqlite).
 
 </PrismaOutlinks>
 
@@ -26,11 +26,11 @@ The basic command needed to export the database schema from SQLite looks like th
 sqlite3 DATABASE_FILE.sqlite '.schema' > schema.sql
 ```
 
-Here, the `DATABASE_FILE.sqlite` is the SQLite database file that contains your data and structures.  The `'.schema'` component is the command that tells SQLite to export the database schema without any accompanying data.  The `schema.sql` file is the target file that will received the exported database structures.
+Here, the `DATABASE_FILE.sqlite` is the SQLite database file that contains your data and structures. The `'.schema'` component is the command that tells SQLite to export the database schema without any accompanying data. The `schema.sql` file is the target file that will received the exported database structures.
 
 ### Executing interactively
 
-The above command can be executed from the command line.  You can perform this same procedure interactively within the `sqlite3` shell.
+The above command can be executed from the command line. You can perform this same procedure interactively within the `sqlite3` shell.
 
 First, open the SQLite database file with the `sqlite3` command:
 
@@ -80,7 +80,7 @@ You can also export specific tables by including the table name after `.schema`:
 sqlite3 DATABASE_FILE.sqlite '.schema TABLE' > table_schema.sql
 ```
 
-An alternative to this approach is to use a wildcard match instead of the specific name.  The `schema` command uses [LIKE pattern matching](https://sqlite.org/lang_expr.html#like) for this, which means that the percent character (`%`) is used to match zero or more characters and the underscore (`_`) can stand in for exactly one character.
+An alternative to this approach is to use a wildcard match instead of the specific name. The `schema` command uses [LIKE pattern matching](https://sqlite.org/lang_expr.html#like) for this, which means that the percent character (`%`) is used to match zero or more characters and the underscore (`_`) can stand in for exactly one character.
 
 For example, to export all of the tables that start with `inventory`, you could type:
 
@@ -92,7 +92,7 @@ This syntax does not allow for specifying multiple patterns or multiple specific
 
 ## Include database statistics in the schema dump
 
-You can use the `.fullschema` command in place of the `.schema` command to also include all of the statistics tables that SQLite uses internally to decide on query plans, etc.  This can be useful information when trying to debug why a query executed in a specific way:
+You can use the `.fullschema` command in place of the `.schema` command to also include all of the statistics tables that SQLite uses internally to decide on query plans, etc. This can be useful information when trying to debug why a query executed in a specific way:
 
 ```command
 sqlite3 DATABASE_FILE.sqlite '.fullschema' > schema_with_statistics.sql
@@ -102,10 +102,10 @@ Note that the `.fullschema` command does not allow you to filter by table name.
 
 ## Conclusion
 
-Being able to export your schemas allows you to save your database structures outside of the database itself.  This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
+Being able to export your schemas allows you to save your database structures outside of the database itself. This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
 
 <PrismaOutlinks>
 
-You can use [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications.  To learn how to use Prisma with SQLite, check out [Prisma's SQLite database connector page](https://www.prisma.io/docs/concepts/database-connectors/sqlite).
+You can use [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage PostgreSQL databases from within your JavaScript or TypeScript applications. To learn how to use Prisma with SQLite, check out [Prisma's SQLite database connector page](https://www.prisma.io/docs/orm/overview/databases/sqlite).
 
 </PrismaOutlinks>

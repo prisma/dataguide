@@ -1,20 +1,20 @@
 ---
 title: 'How to insert and delete data in PostgreSQL'
 metaTitle: 'How to insert, update, and delete data in PostgreSQL tables'
-metaDescription: "The `INSERT` and `DELETE` commands are the primary way that PostgreSQL adds and removes records from tables.  This guide demonstrates how to use them to control the data your tables manage."
+metaDescription: 'The `INSERT` and `DELETE` commands are the primary way that PostgreSQL adds and removes records from tables.  This guide demonstrates how to use them to control the data your tables manage.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-Adding and removing records from tables are some of the most common operations that databases perform.  Adding data involves specifying the [table](/intro/database-glossary#table) and [column](/intro/database-glossary#column) names you wish to add values to as well as the values you wish to enter into each fields.  Deleting records involves identifying the correct row or rows and removing them from the table.
+Adding and removing records from tables are some of the most common operations that databases perform. Adding data involves specifying the [table](/intro/database-glossary#table) and [column](/intro/database-glossary#column) names you wish to add values to as well as the values you wish to enter into each fields. Deleting records involves identifying the correct row or rows and removing them from the table.
 
-In this guide, we will cover how to use the SQL `INSERT` and `DELETE` commands with PostgreSQL.  This includes the basic syntax, how to return data information about the data that was processed, and how to add or remove multiple rows in a single statement.
+In this guide, we will cover how to use the SQL `INSERT` and `DELETE` commands with PostgreSQL. This includes the basic syntax, how to return data information about the data that was processed, and how to add or remove multiple rows in a single statement.
 
 ## Reviewing the table's structure
 
-Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, [data types](/intro/database-glossary#data-type), and [constraints](/intro/database-glossary#constraint).  There are a few different ways of doing this depending on your database client.
+Before using the `INSERT` command, you must know the table's structure so that you can accommodate the requirements imposed by the table's columns, [data types](/intro/database-glossary#data-type), and [constraints](/intro/database-glossary#constraint). There are a few different ways of doing this depending on your database client.
 
 If you are using the `psql` command line client, the most straightforward way to find this information is to use the `\d+` meta command built into the tool.
 
@@ -23,6 +23,7 @@ For instance, to find the structure of a table called `employee`, you would type
 ```sql no-lines
 \d+ employee
 ```
+
 ```
                                                                 Table "public.employee"
    Column    | Type                        | Collation | Nullable | Default                                       | Storage  | Stats target | Description
@@ -41,12 +42,13 @@ Access method: heap
 
 The output displays the table's column names, data types, and default values, among others.
 
-The `\d+` meta command is only available with the `psql` client, so if you are using a different client, you might have to query the table information directly.  You can get most of the relevant information with a query like this:
+The `\d+` meta command is only available with the `psql` client, so if you are using a different client, you might have to query the table information directly. You can get most of the relevant information with a query like this:
 
 ```sql
 SELECT column_name, data_type, column_default, is_nullable, character_maximum_length
 FROM information_schema.columns WHERE table_name ='employee';
 ```
+
 ```
  column_name | data_type                   | column_default                                | is_nullable | character_maximum_length
 -------------+-----------------------------+-----------------------------------------------+-------------+--------------------------
@@ -61,7 +63,7 @@ These should give you a good idea of the table's structure so that you can inser
 
 ## Using `INSERT` to add new records to tables
 
-The SQL `INSERT` command is used to add rows of data to an existing table.  Once you know the table's structure, you can construct a command that matches the table's columns with the corresponding values you wish to insert for the new record.
+The SQL `INSERT` command is used to add rows of data to an existing table. Once you know the table's structure, you can construct a command that matches the table's columns with the corresponding values you wish to insert for the new record.
 
 The basic syntax of the command looks like this:
 
@@ -84,15 +86,17 @@ As an example, to insert a new employee into the `employee` table listed above, 
 INSERT INTO employee(first_name, last_name)
 VALUES ('Bob', 'Smith');
 ```
+
 ```
 INSERT 0 1
 ```
 
-Here, we provide values for the `first_name` and `last_name` columns while leaving the other columns to be populated by their default values.  If you query the table, you can see that the new record has been added:
+Here, we provide values for the `first_name` and `last_name` columns while leaving the other columns to be populated by their default values. If you query the table, you can see that the new record has been added:
 
 ```sql
 SELECT * FROM employee;
 ```
+
 ```
  employee_id | first_name | last_name |        last_update
 -------------+------------+-----------+----------------------------
@@ -102,13 +106,13 @@ SELECT * FROM employee;
 
 <PrismaOutlinks>
 
-You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#create).
+You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#create).
 
 </PrismaOutlinks>
 
 ## Returning data from `INSERT` statements
 
-If you want additional information about the data that was added to the table, you can include the `RETURNING` clause at the end of your statement.  The `RETURNING` clause specifies the columns to display of the records that were just inserted.
+If you want additional information about the data that was added to the table, you can include the `RETURNING` clause at the end of your statement. The `RETURNING` clause specifies the columns to display of the records that were just inserted.
 
 For instance, to display all of the columns for the records that were just inserted, you could type something like this:
 
@@ -117,6 +121,7 @@ INSERT INTO my_table(column_name, column_name_2)
 VALUES ('value', 'value2')
 RETURNING *;
 ```
+
 ```
  column_name | column_name_2
 -------------+---------------
@@ -133,6 +138,7 @@ INSERT INTO employee(first_name, last_name)
 VALUES ('Sue', 'Berns')
 RETURNING *;
 ```
+
 ```
  employee_id | first_name | last_name |       last_update
 -------------+------------+-----------+--------------------------
@@ -142,15 +148,16 @@ RETURNING *;
 INSERT 0 1
 ```
 
-You can also choose to return only specific columns from insertions.  For instance, here, we only are interested in the new employee's ID:
+You can also choose to return only specific columns from insertions. For instance, here, we only are interested in the new employee's ID:
 
 ```sql
 INSERT INTO employee(first_name, last_name)
 VALUES ('Delores', 'Muniz')
 RETURNING employee_id;
 ```
+
 ```
- employee_id 
+ employee_id
 -------------
            3
 (1 row)
@@ -165,6 +172,7 @@ INSERT INTO employee(first_name, last_name)
 VALUES ('Simone', 'Kohler')
 RETURNING employee_id AS "Employee ID";
 ```
+
 ```
  Employee ID
 -------------
@@ -176,7 +184,7 @@ INSERT 0 1
 
 ## Using `INSERT` to add multiple rows at once
 
-Inserting records one statement at a time is more time consuming and less efficient than inserting multiple rows at once.  PostgreSQL allows you to specify multiple rows to add to the same table.   Each new row is encapsulated in parentheses, with each set of parentheses separated by commas.
+Inserting records one statement at a time is more time consuming and less efficient than inserting multiple rows at once. PostgreSQL allows you to specify multiple rows to add to the same table. Each new row is encapsulated in parentheses, with each set of parentheses separated by commas.
 
 The basic syntax for multi-record insertion looks like this:
 
@@ -198,13 +206,14 @@ VALUES
     ('Katie', 'Singh'),
     ('Felipe', 'Espinosa');
 ```
+
 ```
 INSERT 0 4
 ```
 
 ## Using `DELETE` to remove rows from tables
 
-The SQL `DELETE` command is used to remove rows from tables, functioning as the complementary action to `INSERT`.  In order to remove rows from a table, you must identify the rows you wish to target by providing match criteria within a `WHERE` clause.
+The SQL `DELETE` command is used to remove rows from tables, functioning as the complementary action to `INSERT`. In order to remove rows from a table, you must identify the rows you wish to target by providing match criteria within a `WHERE` clause.
 
 The basic syntax looks like this:
 
@@ -219,6 +228,7 @@ For instance, to every row in our `employee` table that has its `first_name` set
 DELETE FROM employee
 WHERE first_name = 'Abigail';
 ```
+
 ```
 DELETE 1
 ```
@@ -227,14 +237,13 @@ The return value here indicates that the `DELETE` command was processed with a s
 
 <PrismaOutlinks>
 
-To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#delete).
+To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#delete).
 
 </PrismaOutlinks>
 
 ## Returning data from `DELETE` statements
 
 As with the `INSERT` command, you can return the affected rows or specific columns from the deleted rows by adding a `RETURNING` clause:
-
 
 ```sql
 DELETE FROM my_table
@@ -249,6 +258,7 @@ DELETE FROM employee
 WHERE last_name = 'Smith'
 RETURNING *;
 ```
+
 ```
  employee_id | first_name | last_name |        last_update
 -------------+------------+-----------+----------------------------
@@ -269,8 +279,9 @@ DELETE FROM employee
 WHERE employee_id in (3,4)
 RETURNING *;
 ```
+
 ```
- employee_id | first_name | last_name |        last_update         
+ employee_id | first_name | last_name |        last_update
 -------------+------------+-----------+----------------------------
            3 | Delores    | Muniz     | 2020-08-19 21:17:06.943608
            4 | Simone     | Kohler    | 2020-08-19 21:19:19.298833
@@ -285,6 +296,7 @@ You can even leave out the `WHERE` clause to remove all of the rows from a given
 DELETE FROM employee
 RETURNING *;
 ```
+
 ```
  employee_id | first_name | last_name |        last_update
 -------------+------------+-----------+----------------------------
@@ -301,15 +313,15 @@ Be aware, however, that using `DELETE` to empty a table of data is [not as effic
 
 <PrismaOutlinks>
 
-Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/concepts/components/prisma-client/crud#deletemany) to delete multiple rows of data at one time.
+Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/orm/prisma-client/queries/crud#deletemany) to delete multiple rows of data at one time.
 
 </PrismaOutlinks>
 
 ## Conclusion
 
-In this article, we introduced some of the most important commands to control what data is in your PostgreSQL tables.  The `INSERT` command can be used to add new data to tables, while the `DELETE` command specifies which rows should be removed.  Both commands are able to return the rows they affect and can operate on multiple rows at once.
+In this article, we introduced some of the most important commands to control what data is in your PostgreSQL tables. The `INSERT` command can be used to add new data to tables, while the `DELETE` command specifies which rows should be removed. Both commands are able to return the rows they affect and can operate on multiple rows at once.
 
-These two commands are the primary mechanisms used to manage increase or decrease the number of records your table contains.  Getting a handle on their basic syntax as well as the ways that they can be combined with other clauses will allow you to populate and clean your tables as necessary.
+These two commands are the primary mechanisms used to manage increase or decrease the number of records your table contains. Getting a handle on their basic syntax as well as the ways that they can be combined with other clauses will allow you to populate and clean your tables as necessary.
 
 ## FAQ
 
@@ -341,7 +353,7 @@ VALUES
 
 <details><summary>How do you check if a record exists before inserting in PostgreSQL?</summary>
 
-One way to check if a record exists in PostgreSQL before inserting is by using the [`EXISTS` subquery expression](https://www.postgresql.org/docs/8.1/functions-subquery.html). 
+One way to check if a record exists in PostgreSQL before inserting is by using the [`EXISTS` subquery expression](https://www.postgresql.org/docs/8.1/functions-subquery.html).
 
 The `EXISTS` condition is used in combination with a subquery for the data you are checking for. It is considered to be met if the subquery returns at least one row. If no row is returned, then the record does not yet exist.
 

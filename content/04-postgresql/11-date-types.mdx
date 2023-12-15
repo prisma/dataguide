@@ -1,7 +1,7 @@
 ---
 title: 'Working with dates in PostgreSQL'
-metaTitle: "PostgreSQL Date Types - Format, Functions, and More"
-metaDescription: "Read on to learn about how to work with date types in PostgreSQL, including information on formats, functions, and more."
+metaTitle: 'PostgreSQL Date Types - Format, Functions, and More'
+metaDescription: 'Read on to learn about how to work with date types in PostgreSQL, including information on formats, functions, and more.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['alexemerich']
 ---
@@ -11,8 +11,6 @@ authors: ['alexemerich']
 The ability to store date values inside of your database allows you to add a time element to your queries and analysis of your data. It is important to know how to work with date types in your respective database so that you can be accurate in your reporting whether it's order information, peoples' ages, or any other use case.
 
 In this guide, we are going to discuss storing `DATE` types in PostgreSQL and the various ways that you can work with them.
-
-
 
 ## PostgreSQL `DATE` data type
 
@@ -33,7 +31,7 @@ CREATE TABLE checkouts (
 		author_id serial PRIMARY KEY,
 		author_name VARCHAR (255) NOT NULL,
 		book_title VARCHAR (255) NOT NULL,
-		published_date DATE NOT NULL,  
+		published_date DATE NOT NULL,
 		last_checkout DATE NOT NULL DEFAULT CURRENT_DATE
 );
 ```
@@ -50,19 +48,15 @@ Then when querying the `checkouts` table, we get the following:
 ```sql
 SELECT * FROM checkouts;
 
- author_id | author_name | book_title | published_date | last_checkout 
+ author_id | author_name | book_title | published_date | last_checkout
 -----------+-------------+------------+----------------+---------------
          1 | James Joyce |   Ulysses  |   1922-02-02   |  2021-09-27
 (1 row)
 ```
 
-
-
 ## PostgreSQL `DATE` functions
 
 By knowing the ins and outs of the `DATE` type in PostgreSQL, you are then able to use functions working with the information that you store. We'll walk through some common functions building off of the table introduced in the prior section.
-
-
 
 ### Get the current date
 
@@ -71,7 +65,7 @@ In PostgreSQL, you can get the current date and time by using the built-in `NOW(
 ```sql
 SELECT NOW();
 
-              now              
+              now
 -------------------------------
  2021-09-27 15:22:53.679985+02
 (1 row)
@@ -82,7 +76,7 @@ If the time is not of interest, you can also specify to only return the date wit
 ```sql
 SELECT NOW()::date;
 
-    now     
+    now
 ------------
  2021-09-27
 (1 row)
@@ -93,15 +87,13 @@ Using `CURRENT_DATE` is another way to get the current date as demonstrated belo
 ```sql
 SELECT CURRENT_DATE;
 
- current_date 
+ current_date
 --------------
  2021-09-27
 (1 row)
 ```
 
-All three of these options will return you the date in the `yyyy-mm-dd` format. Within PostgreSQL, you can adjust the format of this output if desired. 
-
-
+All three of these options will return you the date in the `yyyy-mm-dd` format. Within PostgreSQL, you can adjust the format of this output if desired.
 
 ### Output a date value in a specific format
 
@@ -113,7 +105,7 @@ To output a date value in a specific format, you use the `TO_CHAR()` function. T
 ```sql
 SELECT TO_CHAR(NOW()::date, 'dd/mm/yyyy');
 
-  to_char   
+  to_char
 ------------
  27/09/2021
 (1 row)
@@ -124,15 +116,13 @@ You can also display the date in a format like `Sep 27, 2021`:
 ```sql
 SELECT TO_CHAR(NOW():: DATE, 'Mon dd, yyyy');
 
-   to_char    
+   to_char
 --------------
  Sep 27, 2021
 (1 row)
 ```
 
 Depending on the requirements of a system, you may need a date formatted in a specific way. This is a scenario where being able to specify the output in PostgreSQL is useful.
-
-
 
 ### Get the interval between two dates
 
@@ -152,13 +142,11 @@ FROM
 Resulting in:
 
 ```sql
- author_name | book_title |            diff            
+ author_name | book_title |            diff
 -------------+------------+----------------------------
- James Joyce |  Ulysses   |         36397 days 
+ James Joyce |  Ulysses   |         36397 days
 (1 row)
 ```
-
-
 
 ### Calculating age using date values
 
@@ -176,7 +164,7 @@ FROM
 With this function we can calculate how old a book in inventory is:
 
 ```sql
- author_name | book_title |           age           
+ author_name | book_title |           age
 -------------+------------+-------------------------
  James Joyce |  Ulysses   | 99 years 7 mons 25 days
 (1 row)
@@ -197,13 +185,11 @@ FROM
 Resulting in:
 
 ```sql
- author_name | book_title |           age            
+ author_name | book_title |           age
 -------------+------------+--------------------------
  James Joyce |  Ulysses   | 77 years 10 mons 27 days
 (1 row)
 ```
-
-
 
 ### Extracting year, quarter, month, week, or day from a date value
 
@@ -212,20 +198,20 @@ The last function that we are going to cover is the `EXTRACT()` function in Post
 The following statement pulls out the year, month, and day from the published date of <u>Ulysses</u>:
 
 ```sql
-SELECT 
-			author_name, 
-			book_title, 
+SELECT
+			author_name,
+			book_title,
 			EXTRACT(YEAR FROM published_date) AS YEAR,
-			EXTRACT(MONTH FROM published_date) AS MONTH, 
-			EXTRACT(DAY FROM published_date) AS DAY 
-FROM 
+			EXTRACT(MONTH FROM published_date) AS MONTH,
+			EXTRACT(DAY FROM published_date) AS DAY
+FROM
 			checkouts;
 ```
 
 The results will look like the following:
 
 ```sql
- author_name | book_title | year | month | day 
+ author_name | book_title | year | month | day
 -------------+------------+------+-------+-----
  James Joyce |  Ulysses   | 1922 |   2   |  2
 (1 row)
@@ -233,15 +219,13 @@ The results will look like the following:
 
 This is a useful function to be aware of when you may only need a portion of a date value for a calculation with your data for example.
 
-
-
 ## Conclusion
 
-In this guide, we covered the basics of what you can do with the `DATE` data type in PostgreSQL. It is important to know how date data works inside of your database. Having a grasp on the ways you can access it and operate on it allows you to make age calculations, execute extractions in your queries, and also configure your output if necessary for matching another system's requirements. 
+In this guide, we covered the basics of what you can do with the `DATE` data type in PostgreSQL. It is important to know how date data works inside of your database. Having a grasp on the ways you can access it and operate on it allows you to make age calculations, execute extractions in your queries, and also configure your output if necessary for matching another system's requirements.
 
 <PrismaOutlinks>
 
-If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) with PostgreSQL, here's some information about how Prisma Client translates [PostgreSQL's date type](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#postgresql-6).
+If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) with PostgreSQL, here's some information about how Prisma Client translates [PostgreSQL's date type](https://www.prisma.io/docs/orm/reference/prisma-schema-reference#postgresql-6).
 
 </PrismaOutlinks>
 
@@ -255,12 +239,12 @@ The date format for the date data type in PostgreSQL is `yyyy-mm-dd`. This is th
 
 <details><summary>What is the `DATE_PART()` function in PostgreSQL?</summary>
 
-The  `DATE_PART()` function in PostgreSQL is used to subquery for subfields from a date or time value.
+The `DATE_PART()` function in PostgreSQL is used to subquery for subfields from a date or time value.
 
 The basic syntax looks like:
 
 ```sql
-SELECT DATE_PART(field, source); 
+SELECT DATE_PART(field, source);
 ```
 
 For example, you can write the following and return the hour, `20`:
@@ -278,9 +262,9 @@ The `TO_DATE()` function in PostgreSQL can be used to convert a string of text i
 The basic syntax looks as follows:
 
 ```sql
-TO_DATE(text, format); 
+TO_DATE(text, format);
 ```
- 
+
 An example such as:
 
 ```sql
@@ -315,7 +299,7 @@ This statement’s return will be `2022`.
 
 You can truncate a timestamp in PostgreSQL by using the `DATE_TRUNC()` function. This function truncates a `TIMESTAMP` or `INTERVAL` based on a specified date part such as year, month, day, etc.
 
-The basic syntax looks as follows:  
+The basic syntax looks as follows:
 
 ```sql
 DATE_TRUNC('datepart' field);
@@ -328,4 +312,5 @@ DATE_TRUNC('hour', TIMESTAMP '2022-03-17 02:09:30');
 ```
 
 The return for this statement would be `2022-03-17 02:00:00`.
+
 </details>

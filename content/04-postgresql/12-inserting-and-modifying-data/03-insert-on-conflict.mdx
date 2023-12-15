@@ -8,9 +8,9 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-PostgreSQL lets you either add or modify a record within a table depending on whether the record already exists.  This is commonly known as an ["upsert" operation](/intro/database-glossary#upsert) (a portmanteau of "insert" and "update").
+PostgreSQL lets you either add or modify a record within a table depending on whether the record already exists. This is commonly known as an ["upsert" operation](/intro/database-glossary#upsert) (a portmanteau of "insert" and "update").
 
-The actual implementation within PostgreSQL uses the `INSERT` command with a special `ON CONFLICT` clause to specify what to do if the record already exists within the table.  You can specify whether you want the record to be updated if it's found in the table already or silently skipped.
+The actual implementation within PostgreSQL uses the `INSERT` command with a special `ON CONFLICT` clause to specify what to do if the record already exists within the table. You can specify whether you want the record to be updated if it's found in the table already or silently skipped.
 
 ## How to use the `INSERT...ON CONFLICT` construct
 
@@ -26,20 +26,19 @@ VALUES
 ON CONFLICT <target> <action>;
 ```
 
-In this context, the `<target>` specifies what conflict you want to define a policy for.  This can be any of these:
+In this context, the `<target>` specifies what conflict you want to define a policy for. This can be any of these:
 
-* The name of a specific column or columns: `(column1)`
-* The name of a unique constraint: `ON CONSTRAINT <constraint_name>`
+- The name of a specific column or columns: `(column1)`
+- The name of a unique constraint: `ON CONSTRAINT <constraint_name>`
 
-The companion `<action>` item will define what PostgreSQL should do if a conflict arises.  The `<action>` specified can be one of the following:
+The companion `<action>` item will define what PostgreSQL should do if a conflict arises. The `<action>` specified can be one of the following:
 
-* `DO NOTHING`: Tells PostgreSQL to leave the conflicting record as-is.  In essence, this action makes no changes, but suppresses the error that would normally occur if you tried to insert a row that violates a condition.
-* `DO UPDATE`: This tells PostgreSQL that you want to update the row that is already in the table.  The syntax for the update mirrors that of the normal `UPDATE` command.
+- `DO NOTHING`: Tells PostgreSQL to leave the conflicting record as-is. In essence, this action makes no changes, but suppresses the error that would normally occur if you tried to insert a row that violates a condition.
+- `DO UPDATE`: This tells PostgreSQL that you want to update the row that is already in the table. The syntax for the update mirrors that of the normal `UPDATE` command.
 
-When `DO UPDATE` is specified, a special virtual table called `EXCLUDED` is available for use within the `UPDATE` clause.  The table contains the values suggested in the original `INSERT` command (that conflicted with the existing table values).
+When `DO UPDATE` is specified, a special virtual table called `EXCLUDED` is available for use within the `UPDATE` clause. The table contains the values suggested in the original `INSERT` command (that conflicted with the existing table values).
 
-
-**Note:** If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can perform upsert operations using the dedicated [upsert operation](https://www.prisma.io/docs/concepts/components/prisma-client/crud#upsert).
+**Note:** If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), you can perform upsert operations using the dedicated [upsert operation](https://www.prisma.io/docs/orm/prisma-client/queries/crud#upsert).
 
 ## Using the `DO NOTHING` action
 
@@ -63,7 +62,7 @@ VALUES
 
 </details>
 
-Let's take a look at how PostgreSQL normally handles an insertion where a proposed row conflicts with existing data.  Assuming there's already a director with an `id` of 3, PostgreSQL throws an error:
+Let's take a look at how PostgreSQL normally handles an insertion where a proposed row conflicts with existing data. Assuming there's already a director with an `id` of 3, PostgreSQL throws an error:
 
 ```sql
 INSERT INTO director (id, name)
@@ -71,12 +70,13 @@ VALUES
     (3, 'susan'),
     (4, 'delores');
 ```
+
 ```
 ERROR:  duplicate key value violates unique constraint "director_pkey"
 DETAIL:  Key (id)=(3) already exists.
 ```
 
-In this case, neither of the proposed records were added, even if only the first one had a conflict.  If we want to continue adding any rows that do not have a conflict, we can use a `ON CONFLICT DO NOTHING` clause.
+In this case, neither of the proposed records were added, even if only the first one had a conflict. If we want to continue adding any rows that do not have a conflict, we can use a `ON CONFLICT DO NOTHING` clause.
 
 Here, we tell PostgreSQL to move on if a conflict occurs and continue processing the other rows:
 
@@ -87,6 +87,7 @@ VALUES
     (4, 'delores')
 ON CONFLICT (id) DO NOTHING;
 ```
+
 ```
 INSERT 0 1
 ```
@@ -96,6 +97,7 @@ If you query the table, it will show that the second record was added even thoug
 ```sql
 SELECT * FROM director;
 ```
+
 ```
  id |  name   | latest_film
 ----+---------+--------------
@@ -121,17 +123,19 @@ VALUES
 ON CONFLICT (id) DO UPDATE
 SET name = EXCLUDED.name;
 ```
+
 ```
 INSERT 0 3
 ```
 
-This time, we specify a modification to make to the existing row if it conflicts with one of our proposed insertions.  We use the virtual `EXCLUDED` table, which contains the items we intended to insert, to update the `name` column to a new value on conflict.
+This time, we specify a modification to make to the existing row if it conflicts with one of our proposed insertions. We use the virtual `EXCLUDED` table, which contains the items we intended to insert, to update the `name` column to a new value on conflict.
 
 You can show that the records were all updated or added by typing:
 
 ```sql
 SELECT * FROM director;
 ```
+
 ```
  id |  name   | latest_film
 ----+---------+--------------
@@ -146,6 +150,6 @@ SELECT * FROM director;
 
 ## Conclusion
 
-PostgreSQL's `INSERT...ON CONFLICT` construct allows you to choose between two options when a proposed record conflicts with an existing record.  Both `DO NOTHING` and `DO UPDATE` have their uses depending on the way the data you're adding relates to the existing content.
+PostgreSQL's `INSERT...ON CONFLICT` construct allows you to choose between two options when a proposed record conflicts with an existing record. Both `DO NOTHING` and `DO UPDATE` have their uses depending on the way the data you're adding relates to the existing content.
 
-The `DO NOTHING` option allows you to silently skip conflicting rows, allowing you to add any additional records that do _not_ conflict.  Meanwhile, the `DO UPDATE` choice let's you conditionally alter the existing record when a conflict occurs, optionally using values from the original proposed row.  Understanding the scenario where each may be useful and learning how to this use general format can help simplify your queries when adding new data to an existing data set.
+The `DO NOTHING` option allows you to silently skip conflicting rows, allowing you to add any additional records that do _not_ conflict. Meanwhile, the `DO UPDATE` choice let's you conditionally alter the existing record when a conflict occurs, optionally using values from the original proposed row. Understanding the scenario where each may be useful and learning how to this use general format can help simplify your queries when adding new data to an existing data set.

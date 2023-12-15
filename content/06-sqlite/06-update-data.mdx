@@ -1,7 +1,7 @@
 ---
 title: 'How to update existing data with SQLite'
 metaTitle: "Updating existing data | SQLite | Prisma's Data Guide"
-metaDescription: "Learn how to update existing data using SQLite."
+metaDescription: 'Learn how to update existing data using SQLite.'
 metaImage: '/social/generic-sqlite.png'
 authors: ['alexemerich']
 ---
@@ -27,9 +27,9 @@ WHERE
 
 The basic structure involves three seperate clauses:
 
-* specifying a table to act on
-* providing the columns you wish to update as well as their new values
-* defining any criteria SQLite needs to evaluate to determine which records to match
+- specifying a table to act on
+- providing the columns you wish to update as well as their new values
+- defining any criteria SQLite needs to evaluate to determine which records to match
 
 While you can assign values directly to columns like we did above, you can also use the column list syntax too, as is often seen in `INSERT` commands.
 
@@ -45,7 +45,7 @@ WHERE
 
 <PrismaOutlinks>
 
-To update data with Prisma Client, issue an [update query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#update).
+To update data with Prisma Client, issue an [update query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#update).
 
 </PrismaOutlinks>
 
@@ -95,14 +95,13 @@ Here, we are directly updating the value of `column1` in `table1` to be the retu
 
 As an example, let's suppose that we have two tables called `book` and `author`.
 
-
 <details><summary>Expand to see the commands to create and populate these tables</summary>
 
 ```sql
 CREATE TABLE author (
-  id INTEGER PRIMARY KEY, 
-  first_name TEXT, 
-  last_name TEXT, 
+  id INTEGER PRIMARY KEY,
+  first_name TEXT,
+  last_name TEXT,
   last_publication TEXT
 );
 
@@ -118,7 +117,7 @@ VALUES
 		('Leo', 'Tolstoy'),
 		('James', 'Joyce'),
 		('Jean-Paul', 'Sarte');
-		
+
 INSERT INTO book (author_id, title, publication_year)
 VALUES
 		(1, 'Anna Karenina', '1877'),
@@ -127,18 +126,18 @@ VALUES
 		(2, 'Dubliners', '1914'),
 		(3, 'Nausea', '1938');
 ```
+
 </details>
 
 These two tables have a relation with `book.author_id` referencing `author.id`. Currently the `last_publication` for the `author` table is `NULL`. We can populate it with the author's latest published book in our `book` table using `FROM` and `WHERE` clauses to bring the two tables together.
 
 Here, we show an example updating `last_publication`:
 
-
 ```sql
-UPDATE author 
+UPDATE author
 SET last_publication=(
-  SELECT title 
-  FROM book 
+  SELECT title
+  FROM book
   WHERE author_id = author.id
   ORDER BY author_id, publication_year DESC);
 ```
@@ -221,7 +220,7 @@ RETURNING *;
 
 <details><summary>How do you insert or update in SQLite depending on whether data exists?</summary>
 
-In SQLite, there is not an `IF EXISTS` clause like many other relational databases. 
+In SQLite, there is not an `IF EXISTS` clause like many other relational databases.
 
 To control an `INSERT` or `UPDATE` for data existing, you will want to add an [`ON CONFLICT` clause to your statement](https://sqlite.org/lang_conflict.html).
 

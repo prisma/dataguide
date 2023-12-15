@@ -1,16 +1,16 @@
 ---
 title: 'How to insert and delete data in MySQL'
 metaTitle: 'How to insert, update, and delete data in MySQL tables'
-metaDescription: "Learn how to use the `INSERT` and `DELETE` queries to add and remove data from MySQL tables."
+metaDescription: 'Learn how to use the `INSERT` and `DELETE` queries to add and remove data from MySQL tables.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-Adding and deleting data are fairly foundational operations that allow you to control what data is maintained by the database.  To insert, you specify items that fulfill each of the [column](/intro/database-glossary#column) requirements of the table for each new [row](/intro/database-glossary#row).  To remove, you provide the match criteria for rows in the table you wish to delete.
+Adding and deleting data are fairly foundational operations that allow you to control what data is maintained by the database. To insert, you specify items that fulfill each of the [column](/intro/database-glossary#column) requirements of the table for each new [row](/intro/database-glossary#row). To remove, you provide the match criteria for rows in the table you wish to delete.
 
-In this article, we'll take a look at how to use the `INSERT` and `DELETE` commands to add or remove data from MySQL [tables](/intro/database-glossary#table).  We will cover the syntax as well as slightly more advanced variations like operating on multiple rows in a single statement.
+In this article, we'll take a look at how to use the `INSERT` and `DELETE` commands to add or remove data from MySQL [tables](/intro/database-glossary#table). We will cover the syntax as well as slightly more advanced variations like operating on multiple rows in a single statement.
 
 ## Reviewing the table's structure
 
@@ -21,6 +21,7 @@ To find the structure of a table called `employee`, you can use the MySQL `DESCR
 ```sql no-lines
 DESCRIBE employee;
 ```
+
 ```
 +-------------+-----------------+------+-----+-------------------+-------------------+
 | Field       | Type            | Null | Key | Default           | Extra             |
@@ -35,11 +36,12 @@ DESCRIBE employee;
 
 The output displays the table's column names, data types, and default values, among other information.
 
-An alternative is to show the information that could be used to recreate the table.  You can find this information with the `SHOW CREATE TABLE` command:
+An alternative is to show the information that could be used to recreate the table. You can find this information with the `SHOW CREATE TABLE` command:
 
 ```sql no-lines
 SHOW CREATE TABLE employee\G
 ```
+
 ```
 *************************** 1. row ***************************
        Table: employee
@@ -53,13 +55,13 @@ Create Table: CREATE TABLE `employee` (
 1 row in set (0.00 sec)
 ```
 
-Here, we use the `\G` terminator to display the output vertically for better readability.  Along with the properties manually set during table creation, the output shows any of the values that were set due to MySQL defaults.
+Here, we use the `\G` terminator to display the output vertically for better readability. Along with the properties manually set during table creation, the output shows any of the values that were set due to MySQL defaults.
 
 These should give you a good idea of the table's structure so that you can insert values correctly.
 
 ## Using `INSERT` to add new records to tables
 
-The SQL `INSERT` command is used to add rows of data to an existing table.  Once you know the table's structure, you can construct a command that matches the table's columns with the corresponding values you wish to insert for the new record.
+The SQL `INSERT` command is used to add rows of data to an existing table. Once you know the table's structure, you can construct a command that matches the table's columns with the corresponding values you wish to insert for the new record.
 
 The basic syntax of the command looks like this:
 
@@ -77,11 +79,12 @@ INSERT INTO employee(first_name, last_name)
 VALUES ('Bob', 'Smith');
 ```
 
-Here, we provide values for the `first_name` and `last_name` columns while leaving the other columns to be populated by their default values.  If you query the table, you can see that the new record has been added:
+Here, we provide values for the `first_name` and `last_name` columns while leaving the other columns to be populated by their default values. If you query the table, you can see that the new record has been added:
 
 ```sql
 SELECT * FROM employee;
 ```
+
 ```
 +-------------+------------+-----------+---------------------+
 | employee_id | first_name | last_name | last_update         |
@@ -93,13 +96,13 @@ SELECT * FROM employee;
 
 <PrismaOutlinks>
 
-You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#create).
+You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#create).
 
 </PrismaOutlinks>
 
 ## Using `INSERT` to add multiple rows at once
 
-Inserting records one statement at a time is more time consuming and less efficient than inserting multiple rows at once.  MySQL allows you to specify multiple rows to add to the same table.   Each new row is encapsulated in parentheses, with each set of parentheses separated by commas.
+Inserting records one statement at a time is more time consuming and less efficient than inserting multiple rows at once. MySQL allows you to specify multiple rows to add to the same table. Each new row is encapsulated in parentheses, with each set of parentheses separated by commas.
 
 The basic syntax for multi-record insertion looks like this:
 
@@ -121,6 +124,7 @@ VALUES
     ('Katie', 'Singh'),
     ('Felipe', 'Espinosa');
 ```
+
 ```
 Query OK, 4 rows affected (0.01 sec)
 Records: 4  Duplicates: 0  Warnings: 0
@@ -128,7 +132,7 @@ Records: 4  Duplicates: 0  Warnings: 0
 
 ## Using `DELETE` to remove rows from tables
 
-The SQL `DELETE` command is used to remove rows from tables, functioning as the complementary action to `INSERT`.  In order to remove rows from a table, you must identify the rows you wish to target by providing match criteria within a `WHERE` clause.
+The SQL `DELETE` command is used to remove rows from tables, functioning as the complementary action to `INSERT`. In order to remove rows from a table, you must identify the rows you wish to target by providing match criteria within a `WHERE` clause.
 
 The basic syntax looks like this:
 
@@ -143,6 +147,7 @@ For instance, to remove every row in our `employee` table that has its `first_na
 DELETE FROM employee
 WHERE first_name = 'Abigail';
 ```
+
 ```
 Query OK, 1 row affected (0.01 sec)
 ```
@@ -151,7 +156,7 @@ The return value here indicates that the `DELETE` command was processed with a s
 
 <PrismaOutlinks>
 
-To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#delete).
+To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#delete).
 
 </PrismaOutlinks>
 
@@ -165,6 +170,7 @@ For instance, to remove multiple rows by ID, you could type something like this:
 DELETE FROM employee
 WHERE employee_id in (3,4);
 ```
+
 ```
 Query OK, 2 rows affected (0.00 sec)
 ```
@@ -174,6 +180,7 @@ You can even leave out the `WHERE` clause to remove all of the rows from a given
 ```sql
 DELETE FROM employee;
 ```
+
 ```
 Query OK, 2 rows affected (0.00 sec)
 ```
@@ -182,12 +189,12 @@ Be aware, however, that using `DELETE` to empty a table of data [may not be as e
 
 <PrismaOutlinks>
 
-Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/concepts/components/prisma-client/crud#deletemany) to delete multiple rows of data at one time.
+Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/orm/prisma-client/queries/crud#deletemany) to delete multiple rows of data at one time.
 
 </PrismaOutlinks>
 
 ## Conclusion
 
-In this article, we discussed how to insert and remove data from MySQL tables.  First, we covered how to find the table's structure to help construct valid data insertion queries.  Then we inserted data one at a time and in batches using the `INSERT` command.  Finally, we covered the `DELETE` command to remove records from the table according to query conditions.
+In this article, we discussed how to insert and remove data from MySQL tables. First, we covered how to find the table's structure to help construct valid data insertion queries. Then we inserted data one at a time and in batches using the `INSERT` command. Finally, we covered the `DELETE` command to remove records from the table according to query conditions.
 
-While fairly basic, the `INSERT` and `DELETE` commands are some of the most useful commands for managing what data your tables actually maintain.  Understanding their basic syntax and operation will allow you to add or remove records from your database structures quickly and efficiently.
+While fairly basic, the `INSERT` and `DELETE` commands are some of the most useful commands for managing what data your tables actually maintain. Understanding their basic syntax and operation will allow you to add or remove records from your database structures quickly and efficiently.

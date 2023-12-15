@@ -7,86 +7,84 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-One of the most familiar functions of a database system is the ability to retrieve items according to a given query.  While conventional database queries are well suited to structured commands by users who are familiar with the system's tools and the structure of the data, most search functionality exposed to users uses a different technique.
+One of the most familiar functions of a database system is the ability to retrieve items according to a given query. While conventional database queries are well suited to structured commands by users who are familiar with the system's tools and the structure of the data, most search functionality exposed to users uses a different technique.
 
-In this article, we'll introduce the ideas behind full-text search.  We'll discuss how this type of text processing and retrieval differs from conventional database querying and why it is helpful in many cases.  We will explore some of the decisions that you can make during the indexing and querying process to affect the results you retrieve, and we'll discuss some of the trade-offs you'll have to make when interacting with these systems to get the results you need.
+In this article, we'll introduce the ideas behind full-text search. We'll discuss how this type of text processing and retrieval differs from conventional database querying and why it is helpful in many cases. We will explore some of the decisions that you can make during the indexing and querying process to affect the results you retrieve, and we'll discuss some of the trade-offs you'll have to make when interacting with these systems to get the results you need.
 
 <PrismaOutlinks>
 
-The [Prisma Data Platform](https://www.prisma.io/data-platform) can help simplify access to your database in production environments.  If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+The [Prisma Data Platform](https://www.prisma.io/data-platform) can help simplify access to your database in production environments. If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
 
 </PrismaOutlinks>
 
 ## What is full-text search?
 
-**[Full-text search](/intro/database-glossary#full-text-search)** is a term for the family of techniques that allow you to search the complete text of documents within a database system.  This is in direct opposition to search functionality that relies only on metadata, partial text sources, and other incomplete assessments.
+**[Full-text search](/intro/database-glossary#full-text-search)** is a term for the family of techniques that allow you to search the complete text of documents within a database system. This is in direct opposition to search functionality that relies only on metadata, partial text sources, and other incomplete assessments.
 
-In contrast to regular database queries, full-text search is language-aware.  This means that it relies on some level of understanding of the language used both in the stored documents and the search itself in order to retrieve results that are semantically meaningful.
+In contrast to regular database queries, full-text search is language-aware. This means that it relies on some level of understanding of the language used both in the stored documents and the search itself in order to retrieve results that are semantically meaningful.
 
-Full-text search often also includes the ability to rank and sort results based on their relative similarity to the user's query.  This can help the engine display the most appropriate results first or disqualify low-ranking items unless explicitly requested.
-
+Full-text search often also includes the ability to rank and sort results based on their relative similarity to the user's query. This can help the engine display the most appropriate results first or disqualify low-ranking items unless explicitly requested.
 
 ## The importance of indexing
 
 While many database operations can be improved by indexing, full-text search is especially dependent on an asynchronous indexing processes.
 
-Indexing is the process of parsing existing documents to compile an index.  An [index](/intro/database-glossary#index) is a smaller, optimized structure specifically designed for quickly finding requested items.  While normal database indexes might analyze a few fields to create an index, a full-text search index is created by analyzing the complete text of documents.
+Indexing is the process of parsing existing documents to compile an index. An [index](/intro/database-glossary#index) is a smaller, optimized structure specifically designed for quickly finding requested items. While normal database indexes might analyze a few fields to create an index, a full-text search index is created by analyzing the complete text of documents.
 
-Without an index, searches must complete a processes called [serial scanning](/intro/database-glossary#serial-scanning) where the system analyzes each item at query time to see whether they match the query criteria.  For those familiar with Unix-like systems, this is akin to the difference between searching for a filename using the `find` tool, which scans the filesystem during a query, and the faster `locate` command, which relies on an index that is periodically updated.
+Without an index, searches must complete a processes called [serial scanning](/intro/database-glossary#serial-scanning) where the system analyzes each item at query time to see whether they match the query criteria. For those familiar with Unix-like systems, this is akin to the difference between searching for a filename using the `find` tool, which scans the filesystem during a query, and the faster `locate` command, which relies on an index that is periodically updated.
 
 ### How indexes are created
 
-The indexing process is composed of a number of related stages.  First, documents are scanned by a parser to divide the text into individual "tokens".  [Tokens](/intro/database-glossary#token) are discrete words that are known to the system and can be categorized based on their part of speech, relation to similar words, etc.
+The indexing process is composed of a number of related stages. First, documents are scanned by a parser to divide the text into individual "tokens". [Tokens](/intro/database-glossary#token) are discrete words that are known to the system and can be categorized based on their part of speech, relation to similar words, etc.
 
-Tokens are then processed into ["lexemes"](/intro/database-glossary#lexeme), a language-level unit of meaning.  During this process, terms are often normalized to collapse related words into a single entry which allows the querying engine to return relevant results that are slight variations of the literal search.
+Tokens are then processed into ["lexemes"](/intro/database-glossary#lexeme), a language-level unit of meaning. During this process, terms are often normalized to collapse related words into a single entry which allows the querying engine to return relevant results that are slight variations of the literal search.
 
-The results of the analysis are then sorted and stored in an optimized index so that the querying engine can find relevant results and compare different factors about each document.  The index includes information about the lexemes found in each document and may include additional context like positional data, lexeme density, etc. to help with more sophisticated search criteria.
+The results of the analysis are then sorted and stored in an optimized index so that the querying engine can find relevant results and compare different factors about each document. The index includes information about the lexemes found in each document and may include additional context like positional data, lexeme density, etc. to help with more sophisticated search criteria.
 
 ### Balancing the indexing process
 
-While we talked about the general steps required to create a full-text index, we left out some of the key factors that shape the index and resulting querying functionality.  There are many different ways to index text, and the way that you choose to do so can have a large impact on the performance and characteristics of your search functionality.
+While we talked about the general steps required to create a full-text index, we left out some of the key factors that shape the index and resulting querying functionality. There are many different ways to index text, and the way that you choose to do so can have a large impact on the performance and characteristics of your search functionality.
 
-One optimization that almost all indexing processes adopt is the use of stop words.  [Stop words](/intro/database-glossary#stop-words) are a list of words deemed irrelevant or too ambiguous to be useful during a search.  They are often the most common words in a language that contain the least amount of relevant context.  Some examples in English include "the", "a", and "it".  During indexing, stop words are removed from the index, which helps keep the index smaller and faster for more relevant searches.
+One optimization that almost all indexing processes adopt is the use of stop words. [Stop words](/intro/database-glossary#stop-words) are a list of words deemed irrelevant or too ambiguous to be useful during a search. They are often the most common words in a language that contain the least amount of relevant context. Some examples in English include "the", "a", and "it". During indexing, stop words are removed from the index, which helps keep the index smaller and faster for more relevant searches.
 
-As mentioned earlier, the indexing process might also collapse closely related entries into a single item to keep the index small and provide a wider range of results for similar queries.  One of these techniques, called ["stemming"](/intro/database-glossary#stemming), combines words that are variations of the same word "stem".  For instance, "cook", "cooking", and "cooked" would be combined into a single entry.  Other techniques might consult language-aware tools like thesauruses to map synonyms or identify phrases that might stand in for a word.
+As mentioned earlier, the indexing process might also collapse closely related entries into a single item to keep the index small and provide a wider range of results for similar queries. One of these techniques, called ["stemming"](/intro/database-glossary#stemming), combines words that are variations of the same word "stem". For instance, "cook", "cooking", and "cooked" would be combined into a single entry. Other techniques might consult language-aware tools like thesauruses to map synonyms or identify phrases that might stand in for a word.
 
-Many times, the decisions you make during indexing influence the quality of the search results you can get during the querying process.  This is sometimes discussed as a balance between prioritizing recall and precision, both of which are technical terms used to describe different aspects of search effectiveness.
+Many times, the decisions you make during indexing influence the quality of the search results you can get during the querying process. This is sometimes discussed as a balance between prioritizing recall and precision, both of which are technical terms used to describe different aspects of search effectiveness.
 
-[Recall](/intro/database-glossary#recall) is the ratio of the returned relevant results compared to the total number of relevant results within a data set.  A query with high recall retrieves a large percentage of the possible relevant results.
+[Recall](/intro/database-glossary#recall) is the ratio of the returned relevant results compared to the total number of relevant results within a data set. A query with high recall retrieves a large percentage of the possible relevant results.
 
-Related to this is the [precision](/intro/database-glossary#precision) of the search, which describes how many of the returned results were actually relevant.  A query with high precision has a limited number of results that aren't very relevant to the given query.
+Related to this is the [precision](/intro/database-glossary#precision) of the search, which describes how many of the returned results were actually relevant. A query with high precision has a limited number of results that aren't very relevant to the given query.
 
-Techniques like stop words can increase the precision of the results by eliminating words that aren't important from the analysis.  Stemming, on the other hand, primarily increases recall by catching instances where relevant results would be missing due to small word differences.  These two concepts can influence one another, so both must be accounted for as you build your indexes to make sure your results have both the relevancy and volume you desire.
+Techniques like stop words can increase the precision of the results by eliminating words that aren't important from the analysis. Stemming, on the other hand, primarily increases recall by catching instances where relevant results would be missing due to small word differences. These two concepts can influence one another, so both must be accounted for as you build your indexes to make sure your results have both the relevancy and volume you desire.
 
 ## Optimizing the indexing process
 
 Beyond stop words and stemming, there are other ways that database administrators can optimize the indexing process.
 
-Some systems allow document authors to provide a list of relevant keywords along with the document text.  These can be used as hints to the indexer as to the appropriate context of words and also can help dictate the intended primary subject of a document.  They can also be used to help the indexer distinguish between [homographs](https://en.wikipedia.org/wiki/Homograph), words that are spelled the same but can have different meanings (like the difference between a "mean" person and the arithmetic "mean" of a number set).
+Some systems allow document authors to provide a list of relevant keywords along with the document text. These can be used as hints to the indexer as to the appropriate context of words and also can help dictate the intended primary subject of a document. They can also be used to help the indexer distinguish between [homographs](https://en.wikipedia.org/wiki/Homograph), words that are spelled the same but can have different meanings (like the difference between a "mean" person and the arithmetic "mean" of a number set).
 
-Developers and admins can also dictate the parsers, dictionaries, and token types that are used.  These determine how the text is processed, broken down, and categorized during the indexing process.  Switching out a parsing algorithm or the indexing pattern can change the structure of the index created, its performance with different types of queries, and how flexible it is in accommodating complex queries.
+Developers and admins can also dictate the parsers, dictionaries, and token types that are used. These determine how the text is processed, broken down, and categorized during the indexing process. Switching out a parsing algorithm or the indexing pattern can change the structure of the index created, its performance with different types of queries, and how flexible it is in accommodating complex queries.
 
-A further point of influence that can have a large impact on future queries is weighing different factors in the document text.  Administrators can assign increased ["weight"](/intro/database-glossary#search-weight), or relevancy, to words included in a document's title rather than its footnotes, for instance.  Depending on the system, this may be fairly sophisticated and expressive.  For instance, you might use a subject matter-specific word list upon analyzing a document title to assign increased weight to terms that are relevant to the subject on a per-document basis.
-
+A further point of influence that can have a large impact on future queries is weighing different factors in the document text. Administrators can assign increased ["weight"](/intro/database-glossary#search-weight), or relevancy, to words included in a document's title rather than its footnotes, for instance. Depending on the system, this may be fairly sophisticated and expressive. For instance, you might use a subject matter-specific word list upon analyzing a document title to assign increased weight to terms that are relevant to the subject on a per-document basis.
 
 ## Influencing the query engine
 
-For most full-text search systems, it is also important to allow expressiveness during the actual querying process.  The querying interface can expose this expressiveness in many different ways.
+For most full-text search systems, it is also important to allow expressiveness during the actual querying process. The querying interface can expose this expressiveness in many different ways.
 
-One of the easiest ways to increase the level of control a user has during querying structured items is to allow searching by field.  This is not as relevant in unstructured text, but can be incredibly useful when coupled with metadata to search using fields like authors, publication dates, titles, genres, and more.  For fields with a small number of possible values, these can be directly selectable within the interface rather than searchable to increase usability.
+One of the easiest ways to increase the level of control a user has during querying structured items is to allow searching by field. This is not as relevant in unstructured text, but can be incredibly useful when coupled with metadata to search using fields like authors, publication dates, titles, genres, and more. For fields with a small number of possible values, these can be directly selectable within the interface rather than searchable to increase usability.
 
-Compound query operators are another simple way for full-text search tools to allow users to influence the querying engine.  This allows users to structure queries using simple boolean logic like "and" to include multiple terms that should be present and "or" to include alternatives.  It can also enable more complex functionality by letting users provide lists of terms that should *not* be included, phrases that should be present, or queries that account for proximity between words within text.
+Compound query operators are another simple way for full-text search tools to allow users to influence the querying engine. This allows users to structure queries using simple boolean logic like "and" to include multiple terms that should be present and "or" to include alternatives. It can also enable more complex functionality by letting users provide lists of terms that should _not_ be included, phrases that should be present, or queries that account for proximity between words within text.
 
-Another important way that search interfaces can influence the querying engine is by enabling "strict" querying modes.  While it might be helpful to include close matches during regular operation, it is sometimes helpful to search only for the exact word or phrase given.  Allowing users to change the querying mode between fuzzy and exact matching increases the likelihood of surfacing relevant results.
+Another important way that search interfaces can influence the querying engine is by enabling "strict" querying modes. While it might be helpful to include close matches during regular operation, it is sometimes helpful to search only for the exact word or phrase given. Allowing users to change the querying mode between fuzzy and exact matching increases the likelihood of surfacing relevant results.
 
 ## Conclusion
 
-In this article, we talked about what full-text search is and introduced some of the core concepts behind it.  We discussed the difference between full-text search and conventional database queries, explained why indexes are of critical importance in this context, and went over some of the factors you might need to take into account when designing your search indexes.
+In this article, we talked about what full-text search is and introduced some of the core concepts behind it. We discussed the difference between full-text search and conventional database queries, explained why indexes are of critical importance in this context, and went over some of the factors you might need to take into account when designing your search indexes.
 
-Full-text search is an incredibly broad topic with many nuances, optimizations, balance considerations, and implementations.  While this article isn't intended to be a definitive resource, it should hopefully serve as a strong conceptual foundation to build on as you continue to learn.
+Full-text search is an incredibly broad topic with many nuances, optimizations, balance considerations, and implementations. While this article isn't intended to be a definitive resource, it should hopefully serve as a strong conceptual foundation to build on as you continue to learn.
 
 <PrismaOutlinks>
 
-The [Prisma Data Platform](https://www.prisma.io/data-platform) can help simplify access to your database in production environments.  If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
+The [Prisma Data Platform](https://www.prisma.io/data-platform) can help simplify access to your database in production environments. If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage your database connections, the Prisma Data Platform may help you manage your production workloads more easily.
 
 </PrismaOutlinks>

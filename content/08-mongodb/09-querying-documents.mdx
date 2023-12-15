@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Querying [documents](/intro/database-glossary#document) is an essential skill necessary to do many different operations within [MongoDB](/intro/database-glossary#mongodb).  You need to be able to query to effectively retrieve the documents you need, to update existing information within your databases, and to understand commonalities and differences between your documents.
+Querying [documents](/intro/database-glossary#document) is an essential skill necessary to do many different operations within [MongoDB](/intro/database-glossary#mongodb). You need to be able to query to effectively retrieve the documents you need, to update existing information within your databases, and to understand commonalities and differences between your documents.
 
-In this guide, we'll cover the basics of how to compose queries for MongoDB to help you retrieve documents according to your requirements.  We will show you how queries work on a general level, then we will explore various operators that MongoDB provides to help you narrow down results by evaluating your conditions.
+In this guide, we'll cover the basics of how to compose queries for MongoDB to help you retrieve documents according to your requirements. We will show you how queries work on a general level, then we will explore various operators that MongoDB provides to help you narrow down results by evaluating your conditions.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -121,13 +121,14 @@ db.teachers.insertMany([
 
 ## Basic querying syntax
 
-Now that you have two collections with documents in them, you can experiment with how to retrieve individual documents or groups of documents.  The main way to fetch documents from MongoDB is by calling the `find()` method on the collection in question.
+Now that you have two collections with documents in them, you can experiment with how to retrieve individual documents or groups of documents. The main way to fetch documents from MongoDB is by calling the `find()` method on the collection in question.
 
 For instance, to collect all of the documents from the `students` collection, you can call `find()` with no arguments:
 
 ```
 db.students.find()
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
@@ -143,6 +144,7 @@ To make the output more readable, you can also chain the `pretty()` method after
 ```
 db.<collection>.find().pretty()
 ```
+
 ```
 {
         "_id" : ObjectId("60e8743b4655cbf49ff7cb83"),
@@ -189,7 +191,7 @@ db.<collection>.find().pretty()
 }
 ```
 
-You can see that an `_id` field has been added to each of the documents.  MongoDB requires a unique `_id` for each document in a collection.  If you do not provide one upon object creation, it will add one for you.  You can use this ID to retrieve a single object reliably:
+You can see that an `_id` field has been added to each of the documents. MongoDB requires a unique `_id` for each document in a collection. If you do not provide one upon object creation, it will add one for you. You can use this ID to retrieve a single object reliably:
 
 ```
 db.student.find(
@@ -198,6 +200,7 @@ db.student.find(
 	}
 )
 ```
+
 ```
 { "_id" : ObjectId("60e8792d4655cbf49ff7cb89"), "first_name" : "Toni", "last_name" : "Fowler" }
 ```
@@ -211,11 +214,12 @@ For instance, you can get a list of the students named "Brian" with the followin
 ```
 db.students.find({first_name: "Brian"})
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
 ```
 
-Any qualities that you specify using the field-value notation will be interpreted as an equality query.  If you give multiple fields, all of the values must be equal for a document to match.
+Any qualities that you specify using the field-value notation will be interpreted as an equality query. If you give multiple fields, all of the values must be equal for a document to match.
 
 For instance, if we perform the same equality match as before, but include `grade_level` as 3, no documents will be returned:
 
@@ -225,9 +229,9 @@ db.students.find({first_name: "Brian", grade_level: 3})
 
 ## Filtering using comparison operators
 
-While the simple equality filtering is useful, it is fairly limited in what it can express.  For other types of comparisons, MongoDB provides various comparison operators so that you can query in other ways.
+While the simple equality filtering is useful, it is fairly limited in what it can express. For other types of comparisons, MongoDB provides various comparison operators so that you can query in other ways.
 
-The basic function of the available comparison operators is likely fairly familiar if you work with other programming languages.  Most operators work by passing an object to the field name that contains the operator and the value you want to compare against, like this:
+The basic function of the available comparison operators is likely fairly familiar if you work with other programming languages. Most operators work by passing an object to the field name that contains the operator and the value you want to compare against, like this:
 
 ```
 <field_name>: { <operator>: <value_to_compare_against> }
@@ -235,7 +239,7 @@ The basic function of the available comparison operators is likely fairly famili
 
 ### Equal to
 
-The `$eq` operator checks for equality between the value provided and the field values in the documents.  In most cases, this has the same functionality as the equality comparisons we used above.
+The `$eq` operator checks for equality between the value provided and the field values in the documents. In most cases, this has the same functionality as the equality comparisons we used above.
 
 For example, we can express the same query for students named "Brian" by typing:
 
@@ -244,13 +248,14 @@ db.students.find({
 	first_name: { $eq: "Brian" }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
 ```
 
 ### Not equal to
 
-You can also query for documents that are *not* equal to a provided value.  The operator for this is `$ne`.
+You can also query for documents that are _not_ equal to a provided value. The operator for this is `$ne`.
 
 For instance, one way to find all students who have a `grade_level` set is to search for entries where the field is not set to `null`:
 
@@ -259,6 +264,7 @@ db.students.find({
 	grade_level: { $ne: null }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
@@ -276,6 +282,7 @@ db.students.find({
 	grade_level: { $gt: 6 }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 ```
@@ -291,6 +298,7 @@ db.students.find({
 	grade_level: { $gte: 6 }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e8792d4655cbf49ff7cb88"), "first_name" : "Michael", "last_name" : "Rodgers", "dob" : ISODate("2008-02-25T00:00:00Z"), "grade_level" : 6 }
@@ -307,6 +315,7 @@ db.students.find({
 	dob: { $lt: new Date("January 1, 2010") }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb85"), "first_name" : "Leah", "last_name" : "Drake", "dob" : ISODate("2009-10-03T00:00:00Z") }
@@ -324,6 +333,7 @@ db.students.find({
 	grade_level: { $lte: 6 }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
 { "_id" : ObjectId("60e8792d4655cbf49ff7cb88"), "first_name" : "Michael", "last_name" : "Rodgers", "dob" : ISODate("2008-02-25T00:00:00Z"), "grade_level" : 6 }
@@ -331,9 +341,9 @@ db.students.find({
 
 ### Match any of a group of values
 
-The `$in` operator works like the `$eq` equality operator, but allows you to provide multiple possible values in an array.  For instance, instead of checking whether a field value is equal to 8, it can check whether the value is any of `[8, 9, 10, 11]`.
+The `$in` operator works like the `$eq` equality operator, but allows you to provide multiple possible values in an array. For instance, instead of checking whether a field value is equal to 8, it can check whether the value is any of `[8, 9, 10, 11]`.
 
-The `$in` operator also works with regular expressions.  For example, we can find all students whose first name ends with either an 'i' or an 'e' by typing:
+The `$in` operator also works with regular expressions. For example, we can find all students whose first name ends with either an 'i' or an 'e' by typing:
 
 ```
 db.students.find({
@@ -345,6 +355,7 @@ db.students.find({
 	}
 })
 ```
+
 ```
 { "_id" : ObjectId("60e877914655cbf49ff7cb86"), "first_name" : "Naomi", "last_name" : "Pyani" }
 { "_id" : ObjectId("60e8792d4655cbf49ff7cb87"), "first_name" : "Jasmine", "last_name" : "Took", "dob" : ISODate("2011-04-11T00:00:00Z") }
@@ -353,9 +364,9 @@ db.students.find({
 
 ### Match none of a group of values
 
-The inverse of the above procedure is to find all documents that have values not in a given array.  The operator for that is `$nin`.
+The inverse of the above procedure is to find all documents that have values not in a given array. The operator for that is `$nin`.
 
-For instance, we can find all students who have first names that *don't* end in 'i' or 'e' by typing:
+For instance, we can find all students who have first names that _don't_ end in 'i' or 'e' by typing:
 
 ```
 db.students.find({
@@ -367,6 +378,7 @@ db.students.find({
 	}
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
@@ -376,11 +388,11 @@ db.students.find({
 
 ## Filtering using logical operators
 
-To form more complex queries, you can compose multiple conditions using logical operators.  Logical operators work by passing them an object of an expression or an array containing multiple objects of expressions.
+To form more complex queries, you can compose multiple conditions using logical operators. Logical operators work by passing them an object of an expression or an array containing multiple objects of expressions.
 
 ### The logical AND operator
 
-The `$and` operator will return results that satisfy all of the expressions that have been passed to it.  Every expression within the `$and` expression must evaluate to true in order to be returned.
+The `$and` operator will return results that satisfy all of the expressions that have been passed to it. Every expression within the `$and` expression must evaluate to true in order to be returned.
 
 For example, you can use `$and` to query for students that have both a birth date and a grade level set:
 
@@ -392,6 +404,7 @@ db.students.find({
 	]
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
@@ -400,7 +413,7 @@ db.students.find({
 
 ### The logical OR operator
 
-The `$or` operator performs a logical OR calculation.  If *any* of the expressions that are passed to it are true, the entire clause is considered satisfied.
+The `$or` operator performs a logical OR calculation. If _any_ of the expressions that are passed to it are true, the entire clause is considered satisfied.
 
 You can use this, for example, to query students who are missing either of the fields we queried for above:
 
@@ -412,6 +425,7 @@ db.students.find({
 	]
 })
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb85"), "first_name" : "Leah", "last_name" : "Drake", "dob" : ISODate("2009-10-03T00:00:00Z") }
 { "_id" : ObjectId("60e877914655cbf49ff7cb86"), "first_name" : "Naomi", "last_name" : "Pyani" }
@@ -421,21 +435,22 @@ db.students.find({
 
 ### The logical NOT operator
 
-The `$not` operator negates the value of the expression that is passed to it.  Instead of operating on an array of expressions, since `$not` is a unary operator, it operates on a single single defining an operator expression directly.
+The `$not` operator negates the value of the expression that is passed to it. Instead of operating on an array of expressions, since `$not` is a unary operator, it operates on a single single defining an operator expression directly.
 
-This leads to a slightly different syntax than the previous operators.  Instead of wrapping a full field and value expression, you use `$not` as part of the value of the field match and it takes only an *operator expression* as its argument rather than a full expression (the field name is outside of the `$not` expression instead of inside of it).
+This leads to a slightly different syntax than the previous operators. Instead of wrapping a full field and value expression, you use `$not` as part of the value of the field match and it takes only an _operator expression_ as its argument rather than a full expression (the field name is outside of the `$not` expression instead of inside of it).
 
-For instance, we can find all students who *do not* have a birthday before 2010 by typing.  This differs from checking for `dob` entries that are less than 2010 because it also returns any documents that do not have that field set at all:
+For instance, we can find all students who _do not_ have a birthday before 2010 by typing. This differs from checking for `dob` entries that are less than 2010 because it also returns any documents that do not have that field set at all:
 
 ```
 db.students.find({
 	dob: {
-		$not: { 
+		$not: {
 			$lt: new Date("January 1, 2010")
 		}
 	}
 })
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
 { "_id" : ObjectId("60e877914655cbf49ff7cb86"), "first_name" : "Naomi", "last_name" : "Pyani" }
@@ -445,7 +460,7 @@ db.students.find({
 
 ### The logical NOR operator
 
-The `$nor` operator takes an array of objects and returns documents that do not match *any* of the conditions specified in those objects.  Only documents that fail all of the conditions will be returned.
+The `$nor` operator takes an array of objects and returns documents that do not match _any_ of the conditions specified in those objects. Only documents that fail all of the conditions will be returned.
 
 For example, if you want to retrieve documents of students who are not in grade 6 who also do not have a last name that ends in 's', you could type:
 
@@ -457,6 +472,7 @@ db.students.find({
 	]
 })
 ```
+
 ```
 { "_id" : ObjectId("60e875d54655cbf49ff7cb85"), "first_name" : "Leah", "last_name" : "Drake", "dob" : ISODate("2009-10-03T00:00:00Z") }
 { "_id" : ObjectId("60e877914655cbf49ff7cb86"), "first_name" : "Naomi", "last_name" : "Pyani" }
@@ -468,7 +484,7 @@ db.students.find({
 
 Some other ways to test are based on the state of a field or value.
 
-For instance, the `$exists` filter checks for the existence of a field within a document.  You can set `$exists` to `true` or `false` to determine which documents to retrieve.
+For instance, the `$exists` filter checks for the existence of a field within a document. You can set `$exists` to `true` or `false` to determine which documents to retrieve.
 
 For instance, if you wanted to find student documents that have a grade level, you can type:
 
@@ -477,6 +493,7 @@ db.students.find({
 	grade_level: { $exists: true }
 })
 ```
+
 ```
 { "_id" : ObjectId("60e8743b4655cbf49ff7cb83"), "first_name" : "Ashley", "last_name" : "Jenkins", "dob" : ISODate("2003-01-08T00:00:00Z"), "grade_level" : 8 }
 { "_id" : ObjectId("60e875d54655cbf49ff7cb84"), "first_name" : "Brian", "last_name" : "McMantis", "dob" : ISODate("2010-09-18T00:00:00Z"), "grade_level" : 2 }
@@ -485,11 +502,11 @@ db.students.find({
 
 ## Filtering based on array characteristics
 
-You can also query documents through the arrays they hold.  There are a number of operators that can be used to match based on array elements or other qualities.
+You can also query documents through the arrays they hold. There are a number of operators that can be used to match based on array elements or other qualities.
 
 ### Specifying required elements
 
-The `$all` operator returns documents that have an array containing *all* of the elements given.
+The `$all` operator returns documents that have an array containing _all_ of the elements given.
 
 For example, if you want to retrieve only teachers that teach both composition and grammar, you could type:
 
@@ -500,6 +517,7 @@ db.teachers.find({
 	}
 })
 ```
+
 ```
 { "_id" : ObjectId("60eddca65eb74f5c676f3bab"), "first_name" : "Ronald", "last_name" : "Taft", "subjects" : [ "literature", "grammar", "composition" ] }
 { "_id" : ObjectId("60eddca65eb74f5c676f3bac"), "first_name" : "Casey", "last_name" : "Meyers", "subjects" : [ "literature", "composition", "grammar" ] }
@@ -522,6 +540,7 @@ db.teachers.find({
 	}
 })
 ```
+
 ```
 { "_id" : ObjectId("60eddca65eb74f5c676f3baa"), "first_name" : "Nancy", "last_name" : "Smith", "subjects" : [ "vocabulary", "pronunciation" ] }
 { "_id" : ObjectId("60eddca65eb74f5c676f3bae"), "first_name" : "Sophie", "last_name" : "Daggs", "subjects" : [ "literature", "composition", "grammar", "vocabulary", "pronunciation" ] }
@@ -531,13 +550,14 @@ Both of the teachers who teach "pronunciation" are listed here, as that's the on
 
 ### Querying by array size
 
-Finally, you can use the `$size` operator to query for documents of a certain size.  For instance, to find all of the teachers who teach three subjects, type:
+Finally, you can use the `$size` operator to query for documents of a certain size. For instance, to find all of the teachers who teach three subjects, type:
 
 ```
 db.teachers.find({
 	subjects: { $size: 3 }
 })
 ```
+
 ```
 { "_id" : ObjectId("60eddca65eb74f5c676f3bab"), "first_name" : "Ronald", "last_name" : "Taft", "subjects" : [ "literature", "grammar", "composition" ] }
 { "_id" : ObjectId("60eddca65eb74f5c676f3bac"), "first_name" : "Casey", "last_name" : "Meyers", "subjects" : [ "literature", "composition", "grammar" ] }
@@ -545,13 +565,13 @@ db.teachers.find({
 
 ## Conclusion
 
-In this guide, we've covered how to query for documents with MongoDB databases.  We covered the basic way that the `find()` method works and how to make its output more readable.  Afterwards, we took a look at many of the operators that MongoDB provides to specify the exact parameters of the documents you are interested in.
+In this guide, we've covered how to query for documents with MongoDB databases. We covered the basic way that the `find()` method works and how to make its output more readable. Afterwards, we took a look at many of the operators that MongoDB provides to specify the exact parameters of the documents you are interested in.
 
-Understanding how to compose queries to narrow down results and pick out documents that match your specifications is important both when reading and updating data.  By getting familiar with the various ways that operators can be chained together, you can express complex requirements that match different types of documents.
+Understanding how to compose queries to narrow down results and pick out documents that match your specifications is important both when reading and updating data. By getting familiar with the various ways that operators can be chained together, you can express complex requirements that match different types of documents.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -565,13 +585,13 @@ You can use the `$gt` operator within a find statement to find documents with a 
 
 The basic syntax looks like the following:
 
-	db.collection.find( { <Field Name>: { $gt:ISODate('Date here') } } )
+    db.collection.find( { <Field Name>: { $gt:ISODate('Date here') } } )
 
 </details>
 
 <details><summary>What is the MongoDB query profiler?</summary>
 
-[The MongoDB Database query profiler](https://www.mongodb.com/docs/manual/tutorial/manage-the-database-profiler/) is a tool that collects detailed information about database commands executed against a running `mongod` instance. 
+[The MongoDB Database query profiler](https://www.mongodb.com/docs/manual/tutorial/manage-the-database-profiler/) is a tool that collects detailed information about database commands executed against a running `mongod` instance.
 
 This includes CRUD operations as well as configuration and administrative commands. This can be particularly useful when trying to sort for slow operations.
 
@@ -583,7 +603,7 @@ To query for how long the length of a string is, you can use the `$strLenCP` ope
 
 The basic syntax looks as follows:
 
-	{ $strLenCP: "Hello World!" }
+    { $strLenCP: "Hello World!" }
 
 This particular string will return a value of `12`.
 
@@ -591,11 +611,11 @@ This particular string will return a value of `12`.
 
 <details><summary> What is the MongoDB query to find distinct values? </summary>
 
-To query for only unique values of a field within a greater collection, you can use the `distinct()` method. 
+To query for only unique values of a field within a greater collection, you can use the `distinct()` method.
 
 The basic syntax looks like:
 
-	db.collection.distinct("<Field_Name>")
+    db.collection.distinct("<Field_Name>")
 
 This returns all of the unique values within the collection for a particular field with no repetition.
 
@@ -607,6 +627,6 @@ You can export your database contents to JSON with the `mongoexport` command lin
 
 The basic syntax looks as follows where we specify the output of the collection export to be `json`:
 
-	mongoexport --collection=events --db=reporting --out=events.json
+    mongoexport --collection=events --db=reporting --out=events.json
 
 </details>

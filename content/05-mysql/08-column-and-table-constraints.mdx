@@ -8,9 +8,9 @@ authors: ['justinellingwood']
 
 ## What are MySQL column and table constraints?
 
-[Constraints](/intro/database-glossary#constraint) are user defined requirements that define what values are valid for a column or table.  You can think of them as additional restrictions to narrow in on acceptable values more strictly than [data types](/mysql/introduction-to-data-types) allow.
+[Constraints](/intro/database-glossary#constraint) are user defined requirements that define what values are valid for a column or table. You can think of them as additional restrictions to narrow in on acceptable values more strictly than [data types](/mysql/introduction-to-data-types) allow.
 
-Constraints allow you to define qualities that all entries must have, with the server itself enforcing the restrictions upon data entry or update.  As an example, it might not make sense for a column representing boiling point of various substances to be lower than its freezing point.  A constraint can enforce this type of requirement, even though types would not be able to.
+Constraints allow you to define qualities that all entries must have, with the server itself enforcing the restrictions upon data entry or update. As an example, it might not make sense for a column representing boiling point of various substances to be lower than its freezing point. A constraint can enforce this type of requirement, even though types would not be able to.
 
 ## Where constraints are defined: column vs table constraints
 
@@ -18,23 +18,23 @@ MySQL allows you to create constraints associated with a specific column or with
 
 Almost all constraints can be used in both forms without modification:
 
-Constraint  | Column | Table
-----------  | ------ | -----
-CHECK       | Yes    | Yes
-NOT NULL    | Yes    | No*
-UNIQUE      | Yes    | Yes
-PRIMARY KEY | Yes    | Yes
-FOREIGN KEY | No     | Yes
+| Constraint  | Column | Table |
+| ----------- | ------ | ----- |
+| CHECK       | Yes    | Yes   |
+| NOT NULL    | Yes    | No\*  |
+| UNIQUE      | Yes    | Yes   |
+| PRIMARY KEY | Yes    | Yes   |
+| FOREIGN KEY | No     | Yes   |
 
-*: `NOT NULL` cannot be used as a table constraint.  However, you can approximate the results by using `IS NOT NULL` as the statement within a `CHECK` table constraint.
+\*: `NOT NULL` cannot be used as a table constraint. However, you can approximate the results by using `IS NOT NULL` as the statement within a `CHECK` table constraint.
 
 Let's look at how column and table constraints differ.
 
 ### Column constraints
 
-**Column constraints** are constraints attached to a single [column](/intro/database-glossary#column).  They are used to determine whether a proposed value for a column is valid or not.  Column constraints are evaluated after the input is validated against basic type requirements (like making sure a value is a whole number for `int` columns).
+**Column constraints** are constraints attached to a single [column](/intro/database-glossary#column). They are used to determine whether a proposed value for a column is valid or not. Column constraints are evaluated after the input is validated against basic type requirements (like making sure a value is a whole number for `int` columns).
 
-Column constraints are great for expressing requirements that are limited to a single field.  They attach the constraint condition directly to the column involved.  For instance, we could model the `age` restriction in a `person` table by adding a constraint after the column name and data type:
+Column constraints are great for expressing requirements that are limited to a single field. They attach the constraint condition directly to the column involved. For instance, we could model the `age` restriction in a `person` table by adding a constraint after the column name and data type:
 
 ```sql
 CREATE TABLE person (
@@ -44,11 +44,11 @@ CREATE TABLE person (
 );
 ```
 
-This snippet defines a `person` table with one of the columns being an `int` called `age`.  The `age` must be greater than or equal to zero.  Column constraints are easy to understand because they are added as additional requirements onto the column they affect.
+This snippet defines a `person` table with one of the columns being an `int` called `age`. The `age` must be greater than or equal to zero. Column constraints are easy to understand because they are added as additional requirements onto the column they affect.
 
 ### Table constraints
 
-The other type of constraint is called a **table constraint**.  [Table](/intro/database-glossary#table) constraints can express almost any restrictions that a column constraint can, but can additionally express restrictions that involve more than one column.  Instead of being attached to a specific column, table constraints are defined as a separate component of the table and can reference any of the table's columns.
+The other type of constraint is called a **table constraint**. [Table](/intro/database-glossary#table) constraints can express almost any restrictions that a column constraint can, but can additionally express restrictions that involve more than one column. Instead of being attached to a specific column, table constraints are defined as a separate component of the table and can reference any of the table's columns.
 
 The column constraint we saw earlier could be expressed as a table constraint like this:
 
@@ -61,9 +61,9 @@ CREATE TABLE person (
 );
 ```
 
-The same basic syntax is used, but the constraint is listed separately.  To take advantage of the ability for table constraints to introduce compound restrictions, we can use the logical `AND` operator to join multiple conditions from different columns.
+The same basic syntax is used, but the constraint is listed separately. To take advantage of the ability for table constraints to introduce compound restrictions, we can use the logical `AND` operator to join multiple conditions from different columns.
 
-For example, in a banking database, a table called `qualified_borrowers` might need to check whether individuals have an existing account and the ability to offer collateral in order to qualify for a loan.  It might make sense to include both of these in the same check:
+For example, in a banking database, a table called `qualified_borrowers` might need to check whether individuals have an existing account and the ability to offer collateral in order to qualify for a loan. It might make sense to include both of these in the same check:
 
 ```sql
 CREATE TABLE qualified_borrowers (
@@ -75,24 +75,25 @@ CREATE TABLE qualified_borrowers (
 );
 ```
 
-Here, we use the `CHECK` constraint again to check that the `account_number` is not null and that the loan officer has marked the client as having acceptable collateral by checking the `acceptable_collateral` column.  A table constraint is necessary since multiple columns are being checked.
+Here, we use the `CHECK` constraint again to check that the `account_number` is not null and that the loan officer has marked the client as having acceptable collateral by checking the `acceptable_collateral` column. A table constraint is necessary since multiple columns are being checked.
 
-Now is a good time to mention that although we'll mainly be using the `CREATE TABLE` SQL command in these examples to create a new table, you can also add constraints to an existing table with [`ALTER TABLE`](https://dev.mysql.com/doc/refman/8.0/en/alter-table.html).  When using `ALTER TABLE`, new constraints cause the values currently in the table to be checked against the new constraint.  If the values violate the constraint, the constraint cannot be added.
+Now is a good time to mention that although we'll mainly be using the `CREATE TABLE` SQL command in these examples to create a new table, you can also add constraints to an existing table with [`ALTER TABLE`](https://dev.mysql.com/doc/refman/8.0/en/alter-table.html). When using `ALTER TABLE`, new constraints cause the values currently in the table to be checked against the new constraint. If the values violate the constraint, the constraint cannot be added.
 
 ## Creating names for constraints
 
 ### Default constraint names
 
-When you create constraints using the syntax above, MySQL automatically chooses a reasonable, but vague, name.  In the case of the `qualified_borrowers` table above, MySQL would name the constraint `qualified_borrowers_chk_1`:
+When you create constraints using the syntax above, MySQL automatically chooses a reasonable, but vague, name. In the case of the `qualified_borrowers` table above, MySQL would name the constraint `qualified_borrowers_chk_1`:
 
 ```sql
 INSERT INTO qualified_borrowers VALUES (123, false);
 ```
+
 ```
 ERROR 3819 (HY000): Check constraint 'qualified_borrowers_chk_1' is violated.
 ```
 
-This name gives you information about the table and type of constraint when a constraint is violated.  In cases where multiple constraints are present on a table, however, more descriptive names are helpful to help troubleshooting.
+This name gives you information about the table and type of constraint when a constraint is violated. In cases where multiple constraints are present on a table, however, more descriptive names are helpful to help troubleshooting.
 
 ### Custom constraint names
 
@@ -104,7 +105,7 @@ The basic syntax for adding a custom name is this:
 CONSTRAINT <constraint_name> <constraint_type_and_details>
 ```
 
-For example, if you wanted to name the constraint in the `qualified_borrowers`  table `loan_worthiness`, you could instead define the table like this:
+For example, if you wanted to name the constraint in the `qualified_borrowers` table `loan_worthiness`, you could instead define the table like this:
 
 ```sql
 CREATE TABLE qualified_borrowers (
@@ -121,6 +122,7 @@ Now, when we violate a constraint, we get our more descriptive label:
 ```sql
 INSERT INTO qualified_borrowers VALUES (123, false);
 ```
+
 ```
 ERROR 3819 (HY000): Check constraint 'loan_worthiness' is violated.
 ```
@@ -143,7 +145,7 @@ Now that we've covered some of the basics of how constraints work, we can take a
 
 [**Check** constraints](/intro/database-glossary#check-constraint) are a general purpose constraint that allows you to specify an expression involving column or table values that evaluates to a boolean.
 
-You've already seen a few examples of check constraints earlier.  Check constraints begin with the keyword `CHECK` and then provide an expression enclosed in parentheses.  For column constraints, this is placed after the data type declaration.  For table constraints, these can be placed anywhere after the columns that they interact with are defined.
+You've already seen a few examples of check constraints earlier. Check constraints begin with the keyword `CHECK` and then provide an expression enclosed in parentheses. For column constraints, this is placed after the data type declaration. For table constraints, these can be placed anywhere after the columns that they interact with are defined.
 
 For example, we can create a `film_nominations` table that contains films that have been nominated and are eligible for a feature length award for 2019:
 
@@ -158,9 +160,9 @@ CREATE TABLE film_nominations (
 );
 ```
 
-We have one column check restraint that checks that the `release_date` is within 2019.  Afterwards, we have a table check constraint ensuring that the film has received enough votes to be nominated and that the length qualifies it for the "feature length" category.
+We have one column check restraint that checks that the `release_date` is within 2019. Afterwards, we have a table check constraint ensuring that the film has received enough votes to be nominated and that the length qualifies it for the "feature length" category.
 
-When evaluating check constraints, acceptable values evaluate as being true.  If the new record's values satisfy all type requirements and constraints, the record will be added to the table:
+When evaluating check constraints, acceptable values evaluate as being true. If the new record's values satisfy all type requirements and constraints, the record will be added to the table:
 
 ```sql
 INSERT INTO film_nominations VALUES (
@@ -171,6 +173,7 @@ INSERT INTO film_nominations VALUES (
     45
 );
 ```
+
 ```
 Query OK, 1 row affected (0.01 sec)
 ```
@@ -186,15 +189,16 @@ INSERT INTO film_nominations VALUES (
     1
 );
 ```
+
 ```
 ERROR 3819 (HY000): Check constraint 'film_nominations_chk_2' is violated.
 ```
 
-In this case, the film has satisfied every condition except for the number of votes required.  MySQL rejects the submission since it does not pass the final table check constraint.
+In this case, the film has satisfied every condition except for the number of votes required. MySQL rejects the submission since it does not pass the final table check constraint.
 
 ### Not null constraints
 
-The `NOT NULL` constraint is much more focused.  It guarantees that values within a column are not null.  While this is a simple constraint, it is used very frequently.
+The `NOT NULL` constraint is much more focused. It guarantees that values within a column are not null. While this is a simple constraint, it is used very frequently.
 
 #### How to add not null constraints in MySQL
 
@@ -207,7 +211,7 @@ CREATE TABLE national_capitals (
 );
 ```
 
-In the above example, we have a simple two column table mapping countries to their national capitals.  Since both of these are required fields that would not make sense to leave blank, we add the `NOT NULL` constraint.
+In the above example, we have a simple two column table mapping countries to their national capitals. Since both of these are required fields that would not make sense to leave blank, we add the `NOT NULL` constraint.
 
 Inserting a null value now results in an error:
 
@@ -217,11 +221,12 @@ INSERT INTO national_capitals VALUES (
     'London',
 );
 ```
+
 ```
 ERROR 1048 (23000): Column 'country' cannot be null
 ```
 
-The `NOT NULL` constraint functions only as a column constraint (it cannot be used as a table constraint).  However, you can easily work around this by using `IS NOT NULL` within a table `CHECK` constraint.
+The `NOT NULL` constraint functions only as a column constraint (it cannot be used as a table constraint). However, you can easily work around this by using `IS NOT NULL` within a table `CHECK` constraint.
 
 For example, this offers equivalent guarantees using a table constraint:
 
@@ -235,15 +240,15 @@ CREATE TABLE national_capitals (
 
 <PrismaOutlinks>
 
-When working with Prisma Client, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#optional-and-mandatory-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
+When working with Prisma Client, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#optional-and-mandatory-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
 
 </PrismaOutlinks>
 
 ### Unique constraints
 
-The `UNIQUE` constraint tells MySQL that each value within a column must not be repeated.  This is useful in many different scenarios where having the same value in multiple records should be impossible.
+The `UNIQUE` constraint tells MySQL that each value within a column must not be repeated. This is useful in many different scenarios where having the same value in multiple records should be impossible.
 
-For example, columns that deals with IDs of any kind should, by definition, have unique values.  A social security number, a student or customer ID, or a product UPC (barcode number) would be useless if they were not able to differentiate between specific people or items.
+For example, columns that deals with IDs of any kind should, by definition, have unique values. A social security number, a student or customer ID, or a product UPC (barcode number) would be useless if they were not able to differentiate between specific people or items.
 
 A `UNIQUE` constraint can be specified at the column level:
 
@@ -266,7 +271,7 @@ CREATE TABLE supplies (
 );
 ```
 
-One of the advantages of using `UNIQUE` table constraints is that it allows you to perform uniqueness checks on a combination of columns.  This works by specifying two or more columns that MySQL should evaluate together.  The values in individual columns may repeat but the combination of values specified must be unique.
+One of the advantages of using `UNIQUE` table constraints is that it allows you to perform uniqueness checks on a combination of columns. This works by specifying two or more columns that MySQL should evaluate together. The values in individual columns may repeat but the combination of values specified must be unique.
 
 As an example, let's look back at the `national_capitals` table we used before:
 
@@ -286,7 +291,7 @@ CREATE TABLE national_capitals (
 );
 ```
 
-This would ensure that both the countries and capitals are only present once in each table.  However, [some countries have multiple capitals](https://en.wikipedia.org/wiki/List_of_countries_with_multiple_capitals).  This would mean we may have multiple entries with the same `country` value.  These wouldn't work with the current design:
+This would ensure that both the countries and capitals are only present once in each table. However, [some countries have multiple capitals](https://en.wikipedia.org/wiki/List_of_countries_with_multiple_capitals). This would mean we may have multiple entries with the same `country` value. These wouldn't work with the current design:
 
 ```sql
 INSERT INTO national_capitals VALUES (
@@ -298,6 +303,7 @@ INSERT INTO national_capitals VALUES (
     'La Paz'
 );
 ```
+
 ```
 ERROR 1062 (23000): Duplicate entry 'Bolivia' for key 'national_capitals.country'
 ```
@@ -324,6 +330,7 @@ INSERT INTO national_capitals VALUES (
     'La Paz'
 );
 ```
+
 ```
 Query OK, 1 row affected (0.00 sec)
 Query OK, 1 row affected (0.00 sec)
@@ -341,6 +348,7 @@ INSERT INTO national_capitals VALUES (
     'Sucre'
 );
 ```
+
 ```
 Query OK, 1 row affected (0.00 sec)
 ERROR 1062 (23000): Duplicate entry 'Bolivia-Sucre' for key 'national_capitals.country'
@@ -348,9 +356,9 @@ ERROR 1062 (23000): Duplicate entry 'Bolivia-Sucre' for key 'national_capitals.c
 
 ### Primary key constraints
 
-The [`PRIMARY KEY`](/intro/database-glossary#primary-key) constraint serves a special purpose.  It indicates that the column can be used to uniquely identify a record within the table.  This means that it must be reliably unique and that every record must have a value in that column.
+The [`PRIMARY KEY`](/intro/database-glossary#primary-key) constraint serves a special purpose. It indicates that the column can be used to uniquely identify a record within the table. This means that it must be reliably unique and that every record must have a value in that column.
 
-Primary keys are recommended for every table but not required, and every table may only have one primary key.  Primary keys are mainly used to identify, retrieve, modify, or delete individual records within a table.  They allow users and administrators to target the operation using an identifier that is guaranteed by MySQL to match exactly one record.
+Primary keys are recommended for every table but not required, and every table may only have one primary key. Primary keys are mainly used to identify, retrieve, modify, or delete individual records within a table. They allow users and administrators to target the operation using an identifier that is guaranteed by MySQL to match exactly one record.
 
 Let's use the `supplies` table we saw before as an example:
 
@@ -362,7 +370,7 @@ CREATE TABLE supplies (
 );
 ```
 
-Here we've identified that the `supply_id` should be unique.  If we wanted to use this column as our primary key (guaranteeing uniqueness and a non-null value), we could simply change the `UNIQUE` constraint to `PRIMARY KEY`:
+Here we've identified that the `supply_id` should be unique. If we wanted to use this column as our primary key (guaranteeing uniqueness and a non-null value), we could simply change the `UNIQUE` constraint to `PRIMARY KEY`:
 
 ```sql
 CREATE TABLE supplies (
@@ -382,6 +390,7 @@ INSERT INTO supplies VALUES (
 );
 UPDATE supplies set inventory = 10 WHERE supply_id = 38;
 ```
+
 ```
 Query OK, 1 row affected (0.00 sec)
 Query OK, 1 row affected (0.00 sec)
@@ -390,7 +399,7 @@ Rows matched: 1  Changed: 1  Warnings: 0
 
 While many tables use a single column as the primary key, it is also possible to create a primary key using a set of columns, as a table constraint.
 
-The `national_capitals` table is a good candidate to demonstrate this.  If we wanted to create a primary key using the existing columns, we could replace the `UNIQUE` table constraint with `PRIMARY KEY`:
+The `national_capitals` table is a good candidate to demonstrate this. If we wanted to create a primary key using the existing columns, we could replace the `UNIQUE` table constraint with `PRIMARY KEY`:
 
 ```sql
 CREATE TABLE national_capitals (
@@ -402,9 +411,9 @@ CREATE TABLE national_capitals (
 
 ### Foreign key constraints
 
-[**Foreign keys**](/intro/database-glossary#foreign-key) are columns within one table that reference column values within another table.  This is desirable and often necessary in a variety of scenarios where tables contain related data.  This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
+[**Foreign keys**](/intro/database-glossary#foreign-key) are columns within one table that reference column values within another table. This is desirable and often necessary in a variety of scenarios where tables contain related data. This ability for the database to easily connect and reference data stored in separate tables is one of the primary features of relational databases.
 
-For example, you may have a `orders` table to track individual orders and a `customers` table to track contact info and information about your customers.  It makes sense to put this information separately since customers may have many orders.  However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
+For example, you may have a `orders` table to track individual orders and a `customers` table to track contact info and information about your customers. It makes sense to put this information separately since customers may have many orders. However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
 
 #### How to create foreign key constraints in MySQL
 
@@ -419,9 +428,9 @@ CREATE TABLE customers (
 );
 ```
 
-This table is pretty simple.  It includes columns to store the customer's first name, last name, and phone number.  It also specifies an ID column that uses the `PRIMARY KEY` constraint.  The `serial` alias is used to automatically generate the next ID in the sequence if an ID is not specified.
+This table is pretty simple. It includes columns to store the customer's first name, last name, and phone number. It also specifies an ID column that uses the `PRIMARY KEY` constraint. The `serial` alias is used to automatically generate the next ID in the sequence if an ID is not specified.
 
-For the `orders` table, we want to be able to specify information about individual orders.  One essential piece of data is what customer placed the order.  We can use a foreign key to link the order to the customer without duplicating information.  We do this with the `FOREIGN KEY` constraint, which defines a foreign key relationship to a column in another table:
+For the `orders` table, we want to be able to specify information about individual orders. One essential piece of data is what customer placed the order. We can use a foreign key to link the order to the customer without duplicating information. We do this with the `FOREIGN KEY` constraint, which defines a foreign key relationship to a column in another table:
 
 ```sql
 CREATE TABLE orders (
@@ -434,7 +443,7 @@ CREATE TABLE orders (
 
 Here, we are indicating that the `customer` column in the `orders` table has a foreign key relationship with the `customer_id` column in the `customers` table.
 
-We have to ensure that the type of the foreign key column is compatible with the type used in the foreign table.  The `customer_id` column in the `customers` table uses the `SERIAL` alias, which stands for `BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE`, so we can use `BIGINT UNSIGNED` as our data type for the `customer` column in the `orders` table to match.
+We have to ensure that the type of the foreign key column is compatible with the type used in the foreign table. The `customer_id` column in the `customers` table uses the `SERIAL` alias, which stands for `BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE`, so we can use `BIGINT UNSIGNED` as our data type for the `customer` column in the `orders` table to match.
 
 If we try to insert a value into the `orders` table that doesn't reference a valid customer, MySQL will reject it:
 
@@ -445,6 +454,7 @@ INSERT INTO orders VALUES (
     300
 );
 ```
+
 ```
 ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`prisma`.`orders`, CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer`) REFERENCES `customers` (`customer_id`))
 ```
@@ -464,6 +474,7 @@ INSERT INTO orders VALUES (
     300
 );
 ```
+
 ```
 Query OK, 1 row affected (0.00 sec)
 Query OK, 1 row affected (0.00 sec)
@@ -482,7 +493,7 @@ CREATE TABLE example (
 
 <PrismaOutlinks>
 
-We cover how to define [relations](https://www.prisma.io/docs/concepts/components/prisma-schema/relations) in the Prisma schema in our documentation.
+We cover how to define [relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations) in the Prisma schema in our documentation.
 
 </PrismaOutlinks>
 
@@ -490,17 +501,17 @@ We cover how to define [relations](https://www.prisma.io/docs/concepts/component
 
 One consideration you'll need to think about when defining foreign key constraints is what to do when a referenced table value is deleted or updated.
 
-As an example, let's look at the `customers` and `orders` tables again.  We need to specify how we want the system to respond when we delete a customer from the `customers` table when the customer has an associated order in the `orders` table.
+As an example, let's look at the `customers` and `orders` tables again. We need to specify how we want the system to respond when we delete a customer from the `customers` table when the customer has an associated order in the `orders` table.
 
 We can choose between the following options:
 
-* **RESTRICT**: Choosing to restrict deletions means that MySQL will refuse to delete the `customer` record if it's referenced by a record in the `orders` table.  To delete a customer, you will first have to remove any associated records from the `orders` table.  Only then will you be able to remove the value from the customer table.  This is the default action.
-* **CASCADE**: Selecting the cascade option means that when we delete the `customer` record, the records that reference it in the `orders` table are *also* deleted.  This is useful in many cases but must be used with care to avoid deleting data by mistake.
-* **NO ACTION**: Although some other database systems allow you to defer checks with the `NO ACTION` option, in MySQL, this is equivalent to `RESTRICT`.  The system will reject the update or deletion request.
-* **SET NULL**: This option tells MySQL to set the referencing columns to `NULL` when the referenced records are removed.  So if we delete a customer from the `customers` table, the `customer` column in the `orders` table will be set to `NULL`.
-* **SET DEFAULT**: Although some other database systems allow you to set a column to a default value in case of a reference deletion or update, MySQL does not actually allow this action and will not let you define tables using this option.
+- **RESTRICT**: Choosing to restrict deletions means that MySQL will refuse to delete the `customer` record if it's referenced by a record in the `orders` table. To delete a customer, you will first have to remove any associated records from the `orders` table. Only then will you be able to remove the value from the customer table. This is the default action.
+- **CASCADE**: Selecting the cascade option means that when we delete the `customer` record, the records that reference it in the `orders` table are _also_ deleted. This is useful in many cases but must be used with care to avoid deleting data by mistake.
+- **NO ACTION**: Although some other database systems allow you to defer checks with the `NO ACTION` option, in MySQL, this is equivalent to `RESTRICT`. The system will reject the update or deletion request.
+- **SET NULL**: This option tells MySQL to set the referencing columns to `NULL` when the referenced records are removed. So if we delete a customer from the `customers` table, the `customer` column in the `orders` table will be set to `NULL`.
+- **SET DEFAULT**: Although some other database systems allow you to set a column to a default value in case of a reference deletion or update, MySQL does not actually allow this action and will not let you define tables using this option.
 
-These actions can be specified when defining a foreign key constraint by adding `ON DELETE` followed by the action.  So if we want to remove associated orders from our system when a customer is deleted, we could specify that like this:
+These actions can be specified when defining a foreign key constraint by adding `ON DELETE` followed by the action. So if we want to remove associated orders from our system when a customer is deleted, we could specify that like this:
 
 ```sql
 CREATE TABLE orders (
@@ -511,10 +522,10 @@ CREATE TABLE orders (
 );
 ```
 
-These type of actions can also be applied when *updating* a referenced column instead of deleting one by using `ON UPDATE` instead of `ON DELETE`.
+These type of actions can also be applied when _updating_ a referenced column instead of deleting one by using `ON UPDATE` instead of `ON DELETE`.
 
 ## Conclusion
 
-In this guide, we covered what constraints are and how they can help you control the data that is entered into your MySQL tables.  We discussed the difference between column and table constraints and the increased flexibility offered by using the table format.  We then went over what constraints MySQL supports and how to use them in your tables.
+In this guide, we covered what constraints are and how they can help you control the data that is entered into your MySQL tables. We discussed the difference between column and table constraints and the increased flexibility offered by using the table format. We then went over what constraints MySQL supports and how to use them in your tables.
 
-Constraints help you define the exact requirements of your table columns and as such, they are indispensable in many scenarios.  Understanding the way various constraints work and what scenarios they help you prevent will go a long way into ensuring that you data conforms to the standards you require.  Once defined, MySQL can help you enforce constraints automatically to prevent problems before they occur.
+Constraints help you define the exact requirements of your table columns and as such, they are indispensable in many scenarios. Understanding the way various constraints work and what scenarios they help you prevent will go a long way into ensuring that you data conforms to the standards you require. Once defined, MySQL can help you enforce constraints automatically to prevent problems before they occur.

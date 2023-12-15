@@ -32,8 +32,8 @@ mysqldump DB_NAME > OUTPUT_FILE
 
 You need to replace the `DB_NAME` and `OUTPUT_FILE` placeholders with the respective values for:
 
-* your **database name**
-* the name of the desired **output file** (should end in `.sql` for best interoperability)
+- your **database name**
+- the name of the desired **output file** (should end in `.sql` for best interoperability)
 
 For example, to export data from a local MySQL server from a database called `mydb` into a file called `mydb.sql`, you can use the following command:
 
@@ -57,7 +57,7 @@ To authenticate against the MySQL database server, you can use the following arg
 | `--user` (short: `-u`)     | -       | The name of the database user. |
 | `--password` (short: `-p`) | -       | Trigger password prompt.       |
 
-For example, if you want to export data from a MySQL database that has the following [connection string](https://www.prisma.io/docs/concepts/database-connectors/mysql):
+For example, if you want to export data from a MySQL database that has the following [connection string](https://www.prisma.io/docs/orm/overview/databases/mysql):
 
 ```
 mysql://opnmyfngbknppm:XXX@ec2-46-137-91-216.eu-west-1.compute.amazonaws.com:5432/d50rgmkqi2ipus
@@ -75,18 +75,18 @@ Note that **this command will trigger a prompt where you need to specify the pas
 
 There might be cases where you don't want to dump the _entire_ database, for example you might want to:
 
-* dump only the actual data but exclude the [DDL](/intro/database-glossary#data-definition-language) (i.e. the SQL statements that define your database schema like `CREATE TABLE`,...)
-* dump only the DDL but exclude the actual data
-* exclude specific tables
+- dump only the actual data but exclude the [DDL](/intro/database-glossary#data-definition-language) (i.e. the SQL statements that define your database schema like `CREATE TABLE`,...)
+- dump only the DDL but exclude the actual data
+- exclude specific tables
 
 Here's an overview of a few command line options you can use in these scenarios:
 
-| Argument                       | Default                          | Description                                                                                      |
-| ------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Argument                       | Default                          | Description                                                                                                        |
+| ------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `--no-create-db` (short: `-n`) | `false`                          | Exclude any [DDL](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_ddl) statements and export only data. |
 | `--no-data` (short: `-d`)      | `false`                          | Exclude data and export only [DDL](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_ddl) statements.     |
-| `--tables`                     | _includes all tables by default_ | Explicitly specify the names of the tables to be dumped.                                         |
-| `--ignore-table`               | -                                | Exclude specific tables from the dump.                                                           |
+| `--tables`                     | _includes all tables by default_ | Explicitly specify the names of the tables to be dumped.                                                           |
+| `--ignore-table`               | -                                | Exclude specific tables from the dump.                                                                             |
 
 ## Importing data from SQL files
 
@@ -100,8 +100,8 @@ Note that your [MySQL installation](https://dev.mysql.com/doc/refman/8.0/en/inst
 
 You need to replace the `DB_NAME` and `INPUT_FILE` placeholders with the respective values for:
 
-* your **database name** (a database with that name must be created beforehand!)
-* the name of the target **input file** (likely ends in `.sql`)
+- your **database name** (a database with that name must be created beforehand!)
+- the name of the target **input file** (likely ends in `.sql`)
 
 For example:
 
@@ -123,4 +123,4 @@ CREATE DATABASE mydb;
 
 ## Conclusion
 
-Exporting data from MySQL and ingesting it again to recreate your data structures and populate databases is a good way to migrate data, back up and recover, or prepare for replication.  Understanding how the `mysqldump` and `mysql` tools work together to accomplish this task will help you transfer data across the boundaries of your databases.
+Exporting data from MySQL and ingesting it again to recreate your data structures and populate databases is a good way to migrate data, back up and recover, or prepare for replication. Understanding how the `mysqldump` and `mysql` tools work together to accomplish this task will help you transfer data across the boundaries of your databases.

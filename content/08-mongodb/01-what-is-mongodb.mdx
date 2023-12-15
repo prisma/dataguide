@@ -9,13 +9,13 @@ authors: ['alexemerich']
 
 ## What is MongoDB?
 
-MongoDB is an [open-source](https://github.com/mongodb/mongo) document-oriented [NoSQL](/intro/database-glossary#nosql) database system. Data is stored using JavaScript Object Notation(JSON)-like structures that can be specified at the time of data storage. 
+MongoDB is an [open-source](https://github.com/mongodb/mongo) document-oriented [NoSQL](/intro/database-glossary#nosql) database system. Data is stored using JavaScript Object Notation(JSON)-like structures that can be specified at the time of data storage.
 
 Each document can have its own structure with as much or as little complexity as needed. MongoDB provides non-SQL methods and commands to manage and query data programmatically or interactively. MongoDB is known for its fast performance, scalability, and for enabling a rapid development pace.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -23,21 +23,23 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## Origin story
 
-MongoDB was founded in 2007 by Dwight Merriman, Eliot Horowitz, and Kevin Ryan. They previously worked at an internet advertising company that was serving  400,000 ads per second. 
+MongoDB was founded in 2007 by Dwight Merriman, Eliot Horowitz, and Kevin Ryan. They previously worked at an internet advertising company that was serving 400,000 ads per second.
 
-The team was developing many custom data stores to accommodate this traffic. They regularly ran into struggles around scalability and agility, which led to the inspiration to create a database that solved for these issues. And voila, MongoDB. 
+The team was developing many custom data stores to accommodate this traffic. They regularly ran into struggles around scalability and agility, which led to the inspiration to create a database that solved for these issues. And voila, MongoDB.
 
 ## How it works
-To achieve better scalability and agility, MongoDB works with the JSON variant, Binary JSON, or [BSON](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes).  BSON accommodates more data types than JSON, giving more flexibility to the types of data that can be stored in MongoDB.
+
+To achieve better scalability and agility, MongoDB works with the JSON variant, Binary JSON, or [BSON](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes). BSON accommodates more data types than JSON, giving more flexibility to the types of data that can be stored in MongoDB.
 
 ### MongoDB data structure
+
 Rather than tables made up of [rows](/intro/database-glossary#row) and [columns](/intro/database-glossary#column), MongoDB has [collections](/intro/database-glossary#collection) made up of [documents](/intro/database-glossary#document). Documents are comprised of [field](/intro/database-glossary#field) and [value](/intro/database-glossary#value) pairs. In comparison to [relational databases](/intro/database-glossary#relational-database), the pieces that make up a MongoDB database can loosely be thought of as follows:
 
-| Relational |   | Document |
-|----------- |---|--------- |
-|Table       | = |Collection|
-|Row | = | Document |
-|Column | =| Field|
+| Relational |     | Document   |
+| ---------- | --- | ---------- |
+| Table      | =   | Collection |
+| Row        | =   | Document   |
+| Column     | =   | Field      |
 
 The basic structure looks as follows:
 
@@ -53,7 +55,7 @@ The basic structure looks as follows:
 
 Documents look very similar to a JSON object. Documents can hold any of the available BSON data types as well as other documents, arrays, and arrays of documents. This JSON-style format directly maps to native objects in most modern programming languages, making it a natural choice for developers.
 
- An example would look like:
+An example would look like:
 
 ```
 var mydoc = {
@@ -67,16 +69,17 @@ var mydoc = {
 ```
 
 - `_id` holds an [*ObjectId*].
-- `name` holds an *embedded document* that contains the fields `first` and `last`.
+- `name` holds an _embedded document_ that contains the fields `first` and `last`.
 - `birth` and `death` hold values of the [*Date*] type.
 - `books` holds an array of [*strings*].
 - `sales` holds a value of the [*NumberLong*] type.
 
-Depending on the data model, rather than a single document housing all of the information on James Joyce and his work, a relational database could potentially have an `author` table and a `book` table that is joined with something like `author_id`. 
+Depending on the data model, rather than a single document housing all of the information on James Joyce and his work, a relational database could potentially have an `author` table and a `book` table that is joined with something like `author_id`.
 
-In this particular simple use case, the document model simplifies data access and keeps data that is accessed together, stored together. 
+In this particular simple use case, the document model simplifies data access and keeps data that is accessed together, stored together.
 
-### MongoDB document vs SQL table record 
+### MongoDB document vs SQL table record
+
 Expanding on the previous example, let's look at how a document in MongoDB looks compared to the same record in a relational database. In a relational database, a table storing records might look something like this:
 
 ```
@@ -86,6 +89,7 @@ Expanding on the previous example, let's look at how a document in MongoDB looks
 |           2 |      Sarah |     Green |  84 |               (NULL) |     555-8088 |
 |           3 |        Sam |     White |  22 |        sammi@123.org |     555-1234 |
 ```
+
 Whereas, as we saw with our author document previously, a collection of similar documents in MongoDB might be modeled in JSON like this:
 
 ```
@@ -117,10 +121,12 @@ Whereas, as we saw with our author document previously, a collection of similar 
     ]
 }
 ```
+
 Deciding on a document database versus a relational database comes down to the type of data that the database is storing and how it should be accessed. MongoDB's documents promote flexibility over rigidity and ease the way data is accessed from an application.
 
 ### MongoDB query language
-Since MongoDB databases are document-oriented, the data does not typically follow a pre-defined schema like a relational database. This makes accessing data different then when querying a relational database with structured query language (SQL). MongoDB has its own query language simply called MongoDB Query Language (MQL). 
+
+Since MongoDB databases are document-oriented, the data does not typically follow a pre-defined schema like a relational database. This makes accessing data different then when querying a relational database with structured query language (SQL). MongoDB has its own query language simply called MongoDB Query Language (MQL).
 
 Similar to SQL, MQL also allows a user to access data under certain specifications. You can control for returning documents that match criteria relevant to the need. We won’t go into the finer details of querying in MongoDB in this guide, but you can read more about it in our [querying in MongoDB guide](https://www.prisma.io/dataguide/mongodb/querying-documents).
 
@@ -137,13 +143,14 @@ db.<collection_name>.find().pretty()
 ```
 
 ## Conclusion
-MongoDB has become the most popular NoSQL database on the market. Developers enjoy working with MongoDB because of its ability to keep them working flexibly and with agility. 
 
-MongoDB provides an alternative to the rigidity of relational databases and  is better suited for applications with evolving schemas. Checkout out some of our other MongoDB content for in depth guides on [getting started with MongoDB, indexes, transactions, and more](https://www.prisma.io/dataguide/mongodb).
+MongoDB has become the most popular NoSQL database on the market. Developers enjoy working with MongoDB because of its ability to keep them working flexibly and with agility.
+
+MongoDB provides an alternative to the rigidity of relational databases and is better suited for applications with evolving schemas. Checkout out some of our other MongoDB content for in depth guides on [getting started with MongoDB, indexes, transactions, and more](https://www.prisma.io/dataguide/mongodb).
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 

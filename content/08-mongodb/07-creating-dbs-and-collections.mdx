@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-MongoDB uses [document-oriented structures](/intro/database-glossary#document-database) to store, manage, and process data.  Individual [documents](/intro/database-glossary#document) are organized into [collections](/intro/database-glossary#collections), which in turn, are stored in databases.  Because the schema of each document is not defined by a static schema, document based systems offer more flexibility than relational systems that are composed of tables and records.
+MongoDB uses [document-oriented structures](/intro/database-glossary#document-database) to store, manage, and process data. Individual [documents](/intro/database-glossary#document) are organized into [collections](/intro/database-glossary#collections), which in turn, are stored in databases. Because the schema of each document is not defined by a static schema, document based systems offer more flexibility than relational systems that are composed of tables and records.
 
-In this guide, we'll talk about how to create and manage the structures that MongoDB uses to organize data.  We'll cover how to create and manage databases and then how to make collections to hold similar or related documents.
+In this guide, we'll talk about how to create and manage the structures that MongoDB uses to organize data. We'll cover how to create and manage databases and then how to make collections to hold similar or related documents.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -22,13 +22,14 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## How to view existing databases
 
-Before we begin creating new databases, it's helpful to get familiar with some of the methods that MongoDB provides for finding information about existing databases.  This can help you understand the current state of the system before you begin making changes.
+Before we begin creating new databases, it's helpful to get familiar with some of the methods that MongoDB provides for finding information about existing databases. This can help you understand the current state of the system before you begin making changes.
 
 To display all of the databases on the system that you have access to, use the `show dbs` method:
 
 ```
 show dbs
 ```
+
 ```
 admin   0.000GB
 config  0.000GB
@@ -42,17 +43,19 @@ To see which database you are currently set to operate on, use the `db.getName()
 ```
 db
 ```
+
 ```
 test
 ```
 
-You may find that you are currently using a database that wasn't listed by the `show dbs` command.  This is because in MongoDB, until you write the first document to the database, the database is not actually created.  So, in the example output above, the shell is prepared to operate on a `test` database, but since it does not exist yet, it will not be returned by the `show dbs` command.
+You may find that you are currently using a database that wasn't listed by the `show dbs` command. This is because in MongoDB, until you write the first document to the database, the database is not actually created. So, in the example output above, the shell is prepared to operate on a `test` database, but since it does not exist yet, it will not be returned by the `show dbs` command.
 
 To switch to a different database, you can use the `use` command:
 
 ```
 use admin
 ```
+
 ```
 switched to db admin
 ```
@@ -62,6 +65,7 @@ To get some basic information about your current database, you can use the `db.s
 ```
 db.stats()
 ```
+
 ```
 {
         "db" : "admin",
@@ -86,7 +90,7 @@ The output shows information about the number of collections within the database
 
 ## How to create databases
 
-MongoDB does not have an explicit command for creating a new database.  Instead, as mentioned earlier, you have to instead indicate to MongoDB that you want to write new documents to a new database.  When those documents are created, they will implicitly create the database.
+MongoDB does not have an explicit command for creating a new database. Instead, as mentioned earlier, you have to instead indicate to MongoDB that you want to write new documents to a new database. When those documents are created, they will implicitly create the database.
 
 To prepare MongoDB to write to a new database, issue the `use` command to switch to a non-existent database.
 
@@ -95,6 +99,7 @@ Here, we will set up MongoDB to create a new database called `playground`:
 ```
 use playground
 ```
+
 ```
 switched to db playground
 ```
@@ -104,6 +109,7 @@ If you check your current database, it will confirm that the `playground` databa
 ```
 db
 ```
+
 ```
 playground
 ```
@@ -113,6 +119,7 @@ However, as mentioned before, since we have not yet created any documents, the d
 ```
 show dbs
 ```
+
 ```
 admin   0.000GB
 config  0.000GB
@@ -121,10 +128,9 @@ local   0.000GB
 
 To actually create the new database, we will need to create something first.
 
-
 ## How to view the collections in a database
 
-In MongoDB, *collections* are structures used to group documents together using whatever system of categorization you want to implement.  They live inside databases and store documents.
+In MongoDB, _collections_ are structures used to group documents together using whatever system of categorization you want to implement. They live inside databases and store documents.
 
 You can see the available collections in the database you're currently using by using the `show collections` method.
 
@@ -134,6 +140,7 @@ Here, we'll switch to the `admin` database that has some collections available t
 use admin
 show collections
 ```
+
 ```
 system.roles
 system.users
@@ -145,6 +152,7 @@ Alternatively, you can retrieve the same collection names in an array using the 
 ```
 db.getCollectionNames()
 ```
+
 ```
 [ "system.roles", "system.users", "system.version" ]
 ```
@@ -154,6 +162,7 @@ To show additional information about the collections in the current database, us
 ```
 db.getCollectionInfos()
 ```
+
 ```
 [
         {
@@ -213,7 +222,7 @@ db.getCollectionInfos()
 ]
 ```
 
-You can also optionally pass in a document to the command to filter the results.  For example, if you are only interested in seeing the information about the `system.version` collection, you could type:
+You can also optionally pass in a document to the command to filter the results. For example, if you are only interested in seeing the information about the `system.version` collection, you could type:
 
 ```
 db.getCollectionInfos(
@@ -222,6 +231,7 @@ db.getCollectionInfos(
 	}
 )
 ```
+
 ```
 [
         {
@@ -245,11 +255,12 @@ db.getCollectionInfos(
 ]
 ```
 
-To check how many documents a collection contains, use the `db.<collection>.count()` method.  For instance, the following command checks how many documents are in the `system.users` collection:
+To check how many documents a collection contains, use the `db.<collection>.count()` method. For instance, the following command checks how many documents are in the `system.users` collection:
 
 ```
 db.system.users.count()
 ```
+
 ```
 2
 ```
@@ -266,20 +277,21 @@ The command may output more information than you can easily consume, but contain
 
 To create a new collection, there are two options: you can create collections either implicitly or explicitly.
 
-As with databases, MongoDB can automatically create collections the first time a document is written to them.  This method tells MongoDB to create a new collection by inserting a document into a collection that does not exist yet.
+As with databases, MongoDB can automatically create collections the first time a document is written to them. This method tells MongoDB to create a new collection by inserting a document into a collection that does not exist yet.
 
-For instance, we can change back to the `playground` database that we were interested in earlier.  Once we are in that namespace, we can insert a new document into a collection by calling the `insert.()` command on the name we'd like to use for the new collection.  Here, we can create a document about a slide in a new collection called `equipment`:
+For instance, we can change back to the `playground` database that we were interested in earlier. Once we are in that namespace, we can insert a new document into a collection by calling the `insert.()` command on the name we'd like to use for the new collection. Here, we can create a document about a slide in a new collection called `equipment`:
 
 ```
 use playground
 db.equipment.insert({name: "slide"})
 ```
+
 ```
 switched to db playground
 WriteResult({ "nInserted" : 1 })
 ```
 
-The output indicates that one document was written.  The above command performed three separate actions.  First, MongoDB created the `playground` database that we'd referenced in our `use` command.  It also created the `equipment` collection within the database since we call the `insert()` command on that collection name.  Finally, it creates the actual document within the `equipment` collection using the input we provided to the `insert()` command.
+The output indicates that one document was written. The above command performed three separate actions. First, MongoDB created the `playground` database that we'd referenced in our `use` command. It also created the `equipment` collection within the database since we call the `insert()` command on that collection name. Finally, it creates the actual document within the `equipment` collection using the input we provided to the `insert()` command.
 
 You can verify that all of these actions have been performed with the following commands:
 
@@ -292,13 +304,14 @@ db.equipment.find()
 
 The output should show that the `playground` database is now among the listed databases, that the `equipment` collection is listed, that there is one document within the `equipement` collection, and that the document is the `{name: "slide"}` document we inserted in the command.
 
-The other option to use to create collections is to explicitly use the `db.createCollection()` method.  This allows you to create collections without adding any documents to them.
+The other option to use to create collections is to explicitly use the `db.createCollection()` method. This allows you to create collections without adding any documents to them.
 
 For example, you can create a new collection in the `playground` database called `maintenance.requests` by typing:
 
 ```
 db.createCollection("maintenance.requests")
 ```
+
 ```
 { "ok" : 1 }
 ```
@@ -309,13 +322,14 @@ We can verify that the new collection shows up when we query for it, but that it
 show collections
 db.maintenance.requests.count()
 ```
+
 ```
 equipment
 maintenance.requests
 0
 ```
 
-The `db.createCollection()` method is primarily useful because it allows you to specify various options upon creation.  For example, we may want to create a create a *capped collection*, which is a collection that maintains an upper limit on its allocated size it stores by deleting its oldest document when full.
+The `db.createCollection()` method is primarily useful because it allows you to specify various options upon creation. For example, we may want to create a create a _capped collection_, which is a collection that maintains an upper limit on its allocated size it stores by deleting its oldest document when full.
 
 To create a capped collection called `notifications` that can store, at most, 10240 bytes of information, you could call:
 
@@ -328,6 +342,7 @@ db.createCollection(
 	}
 )
 ```
+
 ```
 { "ok" : 1}
 ```
@@ -337,6 +352,7 @@ This will create a capped `notification` collection, which we can verify by typi
 ```
 db.getCollecitonInfos({"options.capped": true})
 ```
+
 ```
 [
         {
@@ -361,7 +377,6 @@ db.getCollecitonInfos({"options.capped": true})
 ]
 ```
 
-
 ## How to delete collections
 
 To delete a collection, you can use the `drop()` method on the collection itself.
@@ -371,6 +386,7 @@ For example, to drop the capped `notifications` collection we created, you can t
 ```
 db.notifications.drop()
 ```
+
 ```
 true
 ```
@@ -380,6 +396,7 @@ You can verify that the operation was successful by listing the collections in t
 ```
 show collections
 ```
+
 ```
 equipment
 maintenance.requests
@@ -387,12 +404,13 @@ maintenance.requests
 
 ## How to delete databases
 
-To delete a whole database, call the `db.dropDatabase()` command.  This will delete the current database, so be sure you are on the correct database before executing:
+To delete a whole database, call the `db.dropDatabase()` command. This will delete the current database, so be sure you are on the correct database before executing:
 
 ```
 use playground
 db.dropDatabase()
 ```
+
 ```
 switched to db playground
 { "dropped" : "playground", "ok" : 1 }
@@ -403,28 +421,30 @@ If you check the list of available databases, `playground` is no longer displaye
 ```
 show dbs
 ```
+
 ```
 admin   0.000GB
 config  0.000GB
 local   0.000GB
 ```
 
-Since we haven't switched to a new database yet, MongoDB is still set up to create a `playground` database should we choose to add a new collection or document.  You can verify this with the `db` command:
+Since we haven't switched to a new database yet, MongoDB is still set up to create a `playground` database should we choose to add a new collection or document. You can verify this with the `db` command:
 
 ```
 db
 ```
+
 ```
 playground
 ```
 
 ## Conclusion
 
-Creating and managing databases and collections is an important skill when using MongoDB.  These basic organizational tools allow you to group related documents together, query subsets of information, and set up authorization policies for different types of data.  Getting familiar with how to effectively manage these structures will allow you to manage your data more effectively with fewer surprises.
+Creating and managing databases and collections is an important skill when using MongoDB. These basic organizational tools allow you to group related documents together, query subsets of information, and set up authorization policies for different types of data. Getting familiar with how to effectively manage these structures will allow you to manage your data more effectively with fewer surprises.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -448,11 +468,12 @@ To drop a database, the basic syntax looks like:
 use playground
 db.dropDatabase()
 ```
+
 </details>
 
 <details><summary>How do you rename a collection in MongoDB?</summary>
 
-To rename a collection in MongoDB, you can use the [`renameCollection()`](https://docs.mongodb.com/manual/reference/method/db.collection.renameCollection/) method. 
+To rename a collection in MongoDB, you can use the [`renameCollection()`](https://docs.mongodb.com/manual/reference/method/db.collection.renameCollection/) method.
 
 The basic syntax would look like:
 
@@ -480,6 +501,7 @@ Alternatively, you can also use the `db.getCollectionNames()` method to get the 
 ```
 db.getCollectionNames()
 ```
+
 ```
 [ "system.roles", "system.users", "system.version" ]
 ```

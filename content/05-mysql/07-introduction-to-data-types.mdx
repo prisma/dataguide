@@ -8,102 +8,102 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-One of the primary features of relational databases in general is the ability to define [schemas](/intro/intro-to-schemas) or [table structures](/mysql/create-and-delete-databases-and-tables#create-tables-within-databases) that exactly specify the format of the data they will contain.  This is done by prescribing the columns that these structures contain along with their *data type* and any constraints.
+One of the primary features of relational databases in general is the ability to define [schemas](/intro/intro-to-schemas) or [table structures](/mysql/create-and-delete-databases-and-tables#create-tables-within-databases) that exactly specify the format of the data they will contain. This is done by prescribing the columns that these structures contain along with their _data type_ and any constraints.
 
-[Data types](/intro/database-glossary#data-type) specify a general pattern for the data they accept and store.  Values must adhere to the requirements that they outline in order to be accepted by MySQL.  While it is possible to define custom requirements, data types provide the basic building blocks that allow MySQL to validate input and work with the data using appropriate operations.
+[Data types](/intro/database-glossary#data-type) specify a general pattern for the data they accept and store. Values must adhere to the requirements that they outline in order to be accepted by MySQL. While it is possible to define custom requirements, data types provide the basic building blocks that allow MySQL to validate input and work with the data using appropriate operations.
 
-MySQL includes [a wide range of data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) that are used to label and validate that values conform to appropriate types.  In this guide, we will discuss the most common data types available in MySQL, the different input and output formats they use, and how to configure various fields to meet your applications' needs.
+MySQL includes [a wide range of data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) that are used to label and validate that values conform to appropriate types. In this guide, we will discuss the most common data types available in MySQL, the different input and output formats they use, and how to configure various fields to meet your applications' needs.
 
 ### What are the data types in MySQL?
 
 Before going into detail, let's take a broad view of what data types MySQL provides.
 
-MySQL supports a reasonable range of data types suitable for various types of simple and complex data.  These include:
+MySQL supports a reasonable range of data types suitable for various types of simple and complex data. These include:
 
-* `TINYINT`
-* `SMALLINT`
-* `MEDIUMINT`
-* `INT`
-* `BIGINT`
-* `DECIMAL`
-* `NUMERIC`
-* `FLOAT`
-* `DOUBLE`
-* `BIT`
-* `DATE`
-* `DATETIME`
-* `TIMESTAMP`
-* `TIME`
-* `YEAR`
-* `CHAR`
-* `VARCHAR`
-* `BINARY`
-* `VARBINARY`
-* `BLOB`
-* `TEXT`
-* `ENUM`
-* `SET`
-* `GEOMETRY`
-* `POINT`
-* `LINESTRING`
-* `POLYGON`
-* `MULTIPOINT`
-* `MULTILINESTRING`
-* `MULTIPOLYGON`
-* `GEOMETRYCOLLECTION`
-* `JSON`
+- `TINYINT`
+- `SMALLINT`
+- `MEDIUMINT`
+- `INT`
+- `BIGINT`
+- `DECIMAL`
+- `NUMERIC`
+- `FLOAT`
+- `DOUBLE`
+- `BIT`
+- `DATE`
+- `DATETIME`
+- `TIMESTAMP`
+- `TIME`
+- `YEAR`
+- `CHAR`
+- `VARCHAR`
+- `BINARY`
+- `VARBINARY`
+- `BLOB`
+- `TEXT`
+- `ENUM`
+- `SET`
+- `GEOMETRY`
+- `POINT`
+- `LINESTRING`
+- `POLYGON`
+- `MULTIPOINT`
+- `MULTILINESTRING`
+- `MULTIPOLYGON`
+- `GEOMETRYCOLLECTION`
+- `JSON`
 
 We'll cover the most common of these in more depth throughout this guide.
 
 ### Getting started with MySQL data types
 
-As you get started with types, it's important to remember that types alone are not always a complete solution to data validation, but a component.  Other database tools, like [constraints](/intro/database-glossary#constraint) also have a role to play in defining correctness.  Still, data types are often the first line of defense against invalid data.
+As you get started with types, it's important to remember that types alone are not always a complete solution to data validation, but a component. Other database tools, like [constraints](/intro/database-glossary#constraint) also have a role to play in defining correctness. Still, data types are often the first line of defense against invalid data.
 
-For many cases, the general types provided by MySQL are appropriate for the kinds of data you'll be storing.  For example, while you could store the coordinates of a geometric point in two different number columns, the provided [`point` type](https://dev.mysql.com/doc/refman/8.0/en/gis-class-point.html) is purpose built to store and validate exactly this type of information.  When choosing types, check to see that you are using the most specific type applicable to your use case.
+For many cases, the general types provided by MySQL are appropriate for the kinds of data you'll be storing. For example, while you could store the coordinates of a geometric point in two different number columns, the provided [`point` type](https://dev.mysql.com/doc/refman/8.0/en/gis-class-point.html) is purpose built to store and validate exactly this type of information. When choosing types, check to see that you are using the most specific type applicable to your use case.
 
 ## Numbers and numeric values
 
-MySQL includes a range of numeric data types suitable for different scenarios.  The appropriate type depends on the exact nature of the values you plan to store as well as your precision requirements.
+MySQL includes a range of numeric data types suitable for different scenarios. The appropriate type depends on the exact nature of the values you plan to store as well as your precision requirements.
 
 ### Integers
 
-The *integer* data type is a category of types used to store numbers without any fractions or decimals.  These can be either positive or negative values, and different integer types can store different ranges of numbers.  Integer types with smaller ranges of acceptable values take up less space than those with wider ranges.
+The _integer_ data type is a category of types used to store numbers without any fractions or decimals. These can be either positive or negative values, and different integer types can store different ranges of numbers. Integer types with smaller ranges of acceptable values take up less space than those with wider ranges.
 
 The basic list of integer types includes the following:
 
 | Integer type | Length  | Applicable signed range   | Applicable unsigned range |
-| ------------ | ------- | --------------------------| ------------------------- |
+| ------------ | ------- | ------------------------- | ------------------------- |
 | `TINYINT`    | 1 bytes | -128 to 127               | 0 to 255                  |
 | `SMALLINT`   | 2 bytes | -32768 to 32767           | 0 to 65535                |
 | `MEDIUMINT`  | 3 bytes | -8388608 to 8388607       | 0 to 16777215             |
 | `INT`        | 4 bytes | -2147483648 to 2147483647 | 0 to 4294967295           |
 | `BIGINT`     | 8 bytes | -2^63 to 2^63-1           | 0 to 2^64-1               |
 
-The types above are limited by their valid range.  Any value outside of the range will result in an error.
+The types above are limited by their valid range. Any value outside of the range will result in an error.
 
-In addition to the types mentioned above, MySQL also recognizes an alias called `SERIAL`.  Marking a column as `SERIAL` will give it these properties: `BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE`.  This is used as a shorthand for common primary key column properties.  The column will automatically assign a new unique value whenever a record is added.
+In addition to the types mentioned above, MySQL also recognizes an alias called `SERIAL`. Marking a column as `SERIAL` will give it these properties: `BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE`. This is used as a shorthand for common primary key column properties. The column will automatically assign a new unique value whenever a record is added.
 
 ### Fixed point
 
-Fixed point types are used to control the amount of *precision* or specificity possible for a number with decimals.  In MySQL, this can be controlled by manipulating two factors: precision and scale.
+Fixed point types are used to control the amount of _precision_ or specificity possible for a number with decimals. In MySQL, this can be controlled by manipulating two factors: precision and scale.
 
-*Precision* is the maximum amount of total digits that a number can have.  In contrast, *scale* is the number of digits to the right of the decimal point.  By manipulating these numbers, you can control how large the fractional and non-fractional components of a number are allowed to be.
+_Precision_ is the maximum amount of total digits that a number can have. In contrast, _scale_ is the number of digits to the right of the decimal point. By manipulating these numbers, you can control how large the fractional and non-fractional components of a number are allowed to be.
 
-These two arguments are used to control arbitrary precision using the *`numeric`* or *`decimal`* data types (these two types are synonymous in MySQL).  The `numeric` type takes zero to two arguments.
+These two arguments are used to control arbitrary precision using the _`numeric`_ or _`decimal`_ data types (these two types are synonymous in MySQL). The `numeric` type takes zero to two arguments.
 
-With no arguments, the column is defined as having a precision of 10 and a scale of 0.  This means that the column can hold up to 10 digits, but none of these can be after the decimal point:
+With no arguments, the column is defined as having a precision of 10 and a scale of 0. This means that the column can hold up to 10 digits, but none of these can be after the decimal point:
 
 ```
 NUMERIC
 ```
 
-When a single argument is provided, it is interpreted as the precision of the column with scale set to 0.  This effectively allows you to specify the maximum number of digits in an integer-like number (no fractional or decimal components).  For example, if you need a 5 digit whole number, you can specify:
+When a single argument is provided, it is interpreted as the precision of the column with scale set to 0. This effectively allows you to specify the maximum number of digits in an integer-like number (no fractional or decimal components). For example, if you need a 5 digit whole number, you can specify:
 
 ```
 NUMERIC(5)
 ```
 
-Specify precision followed by scale when configuring a column using both controls.  MySQL will round the decimal component of any input to the correct number of digits using the scale number.  MySQL will use the precision and scale to determine how many digits are allowed on the left side of the decimal point.  If an entry exceeds the allowed number of digits, MySQL will produce an error.
+Specify precision followed by scale when configuring a column using both controls. MySQL will round the decimal component of any input to the correct number of digits using the scale number. MySQL will use the precision and scale to determine how many digits are allowed on the left side of the decimal point. If an entry exceeds the allowed number of digits, MySQL will produce an error.
 
 For example, we can specify a column with a total precision of 5 and a scale of 2:
 
@@ -113,17 +113,17 @@ NUMERIC(5, 2)
 
 This column would have the following behavior:
 
-Input value | Rounded value | Accepted (fits precision)?
------------ | ------------- | ---------
-400.28080   | 400.28        | Yes
-8.332799    | 8.33          | Yes
-11799.799   | 11799.80      | No
-11799       | 11799         | No
-2802.27     | 2802.27       | No
+| Input value | Rounded value | Accepted (fits precision)? |
+| ----------- | ------------- | -------------------------- |
+| 400.28080   | 400.28        | Yes                        |
+| 8.332799    | 8.33          | Yes                        |
+| 11799.799   | 11799.80      | No                         |
+| 11799       | 11799         | No                         |
+| 2802.27     | 2802.27       | No                         |
 
 ### Floating point
 
-Floating point numbers are another way to express decimal numbers, but without exact, consistent precision.  Instead, floating point types only have a concept of a maximum precision which is often related to the architecture and platform of the hardware.
+Floating point numbers are another way to express decimal numbers, but without exact, consistent precision. Instead, floating point types only have a concept of a maximum precision which is often related to the architecture and platform of the hardware.
 
 For example, to limit a floating point column to 8 digits of precision, you can use the `FLOAT` type, which stores results using 4 bytes with anywhere from 0 to 23 digits of precision:
 
@@ -133,23 +133,23 @@ FLOAT(8)
 
 Similarly, the `DOUBLE` type uses 8 bytes to store data and can use precisions of 24 to 53 digits.
 
-Because of these design choices, floating point numbers can work with numbers with large number of decimals efficiently, but not always exactly.  The internal representation of numbers may cause slight differences between the input and output.  This can cause unexpected behavior when comparing values, doing floating point math, or performing operations that require exact values.
+Because of these design choices, floating point numbers can work with numbers with large number of decimals efficiently, but not always exactly. The internal representation of numbers may cause slight differences between the input and output. This can cause unexpected behavior when comparing values, doing floating point math, or performing operations that require exact values.
 
 ### Floating point vs numeric
 
-Both floating point numbers provided by types like `FLOAT` and `DOUBLE` and fixed point numbers provided by the `NUMERIC` or `DECIMAL` types can be used to store decimal values.  How do you know which one to use?
+Both floating point numbers provided by types like `FLOAT` and `DOUBLE` and fixed point numbers provided by the `NUMERIC` or `DECIMAL` types can be used to store decimal values. How do you know which one to use?
 
-The general rule is that if you need exactness in your calculations, the `NUMERIC` type is always the better choice.  The `NUMERIC` type will store values exactly as they are provided, meaning that the results are entirely predictable when retrieving or computing over values.  The `NUMERIC` type is called arbitrary precision because you specify the amount of precision the type requires and it will store that exact amount of digits in the field.
+The general rule is that if you need exactness in your calculations, the `NUMERIC` type is always the better choice. The `NUMERIC` type will store values exactly as they are provided, meaning that the results are entirely predictable when retrieving or computing over values. The `NUMERIC` type is called arbitrary precision because you specify the amount of precision the type requires and it will store that exact amount of digits in the field.
 
-In contrast, types like `FLOAT` and `DOUBLE` are variable precision types.  The amount of precision they maintain depends on the input value.  When they reach the end of their allowed level of precision, they may round the remaining digits, leading to differences between the submitted and retrieved values.
+In contrast, types like `FLOAT` and `DOUBLE` are variable precision types. The amount of precision they maintain depends on the input value. When they reach the end of their allowed level of precision, they may round the remaining digits, leading to differences between the submitted and retrieved values.
 
-So when would you use variable precision types?  Variable precision types like `FLOAT` and `DOUBLE` are well suited for scenarios where exact values are not necessary (for example, if they'll be rounded anyways) and when speed is highly valuable.  Variable precision will generally offer performance benefits over the `NUMERIC` type.
+So when would you use variable precision types? Variable precision types like `FLOAT` and `DOUBLE` are well suited for scenarios where exact values are not necessary (for example, if they'll be rounded anyways) and when speed is highly valuable. Variable precision will generally offer performance benefits over the `NUMERIC` type.
 
 ## String types
 
-MySQL's character types and string types can be placed into two categories: *fixed length* and *variable length*.  The choice between these two affects how MySQL allocates space for each value and how it validates input.
+MySQL's character types and string types can be placed into two categories: _fixed length_ and _variable length_. The choice between these two affects how MySQL allocates space for each value and how it validates input.
 
-The simplest character-based data type within MySQL is the *`char`* type.  With no arguments, the `char` type accepts a single character as input:
+The simplest character-based data type within MySQL is the _`char`_ type. With no arguments, the `char` type accepts a single character as input:
 
 ```
 CHAR
@@ -163,14 +163,13 @@ CHAR(10)
 
 If a string is provided with fewer characters, blank spaces will be appended to pad the length:
 
-Input  | # of input characters | Stored value | # of stored characters
------  | --------------------- | ------------ | ----------------------
-'tree' | 4                     | 'tree&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' | 10
+| Input  | # of input characters | Stored value                               | # of stored characters |
+| ------ | --------------------- | ------------------------------------------ | ---------------------- |
+| 'tree' | 4                     | 'tree&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' | 10                     |
 
+If a string is given with greater than the allowed number of characters, MySQL will raise an error. As an exception to this rule, if the overflowing characters are all spaces, MySQL will simply truncate the excess spaces to fit the field.
 
-If a string is given with greater than the allowed number of characters, MySQL will raise an error.  As an exception to this rule, if the overflowing characters are all spaces, MySQL will simply truncate the excess spaces to fit the field.
-
-The alternative to fixed length character fields are variable length fields.  For this, MySQL provides the *`varchar`* type.  The `varchar` type stores characters with no fixed size.  Unlike `char`, `varchar` cannot be used without specifying the maximum number of characters to store.
+The alternative to fixed length character fields are variable length fields. For this, MySQL provides the _`varchar`_ type. The `varchar` type stores characters with no fixed size. Unlike `char`, `varchar` cannot be used without specifying the maximum number of characters to store.
 
 By defining a `varchar` with a positive integer, you can set a maximum string length:
 
@@ -180,25 +179,25 @@ VARCHAR(10)
 
 This differs from using the `char` type with an integer in that `varchar` will not pad the value if the input does not meet the maximum field length:
 
-Input  | # of input characters | Stored value | # of stored characters
------  | --------------------- | ------------ | ----------------------
-'tree' | 4                     | 'tree'       | 4
+| Input  | # of input characters | Stored value | # of stored characters |
+| ------ | --------------------- | ------------ | ---------------------- |
+| 'tree' | 4                     | 'tree'       | 4                      |
 
-If the string is greater than the maximum length, MySQL will throw an error.  The same truncation behavior that's present in `char` fields occurs here: if the overflowing characters are spaces, they will be truncated to fit inside the maximum character length.
+If the string is greater than the maximum length, MySQL will throw an error. The same truncation behavior that's present in `char` fields occurs here: if the overflowing characters are spaces, they will be truncated to fit inside the maximum character length.
 
-MySQL also supports the *`binary`* and *`varbinary`* data types.  These operate in a similar manner to the `char` and `varchar` types, but store binary strings rather than character strings.  This has implications on how they are stored and operated on (for things like comparisons, sorting, etc.).
+MySQL also supports the _`binary`_ and _`varbinary`_ data types. These operate in a similar manner to the `char` and `varchar` types, but store binary strings rather than character strings. This has implications on how they are stored and operated on (for things like comparisons, sorting, etc.).
 
 For `binary` and `varbinary` types, the integer given when defining the column type represents the number of bytes instead of the number of characters.
 
-Two other data types that MySQL provides for strings and character storage are *`blob`* and *`text`*.  These types operate similar to the `varchar` and `varbinary` types respectively and are meant for storing large objects.  They operate mostly the same as their counterparts, but have a few differences like not begin able to have default values and requiring a prefix length when creating an index.
+Two other data types that MySQL provides for strings and character storage are _`blob`_ and _`text`_. These types operate similar to the `varchar` and `varbinary` types respectively and are meant for storing large objects. They operate mostly the same as their counterparts, but have a few differences like not begin able to have default values and requiring a prefix length when creating an index.
 
 ## Booleans
 
 MySQL does not actually have a native boolean type to represent true and false values.
 
-MySQL recognizes the types `BOOL` or `BOOLEAN` in an effort for compatibility with other database systems.  Its internal implementation, however, [uses a `TINYINT(1)` column to store the values](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html#idm45912181298400) and interprets them as true or false based on a set of rules.
+MySQL recognizes the types `BOOL` or `BOOLEAN` in an effort for compatibility with other database systems. Its internal implementation, however, [uses a `TINYINT(1)` column to store the values](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html#idm45912181298400) and interprets them as true or false based on a set of rules.
 
-When interpreting numeric values in a boolean context, the value of `0` is considered false.  All non-zero values are considered true.
+When interpreting numeric values in a boolean context, the value of `0` is considered false. All non-zero values are considered true.
 
 MySQL recognizes the [boolean literals `TRUE` and `FALSE`](https://dev.mysql.com/doc/refman/8.0/en/boolean-literals.html) and converts `TRUE` to 1 and `FALSE` to 0 when storing them.
 
@@ -214,9 +213,9 @@ The `date` type can store a date without an associated time value:
 DATE
 ```
 
-When processing input for `date` columns, MySQL can interpret different formats to determine the correct date to store.  However, the component parts must always come in the same sequence: year, month, and then day.  The [`STR_TO_DATE()` function](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_str-to-date) is available to help convert other date formats to a format MySQL will interpret correctly.
+When processing input for `date` columns, MySQL can interpret different formats to determine the correct date to store. However, the component parts must always come in the same sequence: year, month, and then day. The [`STR_TO_DATE()` function](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_str-to-date) is available to help convert other date formats to a format MySQL will interpret correctly.
 
-When displaying dates, MySQL uses the `YYYY-MM-DD` format.  You can use the [`DATE_FORMAT()` function](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_date-format) to format output in other formats.
+When displaying dates, MySQL uses the `YYYY-MM-DD` format. You can use the [`DATE_FORMAT()` function](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_date-format) to format output in other formats.
 
 The `date` type can store values ranging from `1000-01-01` to `9999-12-31`.
 
@@ -224,37 +223,37 @@ The `date` type can store values ranging from `1000-01-01` to `9999-12-31`.
 
 The `time` data type can store a specific time of day without an associated timezone or date.
 
-When processing input for `time` columns, MySQL can interpret multiple formats to determine the correct time to store.  When input has colons, it is generally interpreted as `hh:mm:ss`.  Any shortened value (using only one column) will be interpreted as using `hh:mm`.  When the input does *not* have colons, the time is processed to fill up the smallest value first.  For example, `1045` is taken as 10 minutes and 45 seconds.
+When processing input for `time` columns, MySQL can interpret multiple formats to determine the correct time to store. When input has colons, it is generally interpreted as `hh:mm:ss`. Any shortened value (using only one column) will be interpreted as using `hh:mm`. When the input does _not_ have colons, the time is processed to fill up the smallest value first. For example, `1045` is taken as 10 minutes and 45 seconds.
 
-MySQL also supports fractional seconds if a decimal point is given.  It stores up to 6 digits of precision after the decimal.  Values in `time` columns can range from `-838:59:59.000000` to `838:59:59.000000`.
+MySQL also supports fractional seconds if a decimal point is given. It stores up to 6 digits of precision after the decimal. Values in `time` columns can range from `-838:59:59.000000` to `838:59:59.000000`.
 
-When displaying time values, MySQL uses the `hh:mm:ss` format.  As with dates, a function is provided, called [`TIME_FORMAT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time-format) to display time values using other formats.
+When displaying time values, MySQL uses the `hh:mm:ss` format. As with dates, a function is provided, called [`TIME_FORMAT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time-format) to display time values using other formats.
 
 ## Timestamps and datetime
 
-MySQL can represent [timestamps](https://en.wikipedia.org/wiki/Timestamp), a combination of a date and time used to represent a specific moment in time, in two different variations: using the *`timestamp`* type and the *`datetime`* type.
+MySQL can represent [timestamps](https://en.wikipedia.org/wiki/Timestamp), a combination of a date and time used to represent a specific moment in time, in two different variations: using the _`timestamp`_ type and the _`datetime`_ type.
 
-The `datetime` type can represent values from `1000-01-01 00:00:00` to `9999-12-31 23:59:59`.  It can also include fractional seconds of up to six digits similar to the `time` type.
+The `datetime` type can represent values from `1000-01-01 00:00:00` to `9999-12-31 23:59:59`. It can also include fractional seconds of up to six digits similar to the `time` type.
 
-The `timestamp` type can represent values from `1970-01-01 00:00:01` UTC to `2038-01-19 03:14:07` UTC.  It can handle fractional seconds as well.  When storing `timestamp` values, all values are converted from the given timezone to UTC for storage and converted back to the local timezone on retrieval.  The `datetime` type does not do this.
+The `timestamp` type can represent values from `1970-01-01 00:00:01` UTC to `2038-01-19 03:14:07` UTC. It can handle fractional seconds as well. When storing `timestamp` values, all values are converted from the given timezone to UTC for storage and converted back to the local timezone on retrieval. The `datetime` type does not do this.
 
-From MySQL 8.0.19 onward, you can include a timezone offset when storing a `timestamp` to explicitly set the timezone for the stored value.  You do this by including a value after the time component, with no space to indicate the offset.  The range of accepted values goes from `-14:00` to `+14:00`, which represents the offset of the stored value from UTC.
+From MySQL 8.0.19 onward, you can include a timezone offset when storing a `timestamp` to explicitly set the timezone for the stored value. You do this by including a value after the time component, with no space to indicate the offset. The range of accepted values goes from `-14:00` to `+14:00`, which represents the offset of the stored value from UTC.
 
 When deciding on whether to store date and time values using `datetime` or `timezone` types, it's often helpful to separate them by what they are best for.
 
-Think of `datetime` values as a specific date and time, in relationship to the calendar and clock wherever it is retrieved.  If a person goes to bed at 11pm at night, a `datetime` value can represent that value, regardless of what timezone the person is in currently.
+Think of `datetime` values as a specific date and time, in relationship to the calendar and clock wherever it is retrieved. If a person goes to bed at 11pm at night, a `datetime` value can represent that value, regardless of what timezone the person is in currently.
 
-On the other hand, `timezone` values are best at representing a specific moment in time that is unambiguous across timezones.  To send a video call invite, a `timezone` value would be able to make sure the meeting occurs at the same time for everyone, regardless of what timezone the participant is in.
+On the other hand, `timezone` values are best at representing a specific moment in time that is unambiguous across timezones. To send a video call invite, a `timezone` value would be able to make sure the meeting occurs at the same time for everyone, regardless of what timezone the participant is in.
 
 ## Other useful types
 
-Along with the types we covered with some depth above, there are additional types that are useful in specific scenarios.  We'll cover these briefly to give you an idea of how to use them and when they may be useful.
+Along with the types we covered with some depth above, there are additional types that are useful in specific scenarios. We'll cover these briefly to give you an idea of how to use them and when they may be useful.
 
 ### Enumerated and set types
 
-Two related types that allow users to dictate the valid values for a column are the *`enum`* and *`set`* types.
+Two related types that allow users to dictate the valid values for a column are the _`enum`_ and _`set`_ types.
 
-The [`enum` type](https://dev.mysql.com/doc/refman/8.0/en/enum.html) is a string type that allows the user to define a collection of valid values when the column is created.  Any value that matches one of the defined values is accepted and all other values are rejected.  This functions similar to a drop down menu in that a choice can be made from a specific set of options. For example, an `enum` called `season` could be created with the values `winter`, `spring`, `summer`, and `autumn`.
+The [`enum` type](https://dev.mysql.com/doc/refman/8.0/en/enum.html) is a string type that allows the user to define a collection of valid values when the column is created. Any value that matches one of the defined values is accepted and all other values are rejected. This functions similar to a drop down menu in that a choice can be made from a specific set of options. For example, an `enum` called `season` could be created with the values `winter`, `spring`, `summer`, and `autumn`.
 
 To create an `enum` column, specify the type as `enum`, giving the possible values as strings, separated by commas, inside of a set of parentheses, like this:
 
@@ -262,7 +261,7 @@ To create an `enum` column, specify the type as `enum`, giving the possible valu
 season ENUM('winter', 'spring', 'summer', 'autumn')
 ```
 
-A similar type of user-defined type is the [`set` type](https://dev.mysql.com/doc/refman/8.0/en/set.html).  Like the `enum` type, `set` types allow users to specify valid values as strings upon definition.  The difference between these two types is that in a `set`, more than one value can be stored for each record.
+A similar type of user-defined type is the [`set` type](https://dev.mysql.com/doc/refman/8.0/en/set.html). Like the `enum` type, `set` types allow users to specify valid values as strings upon definition. The difference between these two types is that in a `set`, more than one value can be stored for each record.
 
 For example, if you needed a column to a represent the days of the week volunteers are available to work, you could have a `set` column like this:
 
@@ -270,7 +269,7 @@ For example, if you needed a column to a represent the days of the week voluntee
 availability SET('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday')
 ```
 
-When entering values for the `availability` column we just created, you provide a single string with commas separating all of the days the volunteer is available.  For example:
+When entering values for the `availability` column we just created, you provide a single string with commas separating all of the days the volunteer is available. For example:
 
 ```
 'monday,tuesday,wednesday,thursday,friday'
@@ -283,7 +282,7 @@ For `set` types in MySQL, duplicate values in input are always removed and upon 
 
 ### JSON
 
-MySQL supports columns in [JSON](https://en.wikipedia.org/wiki/JSON) using the `json` type.  Data stored as `json` is stored in binary for faster execution and processing so that the server does not have to interpret a string to operate on `JSON` values.
+MySQL supports columns in [JSON](https://en.wikipedia.org/wiki/JSON) using the `json` type. Data stored as `json` is stored in binary for faster execution and processing so that the server does not have to interpret a string to operate on `JSON` values.
 
 ```
 JSON
@@ -293,15 +292,15 @@ To operate on `JSON` columns, MySQL provides [a number of functions](https://dev
 
 ## Conclusion
 
-In this article, we've covered a lot of the most common data types that are useful when working with MySQL databases.  There are [additional types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) not covered in this guide that are helpful to know about, but these represent a good starting point for most use cases.
+In this article, we've covered a lot of the most common data types that are useful when working with MySQL databases. There are [additional types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html) not covered in this guide that are helpful to know about, but these represent a good starting point for most use cases.
 
-It is important to use the type system appropriately so that you can control valid values and operate on data as expected.  There are pitfalls you can run into if you choose a type not suited for your data, so giving it thought before you commit to a data type is worthwhile in most cases.
+It is important to use the type system appropriately so that you can control valid values and operate on data as expected. There are pitfalls you can run into if you choose a type not suited for your data, so giving it thought before you commit to a data type is worthwhile in most cases.
 
-If you are using [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to work with your MySQL databases, you can find a mapping between some of the common MySQL and Prisma types in [Prisma's MySQL data connectors docs](https://www.prisma.io/docs/concepts/database-connectors/mysql#type-mapping-between-mysql-to-prisma-schema).
+If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to work with your MySQL databases, you can find a mapping between some of the common MySQL and Prisma types in [Prisma's MySQL data connectors docs](https://www.prisma.io/docs/orm/overview/databases/mysql#type-mapping-between-mysql-to-prisma-schema).
 
 <PrismaOutlinks>
 
-In the data model used by Prisma schema, data types are represented by [field types](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-fields).  Check out our documentation to learn more.
+In the data model used by Prisma schema, data types are represented by [field types](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-fields). Check out our documentation to learn more.
 
 </PrismaOutlinks>
 
@@ -311,21 +310,21 @@ In the data model used by Prisma schema, data types are represented by [field ty
 
 The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D)`. The ranges of values for the arguments are as follows:
 
-* *M* is the maximum number of digits (the precision). It has a range of 1 to 65.
-* *D* is the number of digits to the right of the decimal point (the scale). It has a range of 0 to 30 and must be no larger than *M*. 
+- _M_ is the maximum number of digits (the precision). It has a range of 1 to 65.
+- _D_ is the number of digits to the right of the decimal point (the scale). It has a range of 0 to 30 and must be no larger than _M_.
 
 </details>
 
 <details><summary>How does MySQL store `TEXT`?</summary>
 
-The [storage requirements](https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html) for string types in MySQL can be represented in the following table with *L* representing the actual length in bytes of a given string value.
+The [storage requirements](https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html) for string types in MySQL can be represented in the following table with _L_ representing the actual length in bytes of a given string value.
 
-| Data Type | Storage Required |
-| --------- | ---------------- |
-| TINYTEXT  | *L* + 1 bytes, where *L* < 2^8 |
-| TEXT  | *L* + 2 bytes, where *L* < 2^16 |
-| MEDIUMTEXT  | *L* + 3 bytes, where *L* < 2^24|
-| LONGTEXT  | *L* + 4 bytes, where *L* < 2^32 |
+| Data Type  | Storage Required                |
+| ---------- | ------------------------------- |
+| TINYTEXT   | _L_ + 1 bytes, where _L_ < 2^8  |
+| TEXT       | _L_ + 2 bytes, where _L_ < 2^16 |
+| MEDIUMTEXT | _L_ + 3 bytes, where _L_ < 2^24 |
+| LONGTEXT   | _L_ + 4 bytes, where _L_ < 2^32 |
 
 </details>
 
@@ -339,7 +338,7 @@ The example definition syntax of a `VARCHAR` would look like this:
 
 ```
 VARCHAR(10)
-``` 
+```
 
 </details>
 
@@ -357,8 +356,8 @@ The effective maximum length of a `VARCHAR` is subject to the maximum row size a
 
 It has the same storage requirements as all columns:
 
-| Data Type | Storage Required |
-| --------- | ---------------- |
-| ENUM  | 1 or 2 bytes, depending on the number of enumeration values (65,535 values maximum) |
+| Data Type | Storage Required                                                                    |
+| --------- | ----------------------------------------------------------------------------------- |
+| ENUM      | 1 or 2 bytes, depending on the number of enumeration values (65,535 values maximum) |
 
 </details>

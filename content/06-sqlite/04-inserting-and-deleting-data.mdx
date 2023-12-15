@@ -36,11 +36,11 @@ To get a more easily read result, you can use the `.fullschema --indent` command
 
 ```sql
 CREATE TABLE student (
-	id INTEGER PRIMARY KEY, 
-	first_name TEXT, 
-	last_name TEXT, 
-	age INTEGER, 
-	student_email TEXT NOT NULL, 
+	id INTEGER PRIMARY KEY,
+	first_name TEXT,
+	last_name TEXT,
+	age INTEGER,
+	student_email TEXT NOT NULL,
 	class TEXT
 );
 ```
@@ -83,7 +83,7 @@ SELECT * FROM student;
 
 <PrismaOutlinks>
 
-You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#create).
+You can also use the Prisma Client to add data to your tables by issuing a [create query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#create).
 
 </PrismaOutlinks>
 
@@ -99,7 +99,7 @@ VALUES
 	('value', 'value2'),
 	('value3', 'value4'),
 	('value5', 'value6');
-	
+
 ```
 
 For the `student` table we've been referencing, you can add three new students in a single statement by typing:
@@ -110,7 +110,7 @@ VALUES
 	('Abigail', 'Spencer', 'abispence@university.com'),
 	('Tamal', 'Wayne', 'tamalwayne@university.com'),
 	('Felipe', 'Espinosa', 'felesp@university.com');
-	
+
 ```
 
 ## Using `DELETE` to remove rows from tables
@@ -133,7 +133,7 @@ WHERE last_name = 'Wayne';
 
 <PrismaOutlinks>
 
-To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#delete).
+To remove data from your tables using Prisma Client, use a [delete query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#delete).
 
 </PrismaOutlinks>
 
@@ -156,7 +156,7 @@ DELETE FROM student;
 
 <PrismaOutlinks>
 
-Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/concepts/components/prisma-client/crud#deletemany) to delete multiple rows of data at one time.
+Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/docs/orm/prisma-client/queries/crud#deletemany) to delete multiple rows of data at one time.
 
 </PrismaOutlinks>
 
@@ -165,4 +165,3 @@ Prisma Client uses a separate query called [deleteMany](https://www.prisma.io/do
 In this article, we covered the basics of how to insert and remove data from SQLite tables. We first discussed how to find your table's structure to ensure the construction of valid data insertion queries. We then covered how to insert and delete data both one at a time and in batches.
 
 The `INSERT` and `DELETE` commands are some of the most useful commands for managing what data is maintained inside of your tables. A comprehension of their basic syntax and operation will allow you to add or remove records from your database structures quickly and effectively.
-

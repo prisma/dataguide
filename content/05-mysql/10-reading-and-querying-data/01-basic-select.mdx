@@ -1,16 +1,16 @@
 ---
 title: 'How to perform basic queries with `SELECT` in MySQL'
 metaTitle: "Basic Select | MySQL Basic Queries | Prisma's Data Guide"
-metaDescription: "The `SELECT` command is the main way to query the data within tables and views in MySQL.  This guide demonstrates the basic syntax and operation of this highly flexible command."
+metaDescription: 'The `SELECT` command is the main way to query the data within tables and views in MySQL.  This guide demonstrates the basic syntax and operation of this highly flexible command.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-`SELECT` is the most suitable SQL command for when you are trying to query and return information inside of your MySQL tables.  As its name implies, it is used to specify criteria used to select matching records from within the database.  This is a broadly useful role that is suitable not only for [reading data](/intro/database-glossary#read-operation), but also for targeting updates and other actions.
+`SELECT` is the most suitable SQL command for when you are trying to query and return information inside of your MySQL tables. As its name implies, it is used to specify criteria used to select matching records from within the database. This is a broadly useful role that is suitable not only for [reading data](/intro/database-glossary#read-operation), but also for targeting updates and other actions.
 
-In this article, we'll introduce the basic form of the `SELECT` command and demonstrate how to use it to return data.  While `SELECT` supports many advanced use cases, we'll stick to some of the simpler forms to demonstrate the basic command structure.
+In this article, we'll introduce the basic form of the `SELECT` command and demonstrate how to use it to return data. While `SELECT` supports many advanced use cases, we'll stick to some of the simpler forms to demonstrate the basic command structure.
 
 ## The general syntax of the `SELECT` command
 
@@ -22,10 +22,10 @@ SELECT <column_names> FROM <table_name> <additional_conditions_and_formatting>;
 
 This statement is composed of a few different pieces:
 
-* `SELECT`: The `SELECT` command itself.  This SQL command indicates that we want to query [tables](/intro/database-glossary#table) or [views](/intro/database-glossary#view) for data they contain.  The arguments and clauses surrounding it determine both the contents and the format of the output returned.
-* `<column_names>`: The `SELECT` statement can return entire rows (if specified with the `*` wildcard character) or a subset of the available columns.  If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
-* `FROM <table_name>`: The `FROM` keyword is used to indicate the table or view that should be queried.  In most simple queries, this consists of a single table that contains the data you're interested in.
-* `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command.  You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
+- `SELECT`: The `SELECT` command itself. This SQL command indicates that we want to query [tables](/intro/database-glossary#table) or [views](/intro/database-glossary#view) for data they contain. The arguments and clauses surrounding it determine both the contents and the format of the output returned.
+- `<column_names>`: The `SELECT` statement can return entire rows (if specified with the `*` wildcard character) or a subset of the available columns. If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
+- `FROM <table_name>`: The `FROM` keyword is used to indicate the table or view that should be queried. In most simple queries, this consists of a single table that contains the data you're interested in.
+- `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command. You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
 
 ## Specifying columns to display with `SELECT`
 
@@ -37,7 +37,7 @@ For ad hoc querying and during data exploration, one of the most helpful options
 SELECT * FROM my_table;
 ```
 
-This will display all of the records from `my_table` since we do not provide any filtering to narrow the results.  All of the columns for each record will be shown in the order that they are defined within the table.
+This will display all of the records from `my_table` since we do not provide any filtering to narrow the results. All of the columns for each record will be shown in the order that they are defined within the table.
 
 One modification you may want to use if querying a table with many columns is to end your statement with `\G` instead of a semicolon `;`:
 
@@ -45,9 +45,9 @@ One modification you may want to use if querying a table with many columns is to
 SELECT * FROM my_table\G
 ```
 
-The `\G` statement terminator tells MySQL to display the results vertically instead of horizontally, which can improve readability in tables with many columns or long values.  You can use `\G` to terminate any statement, not just with `SELECT`.
+The `\G` statement terminator tells MySQL to display the results vertically instead of horizontally, which can improve readability in tables with many columns or long values. You can use `\G` to terminate any statement, not just with `SELECT`.
 
-You can also choose to view a subset of available column by specifying them by name.  Column names are separated by commas and are displayed in the order in which they are given:
+You can also choose to view a subset of available column by specifying them by name. Column names are separated by commas and are displayed in the order in which they are given:
 
 ```sql
 SELECT column2, column1 FROM my_table;
@@ -63,21 +63,21 @@ You can optionally set _column aliases_ to modify the name used for columns in t
 SELECT column1 AS "first column" FROM my_table;
 ```
 
-This will show the each of the values for `column1` in `my_table`.  However, the column in the output will be labeled as `first column` instead of `column1`.
+This will show the each of the values for `column1` in `my_table`. However, the column in the output will be labeled as `first column` instead of `column1`.
 
 This is especially useful if the output combines column names from multiple tables that might share names or if it includes computed columns that don't already have a name.
 
 ## Defining sort order with `ORDER BY`
 
-The `ORDER BY` clause can be used to sort the resulting rows according to the criteria given.  The general syntax looks like this:
+The `ORDER BY` clause can be used to sort the resulting rows according to the criteria given. The general syntax looks like this:
 
 ```sql
 SELECT * FROM my_table ORDER BY <sort_expression>;
 ```
 
-This will display the values for all columns in all records within `my_table`.  The results will be ordered according to the expression represented by the placeholder `<sort_expression>`.
+This will display the values for all columns in all records within `my_table`. The results will be ordered according to the expression represented by the placeholder `<sort_expression>`.
 
-For example, suppose we have a `customer` table that contains columns for `first_name`, `last_name`, `address`, and `phone_number`.  If we want to display the results in alphabetical order by `last_name`, we could use the following command:
+For example, suppose we have a `customer` table that contains columns for `first_name`, `last_name`, `address`, and `phone_number`. If we want to display the results in alphabetical order by `last_name`, we could use the following command:
 
 <CodeWithResult>
 
@@ -141,7 +141,7 @@ SELECT * FROM customer ORDER BY last_name DESC;
 
 </CodeWithResult>
 
-You can also sort by multiple columns.  Here, we sort first by `last_name`, and then by `first_name` for any columns with the same `last_name` value.  Both sorts are in ascending order:
+You can also sort by multiple columns. Here, we sort first by `last_name`, and then by `first_name` for any columns with the same `last_name` value. Both sorts are in ascending order:
 
 <CodeWithResult>
 
@@ -174,13 +174,13 @@ SELECT * FROM customer ORDER BY last_name, first_name;
 
 <PrismaOutlinks>
 
-You can [sort your results](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting) with Prisma Client in much the same way as you would in an SQL query.
+You can [sort your results](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting) with Prisma Client in much the same way as you would in an SQL query.
 
 </PrismaOutlinks>
 
 ## Getting distinct results
 
-If you want to find the range of values for a column in MySQL, you can use the `SELECT DISTINCT` variant.  This will display a single row for each distinct value of a column.
+If you want to find the range of values for a column in MySQL, you can use the `SELECT DISTINCT` variant. This will display a single row for each distinct value of a column.
 
 The basic syntax looks like this:
 
@@ -195,6 +195,7 @@ For example, to display all of the different values for `color` that your `shirt
 ```sql
 SELECT DISTINCT color FROM shirt;
 ```
+
 ```
 +--------+
 | color  |
@@ -215,6 +216,7 @@ For instance, this will display all of the different combinations of `color` and
 ```sql
 SELECT DISTINCT color,shirt_size FROM shirt;
 ```
+
 ```
 +--------+------------+
 | color  | shirt_size |
@@ -236,10 +238,10 @@ This displays every unique combination of `color` and `shirt_size` within the ta
 
 <PrismaOutlinks>
 
-You can filter duplicate rows from your query with Prisma Client by using the [distinct](https://www.prisma.io/docs/concepts/components/prisma-client/aggregation-grouping-summarizing#select-distinct) functionality.
+You can filter duplicate rows from your query with Prisma Client by using the [distinct](https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing#select-distinct) functionality.
 
 </PrismaOutlinks>
 
 ## Conclusion
 
-In this article, we introduced some basic elements of the `SELECT` command to demonstrate how to return data from MySQL tables.  There are many more optional clauses that modify the behavior of the command, allowing you to narrow down which results you want, specify the number of rows to return, and more.  In later articles, we explore these modifiers to enhance the usefulness of `SELECT`.
+In this article, we introduced some basic elements of the `SELECT` command to demonstrate how to return data from MySQL tables. There are many more optional clauses that modify the behavior of the command, allowing you to narrow down which results you want, specify the number of rows to return, and more. In later articles, we explore these modifiers to enhance the usefulness of `SELECT`.
