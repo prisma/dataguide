@@ -1,39 +1,40 @@
 ---
 title: 'How check your MySQL configuration for syntax errors'
-metaTitle: "Validating MySQL server configuration"
-metaDescription: "Learn how to check your MySQL server configuration file for syntax errors."
+metaTitle: 'Validating MySQL server configuration'
+metaDescription: 'Learn how to check your MySQL server configuration file for syntax errors.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-When configuring services, it's important to try to validate your changes before applying them to the environments that they will impact.  This is especially true for changes made to essential services like MySQL databases.
+When configuring services, it's important to try to validate your changes before applying them to the environments that they will impact. This is especially true for changes made to essential services like MySQL databases.
 
-While many changes need to be checked manually for semantic correctness (making sure the configuration means what you intend it to mean), often you can automate checks for syntactic correctness (making sure the changes are in an expected format).  This provides a limited, but extremely helpful check that can catch spelling mistakes, incorrect punctuation, and malformed configuration options that would otherwise prevent the server from starting correctly when attempting to incorporate new changes.
+While many changes need to be checked manually for semantic correctness (making sure the configuration means what you intend it to mean), often you can automate checks for syntactic correctness (making sure the changes are in an expected format). This provides a limited, but extremely helpful check that can catch spelling mistakes, incorrect punctuation, and malformed configuration options that would otherwise prevent the server from starting correctly when attempting to incorporate new changes.
 
-In this short guide, we'll cover how to validate MySQL server configuration files using the built-in options.  This can help you validate that the edits you perform won't interfere with MySQL when you restart the service.
+In this short guide, we'll cover how to validate MySQL server configuration files using the built-in options. This can help you validate that the edits you perform won't interfere with MySQL when you restart the service.
 
 ## Checking MySQL server configuration files
 
-The `mysqld` binary used to run the MySQL server includes many options that you might not use on a regular basis.  One of these is the `--validate-config` flag.
+The `mysqld` binary used to run the MySQL server includes many options that you might not use on a regular basis. One of these is the `--validate-config` flag.
 
-The `--validate-config` flag causes the `mysqld` binary to parse its configuration file and then exit.  You can run the validation check by typing:
+The `--validate-config` flag causes the `mysqld` binary to parse its configuration file and then exit. You can run the validation check by typing:
 
 ```shell
 mysqld --validate-config
 ```
 
-If no problems are found, the program will exit successfully with no output instead of attempting to start the MySQL server.  You can verify that the process exited successfully by checking its exit code:
+If no problems are found, the program will exit successfully with no output instead of attempting to start the MySQL server. You can verify that the process exited successfully by checking its exit code:
 
 ```shell
 echo $?
 ```
+
 ```
 0
 ```
 
-If any errors are found, MySQL will abort the process as it would in an actual startup scenario and output information about the file and line where the problem occurred.  You can add syntax errors to your MySQL configuration file to trigger this process see the output.  For instance, you can 
+If any errors are found, MySQL will abort the process as it would in an actual startup scenario and output information about the file and line where the problem occurred. You can add syntax errors to your MySQL configuration file to trigger this process see the output. For instance, you can
 
 ```shell
 echo "hello there" | sudo tee --append /etc/mysql/my.cnf
@@ -51,11 +52,12 @@ The exit code also verifies that an error occurred:
 ```shell
 echo $?
 ```
+
 ```
 1
 ```
 
-You can use `sed` to remove the line we added to the MySQL configuration file.  Validate the configuration file again to ensure that the removal was successful:
+You can use `sed` to remove the line we added to the MySQL configuration file. Validate the configuration file again to ensure that the removal was successful:
 
 ```shell
 sudo sed --in-place '/hello there/d' /etc/mysql/my.cnf
@@ -66,11 +68,10 @@ The server configuration file is now verified to by syntactically correct again.
 
 ## Conclusion
 
-In this guide, we covered how to use the `mysqld` binary with the `--validate-config` flag to validate the MySQL server's configuration files for errors.  While this cannot be used to detect all errors, it goes a long way towards preventing typos, incorrect configuration grammar, and invalid options.  It is a good idea to always use the `--validate-config` flag before restarting your server to ensure that your new configuration is valid before stopping your database service.
-
+In this guide, we covered how to use the `mysqld` binary with the `--validate-config` flag to validate the MySQL server's configuration files for errors. While this cannot be used to detect all errors, it goes a long way towards preventing typos, incorrect configuration grammar, and invalid options. It is a good idea to always use the `--validate-config` flag before restarting your server to ensure that your new configuration is valid before stopping your database service.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/concepts/database-connectors/mysql#connection-details).
+If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/orm/overview/databases/mysql#connection-details).
 
 </PrismaOutlinks>

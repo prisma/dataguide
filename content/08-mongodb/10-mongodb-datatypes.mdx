@@ -8,22 +8,22 @@ authors: ['alexemerich']
 
 ## Introduction
 
-When using [MongoDB](/intro/database-glossary#mongodb), you have the ability to be flexible with the structure of your data. You are not locked into maintaining a certain [schema](/intro/database-glossary#schema) that all of your [documents](/intro/database-glossary#document) must fit into. For any given field in a document, you are able to use any of the available [*data types*](/intro/database-glossary#data-type) supported by MongoDB. Despite this default way of working, you are able to impose a [JSON Schema](https://docs.mongodb.com/manual/core/schema-validation/) in MongoDB to add validation on your collections if desired. We won't go into the details of schema design in this guide, but it can have an effect on data typing if implemented.
+When using [MongoDB](/intro/database-glossary#mongodb), you have the ability to be flexible with the structure of your data. You are not locked into maintaining a certain [schema](/intro/database-glossary#schema) that all of your [documents](/intro/database-glossary#document) must fit into. For any given field in a document, you are able to use any of the available [_data types_](/intro/database-glossary#data-type) supported by MongoDB. Despite this default way of working, you are able to impose a [JSON Schema](https://docs.mongodb.com/manual/core/schema-validation/) in MongoDB to add validation on your collections if desired. We won't go into the details of schema design in this guide, but it can have an effect on data typing if implemented.
 
-Data types specify a general pattern for the data they accept and store. It is paramount to understand when to choose a certain data type over another when planning your database. The type chosen is going to dictate how you're able to operate on your data and how it is stored. 
+Data types specify a general pattern for the data they accept and store. It is paramount to understand when to choose a certain data type over another when planning your database. The type chosen is going to dictate how you're able to operate on your data and how it is stored.
 
 ## JSON and BSON
 
-Before getting into the details of specific data types, it is important to have an understanding of how MongoDB stores data. MongoDB and many other [document-based NoSQL databases](/intro/database-glossary#document-database) use [JSON](https://www.mongodb.com/json-and-bson)  (JavaScript Object Notation) to represent data records as [documents](https://www.prisma.io/dataguide/mongodb/managing-documents). 
+Before getting into the details of specific data types, it is important to have an understanding of how MongoDB stores data. MongoDB and many other [document-based NoSQL databases](/intro/database-glossary#document-database) use [JSON](https://www.mongodb.com/json-and-bson) (JavaScript Object Notation) to represent data records as [documents](https://www.prisma.io/dataguide/mongodb/managing-documents).
 
 There are many advantages to using JSON to store data. Some of them being:
 
-* easiness to read, learn, and its familiarity among developers
-* flexibility in format, whether sparse, hierarchical, or deeply nested
-* self-describing, which allows for applications to easily operate with JSON data
-* allows for the focus on a minimal number of basic types 
+- easiness to read, learn, and its familiarity among developers
+- flexibility in format, whether sparse, hierarchical, or deeply nested
+- self-describing, which allows for applications to easily operate with JSON data
+- allows for the focus on a minimal number of basic types
 
-JSON supports all the basic data types like string, number, boolean, etc. MongoDB actually stores data records as Binary-encoded JSON ([BSON](https://bsonspec.org/)) documents. Like JSON, BSON supports the embedding of documents and arrays within other documents and arrays. BSON allows for additional data types that are not available to JSON. 
+JSON supports all the basic data types like string, number, boolean, etc. MongoDB actually stores data records as Binary-encoded JSON ([BSON](https://bsonspec.org/)) documents. Like JSON, BSON supports the embedding of documents and arrays within other documents and arrays. BSON allows for additional data types that are not available to JSON.
 
 ## What are the data types in MongoDB?
 
@@ -33,38 +33,38 @@ MongoDB supports a range of data types suitable for various types of both simple
 
 Text
 
-* `String`
+- `String`
 
 Numeric
 
-* `32-Bit Integer`
-* `64-Bit Integer`
-* `Double`
-* `Decimal128`
+- `32-Bit Integer`
+- `64-Bit Integer`
+- `Double`
+- `Decimal128`
 
 Date/Time
 
-* `Date`
-* `Timestamp`
+- `Date`
+- `Timestamp`
 
 Other
 
-* `Object`
-* `Array`
-* `Binary Data`
-* `ObjectId`
-* `Boolean`
-* `Null`
-* `Regular Expression`
-* `JavaScript`
-* `Min Key`
-* `Max Key`
+- `Object`
+- `Array`
+- `Binary Data`
+- `ObjectId`
+- `Boolean`
+- `Null`
+- `Regular Expression`
+- `JavaScript`
+- `Min Key`
+- `Max Key`
 
 In MongoDB, each BSON type has both an integer and string identifiers. We'll cover the most common of these in more depth throughout this guide.
 
 <PrismaOutlinks>
 
-With MongoDB's document model, you are able to store data in embedded documents. Check out how you can find, create, update, and delete [composite types with the Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client/composite-types), and model your data by [defining fields in your Prisma Schema](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-fields). 
+With MongoDB's document model, you are able to store data in embedded documents. Check out how you can find, create, update, and delete [composite types with the Prisma Client](https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/composite-types), and model your data by [defining fields in your Prisma Schema](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-fields).
 
 </PrismaOutlinks>
 
@@ -78,7 +78,7 @@ The string type is the most commonly used MongoDB data type. Any value written i
 |      String        |    2   | "string" |
 ```
 
-Generally, drivers for programming languages will convert from the language's string format to UTF-8 when serializing and deserializing BSON. This makes BSON an attractive method for storing international characters with ease for example. 
+Generally, drivers for programming languages will convert from the language's string format to UTF-8 when serializing and deserializing BSON. This makes BSON an attractive method for storing international characters with ease for example.
 
 Inserting a document with a `String` data type will look something like this:
 
@@ -95,7 +95,7 @@ Querying the collection will return the following:
 ```shell
 db.mytestcoll.find().pretty()
 {
-		_id: ObjectId("614b37296a124db40ae74d15"), 
+		_id: ObjectId("614b37296a124db40ae74d15"),
 		first_name: "Alex"
 }
 ```
@@ -138,19 +138,17 @@ Because we did not insert any `Null` type values into our collection, the result
 
 You can use the same method with all of the following types that we will discuss.
 
-
-
 ## Numbers and numeric values
 
-MongoDB includes a range of numeric data types suitable for different scenarios. Deciding which type to use depends on the nature of the values you plan to store and your use cases for the data. JSON calls anything with numbers a *Number*. That forces the system to figure out how to turn it into the nearest native data type. We'll start off by exploring integers and how they work in MongoDB.
+MongoDB includes a range of numeric data types suitable for different scenarios. Deciding which type to use depends on the nature of the values you plan to store and your use cases for the data. JSON calls anything with numbers a _Number_. That forces the system to figure out how to turn it into the nearest native data type. We'll start off by exploring integers and how they work in MongoDB.
 
 ### Integer
 
 The `Integer` data type is used to store numbers as whole numbers without any fractions or decimals. Integers can either be positive or negative values. There are two types in MongoDB, `32-Bit Integer` and `64-Bit Integer`. They can be represented in the two ways depicted in the table below, `number` and `alias`:
 
 ```
-| Integer type   | number |    alias     | 
-| ------------   | -----  | ------------ | 
+| Integer type   | number |    alias     |
+| ------------   | -----  | ------------ |
 |`32-bit integer`|   16   |    "int"     |
 |`64-bit integer`|   18   |    "long"    |
 ```
@@ -161,7 +159,7 @@ The ranges a value can fit into for each type are the following:
 | Integer type   |    Applicable signed range     |    Applicable unsigned range    |
 | ------------   | ------------------------------ | ------------------------------- |
 |`32-bit integer`| -2,147,483,648 to 2,147,483,647|  0 to 4,294,967,295             |
-|`64-bit integer`| -9,223,372,036,854,775,808 to  |  0 to 18,446,744,073,709,551,615 
+|`64-bit integer`| -9,223,372,036,854,775,808 to  |  0 to 18,446,744,073,709,551,615
                         9,223,372,036,854,775,807
 ```
 
@@ -188,7 +186,7 @@ As suggested by the names, a `32-Bit Integer` has 32 bits of integer precision w
 
 ### Double
 
-In BSON, the default replacement for JSON's *Number* is the `Double` data type. The `Double` data type is used to store a floating-point value and can be represented in MongoDB like so: 
+In BSON, the default replacement for JSON's _Number_ is the `Double` data type. The `Double` data type is used to store a floating-point value and can be represented in MongoDB like so:
 
 ```
 |       Type         | Number |   Alias  |
@@ -196,7 +194,7 @@ In BSON, the default replacement for JSON's *Number* is the `Double` data type. 
 |      Double        |    1   | "double" |
 ```
 
-Floating point numbers are another way to express decimal numbers, but without exact, consistent precision. 
+Floating point numbers are another way to express decimal numbers, but without exact, consistent precision.
 
 Floating point numbers can work with a large number of decimals efficiently but not always exactly. The following is an example of entering a document with the `Double` type into your collection:
 
@@ -208,7 +206,7 @@ db.mytestcoll.insertOne({testScore: 89.6})
 }
 ```
 
-There can be slight differences between input and output when calculating with doubles that could potentially lead to unexpected behavior. When performing operations that require exact values MongoDB has a more precise type. 
+There can be slight differences between input and output when calculating with doubles that could potentially lead to unexpected behavior. When performing operations that require exact values MongoDB has a more precise type.
 
 ### Decimal128
 
@@ -222,7 +220,7 @@ If you are working with very large numbers with lots of floating point range, th
 
 The BSON type, `Decimal128`, provides 128 bits of decimal representation for storing numbers where rounding decimals exactly is important. `Decimal128` supports 34 decimal digits of precision, or a [sinificand](https://en.wikipedia.org/wiki/Significand) with a range of -6143 to +6144. This allows for a high amount of precision.
 
-Inserting a value using the `Decimal128` data type requires using the [`NumberDecimal()`](https://docs.mongodb.com/manual/core/shell-types/#std-label-shell-type-decimal) constructor with your number as a `String` to keep MongoDB from using the default numeric type, `Double`. 
+Inserting a value using the `Decimal128` data type requires using the [`NumberDecimal()`](https://docs.mongodb.com/manual/core/shell-types/#std-label-shell-type-decimal) constructor with your number as a `String` to keep MongoDB from using the default numeric type, `Double`.
 
 Here, we demonstrate this:
 
@@ -239,14 +237,12 @@ When querying the collection, you then get the following return:
 ```shell
 db.mytestcoll.find().pretty()
 {
-		_id: ObjectId("614b37296a124db40ae74d12"), 
-		price: "5.099" 
+		_id: ObjectId("614b37296a124db40ae74d12"),
+		price: "5.099"
 }
 ```
 
 The numeric value maintains its precision allowing for exact operations. To demonstrate the `Decimal128` type versus the `Double`, we can go through the following exercise.
-
-
 
 ### How precision can be lost based on data type
 
@@ -265,7 +261,7 @@ When we query for this data, we get the following result:
 ```shell
 db.mytestcoll.find().pretty()
 {
-		_id: ObjectId("614b37296a124db40ae74d24"), 
+		_id: ObjectId("614b37296a124db40ae74d24"),
 		price: 9999999.5
 }
 ```
@@ -287,18 +283,18 @@ db.mytestcoll.insertOne({ price: NumberDecimal( 9999999.4999999999 ) })
 **Note**: When making this insertion in the MongoDB shell, the following warning message is displayed:
 
 ```
-Warning: NumberDecimal: specifying a number as argument is deprecated and may lead to 
+Warning: NumberDecimal: specifying a number as argument is deprecated and may lead to
 loss of precision, pass a string instead
 ```
 
-This warning message indicates that the number you are trying to pass could be subject to a loss of precision. They suggest to use a `String` using `NumberDecimal()`  so that you do not lose any precision. 
+This warning message indicates that the number you are trying to pass could be subject to a loss of precision. They suggest to use a `String` using `NumberDecimal()` so that you do not lose any precision.
 
 If we ignore the warning and insert the document anyways, the loss of precision is seen in the query results from the rounding up of the value:
 
 ```shell
 db.mytestcoll.find().pretty()
 {
-		_id: ObjectId("614b37296a124db40ae74d14"), 
+		_id: ObjectId("614b37296a124db40ae74d14"),
 		price: Decimal128("9999999.50000000")
 }
 ```
@@ -312,14 +308,12 @@ db.mytestcoll.insertOne({ price: NumberDecimal( "9999999.4999999999" ) } )
 ```shell
 db.mytestcoll.find().pretty()
 {
-		_id: ObjectId("614b37296a124db40ae74d14"), 
+		_id: ObjectId("614b37296a124db40ae74d14"),
 		price: Decimal128("9999999.4999999999")
 }
 ```
 
 For any use case requiring precise, exact values, this return could cause issues. Any work involving monetary operations is an example where precision is going to be extremely important and having exact values is critical to accurate calculations. This demonstration highlights the importance of knowing which numeric data type is going to be best suited for your data.
-
-
 
 ## Date
 
@@ -333,11 +327,9 @@ The BSON `Date` data type is a 64-bit integer that represents the number of mill
 
 **Note**: BSON `Date` type is signed. Negative values represent dates before 1970.
 
+There are three methods for returning date values.
 
-
-There are three methods for returning date values. 
-
-1. `Date()` - returns a string 
+1. `Date()` - returns a string
 
 2. `new Date()` - returns a date object using the `ISODate()` wrapper
 
@@ -369,14 +361,12 @@ db.mytestcoll.find().pretty()
 }
 ```
 
-
-
 ## Timestamp
 
-There is also the `Timestamp` data type in MongoDB for representing time. However, `Timestamp` is going to be most useful for internal use and ***is not*** associated with the `Date` type. The type itself is a sequence of characters used to describe the date and time when an event occurs. `Timestamp` is a 64 bit value where:
+There is also the `Timestamp` data type in MongoDB for representing time. However, `Timestamp` is going to be most useful for internal use and **_is not_** associated with the `Date` type. The type itself is a sequence of characters used to describe the date and time when an event occurs. `Timestamp` is a 64 bit value where:
 
-* the most significant 32 bits are `time_t` value (seconds since Unix epoch)
-* the least significant 32 bits are an incrementing `ordinal` for operations within a given second
+- the most significant 32 bits are `time_t` value (seconds since Unix epoch)
+- the least significant 32 bits are an incrementing `ordinal` for operations within a given second
 
 Its representation in MongoDB will look as follows:
 
@@ -386,7 +376,7 @@ Its representation in MongoDB will look as follows:
 |     Timestamp      |   17   |  "timestamp" |
 ```
 
-When inserting a document that contains top-level fields with empty timestamps, MongoDB will replace the empty timestamp value with the current timestamp value. The exception to this is if the `_id` field contains an empty timestamp. The timestamp value will always be inserted as is and not replaced. 
+When inserting a document that contains top-level fields with empty timestamps, MongoDB will replace the empty timestamp value with the current timestamp value. The exception to this is if the `_id` field contains an empty timestamp. The timestamp value will always be inserted as is and not replaced.
 
 Inserting a new `Timestamp` value in MongoDB will use the `new Timestamp()` function and look something like this:
 
@@ -403,16 +393,14 @@ When querying the collection, you'll return a result resembling:
 ```shell
 db.mytestcoll.find().pretty()
 {
-		"_id" : ObjectId("614b37296a124db40ae74d24"), 
+		"_id" : ObjectId("614b37296a124db40ae74d24"),
 		"ts" : Timestamp( { t: 1412180887, i: 1 })
 }
 ```
 
-
-
 ## Object
 
-The `Object` data type in MongoDB is used for storing embedded documents. An embedded document is a series of nested documents in ``key: value`` pair format. We demonstrate the `Object` type below:
+The `Object` data type in MongoDB is used for storing embedded documents. An embedded document is a series of nested documents in `key: value` pair format. We demonstrate the `Object` type below:
 
 ```shell
 var classGrades = {"Physics": 88, "German": 92, "LitTheoery": 79}
@@ -437,8 +425,6 @@ db.mytestcoll.find().pretty()
 ```
 
 The `Object` data type optimizes for storing data that is best accessed together. It provides some efficiencies around storage, speed, and durability as opposed to storing each class mark, from the above example, separately.
-
-
 
 ## Binary data
 
@@ -471,8 +457,6 @@ db.mytestcoll.find().pretty()
 }
 ```
 
-
-
 ## ObjectId
 
 The `ObjectId` type is specific to MongoDB and it stores the document's unique ID. MongoDB provides an `_id` field for every document. ObjectId is 12 bytes in size and can be represented as follows:
@@ -485,34 +469,30 @@ The `ObjectId` type is specific to MongoDB and it stores the document's unique I
 
 ObjectId consists of three parts that make up its 12-byte makeup:
 
-* a 4-byte *timestamp value*, representing the ObjectId's creation, measured in seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time)
-* a 5-byte *random value*
-* a 3-byte *incrementing counter* initialized to a random value
+- a 4-byte _timestamp value_, representing the ObjectId's creation, measured in seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time)
+- a 5-byte _random value_
+- a 3-byte _incrementing counter_ initialized to a random value
 
 In MongoDB, each document within a collection requires a unique `_id` to act as a primary key. If the `_id` field is left empty for an inserted document, MongoDB will automatically generate an ObjectId for the field.
 
 There are several benefits to using ObjectIds for the `_id`:
 
-* in [`mongosh`](https://docs.mongodb.com/mongodb-shell/#mongodb-binary-bin.mongosh) (MongoDB shell), the creation time of the `ObjectId` is accessible using the [`ObjectId.getTimestamp()`](https://docs.mongodb.com/manual/reference/method/ObjectId.getTimestamp/#mongodb-method-ObjectId.getTimestamp) method.
-* sorting on an `_id` field that stores `ObjectId` data types is a close equivalent to sorting by creation time.
+- in [`mongosh`](https://docs.mongodb.com/mongodb-shell/#mongodb-binary-bin.mongosh) (MongoDB shell), the creation time of the `ObjectId` is accessible using the [`ObjectId.getTimestamp()`](https://docs.mongodb.com/manual/reference/method/ObjectId.getTimestamp/#mongodb-method-ObjectId.getTimestamp) method.
+- sorting on an `_id` field that stores `ObjectId` data types is a close equivalent to sorting by creation time.
 
 We've seen ObjectIds throughout the examples so far, and they will look similar to this:
 
 ```shell
 db.mytestcoll.find().pretty()
-{ 
+{
 		_id: ObjectId("614b37296a124db40ae74d19")
 }
 ```
 
-
-
 **Note**: ObjectId values should increase over time, however they are not necessarily monotonic. This is because they:
 
-* Only contain one second of temporal resolution, so values created within the same second do not have guaranteed ordering
-* values are generated by clients, which may have differing system clocks
-
-
+- Only contain one second of temporal resolution, so values created within the same second do not have guaranteed ordering
+- values are generated by clients, which may have differing system clocks
 
 ## Boolean
 
@@ -545,8 +525,6 @@ db.mytestcoll.find().pretty()
 }
 ```
 
-
-
 ## Regular Expression
 
 The `Regular Expression` data type in MongoDB allows for the storage of regular expressions as the value of a field. MongoDB uses [PCRE (Perl Compatible Regular Expression)](https://www.pcre.org/) as its regular expression language.
@@ -559,7 +537,7 @@ Its can be represented in the following way:
 | Regular Expression |   11   | "regex" |
 ```
 
-BSON allows you to avoid the typical "convert from string" step that is commonly experienced when working with regular expressions and databases. This type is going to be most useful when you are writing database objects that require validation patterns or matching triggers. 
+BSON allows you to avoid the typical "convert from string" step that is commonly experienced when working with regular expressions and databases. This type is going to be most useful when you are writing database objects that require validation patterns or matching triggers.
 
 For instance, you can insert the `Regular Expression` data type like this:
 
@@ -582,13 +560,11 @@ This sequence of statements will add these documents to your collection. You are
 db.mytestcoll.find().pretty()
 {
 		_id: ObjectId("614b37296a124db40ae74d16"), exampleregex: /tt/,
-		_id: ObjectId("614b37296a124db40ae74d17"), exampleregex: /t+/ 
+		_id: ObjectId("614b37296a124db40ae74d17"), exampleregex: /t+/
 }
 ```
 
 The regular expression patterns are stored as regex and not as strings. This allows you to query for a particular string and get returned documents that have a regular expression matching the desired string.
-
-
 
 ## JavaScript (without scope)
 
@@ -614,19 +590,17 @@ This functionality allows you to store JavaScript functions inside of your Mongo
 
 **Note**: With [MongoDB version 4.4](https://docs.mongodb.com/manual/release-notes/4.4-compatibility/#remove-support-for-bson-type-javascript-code-with-scope) and above, an alternative JavaScript type, the `JavaScript with Scope` data type, has been deprecated
 
-
-
 ## Conclusion
 
 In this article, we've covered most of the common data types that are useful when working with MongoDB databases. There are [additional types](https://docs.mongodb.com/manual/reference/bson-types/) that are not explicitly covered in this guide that may be helpful depending on the use case. Getting started by knowing these types covers most use cases. It is a strong foundation to begin modelling your MongoDB database.
 
-It is important to know what data types are available to you when using a database so that you're using valid values and operating on the data with expected results. There are risks you can run into without properly typing your data like demonstrated in the `Double` versus `Decimal128` exercise. It's important to think about this ahead of committing to any given type. 
+It is important to know what data types are available to you when using a database so that you're using valid values and operating on the data with expected results. There are risks you can run into without properly typing your data like demonstrated in the `Double` versus `Decimal128` exercise. It's important to think about this ahead of committing to any given type.
 
-If you are interested in checking out Prisma with a MongoDB database, you can check out the [data connector documentation](https://www.prisma.io/docs/concepts/database-connectors/mongodb).
+If you are interested in checking out Prisma with a MongoDB database, you can check out the [data connector documentation](https://www.prisma.io/docs/orm/overview/databases/mongodb).
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 

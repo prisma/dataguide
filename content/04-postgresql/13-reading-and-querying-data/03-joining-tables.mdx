@@ -1,6 +1,6 @@
 ---
 title: 'Using joins to combine data from different tables in PostgreSQL'
-metaTitle: "Joining tables in Postgres | Combine data from different tables"
+metaTitle: 'Joining tables in Postgres | Combine data from different tables'
 metaDescription: "Joins allow you to bring together data from multiple tables by stitching together columns that contain common values. In this guide, we'll talk about the different types of joins PostgreSQL supports and how to use joins to construct more valuable queries."
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-Splitting related data into separate tables can be beneficial from the standpoint of consistency, flexibility, and certain types of performance.  However, you still need a reasonable way of reintegrating records when the relevant information spans multiple tables.
+Splitting related data into separate tables can be beneficial from the standpoint of consistency, flexibility, and certain types of performance. However, you still need a reasonable way of reintegrating records when the relevant information spans multiple tables.
 
-In relational databases, *joins* offer a way to combine the records in two or more tables based on common field values.  Different types of joins can achieve different results depending on how unmatched rows should be handled.  In this guide, we'll discuss the various types of joins that PostgreSQL offers and how you can use them to combine table data from multiple sources.
+In relational databases, _joins_ offer a way to combine the records in two or more tables based on common field values. Different types of joins can achieve different results depending on how unmatched rows should be handled. In this guide, we'll discuss the various types of joins that PostgreSQL offers and how you can use them to combine table data from multiple sources.
 
 ## What are joins?
 
-In short, [*joins*](/intro/database-glossary#join) are a way of displaying data from multiple tables.  They do this by stitching together records from different sources based on matching values in certain columns.  Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
+In short, [_joins_](/intro/database-glossary#join) are a way of displaying data from multiple tables. They do this by stitching together records from different sources based on matching values in certain columns. Each resulting row consists of a record from the first table combined with a row from the second table, based on one or more columns in each table having the same value.
 
 The basic syntax of a join looks like this:
 
@@ -27,21 +27,21 @@ FROM
     <join_condition>;
 ```
 
-In a join, each resulting row is constructed by including all of the columns of the first table followed by all of the columns from the second table.  The `SELECT` portion of the query can be used to specify the exact columns you wish to display.
+In a join, each resulting row is constructed by including all of the columns of the first table followed by all of the columns from the second table. The `SELECT` portion of the query can be used to specify the exact columns you wish to display.
 
-Multiple rows may be constructed from the original tables if the values in the columns used for comparison are not unique.  For example, imagine you have a column being compared from the first table that has two records with a value of "red".  Matched with this is a column from the second table that has three rows with that value.  The join will produce six different rows for that value representing the various combinations that can be achieved.
+Multiple rows may be constructed from the original tables if the values in the columns used for comparison are not unique. For example, imagine you have a column being compared from the first table that has two records with a value of "red". Matched with this is a column from the second table that has three rows with that value. The join will produce six different rows for that value representing the various combinations that can be achieved.
 
-The type of join and the join conditions determine how each row that is displayed is constructed.  This impacts what happens to the rows from each table that do and do *not* have a match on the join condition.
+The type of join and the join conditions determine how each row that is displayed is constructed. This impacts what happens to the rows from each table that do and do _not_ have a match on the join condition.
 
-For the sake of convenience, many joins match the primary key on one table with an associated foreign key on the second table.  Although primary and foreign keys are only used by the database system to maintain consistency guarantees, their relationship often makes them a good candidate for join conditions.
+For the sake of convenience, many joins match the primary key on one table with an associated foreign key on the second table. Although primary and foreign keys are only used by the database system to maintain consistency guarantees, their relationship often makes them a good candidate for join conditions.
 
 ## Different types of joins
 
-Various types of joins are available, each of which will potentially produce different results.  Understanding how each type is constructed will help you determine which is appropriate for different scenarios.
+Various types of joins are available, each of which will potentially produce different results. Understanding how each type is constructed will help you determine which is appropriate for different scenarios.
 
 ### Inner join
 
-The default join is called an [*inner join*](/intro/database-glossary#inner-join).  In PostgreSQL, this can be specified using either `INNER JOIN` or just simply `JOIN`.
+The default join is called an [_inner join_](/intro/database-glossary#inner-join). In PostgreSQL, this can be specified using either `INNER JOIN` or just simply `JOIN`.
 
 Here is a typical example demonstrating the syntax of an inner join:
 
@@ -54,13 +54,13 @@ FROM
     ON table_1.id = table_2.table_1_id;
 ```
 
-An inner join is the most restrictive type of join because it only displays rows created by combining rows from each table.  Any rows in the constituent tables that did not have a matching counterpart in the other table are removed from the results.  For example, if the first table has a value of "blue" in the comparison column, and the second table has no record with that value, that row will be suppressed from the output.
+An inner join is the most restrictive type of join because it only displays rows created by combining rows from each table. Any rows in the constituent tables that did not have a matching counterpart in the other table are removed from the results. For example, if the first table has a value of "blue" in the comparison column, and the second table has no record with that value, that row will be suppressed from the output.
 
-If you represent the results as a Venn diagram of the component tables, an inner join allows you to represent the overlapping area of the two circles.  None of values that only existed in one of the tables are displayed.
+If you represent the results as a Venn diagram of the component tables, an inner join allows you to represent the overlapping area of the two circles. None of values that only existed in one of the tables are displayed.
 
 ### Left join
 
-A [left join](/intro/database-glossary#left-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the first table.  In PostgreSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
+A [left join](/intro/database-glossary#left-join) is a join that shows all of the records found in an inner join, plus all of the _unmatched_ rows from the first table. In PostgreSQL, this can be specified as a `LEFT OUTER JOIN` or as just a `LEFT JOIN`.
 
 The basic syntax of a left join follows this pattern:
 
@@ -73,13 +73,13 @@ LEFT JOIN table_2
     ON table_1.id = table_2.table_1_id;
 ```
 
-A left join is constructed by first performing an inner join to construct rows from all of the matching records in both tables.  Afterwards, the unmatched records from the first table are also included.  Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the second table.
+A left join is constructed by first performing an inner join to construct rows from all of the matching records in both tables. Afterwards, the unmatched records from the first table are also included. Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the second table.
 
-If you represent the results as a Venn diagram of the component tables, a left join allows you to represent the entire left circle.  The parts of the left circle represented by the intersection between the two circles will have additional data supplemented by the right table.
+If you represent the results as a Venn diagram of the component tables, a left join allows you to represent the entire left circle. The parts of the left circle represented by the intersection between the two circles will have additional data supplemented by the right table.
 
 ### Right join
 
-A [right join](/intro/database-glossary#right-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from the second table.  In PostgreSQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
+A [right join](/intro/database-glossary#right-join) is a join that shows all of the records found in an inner join, plus all of the _unmatched_ rows from the second table. In PostgreSQL, this can be specified as a `RIGHT OUTER JOIN` or as just a `RIGHT JOIN`.
 
 The basic syntax of a right join follows this pattern:
 
@@ -92,13 +92,13 @@ RIGHT JOIN table_2
     ON table_1.id = table_2.table_1_id;
 ```
 
-A right join is constructed by first performing an inner join to construct rows from all of the matching records in both tables.  Afterwards, the unmatched records from the second table are also included.  Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the first table.
+A right join is constructed by first performing an inner join to construct rows from all of the matching records in both tables. Afterwards, the unmatched records from the second table are also included. Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the first table.
 
-If you represent the results as a Venn diagram of the component tables, a right join allows you to represent the entire right circle.  The parts of the right circle represented by the intersection between the two circles will have additional data supplemented by the left table.
+If you represent the results as a Venn diagram of the component tables, a right join allows you to represent the entire right circle. The parts of the right circle represented by the intersection between the two circles will have additional data supplemented by the left table.
 
 ### Full join
 
-A [full join](/intro/database-glossary#outer-join) is a join that shows all of the records found in an inner join, plus all of the *unmatched* rows from both component tables.  In PostgreSQL, this can be specified as a `FULL OUTER JOIN` or as just a `FULL JOIN`.
+A [full join](/intro/database-glossary#outer-join) is a join that shows all of the records found in an inner join, plus all of the _unmatched_ rows from both component tables. In PostgreSQL, this can be specified as a `FULL OUTER JOIN` or as just a `FULL JOIN`.
 
 The basic syntax of a full join follows this pattern:
 
@@ -111,15 +111,15 @@ FULL JOIN table_2
     ON table_1.id = table_2.table_1_id;
 ```
 
-A full join is constructed by first performing an inner join to construct rows from all of the matching records in both tables.  Afterwards, the unmatched records from both tables are also included.  Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the unmatched other table.
+A full join is constructed by first performing an inner join to construct rows from all of the matching records in both tables. Afterwards, the unmatched records from both tables are also included. Since each row in a join includes the columns of both tables, the unmatched columns use `NULL` as the value for all of the columns in the unmatched other table.
 
-If you represent the results as a Venn diagram of the component tables, a full join allows you to represent both of the component circles entirely.  The intersection of the two circles will have values supplied by each of the component tables.  The parts of the circles outside of the overlapping area will have the values from the table they belong to, using `NULL` to fill in the columns found in the other table.
+If you represent the results as a Venn diagram of the component tables, a full join allows you to represent both of the component circles entirely. The intersection of the two circles will have values supplied by each of the component tables. The parts of the circles outside of the overlapping area will have the values from the table they belong to, using `NULL` to fill in the columns found in the other table.
 
 ### Cross join
 
-A special join called a `CROSS JOIN` is also available.  A cross join does not use any comparisons to determine whether the rows in each table match one another.  Instead, results are constructed by simply adding each of the rows from the first table to each of the rows of the second table.
+A special join called a `CROSS JOIN` is also available. A cross join does not use any comparisons to determine whether the rows in each table match one another. Instead, results are constructed by simply adding each of the rows from the first table to each of the rows of the second table.
 
-This produces a Cartesian product of the rows in two or more tables.  In effect, this style of join combines rows from each table unconditionally.  So, if each table has three rows, the resulting table would have nine rows containing all of the columns from both tables.
+This produces a Cartesian product of the rows in two or more tables. In effect, this style of join combines rows from each table unconditionally. So, if each table has three rows, the resulting table would have nine rows containing all of the columns from both tables.
 
 For example, if you have a table called `t1` combined with a table called `t2`, each with rows `r1`, `r2`, and `r3`, the result would be nine rows combined like so:
 
@@ -137,11 +137,11 @@ t1.r3 + t2.r3
 
 ### Self join
 
-A self join is any join that combines the rows of a table with itself.  It may not be immediately apparent how this could be useful, but it actually has many common applications.
+A self join is any join that combines the rows of a table with itself. It may not be immediately apparent how this could be useful, but it actually has many common applications.
 
-Often, tables describe entities that can fulfill multiple roles in relationship to one another.  For instance, if you have a table of `people`, each row could potentially contain a `mother` column that reference other `people` in the table.  A self join would allow you to stitch these different rows together by joining a second instance of the table to the first where these values match.
+Often, tables describe entities that can fulfill multiple roles in relationship to one another. For instance, if you have a table of `people`, each row could potentially contain a `mother` column that reference other `people` in the table. A self join would allow you to stitch these different rows together by joining a second instance of the table to the first where these values match.
 
-Since self joins reference the same table twice, table aliases are required to disambiguate the references.  In the example above, for instance, you could join the two instances of the `people` table using the aliases `people AS children` and `people AS mothers`.  That way, you can specify which instance of the table you are referring to when defining join conditions.
+Since self joins reference the same table twice, table aliases are required to disambiguate the references. In the example above, for instance, you could join the two instances of the `people` table using the aliases `people AS children` and `people AS mothers`. That way, you can specify which instance of the table you are referring to when defining join conditions.
 
 Here is another example, this time representing relationships between employees and managers:
 
@@ -156,13 +156,13 @@ JOIN people AS manager
 
 ## Join conditions
 
-When combining tables, the join condition determines how rows will be matched together to form the composite results.  The basic premise is to define the columns in each table that must match for the join to occur on that row.
+When combining tables, the join condition determines how rows will be matched together to form the composite results. The basic premise is to define the columns in each table that must match for the join to occur on that row.
 
 ### The `ON` clause
 
-The most standard way of defining the conditions for table joins is with the `ON` clause.  The `ON` clause uses an equals sign to specify the exact columns from each table that will be compared to determine when a join may occur.  PostgreSQL uses the provided columns to stitch together the rows from each table.
+The most standard way of defining the conditions for table joins is with the `ON` clause. The `ON` clause uses an equals sign to specify the exact columns from each table that will be compared to determine when a join may occur. PostgreSQL uses the provided columns to stitch together the rows from each table.
 
-The `ON` clause is the most verbose, but also the most flexible of the available join conditions.  It allows for specificity regardless of how standardized the column names are of each table being combined.
+The `ON` clause is the most verbose, but also the most flexible of the available join conditions. It allows for specificity regardless of how standardized the column names are of each table being combined.
 
 The basic syntax of the `ON` clause looks like this:
 
@@ -177,13 +177,13 @@ ON
     table1.id = table2.ident;
 ```
 
-Here, the rows from `table1` and `table2` will be joined whenever the `id` column from `table1` matches the `ident` column from `table2`.  Because an inner join is used, the results will only show the rows that were joined.  Since the query uses the wildcard `*` character, all of the columns from both tables will be displayed.
+Here, the rows from `table1` and `table2` will be joined whenever the `id` column from `table1` matches the `ident` column from `table2`. Because an inner join is used, the results will only show the rows that were joined. Since the query uses the wildcard `*` character, all of the columns from both tables will be displayed.
 
-This means that both the `id` column from `table1` and the `ident` column from `table2` will be displayed, even though they have the same exact value by virtue of satisfying the join condition.  You can avoid this duplication by calling out the exact columns you wish to display in the `SELECT` column list.
+This means that both the `id` column from `table1` and the `ident` column from `table2` will be displayed, even though they have the same exact value by virtue of satisfying the join condition. You can avoid this duplication by calling out the exact columns you wish to display in the `SELECT` column list.
 
 ### The `USING` clause
 
-The `USING` clause is a shorthand for specifying the conditions of an `ON` clause that can be used when the columns being compared have the same name in both tables.  The `USING` clause takes a list, enclosed in parentheses, of the shared column names that should be compared.
+The `USING` clause is a shorthand for specifying the conditions of an `ON` clause that can be used when the columns being compared have the same name in both tables. The `USING` clause takes a list, enclosed in parentheses, of the shared column names that should be compared.
 
 The general syntax of the `USING` clause uses this format:
 
@@ -213,11 +213,11 @@ ON
     table1.id = table2.id AND table1.state = table2.state;
 ```
 
-While both of the above joins would result in the same rows being constructed with the same data present, they would be displayed slightly different.  While the `ON` clause includes all of the columns from both tables, the `USING` clause suppresses the duplicate columns.  So instead of there being two separate `id` columns and two separate `state` columns (one for each table), the results would just have one of each of the shared columns, followed by all of the other columns provided by `table1` and `table2`.
+While both of the above joins would result in the same rows being constructed with the same data present, they would be displayed slightly different. While the `ON` clause includes all of the columns from both tables, the `USING` clause suppresses the duplicate columns. So instead of there being two separate `id` columns and two separate `state` columns (one for each table), the results would just have one of each of the shared columns, followed by all of the other columns provided by `table1` and `table2`.
 
 ### The `NATURAL` clause
 
-The `NATURAL` clause is yet another shorthand that can further reduce the verbosity of the `USING` clause.  A `NATURAL` join does not specify *any* columns to be matched.  Instead, PostgreSQL will automatically join the tables based on all columns that have matching columns in each database.
+The `NATURAL` clause is yet another shorthand that can further reduce the verbosity of the `USING` clause. A `NATURAL` join does not specify _any_ columns to be matched. Instead, PostgreSQL will automatically join the tables based on all columns that have matching columns in each database.
 
 The general syntax of the `NATURAL` join clause looks like this:
 
@@ -258,17 +258,17 @@ USING
 
 Like the `USING` clause, the `NATURAL` clause suppresses duplicate columns, so there would be only a single instance of each of the joined columns in the results.
 
-While the `NATURAL` clause can reduce the verbosity of your queries, care must be exercised when using it.  Because the columns used for joining the tables are automatically calculated, if the columns in the component tables change, the results can be vastly different due to new join conditions.
+While the `NATURAL` clause can reduce the verbosity of your queries, care must be exercised when using it. Because the columns used for joining the tables are automatically calculated, if the columns in the component tables change, the results can be vastly different due to new join conditions.
 
 ## Join conditions and the `WHERE` clause
 
-Join conditions share many characteristics with the comparisons used to filter rows of data using `WHERE` clauses.  Both constructs define expressions that must evaluate to true for the row to be considered.  Because of this, it's not always intuitive what the difference is between including additional comparisons in a `WHERE` construct versus defining them within the join clause itself.
+Join conditions share many characteristics with the comparisons used to filter rows of data using `WHERE` clauses. Both constructs define expressions that must evaluate to true for the row to be considered. Because of this, it's not always intuitive what the difference is between including additional comparisons in a `WHERE` construct versus defining them within the join clause itself.
 
-In order to understand the differences that will result, we have to take a look at the order in which PostgreSQL processes different portions of a query.  In this case, the predicates in the join condition are processed first to construct the virtual joined table in memory.  After this stage, the expressions within the `WHERE` clause are evaluated to filter the resulting rows.
+In order to understand the differences that will result, we have to take a look at the order in which PostgreSQL processes different portions of a query. In this case, the predicates in the join condition are processed first to construct the virtual joined table in memory. After this stage, the expressions within the `WHERE` clause are evaluated to filter the resulting rows.
 
-As an example, suppose that we have two tables called `customer` and `order` that we need to join together.  We want to join the two tables by matching the `customer.id` column with the `order.customer_id` column.  Additionally, we're interested in the rows in the `order` table that have a `product_id` of 12345.
+As an example, suppose that we have two tables called `customer` and `order` that we need to join together. We want to join the two tables by matching the `customer.id` column with the `order.customer_id` column. Additionally, we're interested in the rows in the `order` table that have a `product_id` of 12345.
 
-Given the above requirements, we have two conditions that we care about.  The way we express these conditions, however, will determine the results we receive.
+Given the above requirements, we have two conditions that we care about. The way we express these conditions, however, will determine the results we receive.
 
 First, let's use both as the join conditions for a `LEFT JOIN`:
 
@@ -304,12 +304,12 @@ The results could potentially look something like this:
 PostgreSQL arrived at this result by performing the following operations:
 
 1. Combine any rows in the `customer` table with the `order` table where:
-    * `customer.id` matches `order.customer_id`.
-    * `order.product_id` matches 12345
-2. Because we are using a left join, include any *unmatched* rows from the left table (`customer`), padding out the columns from the right table (`order`) with `NULL` values.
+   - `customer.id` matches `order.customer_id`.
+   - `order.product_id` matches 12345
+2. Because we are using a left join, include any _unmatched_ rows from the left table (`customer`), padding out the columns from the right table (`order`) with `NULL` values.
 3. Display only the columns listed in the `SELECT` column specification.
 
-The outcome is that all of our joined rows match both of the conditions that we are looking for.  However, the left join causes PostgreSQL to also include any rows from the first table that did not satisfy the join condition.  This results in "left over" rows that don't seem to follow the apparent intent of the query.
+The outcome is that all of our joined rows match both of the conditions that we are looking for. However, the left join causes PostgreSQL to also include any rows from the first table that did not satisfy the join condition. This results in "left over" rows that don't seem to follow the apparent intent of the query.
 
 If we move the second query (`order.product_id` = 12345) to a `WHERE` clause, instead of including it as a join condition, we get different results:
 
@@ -340,26 +340,26 @@ This time, only three rows are displayed:
 (3 rows)
 ```
 
-The order in which the comparisons are executed is the reason for these differences.  This time, PostgreSQL processes the query like this:
+The order in which the comparisons are executed is the reason for these differences. This time, PostgreSQL processes the query like this:
 
 1. Combine any rows in the `customer` table with the `order` table where `customer.id` matches `order.customer_id`.
-2. Because we are using a left join, include any *unmatched* rows from the left table (`customer`), padding out the columns from the right table (`order`) with `NULL` values.
+2. Because we are using a left join, include any _unmatched_ rows from the left table (`customer`), padding out the columns from the right table (`order`) with `NULL` values.
 3. Evaluate the `WHERE` clause to remove any rows that do not have 12345 as the value for the `order.product_id` column.
 4. Display only the columns listed in the `SELECT` column specification.
 
-This time, even though we are using a left join, the `WHERE` clause truncates the results by filtering out all of the rows without the correct `product_id`.  Because any unmatched rows would have `product_id` set to `NULL`, this removes all of the unmatched rows that were populated by the left join.  It also removes any of the rows that were matched by the join condition that did not pass this second round of checks.
+This time, even though we are using a left join, the `WHERE` clause truncates the results by filtering out all of the rows without the correct `product_id`. Because any unmatched rows would have `product_id` set to `NULL`, this removes all of the unmatched rows that were populated by the left join. It also removes any of the rows that were matched by the join condition that did not pass this second round of checks.
 
 Understanding the basic process that PostgreSQL uses to execute your queries can help you avoid some easy-to-make but difficult-to-debug mistakes as you work with your data.
 
 ## Conclusion
 
-In this guide, we covered how joins enable relational databases to combine data from different tables to provide more valuable answers.  We talked about the various joins that PostgreSQL supports, the way each type assembles its results, and what to expect when using specific kinds of joins.  Afterwards, we went over different ways to define join conditions and looked at how the interplay between joins and the `WHERE` clause can lead to surprises.
+In this guide, we covered how joins enable relational databases to combine data from different tables to provide more valuable answers. We talked about the various joins that PostgreSQL supports, the way each type assembles its results, and what to expect when using specific kinds of joins. Afterwards, we went over different ways to define join conditions and looked at how the interplay between joins and the `WHERE` clause can lead to surprises.
 
-Joins are an essential part of what makes relational databases powerful and flexible enough to handle so many different types of queries.  Organizing data using logical boundaries while still being able to recombine the data in novel ways on a case-by-case basis gives relational databases like PostgreSQL incredible versatility.  Learning how to perform this stitching between tables will allow you to create more complex queries and rely on the database to create complete pictures of your data.
+Joins are an essential part of what makes relational databases powerful and flexible enough to handle so many different types of queries. Organizing data using logical boundaries while still being able to recombine the data in novel ways on a case-by-case basis gives relational databases like PostgreSQL incredible versatility. Learning how to perform this stitching between tables will allow you to create more complex queries and rely on the database to create complete pictures of your data.
 
 <PrismaOutlinks>
 
-Prisma allows you to [define relations](https://www.prisma.io/docs/concepts/components/prisma-schema/relations) between models in the Prisma schema file.  You can then use [relation queries](https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries) to work with data that spans multiple models.
+Prisma allows you to [define relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations) between models in the Prisma schema file. You can then use [relation queries](https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries) to work with data that spans multiple models.
 
 </PrismaOutlinks>
 
@@ -380,13 +380,13 @@ LEFT JOIN table_2
 
 </details>
 
-<details><summary>What is a lateral join in PostgreSQL?</summary> 
+<details><summary>What is a lateral join in PostgreSQL?</summary>
 
 The `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/current/app-createdb.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
 
 </details>
 
-<details><summary>Does PostgreSQL support cross joins?</summary> 
+<details><summary>Does PostgreSQL support cross joins?</summary>
 
 Yes, a `CROSS JOIN` can be done in PostgreSQL. The syntax will look something like:
 

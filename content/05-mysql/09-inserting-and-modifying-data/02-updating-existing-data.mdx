@@ -1,16 +1,16 @@
 ---
 title: 'How to update existing data in MySQL'
 metaTitle: "How to update existing data in MySQL | Prisma's Data Guide"
-metaDescription: "The `UPDATE` command allows you to change the data in existing MySQL records.  This guide demonstrates how to use the `UPDATE` operation to modify the values within your tables."
+metaDescription: 'The `UPDATE` command allows you to change the data in existing MySQL records.  This guide demonstrates how to use the `UPDATE` operation to modify the values within your tables.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-Many database tables manage data that will need to be changed or updated from time to time.  The SQL `UPDATE` command can help in these situations by allowing you to change the values stored in [records](/intro/database-glossary#record) within a table.
+Many database tables manage data that will need to be changed or updated from time to time. The SQL `UPDATE` command can help in these situations by allowing you to change the values stored in [records](/intro/database-glossary#record) within a table.
 
-To update records, you must provide the columns where changes will occur and their new values.  To tell MySQL which records to target, you need to also give match criteria so it can determine which row or rows to change.  In this article, we'll discuss how to use `UPDATE` to change the values of your table data one at a time or in bulk.
+To update records, you must provide the columns where changes will occur and their new values. To tell MySQL which records to target, you need to also give match criteria so it can determine which row or rows to change. In this article, we'll discuss how to use `UPDATE` to change the values of your table data one at a time or in bulk.
 
 ## Using `UPDATE` to modify data
 
@@ -27,9 +27,9 @@ WHERE
 
 As shown above, the basic structure involves three separate clauses:
 
-* specifying a table to act on,
-* providing the columns you wish to update as well as their new values, and
-* defining criteria to determine which records to match
+- specifying a table to act on,
+- providing the columns you wish to update as well as their new values, and
+- defining criteria to determine which records to match
 
 When successfully committed, MySQL confirms the action by outputting the number of rows matched and altered:
 
@@ -40,15 +40,15 @@ Rows matched: 1  Changed: 1  Warnings: 0
 
 <PrismaOutlinks>
 
-To update data with Prisma Client, issue an [update query](https://www.prisma.io/docs/concepts/components/prisma-client/crud#update).
+To update data with Prisma Client, issue an [update query](https://www.prisma.io/docs/orm/prisma-client/queries/crud#update).
 
 </PrismaOutlinks>
 
 ## Updating records based on values in another table
 
-Updates based on providing new external data are relatively straightforward.  You just need to provide the table, the columns, the new values, and the targeting criteria.
+Updates based on providing new external data are relatively straightforward. You just need to provide the table, the columns, the new values, and the targeting criteria.
 
-However, you can also use `UPDATE` to conditionally update table values based on information stored in a [joined table](/intro/database-glossary#join).  The basic syntax looks like this:
+However, you can also use `UPDATE` to conditionally update table values based on information stored in a [joined table](/intro/database-glossary#join). The basic syntax looks like this:
 
 ```sql
 UPDATE <table1>, <table2>
@@ -56,7 +56,7 @@ SET <table1>.<column1> = <table2>.<column1>
 WHERE <table1>.<column2> = <table2>.<column2>;
 ```
 
-Here, we are updating the value of `column1` in the `table1` table to the value stored in `column1` of `table2`, but only in rows where `column2` of `table1` match `column2` of `table2`.  Even though the value is only changing in one table, we need to add both tables to the list of tables that `UPDATE` operates on.  The `WHERE` construction specifies the join conditions to integrate the two tables.
+Here, we are updating the value of `column1` in the `table1` table to the value stored in `column1` of `table2`, but only in rows where `column2` of `table1` match `column2` of `table2`. Even though the value is only changing in one table, we need to add both tables to the list of tables that `UPDATE` operates on. The `WHERE` construction specifies the join conditions to integrate the two tables.
 
 As an example, suppose that we have two tables called `film` and `director`.
 
@@ -92,7 +92,7 @@ VALUES
 
 </details>
 
-These two tables have a relation with `film.director_id` referencing `director.id`.  Currently, the `latest_film` for the `director` table is `NULL`.  However, we can populate it by with the director's latest film title using the `WHERE` clause to bring to bring the two tables together.
+These two tables have a relation with `film.director_id` referencing `director.id`. Currently, the `latest_film` for the `director` table is `NULL`. However, we can populate it by with the director's latest film title using the `WHERE` clause to bring to bring the two tables together.
 
 Here, we use a `WITH` clause to create a Common Table Expression (CTE) called `latest_films` that we can reference in our `UPDATE` statement:
 
@@ -123,6 +123,7 @@ If you query the `director` table, it should show you each director's latest fil
 ```sql
 SELECT * FROM director;
 ```
+
 ```
 +----+-------+--------------+
 | id | name  | latest_film  |
@@ -136,4 +137,4 @@ SELECT * FROM director;
 
 ## Conclusion
 
-In this article, we've demonstrated how to use the `UPDATE` command to alter the values of existing MySQL records.  The `UPDATE` command is very flexible when combined with other SQL constructs, allowing you to modify data in interesting ways according to conditions and values found throughout the database.  As you get familiar with the operation, you will be able to find new ways of changing your data to match your requirements.
+In this article, we've demonstrated how to use the `UPDATE` command to alter the values of existing MySQL records. The `UPDATE` command is very flexible when combined with other SQL constructs, allowing you to modify data in interesting ways according to conditions and values found throughout the database. As you get familiar with the operation, you will be able to find new ways of changing your data to match your requirements.

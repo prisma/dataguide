@@ -1,16 +1,16 @@
 ---
 title: 'How to perform basic queries with `SELECT` in PostgreSQL'
 metaTitle: "Basic Select | PostgreSQL Basic Queries | Prisma's Data Guide"
-metaDescription: "The `SELECT` command is the main way to query the data within tables and views in PostgreSQL.  This guide demonstrates the basic syntax and operation of this highly flexible command."
+metaDescription: 'The `SELECT` command is the main way to query the data within tables and views in PostgreSQL.  This guide demonstrates the basic syntax and operation of this highly flexible command.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-The `SELECT` command is the primary way to query and read information about records stored within database tables within PostgreSQL.  Its usefulness, however, is not restricted to [read-only operations](/intro/database-glossary#read-operation).  The `SELECT` syntax is combined with many other commands to target specific records or fields within databases for updates, deletions, and more complex operations.
+The `SELECT` command is the primary way to query and read information about records stored within database tables within PostgreSQL. Its usefulness, however, is not restricted to [read-only operations](/intro/database-glossary#read-operation). The `SELECT` syntax is combined with many other commands to target specific records or fields within databases for updates, deletions, and more complex operations.
 
-In this guide, we'll show how the basic syntax of `SELECT` supports gathering data from tables.  While we'll leave the vast number of optional clauses to the command for other articles, it will hopefully become evident how even the most basic components provide a strong foundation for querying data.  These fundamentals only require you to learn a few clauses and constructions.
+In this guide, we'll show how the basic syntax of `SELECT` supports gathering data from tables. While we'll leave the vast number of optional clauses to the command for other articles, it will hopefully become evident how even the most basic components provide a strong foundation for querying data. These fundamentals only require you to learn a few clauses and constructions.
 
 ## The general syntax of the `SELECT` command
 
@@ -22,14 +22,14 @@ SELECT <column_names> FROM <table_name> <additional_conditions_and_formatting>;
 
 This statement is composed of a few different pieces:
 
-* `SELECT`: The `SELECT` command itself.  This SQL statement indicates that we want to query tables or views for data they contains.  The arguments and clauses surrounding it determine both the contents and the format of the output by defining criteria.
-* `<column_names>`: The `SELECT` statement can return entire rows (indicated by the `*` wildcard character) or a subset of the available [columns](/intro/database-glossary#column).  If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
-* `FROM <table_name>`: The `FROM` keyword is used to indicate the [table](/intro/database-glossary#table) or [view](/intro/database-glossary#view) that should be queried.  In most simple queries, this consists of a single table that contains the data you're interested in.
-* `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command.  You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
+- `SELECT`: The `SELECT` command itself. This SQL statement indicates that we want to query tables or views for data they contains. The arguments and clauses surrounding it determine both the contents and the format of the output by defining criteria.
+- `<column_names>`: The `SELECT` statement can return entire rows (indicated by the `*` wildcard character) or a subset of the available [columns](/intro/database-glossary#column). If you want to output only specific columns, provide the column names you'd like to display, separated by commas.
+- `FROM <table_name>`: The `FROM` keyword is used to indicate the [table](/intro/database-glossary#table) or [view](/intro/database-glossary#view) that should be queried. In most simple queries, this consists of a single table that contains the data you're interested in.
+- `<additional_conditions_and_formatting>`: A large number of filters, output modifiers, and conditions can be specified as additions to the `SELECT` command. You can use these to help pinpoint data with specific properties, modify the output formatting, or further process the results.
 
 <PrismaOutlinks>
 
-You can learn about how to query with Prisma Client in our guide on [CRUD operations](https://www.prisma.io/docs/concepts/components/prisma-client/crud).
+You can learn about how to query with Prisma Client in our guide on [CRUD operations](https://www.prisma.io/docs/orm/prisma-client/queries/crud).
 
 </PrismaOutlinks>
 
@@ -43,9 +43,9 @@ For ad hoc querying and during data exploration, one of the most helpful options
 SELECT * FROM my_table;
 ```
 
-This will display all of the records from `my_table` since we do not provide any filtering to narrow the results.  All of the columns for each record will be shown in the order that they are defined within the table.
+This will display all of the records from `my_table` since we do not provide any filtering to narrow the results. All of the columns for each record will be shown in the order that they are defined within the table.
 
-You can also choose to view a subset of available column by specifying them by name.  Column names are separated by commas and are displayed in the order in which they are given:
+You can also choose to view a subset of available column by specifying them by name. Column names are separated by commas and are displayed in the order in which they are given:
 
 ```sql
 SELECT column2, column1 FROM my_table;
@@ -55,7 +55,7 @@ This will display all of the records from `my_table`, but only show the columns 
 
 <PrismaOutlinks>
 
-If using Prisma Client, you can achieve the same results using [select fields](https://www.prisma.io/docs/concepts/components/prisma-client/select-fields).
+If using Prisma Client, you can achieve the same results using [select fields](https://www.prisma.io/docs/orm/prisma-client/queries/select-fields).
 
 </PrismaOutlinks>
 
@@ -67,21 +67,21 @@ You can optionally set _column aliases_ to modify the name used for columns in t
 SELECT column1 AS "first column" FROM my_table;
 ```
 
-This will show the each of the values for `column1` in `my_table`.  However, the column in the output will be labeled as `first column` instead of `column1`.
+This will show the each of the values for `column1` in `my_table`. However, the column in the output will be labeled as `first column` instead of `column1`.
 
 This is especially useful if the output combines column names from multiple tables that might share names or if it includes computed columns that don't already have a name.
 
 ## Defining sort order with `ORDER BY`
 
-The `ORDER BY` clause can be used to sort the resulting rows according to the criteria given.  The general syntax looks like this:
+The `ORDER BY` clause can be used to sort the resulting rows according to the criteria given. The general syntax looks like this:
 
 ```sql
 SELECT * FROM my_table ORDER BY <sort_expression>;
 ```
 
-This will display the values for all columns in all records within `my_table`.  The results will be ordered according to the expression represented by the placeholder `<sort_expression>`.
+This will display the values for all columns in all records within `my_table`. The results will be ordered according to the expression represented by the placeholder `<sort_expression>`.
 
-For example, suppose we have a `customer` table that contains columns for `first_name`, `last_name`, `address`, and `phone_number`.  If we want to display the results in alphabetical order by `last_name`, we could use the following command:
+For example, suppose we have a `customer` table that contains columns for `first_name`, `last_name`, `address`, and `phone_number`. If we want to display the results in alphabetical order by `last_name`, we could use the following command:
 
 <CodeWithResult>
 
@@ -139,7 +139,7 @@ sue        | abed      | 456 side st  | 5557654321
 
 </CodeWithResult>
 
-You can also sort by multiple columns.  Here, we sort first by `last_name`, and then by `first_name` for any columns with the same `last_name` value.  Both sorts are in ascending order:
+You can also sort by multiple columns. Here, we sort first by `last_name`, and then by `first_name` for any columns with the same `last_name` value. Both sorts are in ascending order:
 
 <CodeWithResult>
 
@@ -167,7 +167,7 @@ john       | smith     | 123 main st  | 5551234567
 
 </CodeWithResult>
 
-One additional option that is often important is clarifying where `NULL` values should be presented in the sort order.  You can do this by adding `NULLS FIRST` (the default) or `NULLS LAST` for any sort column:
+One additional option that is often important is clarifying where `NULL` values should be presented in the sort order. You can do this by adding `NULLS FIRST` (the default) or `NULLS LAST` for any sort column:
 
 ```sql
 SELECT * FROM customer ORDER BY last_name NULLS LAST;
@@ -175,13 +175,13 @@ SELECT * FROM customer ORDER BY last_name NULLS LAST;
 
 <PrismaOutlinks>
 
-You can [sort your results](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting) with Prisma Client in much the same way as you would in an SQL query.
+You can [sort your results](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting) with Prisma Client in much the same way as you would in an SQL query.
 
 </PrismaOutlinks>
 
 ## Getting distinct results
 
-If you want to find the range of values for a column in PostgreSQL, you can use the `SELECT DISTINCT` variant.  This will display a single row for each distinct value of a column.
+If you want to find the range of values for a column in PostgreSQL, you can use the `SELECT DISTINCT` variant. This will display a single row for each distinct value of a column.
 
 The basic syntax looks like this:
 
@@ -196,6 +196,7 @@ For example, to display all of the different values for `color` that your `shirt
 ```sql
 SELECT DISTINCT color FROM shirt;
 ```
+
 ```
 color
 ------
@@ -213,6 +214,7 @@ For instance, this will display all of the different combinations of `color` and
 ```sql
 SELECT DISTINCT color,shirt_size FROM shirt;
 ```
+
 ```
 color  | shirt_size
 -------+-----------
@@ -229,7 +231,7 @@ yellow | S
 
 This displays every unique combination of `color` and `shirt_size` within the table.
 
-An often more flexible variant is PostgreSQL's `SELECT DISTINCT ON` command.  This format allows you to specify a list of columns that should be unique in combination and separately list the columns you wish to display.
+An often more flexible variant is PostgreSQL's `SELECT DISTINCT ON` command. This format allows you to specify a list of columns that should be unique in combination and separately list the columns you wish to display.
 
 The general syntax looks like this, with the column or columns that should be unique listed in the parentheses after `SELECT DISTINCT ON`, followed by the columns you wish to display:
 
@@ -242,6 +244,7 @@ For example, if you want to display a single color for each shirt size, you coul
 ```sql
 SELECT DISTINCT ON (shirt_size) color,shirt_size FROM shirt;
 ```
+
 ```
 color | shirt_size
 ------+-----------
@@ -250,13 +253,14 @@ green | L
 green | S
 ```
 
-This will show a single row for each unique value in `shirt_size`.  For each row, it will display the `color` column, followed by the `shirt_size` column.
+This will show a single row for each unique value in `shirt_size`. For each row, it will display the `color` column, followed by the `shirt_size` column.
 
 If using an `ORDER BY` clause, the column selected for ordering must match the column selected within the `DISTINCT ON` parentheses for the output to have predictable results:
 
 ```sql
 SELECT DISTINCT ON (shirt_size) color,shirt_size FROM shirt ORDER BY shirt_size DESC;
 ```
+
 ```
 color | shirt_size
 ------+-----------
@@ -267,18 +271,18 @@ green | L
 
 <PrismaOutlinks>
 
-You can filter duplicate rows from your query with Prisma Client by using the [distinct](https://www.prisma.io/docs/concepts/components/prisma-client/aggregation-grouping-summarizing#select-distinct) functionality.
+You can filter duplicate rows from your query with Prisma Client by using the [distinct](https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing#select-distinct) functionality.
 
 </PrismaOutlinks>
 
 ## Conclusion
 
-In this guide, we covered some of the basic ways you can use the `SELECT` command to identify and display records from your tables and views.  The `SELECT` command is one of the most flexible and powerful operations within SQL-oriented databases, with many different ways to add clauses, conditions, and filtering.
+In this guide, we covered some of the basic ways you can use the `SELECT` command to identify and display records from your tables and views. The `SELECT` command is one of the most flexible and powerful operations within SQL-oriented databases, with many different ways to add clauses, conditions, and filtering.
 
-While we only covered basic usage in this guide, the general format you learned here will serve as the foundation for all other read and many write queries.  Learning ways to filter and target the results more accurately extend the capabilities that we covered today.
+While we only covered basic usage in this guide, the general format you learned here will serve as the foundation for all other read and many write queries. Learning ways to filter and target the results more accurately extend the capabilities that we covered today.
 
 <PrismaOutlinks>
 
-You can learn more about sorting and filtering queries with Prisma Client in our [filtering and sorting documentation](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting).
+You can learn more about sorting and filtering queries with Prisma Client in our [filtering and sorting documentation](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting).
 
 </PrismaOutlinks>

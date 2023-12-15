@@ -1,6 +1,6 @@
 ---
 title: 'How to manage authorization and privileges in MongoDB'
-metaTitle: "MongoDB Role Management, Authorization, and Privileges"
+metaTitle: 'MongoDB Role Management, Authorization, and Privileges'
 metaDescription: "Learn how to use MongoDB's authorization and privilege systems to manage access to your data, including how to assign roles to your user list."
 metaImage: '/social/generic-mongodb.png'
 authors: ['justinellingwood']
@@ -8,13 +8,13 @@ authors: ['justinellingwood']
 
 ## Introduction
 
-[Authorization](/intro/database-glossary#authorization) is an essential part of user management and access control that defines the policies for what each user is allowed to do on the system.  Deciding on what policies are appropriate and implementing them in your databases ensures that users can interact with the resources they require while protecting against inappropriate behavior.
+[Authorization](/intro/database-glossary#authorization) is an essential part of user management and access control that defines the policies for what each user is allowed to do on the system. Deciding on what policies are appropriate and implementing them in your databases ensures that users can interact with the resources they require while protecting against inappropriate behavior.
 
-In this guide, we'll go over how authorization works in MongoDB.  We'll take a look at how MongoDB conceptualizes access management, what types of privileges can be granted to users, and how to attach policies to user accounts.
+In this guide, we'll go over how authorization works in MongoDB. We'll take a look at how MongoDB conceptualizes access management, what types of privileges can be granted to users, and how to attach policies to user accounts.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -26,514 +26,514 @@ To follow along with this guide, you'll need an account on a MongoDB server with
 
 To adjust the configuration of MongoDB and enable authorization on the database, you need `root` level access on the server.
 
-Additionally, within MongoDB, you'll need an account that has at least the `userAdmin` role so that role-based authorization policies can be set.  Roles that include the `userAdmin` role, listed from most narrowly focused to the broadest level of privileges are:
+Additionally, within MongoDB, you'll need an account that has at least the `userAdmin` role so that role-based authorization policies can be set. Roles that include the `userAdmin` role, listed from most narrowly focused to the broadest level of privileges are:
 
-* `userAdmin`
-* `dbOwner`
-* `userAdminAnyDatabase`
-* `root`
+- `userAdmin`
+- `dbOwner`
+- `userAdminAnyDatabase`
+- `root`
 
 ## How does authorization work in MongoDB?
 
-Authorization and privilege management in MongoDB is implemented using [Role-Based Access Control (RBAC)](/intro/database-glossary#role-based-access-control).  In this system, different levels of access are associated with individual roles.  To give a user permission to perform an action, you grant them membership to a role that has the appropriate privileges.
+Authorization and privilege management in MongoDB is implemented using [Role-Based Access Control (RBAC)](/intro/database-glossary#role-based-access-control). In this system, different levels of access are associated with individual roles. To give a user permission to perform an action, you grant them membership to a role that has the appropriate privileges.
 
-Roles in MongoDB can be nested.  This means that roles can be granted to other roles.  A role that contains another role inherits all of the child role's privileges.  This makes it possible to create new roles that have the desired privileges by combining roles appropriately.
+Roles in MongoDB can be nested. This means that roles can be granted to other roles. A role that contains another role inherits all of the child role's privileges. This makes it possible to create new roles that have the desired privileges by combining roles appropriately.
 
-Privileges themselves are defined by a combination of an action and a resource.  The action component describes the type of behavior that is permitted by the privilege, while the resource indicates the target or scope of the action.
+Privileges themselves are defined by a combination of an action and a resource. The action component describes the type of behavior that is permitted by the privilege, while the resource indicates the target or scope of the action.
 
 ## What resources are available in MongoDB?
 
-The target or scope of an action is known as a *resource* within MongoDB's access control model.  Each action can only be applied to certain types of resources.  When configuring privileges, you specify the exact resources for which the privilege should be scoped.
+The target or scope of an action is known as a _resource_ within MongoDB's access control model. Each action can only be applied to certain types of resources. When configuring privileges, you specify the exact resources for which the privilege should be scoped.
 
 We can go over the available resources in order from the narrowest focus to the broadest.
 
-Privileges can be most narrowly defined by scoping them to a specific [**collection**](/intro/database-glossary#collections) within a specific database within the cluster.  Within the same databases, different collections can specify different privileges.  This allows you to implement granular policies for different types of data.
+Privileges can be most narrowly defined by scoping them to a specific [**collection**](/intro/database-glossary#collections) within a specific database within the cluster. Within the same databases, different collections can specify different privileges. This allows you to implement granular policies for different types of data.
 
-The next largest resource you can enact policies against is a [**database**](/intro/database-glossary#database).  Managing privileges on the database level allows you to provide general policy that will effect the database as a whole and all of the collections within.
+The next largest resource you can enact policies against is a [**database**](/intro/database-glossary#database). Managing privileges on the database level allows you to provide general policy that will effect the database as a whole and all of the collections within.
 
-You can also set policies that apply to collections of the same name across all databases.  This allows you to use naming conventions to implement access control for specific collections throughout your system.  A broader version of this is to apply policy to all databases and non-system collections on the system.
+You can also set policies that apply to collections of the same name across all databases. This allows you to use naming conventions to implement access control for specific collections throughout your system. A broader version of this is to apply policy to all databases and non-system collections on the system.
 
-Finally, you can apply policy against the entire [**cluster**](/intro/database-glossary#cluster).  Actions targeting the cluster affect the general system instead of the data it is managing directly.  Policies on the cluster level tend to be focused on administrative operations.
+Finally, you can apply policy against the entire [**cluster**](/intro/database-glossary#cluster). Actions targeting the cluster affect the general system instead of the data it is managing directly. Policies on the cluster level tend to be focused on administrative operations.
 
 ## What actions are available in MongoDB?
 
-There are a large number of actions available within MongoDB are related to general usage, database management, and system management.  In general, actions correspond to one or more commands or methods within MongoDB.
+There are a large number of actions available within MongoDB are related to general usage, database management, and system management. In general, actions correspond to one or more commands or methods within MongoDB.
 
 To view the list of actions available in MongoDB as well as their function, expand the section below:
 
 <details><summary>List of MongoDB actions</summary>
 
-| Action | Scope | Description |
-|--------|-------|-------------|
-| `find` | database or collection | Allows read operations on a database |
-| `insert` | database or collection | Allows write operations on a database |
-| `remove` | database or collection | Allows delete operations on a database |
-| `update` | database or collection | Allows replacement operations on a database |
-| `bypassDocumentValidation` | database or collection | Lets the user to ignore data validation policies for documents. |
-| `useUUID` | cluster | Lets the user use `UUID` values to find for documents |
-| `changeCustomData` | database | The user can modify custom data associated with any user in the database |
-| `changeOwnCustomData` | database | Allows the user to change the custom data associated with their own user |
-| `changeOwnPassword` | database | Lets a user change their own account password |
-| `changePassword` | database | Lets a user change the password for any user in the database |
-| `createCollection` | database or collection | Allows the user to create collections in the database | 
-| `createIndex` | database or collection | Lets the user create indexes for the database |
-| `createRole` | database | Allows the user to create custom roles in the database |
-| `createUser` | database | Lets the user define new user accounts |
-| `dropCollection` | database or collection | Allows the user to delete collections |
-| `dropRole` | database | Lets the user delete roles |
-| `dropUser` | database | Lets the user delete users |
-| `enableProfiler` | database | Allows the user to enable performance profiling |
-| `grantRole` | database | Lets the user grant roles associated with the database to any user on the system |
-| `killCursors` | collection | Lets a user kill their own cursors in versions of MongoDB prior to 4.2 |
-| `killAnyCursor` | collection | Lets a user kill other users' cursors |
-| `revokeRole` | database | Allows the user to remove roles from any user in the system |
-| `setAuthenticationRestriction` | database | Allows the user to set authentication requirements for users and roles |
-| `unlock` | cluster | Lets the user reduce the number of write locks on the cluster |
-| `viewRole` | database | Allows viewing details about roles in the database |
-| `viewUser` | database | Allows viewing details about users in the database |
-| `authSchemaUpgrade` | cluster | Allows user to upgrade the authentication mechanisms between MongoDB versions |
-| `cleanupOrphaned` | cluster | Lets the user clean up orphaned documents in MongoDB versions prior to 4.4 |
-| `cpuProfiler` | cluster | Allows the user to enable CPU profiling |
-| `inprog` | cluster | Lets the user view information on other users' in progress or queued operations |
-| `invalidateUserCache` | cluster | Lets the user manually flush user details from the cache |
-| `killop` | cluster | Allows the user to kill other users' operations |
-| `planCacheRead` | database or collection | Lets the user view information about cached query plans |
-| `planCacheWrite` | database or collection | Allows the user to delete cached query plans |
-| `storageDetails` | database or collection | Deprecated |
-| `changeStream` | collection, database, or cluster | Allows the user to access real time change data from non-system collections |
-| `appendOpLogNote` | cluster | Lets the user add notes to the oplog |
-| `replSetConfigure` | cluster | Allows configuring replica sets |
-| `replSetGetConfig` | cluster | Lets the user view the current replica set configuration |
-| `replSetGetStatus` | cluster | Lets the user find the current status of the replica set |
-| `replSetHeartbeat` | cluster | Deprecated |
-| `replSetStateChange` | cluster | Allows the user to manage the state of cluster replica sets |
-| `resync` | cluster | Deprecated |
-| `addShard` | cluster | Lets the user add a shard replica to a sharded cluster |
-| `clearJumboFlag` | database or collection | Lets the user clean up oversized chunks in a shard |
-| `enableSharding` | cluster, database, or collection | Allows user to enable sharding on clusters and database or manage sharding on a cluster level |
-| `refineCollectionShardKey` | database or collection | Lets the user add additional fields to an existing shard key |
-| `flushRouterConfig` | cluster | Lets the user mark a cached routing table as obsolete |
-| `getShardVersion` | database | Internal command |
-| `listShards` | cluster | Lets user see a list of configured shards for the cluster |
-| `moveChunk` | database or collection | Allows a user to move a chunk to a new shard |
-| `removeShard` | cluster | Lets the user drain chunks from a shard and then remove the shard from the cluster |
-| `shardingState` | cluster | Allows the user to view whether the MongoDB server is part of a sharded cluster |
-| `splitChunk` | database or collection | Allows the user to merge or split chunks in a shard |
-| `splitVector` | database or collection | Internal command |
-| `applicationMessage` | cluster | Lets the user add custom messages to the audit log |
-| `closeAllDatabases` | cluster | Deprecated |
-| `collMod` | database or collection | Lets the user modify the options associated with a collection |
-| `compact` | database or collection | Allows the user to defragment data and indexes in a collection |
-| `connPoolSync` | cluster | Internal command |
-| `convertToCapped` | database or collection | Lets the user convert a collection into a capped collection with a set maximum size |
-| `dropConnections` | cluster | Lets the user remove outgoing connections from MongoDB to a specified host |
-| `dropDatabase` | database | Lets the user delete the current database |
-| `dropIndex` | database or collection | Lets the user delete an index |
-| `forceUUID` | cluster | Lets users define collections using globally unique UUIDs |
-| `fsync` | cluster | Allows the user to flush all pending writes to storage and lock the cluster for writes |
-| `getDefaultRWConcern` | cluster | Lets the user view the default read and write consistency and isolation settings |
-| `getParameter` | cluster | Lets the user query for the value of a parameter |
-| `hostInfo` | cluster | Allows the user to see information about the server running the MongoDB instance |
-| `logRotate` | cluster | Lets the user trigger log rotation |
-| `reIndex` | database or collection | Lets the user rebuild the indexes for a collection |
-| `renameCollectionSameDB` | database | Lets the user rename a collection in the current database |
-| `setDefaultRWConcern` | cluster | Lets the user specify the default read and write consistency and isolation settings |
-| `setParameter` | cluster | Allows the user to define the value for parameters |
-| `shutdown` | cluster | Lets the user shutdown the MongoDB instance |
-| `touch` | cluster | Deprecated |
-| `impersonate` | cluster | Lets the user kill sessions associated with other users and roles |
-| `listSessions` | cluster | Lets the user list all sessions by all users |
-| `killAnySession` | cluster | Lets the user kill all sessions for a specific user or a pattern |
-| `checkFreeMonitoringStatus` | cluster | Allows the user to see the status of cloud monitoring functionality |
-| `setFreeMonitoring` | cluster | Lets the user enable or disable cloud monitoring functionality |
-| `collStats` | database or collection | Allows the user to view statistics about collections |
-| `connPoolStats` | cluster | Lets the user see the status of outgoing connections from MongoDB instances |
-| `dbHash` | database or collection | Lets the user query for hashed values of collections in a database |
-| `dbStats` | database | Allows the user to view storage statistics |
-| `getCmdLineOpts` | cluster | Lets the user see the command line options used to start the MongoDB instance |
-| `getLog` | cluster | Lets the user see the most recent MongoDB events |
-| `listDatabases` | cluster | Lets the user see the list of all databases |
-| `listCollections` | database | Allows the user to see a list of collections and views in a database |
-| `listIndexes` | database or collection | Lets the user see what indexes are associated with a specific collection |
-| `netstat` | cluster | Internal command |
-| `serverStatus` | cluster | Lets the user view information about the database's current state |
-| `validate` | database or collection | Allows the user to check a collections data and indexes for correctness |
-| `top` | cluster | Lets the user see usage statistics for collections |
+| Action                         | Scope                            | Description                                                                                   |
+| ------------------------------ | -------------------------------- | --------------------------------------------------------------------------------------------- |
+| `find`                         | database or collection           | Allows read operations on a database                                                          |
+| `insert`                       | database or collection           | Allows write operations on a database                                                         |
+| `remove`                       | database or collection           | Allows delete operations on a database                                                        |
+| `update`                       | database or collection           | Allows replacement operations on a database                                                   |
+| `bypassDocumentValidation`     | database or collection           | Lets the user to ignore data validation policies for documents.                               |
+| `useUUID`                      | cluster                          | Lets the user use `UUID` values to find for documents                                         |
+| `changeCustomData`             | database                         | The user can modify custom data associated with any user in the database                      |
+| `changeOwnCustomData`          | database                         | Allows the user to change the custom data associated with their own user                      |
+| `changeOwnPassword`            | database                         | Lets a user change their own account password                                                 |
+| `changePassword`               | database                         | Lets a user change the password for any user in the database                                  |
+| `createCollection`             | database or collection           | Allows the user to create collections in the database                                         |
+| `createIndex`                  | database or collection           | Lets the user create indexes for the database                                                 |
+| `createRole`                   | database                         | Allows the user to create custom roles in the database                                        |
+| `createUser`                   | database                         | Lets the user define new user accounts                                                        |
+| `dropCollection`               | database or collection           | Allows the user to delete collections                                                         |
+| `dropRole`                     | database                         | Lets the user delete roles                                                                    |
+| `dropUser`                     | database                         | Lets the user delete users                                                                    |
+| `enableProfiler`               | database                         | Allows the user to enable performance profiling                                               |
+| `grantRole`                    | database                         | Lets the user grant roles associated with the database to any user on the system              |
+| `killCursors`                  | collection                       | Lets a user kill their own cursors in versions of MongoDB prior to 4.2                        |
+| `killAnyCursor`                | collection                       | Lets a user kill other users' cursors                                                         |
+| `revokeRole`                   | database                         | Allows the user to remove roles from any user in the system                                   |
+| `setAuthenticationRestriction` | database                         | Allows the user to set authentication requirements for users and roles                        |
+| `unlock`                       | cluster                          | Lets the user reduce the number of write locks on the cluster                                 |
+| `viewRole`                     | database                         | Allows viewing details about roles in the database                                            |
+| `viewUser`                     | database                         | Allows viewing details about users in the database                                            |
+| `authSchemaUpgrade`            | cluster                          | Allows user to upgrade the authentication mechanisms between MongoDB versions                 |
+| `cleanupOrphaned`              | cluster                          | Lets the user clean up orphaned documents in MongoDB versions prior to 4.4                    |
+| `cpuProfiler`                  | cluster                          | Allows the user to enable CPU profiling                                                       |
+| `inprog`                       | cluster                          | Lets the user view information on other users' in progress or queued operations               |
+| `invalidateUserCache`          | cluster                          | Lets the user manually flush user details from the cache                                      |
+| `killop`                       | cluster                          | Allows the user to kill other users' operations                                               |
+| `planCacheRead`                | database or collection           | Lets the user view information about cached query plans                                       |
+| `planCacheWrite`               | database or collection           | Allows the user to delete cached query plans                                                  |
+| `storageDetails`               | database or collection           | Deprecated                                                                                    |
+| `changeStream`                 | collection, database, or cluster | Allows the user to access real time change data from non-system collections                   |
+| `appendOpLogNote`              | cluster                          | Lets the user add notes to the oplog                                                          |
+| `replSetConfigure`             | cluster                          | Allows configuring replica sets                                                               |
+| `replSetGetConfig`             | cluster                          | Lets the user view the current replica set configuration                                      |
+| `replSetGetStatus`             | cluster                          | Lets the user find the current status of the replica set                                      |
+| `replSetHeartbeat`             | cluster                          | Deprecated                                                                                    |
+| `replSetStateChange`           | cluster                          | Allows the user to manage the state of cluster replica sets                                   |
+| `resync`                       | cluster                          | Deprecated                                                                                    |
+| `addShard`                     | cluster                          | Lets the user add a shard replica to a sharded cluster                                        |
+| `clearJumboFlag`               | database or collection           | Lets the user clean up oversized chunks in a shard                                            |
+| `enableSharding`               | cluster, database, or collection | Allows user to enable sharding on clusters and database or manage sharding on a cluster level |
+| `refineCollectionShardKey`     | database or collection           | Lets the user add additional fields to an existing shard key                                  |
+| `flushRouterConfig`            | cluster                          | Lets the user mark a cached routing table as obsolete                                         |
+| `getShardVersion`              | database                         | Internal command                                                                              |
+| `listShards`                   | cluster                          | Lets user see a list of configured shards for the cluster                                     |
+| `moveChunk`                    | database or collection           | Allows a user to move a chunk to a new shard                                                  |
+| `removeShard`                  | cluster                          | Lets the user drain chunks from a shard and then remove the shard from the cluster            |
+| `shardingState`                | cluster                          | Allows the user to view whether the MongoDB server is part of a sharded cluster               |
+| `splitChunk`                   | database or collection           | Allows the user to merge or split chunks in a shard                                           |
+| `splitVector`                  | database or collection           | Internal command                                                                              |
+| `applicationMessage`           | cluster                          | Lets the user add custom messages to the audit log                                            |
+| `closeAllDatabases`            | cluster                          | Deprecated                                                                                    |
+| `collMod`                      | database or collection           | Lets the user modify the options associated with a collection                                 |
+| `compact`                      | database or collection           | Allows the user to defragment data and indexes in a collection                                |
+| `connPoolSync`                 | cluster                          | Internal command                                                                              |
+| `convertToCapped`              | database or collection           | Lets the user convert a collection into a capped collection with a set maximum size           |
+| `dropConnections`              | cluster                          | Lets the user remove outgoing connections from MongoDB to a specified host                    |
+| `dropDatabase`                 | database                         | Lets the user delete the current database                                                     |
+| `dropIndex`                    | database or collection           | Lets the user delete an index                                                                 |
+| `forceUUID`                    | cluster                          | Lets users define collections using globally unique UUIDs                                     |
+| `fsync`                        | cluster                          | Allows the user to flush all pending writes to storage and lock the cluster for writes        |
+| `getDefaultRWConcern`          | cluster                          | Lets the user view the default read and write consistency and isolation settings              |
+| `getParameter`                 | cluster                          | Lets the user query for the value of a parameter                                              |
+| `hostInfo`                     | cluster                          | Allows the user to see information about the server running the MongoDB instance              |
+| `logRotate`                    | cluster                          | Lets the user trigger log rotation                                                            |
+| `reIndex`                      | database or collection           | Lets the user rebuild the indexes for a collection                                            |
+| `renameCollectionSameDB`       | database                         | Lets the user rename a collection in the current database                                     |
+| `setDefaultRWConcern`          | cluster                          | Lets the user specify the default read and write consistency and isolation settings           |
+| `setParameter`                 | cluster                          | Allows the user to define the value for parameters                                            |
+| `shutdown`                     | cluster                          | Lets the user shutdown the MongoDB instance                                                   |
+| `touch`                        | cluster                          | Deprecated                                                                                    |
+| `impersonate`                  | cluster                          | Lets the user kill sessions associated with other users and roles                             |
+| `listSessions`                 | cluster                          | Lets the user list all sessions by all users                                                  |
+| `killAnySession`               | cluster                          | Lets the user kill all sessions for a specific user or a pattern                              |
+| `checkFreeMonitoringStatus`    | cluster                          | Allows the user to see the status of cloud monitoring functionality                           |
+| `setFreeMonitoring`            | cluster                          | Lets the user enable or disable cloud monitoring functionality                                |
+| `collStats`                    | database or collection           | Allows the user to view statistics about collections                                          |
+| `connPoolStats`                | cluster                          | Lets the user see the status of outgoing connections from MongoDB instances                   |
+| `dbHash`                       | database or collection           | Lets the user query for hashed values of collections in a database                            |
+| `dbStats`                      | database                         | Allows the user to view storage statistics                                                    |
+| `getCmdLineOpts`               | cluster                          | Lets the user see the command line options used to start the MongoDB instance                 |
+| `getLog`                       | cluster                          | Lets the user see the most recent MongoDB events                                              |
+| `listDatabases`                | cluster                          | Lets the user see the list of all databases                                                   |
+| `listCollections`              | database                         | Allows the user to see a list of collections and views in a database                          |
+| `listIndexes`                  | database or collection           | Lets the user see what indexes are associated with a specific collection                      |
+| `netstat`                      | cluster                          | Internal command                                                                              |
+| `serverStatus`                 | cluster                          | Lets the user view information about the database's current state                             |
+| `validate`                     | database or collection           | Allows the user to check a collections data and indexes for correctness                       |
+| `top`                          | cluster                          | Lets the user see usage statistics for collections                                            |
 
 </details>
 
 ## What roles are available in MongoDB by default?
 
-MongoDB includes a number of useful roles that combine similar privileges together.  These roles allow you to grant and revoke privileges to database resources in a concise way.
+MongoDB includes a number of useful roles that combine similar privileges together. These roles allow you to grant and revoke privileges to database resources in a concise way.
 
 To view the list of actions available in MongoDB as well as their function, expand the section below:
 
 <details><summary>List of default MongoDB roles</summary>
 
-* `read`: Provides read access to non-system collections
-    * Actions:
-        * `changeStream`
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `listIndexes`
-        * `listCollections`
-* `readWrite`: Provides read and write access to non-system collections
-    * Actions:
-        * `collStats`
-        * `convertToCapped`
-        * `createCollection`
-        * `dbHash`
-        * `dbStats`
-        * `dropCollection`
-        * `createIndex`
-        * `dropIndex`
-        * `find`
-        * `insert`
-        * `killCursors`
-        * `listIndexes`
-        * `listCollections`
-        * `remove`
-        * `renameCollectionSameDB`
-        * `update`
-* `dbAdmin`: Provides access to administrative tasks at the database level, excluding role and user management
-    * Actions within the `system.profile` collection:
-        * `changeStream`
-        * `collStats`
-        * `convertToCapped`
-        * `createCollection`
-        * `dbHash`
-        * `dbStats`
-        * `dropCollection`
-        * `find`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions in non-system collections:
-        * `bypassDocumentValidation`
-        * `collMod`
-        * `collStats`
-        * `compact`
-        * `convertToCapped`
-        * `createCollection`
-        * `createIndex`
-        * `dbStats`
-        * `dropCollection`
-        * `dropDatabase`
-        * `dropIndex`
-        * `enableProfiler`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheIndexFilter`
-        * `planCacheRead`
-        * `planCacheWrite`
-        * `reIndex`
-        * `renameCollectionSameDB`
-        * `storageDetails`
-        * `validate`
-* `userAdmin`: Provides access to create and modify users and roles
-    * Actions:
-        * `changeCustomData`
-        * `changePassword`
-        * `createRole`
-        * `createUser`
-        * `dropRole`
-        * `dropUser`
-        * `grantRole`
-        * `revokeRole`
-        * `setAuthenticationRestriction`
-        * `viewRole`
-        * `viewUser`
-* `dbOwner`: Provides administrative access to the database including role and user management
-    * Roles this role inherits:
-        * `readWrite`
-        * `dbAdmin`
-        * `userAdmin`
-* `clusterMonitor`: Provides read access to the cluster
-    * Actions for the whole cluster:
-        * `checkFreeMonitoringStatus`
-        * `connPoolStats`
-        * `getCmdLineOpts`
-        * `getDefaultRWConcern`
-        * `getLog`
-        * `getParameter`
-        * `getShardMap`
-        * `hostInfo`
-        * `inprog`
-        * `listDatabases`
-        * `listSessions`
-        * `listShards`
-        * `netstat`
-        * `replSetGetConfig`
-        * `replSetGetStatus`
-        * `serverStatus`
-        * `setFreeMonitoring`
-        * `shardingState`
-        * `top`
-    * Actions for all databases within the cluster:
-        * `collStats`
-        * `dbStats`
-        * `getShardVersion`
-        * `indexStats`
-        * `useUUID`
-    * Actions for all `system.profile` collections:
-        * `find`
-    * Actions on the non-system collections in the `config` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `getShardVersion`
-        * `indexStats`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions on the `system.js` collection in the `config` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions on all collections in the `local` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `getShardVersion`
-        * `indexStats`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions on the `system.js` collection in the `local` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions on the `system.replset` and `system.profile` collections in the `local` database:
-        * `find`
-* `clusterManager`: Provides monitoring and management access on the cluster through the `config` and `local` databases
-    * Actions on the entire cluster:
-        * `addShard`
-        * `appendOplogNote`
-        * `applicationMessage`
-        * `cleanupOrphaned`
-        * `flushRouterConfig`
-        * `getDefaultRWConcern`
-        * `listSessions`
-        * `listShards`
-        * `removeShard`
-        * `replSetConfigure`
-        * `replSetGetConfig`
-        * `replSetGetStatus`
-        * `replSetStateChange`
-        * `resync`
-        * `setDefaultRWConcern`
-        * `setFeatureCompatibilityVersion`
-        * `setFreeMonitoring`
-    * Actions on all databases within the cluster:
-        * `clearJumboFlag`
-        * `enableSharding`
-        * `refineCollectionShardKey`
-        * `moveChunk`
-        * `splitChunk`
-        * `splitVector`
-    * Actions on non-system collections in the `config` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `enableSharding`
-        * `find`
-        * `insert`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `moveChunk`
-        * `planCacheRead`
-        * `remove`
-        * `splitChunk`
-        * `splitVector`
-        * `update`
-    * Actions on the `system.js` collection in the `config` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-    * Actions on all non-system collections in the `local` database:
-        * `enableSharding`
-        * `insert`
-        * `moveChunk`
-        * `remove`
-        * `splitChunk`
-        * `splitVector`
-        * `update`
-    * Actions for the `system.replset` collection in the `local` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `listCollections`
-        * `listIndexes`
-        * `planCacheRead`
-* `hostManager`: Provides the ability to monitor and manage servers.
-    * Actions on the entire cluster:
-        * `applicationMessage`
-        * `closeAllDatabases`
-        * `connPoolSync`
-        * `flushRouterConfig`
-        * `fsync`
-        * `invalidateUserCache`
-        * `killAnyCursor`
-        * `KillAnySession`
-        * `killop`
-        * `logRotate`
-        * `resync`
-        * `setParameter`
-        * `shutdown`
-        * `touch`
-        * `unlock`
-* `clusterAdmin`: Provides all cluster management access
-    * Roles this role inherits:
-        * `clusterManager`
-        * `clusterMonitor`
-        * `hostManager`
-    * Additional actions:
-        * `dropDatabase`
-* `backup`: Provides privileges needed to back up data
-    * Actions on all resources:
-        * `listDatabases`
-        * `listCollections`
-        * `listIndexes`
-    * Actions on the entire cluster:
-        * `appendOplogNote`
-        * `getParameter`
-        * `listDatabases`
-        * `serverStatus`
-    * Actions on non-system collections, the `system.js` and `system.profile` collections, the `admin.system.users` and `admin.system.roles` collections, and the `config.settings` collection:
-        * `find`
-    * Actions on the `config.settings` collection:
-        * `insert`
-        * `update`
-* `restore`: Provides the privileges to restore data to the cluster
-    * Actions on the entire cluster:
-        * `getParameter`
-    * Actions on non-system collections:
-        * `bypassDocumentValidation`
-        * `changeCustomData`
-        * `changePassword`
-        * `collMod`
-        * `convertToCapped`
-        * `createCollection`
-        * `createIndex`
-        * `createRole`
-        * `createUser`
-        * `dropCollection`
-        * `dropRole`
-        * `dropUser`
-        * `grantRole`
-        * `insert`
-        * `revokeRole`
-        * `viewRole`
-        * `viewUser`
-    * Actions on the `system.js` collection:
-        * `bypassDocumentValidation`
-        * `collMod`
-        * `createCollection`
-        * `createIndex`
-        * `dropCollection`
-        * `insert`
-    * Actions on any resource
-        * `listCollections`
-    * Actions on non-system collections in the `config` and `local` databases:
-        * `bypassDocumentValidation`
-        * `collMod`
-        * `createCollection`
-        * `createIndex`
-        * `dropCollection`
-        * `insert`
-    * Actions on the `admin.system.version` collection:
-        * `bypassDocumentValidation`
-        * `collMod`
-        * `createCollection`
-        * `createIndex`
-        * `dropCollection`
-        * `find`
-        * `insert`
-    * Actions on the `admin.system.roles` collection:
-        * `createIndex`
-    * Actions on the `admin.system.users` collection:
-        * `bypassDocumentValidation`
-        * `collMod`
-        * `createCollection`
-        * `createIndex`
-        * `dropCollection`
-        * `find`
-        * `insert`
-        * `remove`
-        * `update`
-* `readAnyDatabase`: Provides same privileges as `read` to all databases except `local` and `config`
-    * Additional actions on the entire cluster:
-        * `listDatabases`
-* `readWriteAnyDatabase`: Provides the same privileges as `readWrite` to all databases except `local` and `config`
-    * Additional actions on the entire cluster:
-        * `listDatabases`
-* `userAdminAnyDatabase`: Provides the same privileges as `userAdmin` on all databases except `local` and `config`.
-    * Additional actions on the entire cluster:
-        * `authSchemaUpgrade`
-        * `invalidateUserCache`
-        * `listDatabases`
-    * Additional actions on the `system.users` and `system.roles` clusters in the `admin` database:
-        * `collStats`
-        * `dbHash`
-        * `dbStats`
-        * `find`
-        * `killCursors`
-        * `planCacheRead`
-* `dbAdminAnyDatabase`: Provides the same privileges as `dbAdmin` for all databases except `local` and `config`.
-    * Additional actions on the entire cluster:
-        * `listDatabases`
-* `root`: Provides complete access to the entire system.
-    * Roles this role inherits:
-        * `readWriteAnyDatabase`
-        * `dbAdminAnyDatabase`
-        * `userAdminAnyDatabase`
-        * `clusterAdmin`
-        * `restore`
-        * `backup`
-    * Additional actions on `system` collections:
-        * `validate`
+- `read`: Provides read access to non-system collections
+  - Actions:
+    - `changeStream`
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `listIndexes`
+    - `listCollections`
+- `readWrite`: Provides read and write access to non-system collections
+  - Actions:
+    - `collStats`
+    - `convertToCapped`
+    - `createCollection`
+    - `dbHash`
+    - `dbStats`
+    - `dropCollection`
+    - `createIndex`
+    - `dropIndex`
+    - `find`
+    - `insert`
+    - `killCursors`
+    - `listIndexes`
+    - `listCollections`
+    - `remove`
+    - `renameCollectionSameDB`
+    - `update`
+- `dbAdmin`: Provides access to administrative tasks at the database level, excluding role and user management
+  - Actions within the `system.profile` collection:
+    - `changeStream`
+    - `collStats`
+    - `convertToCapped`
+    - `createCollection`
+    - `dbHash`
+    - `dbStats`
+    - `dropCollection`
+    - `find`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions in non-system collections:
+    - `bypassDocumentValidation`
+    - `collMod`
+    - `collStats`
+    - `compact`
+    - `convertToCapped`
+    - `createCollection`
+    - `createIndex`
+    - `dbStats`
+    - `dropCollection`
+    - `dropDatabase`
+    - `dropIndex`
+    - `enableProfiler`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheIndexFilter`
+    - `planCacheRead`
+    - `planCacheWrite`
+    - `reIndex`
+    - `renameCollectionSameDB`
+    - `storageDetails`
+    - `validate`
+- `userAdmin`: Provides access to create and modify users and roles
+  - Actions:
+    - `changeCustomData`
+    - `changePassword`
+    - `createRole`
+    - `createUser`
+    - `dropRole`
+    - `dropUser`
+    - `grantRole`
+    - `revokeRole`
+    - `setAuthenticationRestriction`
+    - `viewRole`
+    - `viewUser`
+- `dbOwner`: Provides administrative access to the database including role and user management
+  - Roles this role inherits:
+    - `readWrite`
+    - `dbAdmin`
+    - `userAdmin`
+- `clusterMonitor`: Provides read access to the cluster
+  - Actions for the whole cluster:
+    - `checkFreeMonitoringStatus`
+    - `connPoolStats`
+    - `getCmdLineOpts`
+    - `getDefaultRWConcern`
+    - `getLog`
+    - `getParameter`
+    - `getShardMap`
+    - `hostInfo`
+    - `inprog`
+    - `listDatabases`
+    - `listSessions`
+    - `listShards`
+    - `netstat`
+    - `replSetGetConfig`
+    - `replSetGetStatus`
+    - `serverStatus`
+    - `setFreeMonitoring`
+    - `shardingState`
+    - `top`
+  - Actions for all databases within the cluster:
+    - `collStats`
+    - `dbStats`
+    - `getShardVersion`
+    - `indexStats`
+    - `useUUID`
+  - Actions for all `system.profile` collections:
+    - `find`
+  - Actions on the non-system collections in the `config` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `getShardVersion`
+    - `indexStats`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions on the `system.js` collection in the `config` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions on all collections in the `local` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `getShardVersion`
+    - `indexStats`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions on the `system.js` collection in the `local` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions on the `system.replset` and `system.profile` collections in the `local` database:
+    - `find`
+- `clusterManager`: Provides monitoring and management access on the cluster through the `config` and `local` databases
+  - Actions on the entire cluster:
+    - `addShard`
+    - `appendOplogNote`
+    - `applicationMessage`
+    - `cleanupOrphaned`
+    - `flushRouterConfig`
+    - `getDefaultRWConcern`
+    - `listSessions`
+    - `listShards`
+    - `removeShard`
+    - `replSetConfigure`
+    - `replSetGetConfig`
+    - `replSetGetStatus`
+    - `replSetStateChange`
+    - `resync`
+    - `setDefaultRWConcern`
+    - `setFeatureCompatibilityVersion`
+    - `setFreeMonitoring`
+  - Actions on all databases within the cluster:
+    - `clearJumboFlag`
+    - `enableSharding`
+    - `refineCollectionShardKey`
+    - `moveChunk`
+    - `splitChunk`
+    - `splitVector`
+  - Actions on non-system collections in the `config` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `enableSharding`
+    - `find`
+    - `insert`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `moveChunk`
+    - `planCacheRead`
+    - `remove`
+    - `splitChunk`
+    - `splitVector`
+    - `update`
+  - Actions on the `system.js` collection in the `config` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+  - Actions on all non-system collections in the `local` database:
+    - `enableSharding`
+    - `insert`
+    - `moveChunk`
+    - `remove`
+    - `splitChunk`
+    - `splitVector`
+    - `update`
+  - Actions for the `system.replset` collection in the `local` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `listCollections`
+    - `listIndexes`
+    - `planCacheRead`
+- `hostManager`: Provides the ability to monitor and manage servers.
+  - Actions on the entire cluster:
+    - `applicationMessage`
+    - `closeAllDatabases`
+    - `connPoolSync`
+    - `flushRouterConfig`
+    - `fsync`
+    - `invalidateUserCache`
+    - `killAnyCursor`
+    - `KillAnySession`
+    - `killop`
+    - `logRotate`
+    - `resync`
+    - `setParameter`
+    - `shutdown`
+    - `touch`
+    - `unlock`
+- `clusterAdmin`: Provides all cluster management access
+  - Roles this role inherits:
+    - `clusterManager`
+    - `clusterMonitor`
+    - `hostManager`
+  - Additional actions:
+    - `dropDatabase`
+- `backup`: Provides privileges needed to back up data
+  - Actions on all resources:
+    - `listDatabases`
+    - `listCollections`
+    - `listIndexes`
+  - Actions on the entire cluster:
+    - `appendOplogNote`
+    - `getParameter`
+    - `listDatabases`
+    - `serverStatus`
+  - Actions on non-system collections, the `system.js` and `system.profile` collections, the `admin.system.users` and `admin.system.roles` collections, and the `config.settings` collection:
+    - `find`
+  - Actions on the `config.settings` collection:
+    - `insert`
+    - `update`
+- `restore`: Provides the privileges to restore data to the cluster
+  - Actions on the entire cluster:
+    - `getParameter`
+  - Actions on non-system collections:
+    - `bypassDocumentValidation`
+    - `changeCustomData`
+    - `changePassword`
+    - `collMod`
+    - `convertToCapped`
+    - `createCollection`
+    - `createIndex`
+    - `createRole`
+    - `createUser`
+    - `dropCollection`
+    - `dropRole`
+    - `dropUser`
+    - `grantRole`
+    - `insert`
+    - `revokeRole`
+    - `viewRole`
+    - `viewUser`
+  - Actions on the `system.js` collection:
+    - `bypassDocumentValidation`
+    - `collMod`
+    - `createCollection`
+    - `createIndex`
+    - `dropCollection`
+    - `insert`
+  - Actions on any resource
+    - `listCollections`
+  - Actions on non-system collections in the `config` and `local` databases:
+    - `bypassDocumentValidation`
+    - `collMod`
+    - `createCollection`
+    - `createIndex`
+    - `dropCollection`
+    - `insert`
+  - Actions on the `admin.system.version` collection:
+    - `bypassDocumentValidation`
+    - `collMod`
+    - `createCollection`
+    - `createIndex`
+    - `dropCollection`
+    - `find`
+    - `insert`
+  - Actions on the `admin.system.roles` collection:
+    - `createIndex`
+  - Actions on the `admin.system.users` collection:
+    - `bypassDocumentValidation`
+    - `collMod`
+    - `createCollection`
+    - `createIndex`
+    - `dropCollection`
+    - `find`
+    - `insert`
+    - `remove`
+    - `update`
+- `readAnyDatabase`: Provides same privileges as `read` to all databases except `local` and `config`
+  - Additional actions on the entire cluster:
+    - `listDatabases`
+- `readWriteAnyDatabase`: Provides the same privileges as `readWrite` to all databases except `local` and `config`
+  - Additional actions on the entire cluster:
+    - `listDatabases`
+- `userAdminAnyDatabase`: Provides the same privileges as `userAdmin` on all databases except `local` and `config`.
+  - Additional actions on the entire cluster:
+    - `authSchemaUpgrade`
+    - `invalidateUserCache`
+    - `listDatabases`
+  - Additional actions on the `system.users` and `system.roles` clusters in the `admin` database:
+    - `collStats`
+    - `dbHash`
+    - `dbStats`
+    - `find`
+    - `killCursors`
+    - `planCacheRead`
+- `dbAdminAnyDatabase`: Provides the same privileges as `dbAdmin` for all databases except `local` and `config`.
+  - Additional actions on the entire cluster:
+    - `listDatabases`
+- `root`: Provides complete access to the entire system.
+  - Roles this role inherits:
+    - `readWriteAnyDatabase`
+    - `dbAdminAnyDatabase`
+    - `userAdminAnyDatabase`
+    - `clusterAdmin`
+    - `restore`
+    - `backup`
+  - Additional actions on `system` collections:
+    - `validate`
 
 </details>
 
 ## How to enable authorization in MongoDB
 
-Before MongoDB can use authorization to manage user privileges, you must enable the functionality on your server or cluster.  To do so, you must log in to your server with `root` or other administrative privileges.
+Before MongoDB can use authorization to manage user privileges, you must enable the functionality on your server or cluster. To do so, you must log in to your server with `root` or other administrative privileges.
 
 **Note:** Before enabling authorization, double check to make sure that you have access to at least one role with the privileges necessary to manage roles.
 
-Modify the MongoDB server's configuration by opening the `/etc/mongod.conf` file in a text editor as an administrator.  This command will open the file using the text editor defined in the `EDITOR` environment variable and fall back to `vi`, which is available on almost all systems:
+Modify the MongoDB server's configuration by opening the `/etc/mongod.conf` file in a text editor as an administrator. This command will open the file using the text editor defined in the `EDITOR` environment variable and fall back to `vi`, which is available on almost all systems:
 
 ```bash
 sudo ${EDITOR:-vi} /etc/mongod.conf
 ```
 
-The MongoDB configuration file uses [the YAML serialization format](https://en.wikipedia.org/wiki/YAML) to define the configuration.  Uncomment or add a `security:` section key to the file.  Beneath this key, indent a line using spaces (tabs are not permitted in YAML) and set `authorization` to `enabled`:
+The MongoDB configuration file uses [the YAML serialization format](https://en.wikipedia.org/wiki/YAML) to define the configuration. Uncomment or add a `security:` section key to the file. Beneath this key, indent a line using spaces (tabs are not permitted in YAML) and set `authorization` to `enabled`:
 
 ```yaml
 . . .
@@ -544,7 +544,7 @@ security:
 
 Save and close the file when you are finished.
 
-To enable the new settings, restart your MongoDB server process.  If your MongoDB server is running on a Linux host, the operation will look like this:
+To enable the new settings, restart your MongoDB server process. If your MongoDB server is running on a Linux host, the operation will look like this:
 
 ```bash
 sudo systemctl restart mongod.service
@@ -568,7 +568,7 @@ db.getRoles({
 
 The returned list will include a whole list of nested information about each of the roles and the privileges they have on various resources throughout the system.
 
-To get information about a specific role, use the `db.getRole()` method instead.  You must be on the database where the user is defined before executing the command:
+To get information about a specific role, use the `db.getRole()` method instead. You must be on the database where the user is defined before executing the command:
 
 ```
 use admin
@@ -599,7 +599,7 @@ db.getUser("root")
 
 To grant additional privileges to a user, you must grant them access to an existing role.
 
-The `db.grantRolesToUser()` method allows you to specify additional roles that you want to add to a user.  Its first argument is the user you wish to grant additional privileges to and the second argument is an array of additional roles you wish to add:
+The `db.grantRolesToUser()` method allows you to specify additional roles that you want to add to a user. Its first argument is the user you wish to grant additional privileges to and the second argument is an array of additional roles you wish to add:
 
 ```
 db.grantRolesToUser(
@@ -625,7 +625,7 @@ db.grantRolesToUser(
 )
 ```
 
-To revoke roles from a user, you can use the companion method called `db.revokeRolesFromUser()`.  The argument syntax works exactly the same, but this time, the command removes the roles from the specified account.
+To revoke roles from a user, you can use the companion method called `db.revokeRolesFromUser()`. The argument syntax works exactly the same, but this time, the command removes the roles from the specified account.
 
 To remove roles defined in the current database you can use the role names without mentioning the database:
 
@@ -653,18 +653,18 @@ db.revokeRolesFromUser(
 
 ## Creating and managing custom roles
 
-There are times when the system's built-in roles do not adequately match up with the types of permissions you need to assign.  In these cases, you can create your own custom roles.
+There are times when the system's built-in roles do not adequately match up with the types of permissions you need to assign. In these cases, you can create your own custom roles.
 
 ### Creating new roles
 
-The `db.createRole()` method allows you to define a new role that you can assign privileges and other roles to.  You can then grant your new role to users to give them the specific privileges you defined.
+The `db.createRole()` method allows you to define a new role that you can assign privileges and other roles to. You can then grant your new role to users to give them the specific privileges you defined.
 
-The basic syntax of the `db.createRole()` method involves passing a document that defines the role's characteristics.  The document can have the following fields:
+The basic syntax of the `db.createRole()` method involves passing a document that defines the role's characteristics. The document can have the following fields:
 
-* `role`: The name you want to give the role
-* `privileges`: An array containing the set of loose privileges you want to assign to the role.  Each privilege is defined in a nested document that defines a `resource` document (specifying which resources this privilege applies to) as well as an array of `actions` that are being granted
-* `roles`: An array of additional roles that this role should inherit from.  The new role will acquire all of the privileges granted to any of the roles listed here.
-* `authenticationRestrictions`: An array that specifies any restrictions on authentication for the role.  This allows you to deny a role's privileges if the user has not authenticated in a way the role approves of.
+- `role`: The name you want to give the role
+- `privileges`: An array containing the set of loose privileges you want to assign to the role. Each privilege is defined in a nested document that defines a `resource` document (specifying which resources this privilege applies to) as well as an array of `actions` that are being granted
+- `roles`: An array of additional roles that this role should inherit from. The new role will acquire all of the privileges granted to any of the roles listed here.
+- `authenticationRestrictions`: An array that specifies any restrictions on authentication for the role. This allows you to deny a role's privileges if the user has not authenticated in a way the role approves of.
 
 The first three fields are required for every new role created.
 
@@ -713,7 +713,7 @@ db.getRole(
 
 ### Granting additional privileges to custom roles
 
-To grant additional privileges to an existing user-defined role, you can use the `db.grantPrivilegesToRole()` method.  It takes an array of privileges that are defined by documents containing a `resource` document and `actions` array, just as we saw above with `db.createRole()`.
+To grant additional privileges to an existing user-defined role, you can use the `db.grantPrivilegesToRole()` method. It takes an array of privileges that are defined by documents containing a `resource` document and `actions` array, just as we saw above with `db.createRole()`.
 
 For instance, to add the `listCollections` privilege to the `salesMonitor` role, you could type:
 
@@ -721,7 +721,7 @@ For instance, to add the `listCollections` privilege to the `salesMonitor` role,
 db.grantPrivilegesToRole(
     "salesMonitor",
     [
-        { 
+        {
             resource: { db: "sales", collection: "" },
             actions: [ "listCollections" ]
         }
@@ -737,7 +737,7 @@ If you change your mind, you can use the `db.revokePrivilegesFromRole()` method 
 db.revokePrivilegesFromRole(
     "salesMonitor",
     [
-        { 
+        {
             resource: { db: "sales", collection: "" },
             actions: [ "listCollections" ]
         }
@@ -747,7 +747,7 @@ db.revokePrivilegesFromRole(
 
 ### Granting roles to custom roles
 
-To add the privileges defined by a role to another role, you can use the `db.grantRolesToRole()` method.  The method takes the role you want to modify and an array of roles you want to add to it as arguments.
+To add the privileges defined by a role to another role, you can use the `db.grantRolesToRole()` method. The method takes the role you want to modify and an array of roles you want to add to it as arguments.
 
 To specify that you want to use the `read` role for the `salesMonitor` role after all, you can do so by typing:
 
@@ -775,11 +775,11 @@ db.revokeRolesFromRole(
 
 ### Replacing the values of a custom role
 
-To redefine the characteristics of a user-defined role, you can use the `db.updateRole()` command.  It works by *replacing* the fields it specifies instead of *appending* or *truncating* them.  For this reason, it's a good idea to be careful when issuing the command so that you do not accidentally overwrite important information.
+To redefine the characteristics of a user-defined role, you can use the `db.updateRole()` command. It works by _replacing_ the fields it specifies instead of _appending_ or _truncating_ them. For this reason, it's a good idea to be careful when issuing the command so that you do not accidentally overwrite important information.
 
-The syntax for the `db.updateRole()` command involves passing the role name as the first argument and a document specifying the field or fields you wish to replace as the second argument.  The fields that can be replaced include the `privileges` array, the `roles` array, and the `authenticationRestrictions` array.  At least one of these must be included in the document.
+The syntax for the `db.updateRole()` command involves passing the role name as the first argument and a document specifying the field or fields you wish to replace as the second argument. The fields that can be replaced include the `privileges` array, the `roles` array, and the `authenticationRestrictions` array. At least one of these must be included in the document.
 
-For example, once we've finally decided we want the `salesMonitor` role to use the `read` role on the `sales` database, we may want to redefine the role's privilege and role arrays to clean up any extra privileges that have been left behind by our experimentation.  You can do this by updating the role with the new information you want to set:
+For example, once we've finally decided we want the `salesMonitor` role to use the `read` role on the `sales` database, we may want to redefine the role's privilege and role arrays to clean up any extra privileges that have been left behind by our experimentation. You can do this by updating the role with the new information you want to set:
 
 ```
 db.updateRole(
@@ -810,13 +810,13 @@ The role will be removed from the system and any privileges granted to users by 
 
 ## Conclusion
 
-In this article, we covered a lot of ground about how MongoDB implements access control and privilege management.  We took a look at the conceptual underpinnings of the system, saw the roles, actions, and resources available for administrators to manage, and then learned about how to use the roles system to configure authorization across the system.
+In this article, we covered a lot of ground about how MongoDB implements access control and privilege management. We took a look at the conceptual underpinnings of the system, saw the roles, actions, and resources available for administrators to manage, and then learned about how to use the roles system to configure authorization across the system.
 
-These skills are necessary to provide users with access to the resources they need to complete their required tasks while limiting exposure to unrelated parts of the system.  Learning how to define and leverage roles increases your ability to offer fine grained access control on the MongoDB systems you manage.
+These skills are necessary to provide users with access to the resources they need to complete their required tasks while limiting exposure to unrelated parts of the system. Learning how to define and leverage roles increases your ability to offer fine grained access control on the MongoDB systems you manage.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -863,7 +863,7 @@ The `root` role in MongoDB provides access to all of the operations and resource
 
 <details><summary>What is Role-Based Access Control (RBAC) in MongoDB?</summary>
 
-MongoDB employs [RBAC](https://www.mongodb.com/docs/manual/core/authorization/#role-based-access-control) to govern access to a MongoDB system. RBAC is a security strategy that restricts the operations permitted to a user based on their assigned roles. 
+MongoDB employs [RBAC](https://www.mongodb.com/docs/manual/core/authorization/#role-based-access-control) to govern access to a MongoDB system. RBAC is a security strategy that restricts the operations permitted to a user based on their assigned roles.
 
 MongoDB does not allow operations or access to a database if a user does not have an assigned role.
 

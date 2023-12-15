@@ -1,20 +1,20 @@
 ---
 title: 'How to export database and table schemas in MySQL'
-metaTitle: "Export schemas for MySQL databases and tables"
-metaDescription: "Learn how to export your database objects from MySQL for analysis, migrating, backups, and more."
+metaTitle: 'Export schemas for MySQL databases and tables'
+metaDescription: 'Learn how to export your database objects from MySQL for analysis, migrating, backups, and more.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes.  Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
+In relational databases, the [database schema](/intro/database-glossary#schema) defines the structure of the database and its component parts like tables, fields, and indexes. Extracting and exporting this information is useful in many scenarios, including backups, migrating to new environments, visualizing data structures, and managing these structures within a codebase.
 
-In this short guide, we'll discuss how to export MySQL database schemas using the `mysqldump` command.  While this utility can export many types of data from MySQL, we'll focus on extracting the data structures themselves in this guide.
+In this short guide, we'll discuss how to export MySQL database schemas using the `mysqldump` command. While this utility can export many types of data from MySQL, we'll focus on extracting the data structures themselves in this guide.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/concepts/database-connectors/mysql#connection-details).
+If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/orm/overview/databases/mysql#connection-details).
 
 </PrismaOutlinks>
 
@@ -30,16 +30,16 @@ The options here can be divided into two separate categories.
 
 The first category defines the generic basic connection information that you need to provide in order to connect with any MySQL utility:
 
-* `--user=` / `-u`: The database username that you want to authenticate with
-* `--password` / `-p`: Force `mysqldump` to prompt for a password to authenticate
-* `--host=` / `-h`: The hostname or IP address of where MySQL is located
-* `--port=` / `-p`: The port number where MySQL is listening
+- `--user=` / `-u`: The database username that you want to authenticate with
+- `--password` / `-p`: Force `mysqldump` to prompt for a password to authenticate
+- `--host=` / `-h`: The hostname or IP address of where MySQL is located
+- `--port=` / `-p`: The port number where MySQL is listening
 
 If you are connecting to a local MySQL instance running in the default configuration, you can typically omit the host and port options.
 
 The second category tells `mysqldump` what to export:
 
-* `--no-data` / `-d`: This tells the utility to only export the structure itself, not the records they contain
+- `--no-data` / `-d`: This tells the utility to only export the structure itself, not the records they contain
 
 Additionally, the first non-option argument (represented here by the word "DATABASE") indicates the exact database to export.
 
@@ -51,14 +51,14 @@ mysqldump --user=sales_reporter --password --no-data SALES > sales_database_sche
 
 ## Modifying the export behavior
 
-The basic usage discussed above will output every structure related to the database in question.  We can modify this behavior with a number of additional options.
+The basic usage discussed above will output every structure related to the database in question. We can modify this behavior with a number of additional options.
 
 ### Targeting more than one database
 
 You can modify how many databases the export will target with one of the following options:
 
-* `--databases` / `-B`: Treat all name arguments as database names.  This allows you to export the schema from multiple databases at the same time.
-* `--all-databases` / `-A`: Export all databases within MySQL (with the exception of the `performance_schema` database that is used internally)
+- `--databases` / `-B`: Treat all name arguments as database names. This allows you to export the schema from multiple databases at the same time.
+- `--all-databases` / `-A`: Export all databases within MySQL (with the exception of the `performance_schema` database that is used internally)
 
 So to dump all databases, you could use:
 
@@ -82,14 +82,14 @@ For example, if three of the tables in your `SALES` database are called `EMPLOYE
 mysqldump --user=USERNAME --password --no-data SALES EMPLOYEE STORE INVENTORY > some_sales_tables.sql
 ```
 
-In this construction, the first argument is always assumed to the be database name and all additional named arguments are taken to be tables within that database.  Because of this, this usage is incompatible with the `--databases` option which modifies how `mysqldump` interprets additional arguments.
+In this construction, the first argument is always assumed to the be database name and all additional named arguments are taken to be tables within that database. Because of this, this usage is incompatible with the `--databases` option which modifies how `mysqldump` interprets additional arguments.
 
 ### Exporting additional structures
 
 In addition to databases and tables, you can also explicitly export event and routine definitions by including these options:
 
-* `--routines` / `-R`: Include stored procedures and functions within the exported schema dump
-* `--events` / `-E`: Include the definition of Event Scheduler events in the output
+- `--routines` / `-R`: Include stored procedures and functions within the exported schema dump
+- `--events` / `-E`: Include the definition of Event Scheduler events in the output
 
 For example, to include a dump of the database `SALES` that includes these extra definitions, you could type:
 
@@ -101,17 +101,17 @@ mysqldump --user=USERNAME --password --no-data --routines --events SALES > all_s
 
 Some additional options that can be useful depending on your goals include:
 
-* `--add-drop-database`: Add a `DROP DATABASE` statement to the dump file prior to each `CREATE DATABASE` statement.  This ensures that any previously defined structure for a given database is removed first to avoid conflicts.
-* `--single-transaction`: Sets the transaction isolation level to "[repeatable read](/intro/database-glossary#repeatable-read-isolation-level)" to help ensure a more consistent database state with storage engines like InnoDB.  This dumps a snapshot of the database at the point-in-time when the dump is initialized.
+- `--add-drop-database`: Add a `DROP DATABASE` statement to the dump file prior to each `CREATE DATABASE` statement. This ensures that any previously defined structure for a given database is removed first to avoid conflicts.
+- `--single-transaction`: Sets the transaction isolation level to "[repeatable read](/intro/database-glossary#repeatable-read-isolation-level)" to help ensure a more consistent database state with storage engines like InnoDB. This dumps a snapshot of the database at the point-in-time when the dump is initialized.
 
 These options can be added to your schema dump commands without altering the basic semantics or meaning of the other components.
 
 ## Conclusion
 
-Being able to export your schemas allows you to save your database structures outside of the database itself.  This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
+Being able to export your schemas allows you to save your database structures outside of the database itself. This is helpful when setting up new environments, evolving your schema as your needs change, and visualizing the structure of the information you are storing.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/concepts/database-connectors/mysql#connection-details).
+If you are using Prisma, you can connect with your MySQL server and manage your data using the [MySQL database connector](https://www.prisma.io/docs/orm/overview/databases/mysql#connection-details).
 
 </PrismaOutlinks>

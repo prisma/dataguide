@@ -1,26 +1,26 @@
 ---
 title: 'Using `mysql_config_editor` to manage MySQL credentials'
-metaTitle: "Managing connection information with `mysql_config_editor`"
-metaDescription: "Manage connection information like usernames, passwords, and MySQL servers with `mysql_config_editor`."
+metaTitle: 'Managing connection information with `mysql_config_editor`'
+metaDescription: 'Manage connection information like usernames, passwords, and MySQL servers with `mysql_config_editor`.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-Maintaining credentials for different users and databases across a variety of hosts can be challenging from a usability perspective.  If you regularly log into multiple MySQL servers or if you have projects that have separate user accounts with unique privileges for security reasons, you can easily lose track of how to connect to the accounts you need.
+Maintaining credentials for different users and databases across a variety of hosts can be challenging from a usability perspective. If you regularly log into multiple MySQL servers or if you have projects that have separate user accounts with unique privileges for security reasons, you can easily lose track of how to connect to the accounts you need.
 
-Fortunately, [MySQL provides a small utility called `mysql_config_editor`](https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html) specifically designed to store and manage MySQL credentials so that you can [authenticate](/intro/database-glossary#authentication) easily with MySQL clients and tools.  In this guide, we'll cover how `mysql_config_editor` works, how to manage multiple credentials securely, and how to tell your other MySQL tools to leverage the configuration to authenticate to your servers.
+Fortunately, [MySQL provides a small utility called `mysql_config_editor`](https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html) specifically designed to store and manage MySQL credentials so that you can [authenticate](/intro/database-glossary#authentication) easily with MySQL clients and tools. In this guide, we'll cover how `mysql_config_editor` works, how to manage multiple credentials securely, and how to tell your other MySQL tools to leverage the configuration to authenticate to your servers.
 
 ## How does `mysql_config_editor` work?
 
-The `mysql_config_editor` utility is a small program included in MySQL installations that is used to manage credentials for connecting to different MySQL servers or different accounts.  It encrypts credential information and stores it in a file called `.mylogin.cnf` in your home directory.
+The `mysql_config_editor` utility is a small program included in MySQL installations that is used to manage credentials for connecting to different MySQL servers or different accounts. It encrypts credential information and stores it in a file called `.mylogin.cnf` in your home directory.
 
-Each set of credentials describing how to log in to a MySQL account is called a "login path".  These usually specify the account's username and password and can additionally store relevant information about how to connect to the appropriate MySQL server like the hostname and port where the MySQL is listening.
+Each set of credentials describing how to log in to a MySQL account is called a "login path". These usually specify the account's username and password and can additionally store relevant information about how to connect to the appropriate MySQL server like the hostname and port where the MySQL is listening.
 
-MySQL clients and tools are automatically configured to use the information in the `.mylogin.cnf` file to help login to MySQL servers.  You can use the `--login-path=` parameter on MySQL tools like the `mysql` client to specify which login details should be used.  If no login path is provided, the tools will use the credentials associated with the default login path, known as `client`, if it is defined.
+MySQL clients and tools are automatically configured to use the information in the `.mylogin.cnf` file to help login to MySQL servers. You can use the `--login-path=` parameter on MySQL tools like the `mysql` client to specify which login details should be used. If no login path is provided, the tools will use the credentials associated with the default login path, known as `client`, if it is defined.
 
-If the login paths don't define certain values, the MySQL clients and tools will use their configured default values instead.  For instance, if you do not specify a host when creating a login path with `mysql_config_editor`, the `mysql` client will automatically assume `localhost`, just as if you were to omit the `--host=` option when providing credentials manually on the command line.
+If the login paths don't define certain values, the MySQL clients and tools will use their configured default values instead. For instance, if you do not specify a host when creating a login path with `mysql_config_editor`, the `mysql` client will automatically assume `localhost`, just as if you were to omit the `--host=` option when providing credentials manually on the command line.
 
 ## Defining credentials by creating a new login path
 
@@ -34,16 +34,16 @@ mysql_config_editor set [options]
 
 Typically, you'll include some of the following options:
 
-* `--login-path=`: The label you want to use for these credentials
-* `--user=`: The account username
-* `--password`: A flag to tell `mysql_config_editor` to prompt for a password for the account.  The password prompt allows you to securely enter the password so that it isn't recorded to shell history files as it would be if provided it directly on the command line.
-* `--host=`: The host name or IP address where the MySQL server is hosted.
-* `--port=`: The port number where the MySQL server is listening.
-* `--socket=`: The path to the local socket file to connect with if you are connecting to a local server through Unix sockets.
+- `--login-path=`: The label you want to use for these credentials
+- `--user=`: The account username
+- `--password`: A flag to tell `mysql_config_editor` to prompt for a password for the account. The password prompt allows you to securely enter the password so that it isn't recorded to shell history files as it would be if provided it directly on the command line.
+- `--host=`: The host name or IP address where the MySQL server is hosted.
+- `--port=`: The port number where the MySQL server is listening.
+- `--socket=`: The path to the local socket file to connect with if you are connecting to a local server through Unix sockets.
 
 You only need to provide the information that differs from the default options for the MySQL utilities.
 
-As you create entries, keep in mind that `mysql_config_editor` provides no way to edit the details associated with a login path once it's created.  To change any details, you'll need to respecify all of the appropriate connection information again to overwrite the previous entry.
+As you create entries, keep in mind that `mysql_config_editor` provides no way to edit the details associated with a login path once it's created. To change any details, you'll need to respecify all of the appropriate connection information again to overwrite the previous entry.
 
 ### Setting connection information for a local account
 
@@ -53,9 +53,9 @@ For example, to create a login for a user named `salesadmin` on the local MySQL 
 mysql_config_editor set --login-path=sales --user=salesadmin --password
 ```
 
-You will be prompted for the account password and the new connection information will be saved to the `.mylogin.cnf` file under a label called `sales`.  We provide the account name with `--user=salesadmin` and tell `mysql_config_editor` to prompt for the password by including the `--password` flag.
+You will be prompted for the account password and the new connection information will be saved to the `.mylogin.cnf` file under a label called `sales`. We provide the account name with `--user=salesadmin` and tell `mysql_config_editor` to prompt for the password by including the `--password` flag.
 
-Since this is a local account, it will connect through a local socket file if running on a Unix-like system.  If you've not modified MySQL to run differently, however, the MySQL tools will know what to do and you do not need to provide those details when configuring.
+Since this is a local account, it will connect through a local socket file if running on a Unix-like system. If you've not modified MySQL to run differently, however, the MySQL tools will know what to do and you do not need to provide those details when configuring.
 
 ### Setting connection information for a remote account
 
@@ -69,13 +69,13 @@ The entry for the `testing` login path will have all of the information required
 
 ### Setting the default connection information
 
-MySQL tools are designed to use reasonable defaults when called without explicit connection information.  For instance, on Unix-like systems, they will try to connect using the following details if not overwritten:
+MySQL tools are designed to use reasonable defaults when called without explicit connection information. For instance, on Unix-like systems, they will try to connect using the following details if not overwritten:
 
-* **User**: Your operating system username
-* **Password**: No password
-* **Host**: `localhost`, which by default means you'll be connecting over a Unix socket at the default location for your platform.
+- **User**: Your operating system username
+- **Password**: No password
+- **Host**: `localhost`, which by default means you'll be connecting over a Unix socket at the default location for your platform.
 
-If these options aren't appropriate for your use case, you can change the default connection information with `mysql_config_editor`.  To do so, provide the connection information you'd like use by default without specifying a login path.
+If these options aren't appropriate for your use case, you can change the default connection information with `mysql_config_editor`. To do so, provide the connection information you'd like use by default without specifying a login path.
 
 For example:
 
@@ -114,6 +114,7 @@ You can verify the user you're connected as by typing:
 ```
 SELECT user();
 ```
+
 ```
  +----------------------+
  | user()               |
@@ -128,12 +129,13 @@ If you want to verify the user and the method you're connecting with, you can us
 ```
 status
 ```
+
 ```
  --------------
  mysql  Ver 8.0.27-0ubuntu0.20.04.1 for Linux on x86_64 ((Ubuntu))
- 
+
  Connection id:			28
- Current database:	
+ Current database:
  Current user:			sammy@localhost
  SSL:					Not in use
  Current pager:			stdout
@@ -149,7 +151,7 @@ status
  UNIX socket:			/var/run/mysqld/mysqld.sock
  Binary data as:		Hexadecimal
  Uptime:				1 day 21 hours 37 min 49 sec
- 
+
  Threads: 2  Questions: 66  Slow queries: 0  Opens: 186  Flush tables: 3  Open tables: 105  Queries per second avg: 0.000
  --------------
 ```
@@ -158,26 +160,28 @@ You can see the current user under `Current user`, but you can also view the det
 
 ## Displaying available login paths
 
-While the connection details you define are stored in a file called `.mylogin.cnf` in your home directory, the contents are encrypted for security.  To view the configured information, you need to use the `mysql_config_editor` again.
+While the connection details you define are stored in a file called `.mylogin.cnf` in your home directory, the contents are encrypted for security. To view the configured information, you need to use the `mysql_config_editor` again.
 
 To view the default login information you've configured, which is stored under the `client` login path, you can use the `print` subcommand without any additional options:
 
 ```
 mysql_config_editor print
 ```
+
 ```
 [client]
 user = "root"
 password = *****
 ```
 
-MySQL uses an [INI style file format](https://en.wikipedia.org/wiki/INI_file) to group connection details under the appropriate login path label.  You may also notice that the password is obscured.  This, again, is a security measure so as not to leak the saved password.
+MySQL uses an [INI style file format](https://en.wikipedia.org/wiki/INI_file) to group connection details under the appropriate login path label. You may also notice that the password is obscured. This, again, is a security measure so as not to leak the saved password.
 
 To view a different login path, you can supply the `--login-path=` option as usual:
 
 ```
 mysql_config_editor print --login-path=testing
 ```
+
 ```
 [testing]
 user = "testuser"
@@ -191,6 +195,7 @@ To show all of the configured login paths, you can add the `--all` flag instead:
 ```
 mysql_config_editor print --all
 ```
+
 ```
 [sales]
 user = "salesadmin"
@@ -207,7 +212,7 @@ password = *****
 
 ## Removing connection information
 
-You can remove the connection information associated with a login path with the `remove` subcommand.  Providing the `--login-path` will allow `mysql_config_editor` to target the appropriate entry.
+You can remove the connection information associated with a login path with the `remove` subcommand. Providing the `--login-path` will allow `mysql_config_editor` to target the appropriate entry.
 
 For example, to remove the connection information for the `sales` login path, you can type:
 
@@ -220,6 +225,7 @@ If you check the configured entries, you will find that the `sales` login path h
 ```
 mysql_config_editor print --all
 ```
+
 ```
 [testing]
 user = "testuser"
@@ -231,7 +237,7 @@ user = "root"
 password = *****
 ```
 
-You can also remove a specific parameter from the login path's connection information.  For instance, if the MySQL server at "dev.example.com" has been reconfigured to now run on the default 3306 port, you can remove the port information.  To do so, you'd provide the `--port` flag along with the `--login-path=`:
+You can also remove a specific parameter from the login path's connection information. For instance, if the MySQL server at "dev.example.com" has been reconfigured to now run on the default 3306 port, you can remove the port information. To do so, you'd provide the `--port` flag along with the `--login-path=`:
 
 ```
 mysql_config_editor remove --login-path=testing --port
@@ -242,6 +248,7 @@ You can verify that the port specification has been removed from the `testing` l
 ```
 mysql_config_editor print --all
 ```
+
 ```
 [testing]
 user = "testuser"
@@ -262,12 +269,12 @@ This removes all of the configured login paths.
 
 ## Conclusion
 
-In this guide, we took a look at `mysql_config_editor`, one of MySQL's small utilities designed to improve user experience by managing connection information.  We covered how to configure connection information using login paths and how to call MySQL tools using our configured credentials.  We also discussed how to override defaults and manage existing login path information.
+In this guide, we took a look at `mysql_config_editor`, one of MySQL's small utilities designed to improve user experience by managing connection information. We covered how to configure connection information using login paths and how to call MySQL tools using our configured credentials. We also discussed how to override defaults and manage existing login path information.
 
-By taking advantage of `mysql_config_editor` and other tools that the MySQL project provides, you can remove some of the frustration that can arise when managing multiple projects from a single location.  It is a good example of a relatively simple tool designed to streamline repetitive, error-prone tasks to help you focus on more important work.
+By taking advantage of `mysql_config_editor` and other tools that the MySQL project provides, you can remove some of the frustration that can arise when managing multiple projects from a single location. It is a good example of a relatively simple tool designed to streamline repetitive, error-prone tasks to help you focus on more important work.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can set connection information for MySQL databases when configuring the [MySQL database connector](https://www.prisma.io/docs/concepts/database-connectors/mysql#connection-details).
+If you are using Prisma, you can set connection information for MySQL databases when configuring the [MySQL database connector](https://www.prisma.io/docs/orm/overview/databases/mysql#connection-details).
 
 </PrismaOutlinks>

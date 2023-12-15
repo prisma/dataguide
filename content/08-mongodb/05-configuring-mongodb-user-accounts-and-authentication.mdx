@@ -1,22 +1,22 @@
 ---
 title: 'How to manage users and authentication in MongoDB'
-metaTitle: "MongoDB Users and Authentication - Create, List, and Delete"
-metaDescription: "Find out how to configure user accounts and set up authentication credentials on your MongoDB server, including how to create, delete, and show list of users."
+metaTitle: 'MongoDB Users and Authentication - Create, List, and Delete'
+metaDescription: 'Find out how to configure user accounts and set up authentication credentials on your MongoDB server, including how to create, delete, and show list of users.'
 metaImage: '/social/generic-mongodb.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-Managing users and [authentication](/intro/database-glossary#authentication) are some of the most important administration tasks of managing MongoDB servers.  You must ensure that the server is configured to be able to properly identify your users and applications and deny connections or operations that are unable to authenticate correctly.
+Managing users and [authentication](/intro/database-glossary#authentication) are some of the most important administration tasks of managing MongoDB servers. You must ensure that the server is configured to be able to properly identify your users and applications and deny connections or operations that are unable to authenticate correctly.
 
-To manage these requirements, you must be able to decide which the users your server requires and create those accounts.  As part of this process, you can set the authentication details to allow external access using the new identity.
+To manage these requirements, you must be able to decide which the users your server requires and create those accounts. As part of this process, you can set the authentication details to allow external access using the new identity.
 
-In this guide, we will walk through how to create, view, and remove user accounts.  We will go over how to set up authentication for your accounts and how to update the credentials when you need to change your user passwords.
+In this guide, we will walk through how to create, view, and remove user accounts. We will go over how to set up authentication for your accounts and how to update the credentials when you need to change your user passwords.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -30,54 +30,54 @@ To follow along with this guide, you'll need an account on a [MongoDB](/intro/da
 
 To create, modify, and delete users within MongoDB and configure authentication, the core methods you need are:
 
-* `db.createUser`: create a new MongoDB user account
-* `db.updateUser`: update the details of a user account
-* `db.changeUserPassword`: change the password used by a user account
-* `db.dropUser`: delete a MongoDB user account
+- `db.createUser`: create a new MongoDB user account
+- `db.updateUser`: update the details of a user account
+- `db.changeUserPassword`: change the password used by a user account
+- `db.dropUser`: delete a MongoDB user account
 
 Additionally, the following database command is useful for finding information about users on the system:
 
-* `db.runCommand('usersInfo')`: show information about one or more MongoDB user accounts
+- `db.runCommand('usersInfo')`: show information about one or more MongoDB user accounts
 
 ### Required privileges
 
-To execute the commands above, you need to login to MongoDB with an account with a number of different [privilege actions](https://docs.mongodb.com/manual/reference/privilege-actions/).  The specific privileges you require depend on the commands you need to use.
+To execute the commands above, you need to login to MongoDB with an account with a number of different [privilege actions](https://docs.mongodb.com/manual/reference/privilege-actions/). The specific privileges you require depend on the commands you need to use.
 
 To get info about other users, your current user must have the following privilege action enabled:
 
-* [`viewUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-viewUser)
+- [`viewUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-viewUser)
 
 To create new users, your current user must have the following privilege actions enabled:
 
-* [`createUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-createUser)
-* [`grantRole` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-grantRole)
+- [`createUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-createUser)
+- [`grantRole` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-grantRole)
 
 To change a user's password or account details, you might need the following privileges:
 
-* [`changeOwnPassword` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeOwnPassword) to change your own account password
-* [`changeOwnCustomData` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeOwnCustomData) to change your own account's custom data
-* [`changePassword` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changePassword) to change other users' passwords
-* [`changeCustomData` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeCustomData) to change other users' custom data
+- [`changeOwnPassword` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeOwnPassword) to change your own account password
+- [`changeOwnCustomData` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeOwnCustomData) to change your own account's custom data
+- [`changePassword` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changePassword) to change other users' passwords
+- [`changeCustomData` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-changeCustomData) to change other users' custom data
 
 We won't be covering role management in this guide, so the `grantRole` and `revokeRole` privilege actions are not be required.
 
 To delete a user account, your current user must have the following privilege action enabled:
 
-* [`dropUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-dropUser)
+- [`dropUser` privilege action](https://docs.mongodb.com/manual/reference/privilege-actions/#mongodb-authaction-dropUser)
 
 ## Understanding how MongoDB implements users and authentication
 
 Before we start creating and managing accounts, it's helpful to take some time to get familiar with how MongoDB defines and stores this information.
 
-In MongoDB, user accounts are a combination of the account username along with a specific authentication database.  The authentication database is simply the database where the user is defined and does not imply a limitation on scope or rights.  Authentication databases are regular databases used to manage other data and are not special, dedicated databases.
+In MongoDB, user accounts are a combination of the account username along with a specific authentication database. The authentication database is simply the database where the user is defined and does not imply a limitation on scope or rights. Authentication databases are regular databases used to manage other data and are not special, dedicated databases.
 
-A user account name must be unique in its authentication database.  However, the same username may be reused with a different authentication database to create a new, distinct user account.
+A user account name must be unique in its authentication database. However, the same username may be reused with a different authentication database to create a new, distinct user account.
 
-As a result of this design, an account can only be accurately identified by including the username and authentication database.  To authenticate to an account, one also needs to be able to provide the credentials associated with an account.  This is usually a password, but can also be a certificate.
+As a result of this design, an account can only be accurately identified by including the username and authentication database. To authenticate to an account, one also needs to be able to provide the credentials associated with an account. This is usually a password, but can also be a certificate.
 
 ## How do you create users?
 
-Now that we've taken a look at how MongoDB conceptualizes user accounts, we can discuss how to create new users.  Remember to log in to your MongoDB server with a user that has the appropriate privileges to follow along.
+Now that we've taken a look at how MongoDB conceptualizes user accounts, we can discuss how to create new users. Remember to log in to your MongoDB server with a user that has the appropriate privileges to follow along.
 
 To create a new user, you must first switch to the database you want to use as the new user's authentication database.
 
@@ -86,6 +86,7 @@ First, you can get a list of the databases that are already configured on your s
 ```
 show dbs
 ```
+
 ```
 admin   0.000GB
 config  0.000GB
@@ -97,11 +98,12 @@ Switch to the database the user will be associated with using the `use` command:
 ```
 use admin
 ```
+
 ```
 switched to db admin
 ```
 
-To create a new user, you can use either the `db.createUser()` method or you can use the `createUser` database command.  Either way, you will need to pass the username (the `user` field), password (the `pwd` field), and an array of roles that the user should be added to (the `roles` key) within a `user` object.
+To create a new user, you can use either the `db.createUser()` method or you can use the `createUser` database command. Either way, you will need to pass the username (the `user` field), password (the `pwd` field), and an array of roles that the user should be added to (the `roles` key) within a `user` object.
 
 To create a new user called `tom` with a password set to `hellothere` with an empty roles array using the `db.createUser()` method, you can type:
 
@@ -112,6 +114,7 @@ db.createUser({
 	roles: []
 })
 ```
+
 ```
 Successfully added user: { "user" : "tom", "roles" : [ ] }
 ```
@@ -125,13 +128,14 @@ db.runCommand({
 	roles: []
 })
 ```
+
 ```
 Successfully added user: { "user" : "tom", "roles" : [ ] }
 ```
 
-The two different options are very similar, so we'll only be showing the database methods where applicable moving forward.  However, if you prefer the database command syntax, you can find each of the associated commands in the [MongoDB command reference documentation](https://docs.mongodb.com/manual/reference/command/).
+The two different options are very similar, so we'll only be showing the database methods where applicable moving forward. However, if you prefer the database command syntax, you can find each of the associated commands in the [MongoDB command reference documentation](https://docs.mongodb.com/manual/reference/command/).
 
-In the above commands, we explicitly defined the password inline within the `user` object.  To prevent the password from being logged and retrievable, you can alternatively use the `passwordPrompt()` method within the `user` document to have MongoDB interactively prompt you for a password when the command is run.  The password will not be visible, so your command history will be clean:
+In the above commands, we explicitly defined the password inline within the `user` object. To prevent the password from being logged and retrievable, you can alternatively use the `passwordPrompt()` method within the `user` document to have MongoDB interactively prompt you for a password when the command is run. The password will not be visible, so your command history will be clean:
 
 ```
 db.createUser({
@@ -140,6 +144,7 @@ db.createUser({
     roles: []
 })
 ```
+
 ```
 Enter password:
 Successfully added user: { "user" : "tom", "roles" : [ ] }
@@ -151,7 +156,7 @@ Keep in mind that the password will still be sent to the server in plain text if
 
 Next, let's take a look at how to find information about the existing users.
 
-To return multiple users, you can use the `db.getUsers()` method on to show all of the users within the current database.  First, switch to the database you're interested in querying:
+To return multiple users, you can use the `db.getUsers()` method on to show all of the users within the current database. First, switch to the database you're interested in querying:
 
 ```
 use admin
@@ -162,6 +167,7 @@ Next, use the `db.getUsers()` method to return all of the users associated with 
 ```
 db.getUsers()
 ```
+
 ```
 [
 	{
@@ -202,6 +208,7 @@ db.getUsers({
 	showCredentials: true
 })
 ```
+
 ```
 [
         {
@@ -257,6 +264,7 @@ db.getUsers({
 	}
 })
 ```
+
 ```
 [
         {
@@ -278,12 +286,13 @@ db.getUsers({
 ]
 ```
 
-To get a specific user, you can use the `db.getUser()` method instead.  This works like the `db.getUsers()` method, but returns a single user.  Instead of passing an object to the method, you pass a string containing the username you wish to retrieve:
+To get a specific user, you can use the `db.getUser()` method instead. This works like the `db.getUsers()` method, but returns a single user. Instead of passing an object to the method, you pass a string containing the username you wish to retrieve:
 
 ```
 use admin
 db.getUser("tom")
 ```
+
 ```
 {
         "_id" : "admin.tom",
@@ -300,9 +309,9 @@ db.getUser("tom")
 
 You can optionally include an extra `args` object that allows you to specify additional information you'd like by setting the following keys to `true`:
 
-* `showCredentials`: shows credential information in addition to the regular output
-* `showPrivileges`: shows privilege information in addition to the regular output
-* `showAuthenticationRestrictions`: shows authentication restrictions on the account in addition to the regular output
+- `showCredentials`: shows credential information in addition to the regular output
+- `showPrivileges`: shows privilege information in addition to the regular output
+- `showAuthenticationRestrictions`: shows authentication restrictions on the account in addition to the regular output
 
 For example, you can tell MongoDB to supply you will all of the above information by typing:
 
@@ -315,6 +324,7 @@ db.getUser("tom",
 	showAuthenticationRestrictions: true
 })
 ```
+
 ```
 {
         "_id" : "admin.tom",
@@ -349,7 +359,7 @@ db.getUser("tom",
 
 ## How do you change the password for a MongoDB user?
 
-To change a user's password, you can use the `db.changeUserPassword()` method.  Again, you must switch to the user's authentication database before executing the command.
+To change a user's password, you can use the `db.changeUserPassword()` method. Again, you must switch to the user's authentication database before executing the command.
 
 The `db.changeUserPassword()` method takes two arguments: the username of the account you wish to change and the new password for the account.
 
@@ -360,30 +370,31 @@ use admin
 db.changeUserPassword("tom", "secretpassword")
 ```
 
-Just as with the `db.createUser()` method, you can use the `passwordPrompt()` method for the second argument instead of providing a password inline.  MongoDB will prompt you to enter a password when the command is executed:
+Just as with the `db.createUser()` method, you can use the `passwordPrompt()` method for the second argument instead of providing a password inline. MongoDB will prompt you to enter a password when the command is executed:
 
 ```
 use admin
 db.changeUserPassword("tom", passwordPrompt())
 ```
+
 ```
 Enter password:
 ```
 
 ## How do you change other user account details?
 
-To change other information associated with a user account, you can use the `db.updateUser()` method.  Make sure you switch to the user's authentication database before updating their details.
+To change other information associated with a user account, you can use the `db.updateUser()` method. Make sure you switch to the user's authentication database before updating their details.
 
-The `db.updateUser()` method requires you to specify the username and then provide an object containing the data you wish to update.  Any field you choose to update will be completely replaced with the new information, so be sure to include the original data as well as the new data in your object if you only hope to append new information.
+The `db.updateUser()` method requires you to specify the username and then provide an object containing the data you wish to update. Any field you choose to update will be completely replaced with the new information, so be sure to include the original data as well as the new data in your object if you only hope to append new information.
 
-The object that you include in the command with the change information can contain many different fields.  Let's go over them:
+The object that you include in the command with the change information can contain many different fields. Let's go over them:
 
-* `customData`: Any arbitrary data to be associated with the user account.
-* `roles`: The roles that the user is granted.  It is often better to use the [`db.grantRolesToUser()`](https://docs.mongodb.com/manual/reference/method/db.grantRolesToUser/) and [`db.revokeRolesFromUser()`](https://docs.mongodb.com/manual/reference/method/db.revokeRolesFromUser/) methods to control role membership rather than updating with this key as you can append and remove roles individually.
-* `pwd`: The user's password.  Using the `db.ChangeUserPassword()` method is usually easier if that is the only field that needs to be updated.
-* `authenticationRestrictions`: Specifies restrictions for the account that can limit the IP addresses users can connect from or to.  The value of this key is an object or array that defines `clientSource` and or `serverAddress`, which contain arrays specifying the valid IP addresses or ranges.  Find out more in the MongoDB docs on [authentication restrictions](https://docs.mongodb.com/manual/reference/method/db.createUser/#authentication-restrictions).
-* `mechanisms`: The specific authentication mechanisms to be used for credentials.  Can be set to either one or both of `SCRAM-SHA-1` or `SCRAM-SHA-256`, but can only be changed to a subset of the current mechanisms if a new password isn't currently being supplied.
-* `passwordDigestor`: Specifies which component processes the user's password.  Can be either `server` (the default) or `client`.
+- `customData`: Any arbitrary data to be associated with the user account.
+- `roles`: The roles that the user is granted. It is often better to use the [`db.grantRolesToUser()`](https://docs.mongodb.com/manual/reference/method/db.grantRolesToUser/) and [`db.revokeRolesFromUser()`](https://docs.mongodb.com/manual/reference/method/db.revokeRolesFromUser/) methods to control role membership rather than updating with this key as you can append and remove roles individually.
+- `pwd`: The user's password. Using the `db.ChangeUserPassword()` method is usually easier if that is the only field that needs to be updated.
+- `authenticationRestrictions`: Specifies restrictions for the account that can limit the IP addresses users can connect from or to. The value of this key is an object or array that defines `clientSource` and or `serverAddress`, which contain arrays specifying the valid IP addresses or ranges. Find out more in the MongoDB docs on [authentication restrictions](https://docs.mongodb.com/manual/reference/method/db.createUser/#authentication-restrictions).
+- `mechanisms`: The specific authentication mechanisms to be used for credentials. Can be set to either one or both of `SCRAM-SHA-1` or `SCRAM-SHA-256`, but can only be changed to a subset of the current mechanisms if a new password isn't currently being supplied.
+- `passwordDigestor`: Specifies which component processes the user's password. Can be either `server` (the default) or `client`.
 
 As an example, we can update the `tom` account that authenticates against the `admin` database to only be able to login from the same computer that hosts the server itself by changing the `authenticationRestrictions` field:
 
@@ -405,6 +416,7 @@ db.getUser("tom", {
 	showAuthenticationRestrictions: true
 })
 ```
+
 ```
 {
         "_id" : "admin.tom",
@@ -445,7 +457,7 @@ db.changeUser("tom", {
 
 ## How do you delete MongoDB users?
 
-To remove MongoDB user accounts, you can use the `db.dropUser()` method.  Be sure to connect to the user's authentication database before removing them.
+To remove MongoDB user accounts, you can use the `db.dropUser()` method. Be sure to connect to the user's authentication database before removing them.
 
 To execute the `db.dropUser()` method, you need to supply the name of the user you wish to remove:
 
@@ -463,11 +475,11 @@ If the account did not exist in the current database, it will instead return `fa
 
 ## Conclusion
 
-MongoDB's user management and authentication configuration lets you control who can connect to your servers and what their user properties are.  In a following article, we'll cover how to restrict the level of access that users have by tackling the authorization portion of user management.
+MongoDB's user management and authentication configuration lets you control who can connect to your servers and what their user properties are. In a following article, we'll cover how to restrict the level of access that users have by tackling the authorization portion of user management.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/concepts/database-connectors/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
 
 To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
 
@@ -477,7 +489,7 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 <details><summary>How do you list existing users in MongoDB?</summary>
 
-To list existing users in MongoDB, you can use the `db.getUsers()` method to show all of the users within the current database. 
+To list existing users in MongoDB, you can use the `db.getUsers()` method to show all of the users within the current database.
 
 The syntax would look like:
 
@@ -485,15 +497,16 @@ The syntax would look like:
 use admin
 db.getUsers()
 ```
+
 For more details on [`db.getUsers()`](https://www.prisma.io/dataguide/mongodb/configuring-mongodb-user-accounts-and-authentication#how-do-you-show-existing-users).
 
 </details>
 
 <details><summary>How do you create a database admin user in MongoDB?</summary>
 
-In order to create a [database admin user](https://www.prisma.io/dataguide/mongodb/authorization-and-privileges#what-roles-are-available-in-mongodb-by-default) in MongoDB, you will want to use the `db.createUser()` method in the `admin` database. 
+In order to create a [database admin user](https://www.prisma.io/dataguide/mongodb/authorization-and-privileges#what-roles-are-available-in-mongodb-by-default) in MongoDB, you will want to use the `db.createUser()` method in the `admin` database.
 
-The following demonstrates the syntax to use for creating database admins. 
+The following demonstrates the syntax to use for creating database admins.
 
 ```
 use admin
@@ -543,4 +556,5 @@ db.getUser("tom",
     showPrivileges: true,
 })
 ```
+
 </details>

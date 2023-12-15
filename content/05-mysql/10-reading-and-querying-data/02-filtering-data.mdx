@@ -1,24 +1,24 @@
 ---
 title: 'How to filter query results in MySQL'
 metaTitle: 'Filtering Data in MySQL | How to filter query results'
-metaDescription: "This articles shows you how to use filtering clauses to limit the results for `SELECT` commands and other SQL statements."
+metaDescription: 'This articles shows you how to use filtering clauses to limit the results for `SELECT` commands and other SQL statements.'
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
 ---
 
 ## Introduction
 
-The `SELECT` command is the primary means of retrieving data from a MySQL database.  While the basic command allows you to specify the columns you want to display, the table to pull from, and the output format to use, much of the power of `SELECT` comes from its ability to filter results.
+The `SELECT` command is the primary means of retrieving data from a MySQL database. While the basic command allows you to specify the columns you want to display, the table to pull from, and the output format to use, much of the power of `SELECT` comes from its ability to filter results.
 
-Filtering queries allows you to return only the results that you're interested in by providing specific criteria that the records must match.  There are many different ways to filter queries in SQL and in this guide, we'll introduce some of the most common filtering options available for your MySQL databases: `WHERE`, `GROUP BY`, `HAVING`, and `LIMIT`.
+Filtering queries allows you to return only the results that you're interested in by providing specific criteria that the records must match. There are many different ways to filter queries in SQL and in this guide, we'll introduce some of the most common filtering options available for your MySQL databases: `WHERE`, `GROUP BY`, `HAVING`, and `LIMIT`.
 
 By familiarizing yourself with these optional clauses, you can learn to construct queries that target the correct data, even in databases with many records.
 
 ## Using the `WHERE` clause to define match criteria
 
-One of the most flexible and most common ways of specifying your data requirements is with the `WHERE` clause.  The `WHERE` clause provides a way of specifying the requirements that a [record](/intro/database-glossary#record) must meet to match the query.  If a record does not satisfy all of the conditions specified by the `WHERE` clause, it is not included in the query results.
+One of the most flexible and most common ways of specifying your data requirements is with the `WHERE` clause. The `WHERE` clause provides a way of specifying the requirements that a [record](/intro/database-glossary#record) must meet to match the query. If a record does not satisfy all of the conditions specified by the `WHERE` clause, it is not included in the query results.
 
-The `WHERE` clause works by specifying boolean expressions that are checked against each candidate row of data.  If the result of the expression is false, the row will be removed from the results and will not be returned or continue to the next stage of processing.  If the result of the expression is true, it satisfies the criteria of the search and will continue on for any further processing as a candidate row.
+The `WHERE` clause works by specifying boolean expressions that are checked against each candidate row of data. If the result of the expression is false, the row will be removed from the results and will not be returned or continue to the next stage of processing. If the result of the expression is true, it satisfies the criteria of the search and will continue on for any further processing as a candidate row.
 
 The basic syntax of the `WHERE` clause looks like this:
 
@@ -26,71 +26,71 @@ The basic syntax of the `WHERE` clause looks like this:
 SELECT * FROM <table> WHERE <condition>;
 ```
 
-The `<condition>` can be anything that results in a boolean value.  MySQL does not have a dedicated builtin boolean type and uses the `TINYINT` type to express boolean values instead.  MySQL recognizes `BOOLEAN` and `BOOL` as aliases for the `TINYINT` type.
+The `<condition>` can be anything that results in a boolean value. MySQL does not have a dedicated builtin boolean type and uses the `TINYINT` type to express boolean values instead. MySQL recognizes `BOOLEAN` and `BOOL` as aliases for the `TINYINT` type.
 
-Because of this implementation, [nonzero values are considered true, while `0` is considered false](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html#idm45863523900464).  To handle the reverse case, the constant `TRUE` is an alias for `1`, while `FALSE` likewise is an alias for `0`.
+Because of this implementation, [nonzero values are considered true, while `0` is considered false](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html#idm45863523900464). To handle the reverse case, the constant `TRUE` is an alias for `1`, while `FALSE` likewise is an alias for `0`.
 
 Conditions are often formed using one or more of the following operators:
 
-* `=`: equal to
-* `>`: greater than
-* `<`: less than
-* `>=`: greater than or equal to
-* `<=`: less than or equal to
-* `<>` or `!=`: not equal
-* `<=>`: `NULL`-safe equal to (returns 1 if both values are `NULL` and 0 if just one value is `NULL`)
-* `AND`: the logical "and" operator — joins two conditions and returns `TRUE` if both of the conditions are `TRUE`
-* `OR`: logical "or" operator — joins two conditions and returns `TRUE` if at least one of the conditions are `TRUE`
-* `IN`: value is contained in the list, series, or range that follows
-* `BETWEEN`: value is contained within the range the minimum and maximum values that follow, inclusive
-* `IS NULL`: matches if value is `NULL`
-* `NOT`: negates the boolean value that follows
-* `EXISTS`: the query that follows contains results
-* `LIKE`: matches against a pattern (using the wildcards `%` to match 0 or more characters and `_` to match a single character)
-* [`REGEXP` or `REGEXP_LIKE()`](https://dev.mysql.com/doc/refman/8.0/en/regexp.html): matches against a pattern using [regular expressions](https://en.wikipedia.org/wiki/Regular_expression)
-* `STRCMP`: Compares strings using lexicographical sort to determine which value comes first.
+- `=`: equal to
+- `>`: greater than
+- `<`: less than
+- `>=`: greater than or equal to
+- `<=`: less than or equal to
+- `<>` or `!=`: not equal
+- `<=>`: `NULL`-safe equal to (returns 1 if both values are `NULL` and 0 if just one value is `NULL`)
+- `AND`: the logical "and" operator — joins two conditions and returns `TRUE` if both of the conditions are `TRUE`
+- `OR`: logical "or" operator — joins two conditions and returns `TRUE` if at least one of the conditions are `TRUE`
+- `IN`: value is contained in the list, series, or range that follows
+- `BETWEEN`: value is contained within the range the minimum and maximum values that follow, inclusive
+- `IS NULL`: matches if value is `NULL`
+- `NOT`: negates the boolean value that follows
+- `EXISTS`: the query that follows contains results
+- `LIKE`: matches against a pattern (using the wildcards `%` to match 0 or more characters and `_` to match a single character)
+- [`REGEXP` or `REGEXP_LIKE()`](https://dev.mysql.com/doc/refman/8.0/en/regexp.html): matches against a pattern using [regular expressions](https://en.wikipedia.org/wiki/Regular_expression)
+- `STRCMP`: Compares strings using lexicographical sort to determine which value comes first.
 
 While the above list represents some of the most common test constructs, there are many other [operators that may yield boolean results](https://dev.mysql.com/doc/refman/8.0/en/functions.html) that can be used in conjunction with a `WHERE` clause.
 
 <PrismaOutlinks>
 
-Prisma Client supports filtering by multiple criteria.  Check out our [documentation on filtering](https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting) to learn more.
+Prisma Client supports filtering by multiple criteria. Check out our [documentation on filtering](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting) to learn more.
 
 </PrismaOutlinks>
 
 ### Examples using `WHERE`
 
-One of the most common and straightforward checks is for equality, using the `=` operator.  Here, we check whether each row in the `customer` table has a `last_name` value equal to `Smith`:
+One of the most common and straightforward checks is for equality, using the `=` operator. Here, we check whether each row in the `customer` table has a `last_name` value equal to `Smith`:
 
 ```sql
 SELECT * FROM customer WHERE last_name = 'Smith';
 ```
 
-We can add additional conditions to this to create compound expressions using logical operators.  This example uses the `AND` clause to add an additional test against the `first_name` column.  Valid rows must satisfy both of the given conditions:
+We can add additional conditions to this to create compound expressions using logical operators. This example uses the `AND` clause to add an additional test against the `first_name` column. Valid rows must satisfy both of the given conditions:
 
 ```sql
 SELECT * FROM customer WHERE first_name = 'John' AND last_name = 'Smith';
 ```
 
-Similarly, we can check whether any of a series of conditions are met.  Here, we check rows from the `address` table to see whether the `zip_code` value is equal to 60626 or the `neighborhood` column is equal to the string "Roger's Park":
+Similarly, we can check whether any of a series of conditions are met. Here, we check rows from the `address` table to see whether the `zip_code` value is equal to 60626 or the `neighborhood` column is equal to the string "Roger's Park":
 
 ```sql
 SELECT * FROM address WHERE zip_code = '60626' OR neighborhood = "Roger's Park";
 ```
 
-The `IN` operator can work like an comparison between a number of values, wrapped in parentheses.  If there is a match with any of the given values, the expression is `TRUE`:
+The `IN` operator can work like an comparison between a number of values, wrapped in parentheses. If there is a match with any of the given values, the expression is `TRUE`:
 
 ```sql
 SELECT * FROM customer WHERE last_name IN ('Smith', 'Johnson', 'Fredrich');
 ```
 
-Here, we check against a string pattern using `LIKE`.  The `%` works as a wildcard matching zero or more characters, so "Pete", "Peter", and any other string that begins with "Pete" would match:
+Here, we check against a string pattern using `LIKE`. The `%` works as a wildcard matching zero or more characters, so "Pete", "Peter", and any other string that begins with "Pete" would match:
 
 ```sql
 SELECT * FROM customer WHERE last_name LIKE 'Pete%';
 ```
 
-We could do a similar search using the `REGEXP` function to check for matches using regular expressions.  In this case, we check whether the value of `last_name` begins with a "d" and contains the substring "on", which would match names like "Dickson", "Donald", and "Devon":
+We could do a similar search using the `REGEXP` function to check for matches using regular expressions. In this case, we check whether the value of `last_name` begins with a "d" and contains the substring "on", which would match names like "Dickson", "Donald", and "Devon":
 
 ```sql
 SELECT * FROM customer WHERE last_name REGEXP '^D.*on.*';
@@ -102,7 +102,7 @@ We can check whether a street number is within the 4000 block of addresses using
 SELECT * FROM address WHERE street_number BETWEEN 4000 AND 4999;
 ```
 
-Here, we can display any `customer` entries that have social security numbers that are not 9 digits long.  We use the `LENGTH()` function to get the number of digits in the field and the `<>` to check for inequality:
+Here, we can display any `customer` entries that have social security numbers that are not 9 digits long. We use the `LENGTH()` function to get the number of digits in the field and the `<>` to check for inequality:
 
 ```sql
 SELECT * FROM customer WHERE LENGTH(SSN) <> 9;
@@ -110,24 +110,24 @@ SELECT * FROM customer WHERE LENGTH(SSN) <> 9;
 
 ## Using the `GROUP BY` clause to summarize multiple records
 
-The `GROUP BY` clause is another very common way to filter results by representing multiple results with a single row.  The basic syntax of the `GROUP BY` clause looks like this:
+The `GROUP BY` clause is another very common way to filter results by representing multiple results with a single row. The basic syntax of the `GROUP BY` clause looks like this:
 
 ```sql
 SELECT <columns> FROM <table> GROUP BY <columns_to_group>;
 ```
 
-When a `GROUP BY` clause is added to a statement, it tells MySQL to display a single row for each unique value for the given column or columns.  This has some important implications.
+When a `GROUP BY` clause is added to a statement, it tells MySQL to display a single row for each unique value for the given column or columns. This has some important implications.
 
-Since the `GROUP BY` clause is a way of representing multiple rows as a single row, MySQL can only execute the query if it can calculate a value for each of the columns it is tasked with displaying.  This means that each column identified by the `SELECT` portion of the statement has to either be:
+Since the `GROUP BY` clause is a way of representing multiple rows as a single row, MySQL can only execute the query if it can calculate a value for each of the columns it is tasked with displaying. This means that each column identified by the `SELECT` portion of the statement has to either be:
 
-* included in the `GROUP BY` clause to guarantee that each row has a unique value
-* abstracted to summarize all of the rows within each group
+- included in the `GROUP BY` clause to guarantee that each row has a unique value
+- abstracted to summarize all of the rows within each group
 
 Practically speaking, this means that any columns in the `SELECT` list not included in the `GROUP BY` clause must use an aggregate function to produce a single result for the column for each group.
 
 <PrismaOutlinks>
 
-If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can use [aggregations](https://www.prisma.io/docs/concepts/components/prisma-client/aggregation-grouping-summarizing) to compute over and summarize values.
+If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), you can use [aggregations](https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing) to compute over and summarize values.
 
 </PrismaOutlinks>
 
@@ -156,11 +156,12 @@ INSERT INTO pet (type, name, color, age) VALUES
 ('rabbit', 'Briony', 'brown', 6);
 ```
 
-The simplest use of `GROUP BY` is to display the range of unique values for a single column.  To do so, use the same column in `SELECT` and `GROUP BY`.  Here, we see all of the colors used in the table:
+The simplest use of `GROUP BY` is to display the range of unique values for a single column. To do so, use the same column in `SELECT` and `GROUP BY`. Here, we see all of the colors used in the table:
 
 ```sql
 SELECT color FROM pet GROUP BY color;
 ```
+
 ```
 +--------+
 | color  |
@@ -176,11 +177,12 @@ SELECT color FROM pet GROUP BY color;
 
 As you move beyond a single column in the `SELECT` column list, you must either add the columns to the `GROUP BY` clause or use an aggregate function to produce a single value for the group of rows being represented.
 
-Here, we add `type` to the `GROUP BY` clause, meaning that each row will represent a unique combination of `type` and `color` values.  We also add the `age` column, summarized by the `avg()` function to find the average age of each of the groups:
+Here, we add `type` to the `GROUP BY` clause, meaning that each row will represent a unique combination of `type` and `color` values. We also add the `age` column, summarized by the `avg()` function to find the average age of each of the groups:
 
 ```sql
 SELECT type, color, avg(age) AS average_age FROM pet GROUP BY type, color;
 ```
+
 ```
 +--------+--------+-------------+
 | type   | color  | average_age |
@@ -196,11 +198,12 @@ SELECT type, color, avg(age) AS average_age FROM pet GROUP BY type, color;
 7 rows in set (0.00 sec)
 ```
 
-Aggregate functions work just as well with a single column in the `GROUP BY` clause.  Here, we find the average age of each type of animal:
+Aggregate functions work just as well with a single column in the `GROUP BY` clause. Here, we find the average age of each type of animal:
 
 ```sql
 SELECT type, avg(age) AS average_age FROM pet GROUP BY type;
 ```
+
 ```
 +--------+-------------+
 | type   | average_age |
@@ -212,11 +215,12 @@ SELECT type, avg(age) AS average_age FROM pet GROUP BY type;
 3 rows in set (0.00 sec)
 ```
 
-If we want to display the oldest of each type of animal, we could instead use the `max()` function on the `age` column.  The `GROUP BY` clause collapses the results into the same rows as before, but the new function alters the result in the other column:
+If we want to display the oldest of each type of animal, we could instead use the `max()` function on the `age` column. The `GROUP BY` clause collapses the results into the same rows as before, but the new function alters the result in the other column:
 
 ```sql
 SELECT type, max(age) AS oldest FROM pet GROUP BY type;
 ```
+
 ```
 +--------+--------+
 | type   | oldest |
@@ -230,7 +234,7 @@ SELECT type, max(age) AS oldest FROM pet GROUP BY type;
 
 ## Using the `HAVING` clause to filter groups of records
 
-The `GROUP BY` clause is a way to summarize data by collapsing multiple records into a single representative row.  But what if you want to narrow these groups based on additional factors?
+The `GROUP BY` clause is a way to summarize data by collapsing multiple records into a single representative row. But what if you want to narrow these groups based on additional factors?
 
 The `HAVING` clause is a modifier for the `GROUP BY` clause that lets you specify conditions that each group must satisfy to be included in the results.
 
@@ -246,11 +250,12 @@ The operation is very similar to the `WHERE` clause, with the difference being t
 
 Using the same table we introduced in the last section, we can demonstrate how the `HAVING` clause works.
 
-Here, we group the rows of the `pet` table by unique values in the `type` column, finding the minimum value of `age` as well.  The `HAVING` clause then filters the results to remove any groups where the age is not greater than 1:
+Here, we group the rows of the `pet` table by unique values in the `type` column, finding the minimum value of `age` as well. The `HAVING` clause then filters the results to remove any groups where the age is not greater than 1:
 
 ```sql
 SELECT type, min(age) AS youngest FROM pet GROUP BY type HAVING min(age) > 1;
 ```
+
 ```
 +--------+----------+
 | type   | youngest |
@@ -261,12 +266,12 @@ SELECT type, min(age) AS youngest FROM pet GROUP BY type HAVING min(age) > 1;
 2 rows in set (0.00 sec)
 ```
 
-In this example, we group the rows in `pet` by their color.  We then filter the groups that only represent a single row.  The result shows us every color that appears more than once:
-
+In this example, we group the rows in `pet` by their color. We then filter the groups that only represent a single row. The result shows us every color that appears more than once:
 
 ```sql
 SELECT color FROM pet GROUP BY color HAVING count(color) > 1;
 ```
+
 ```
 +-------+
 | color |
@@ -282,6 +287,7 @@ We can perform a similar query to get the combinations of `type` and `color` tha
 ```sql
 SELECT type, color FROM pet GROUP BY type, color HAVING count(color) = 1;
 ```
+
 ```
 +--------+--------+
 | type   | color  |
@@ -297,7 +303,7 @@ SELECT type, color FROM pet GROUP BY type, color HAVING count(color) = 1;
 
 ## Using the `LIMIT` clause to set the maximum number of records
 
-The `LIMIT` clause offers a different approach to paring down the records your query returns.  Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned by a query.
+The `LIMIT` clause offers a different approach to paring down the records your query returns. Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned by a query.
 
 The basic syntax of `LIMIT` looks like this:
 
@@ -305,13 +311,13 @@ The basic syntax of `LIMIT` looks like this:
 SELECT * FROM <table> LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
 ```
 
-Here, the `<num_rows>` indicates the maximum number of rows to display from the executed query.  This is often used in conjunction with `ORDER BY` clauses to get the rows with the most extreme values in a certain column.  For example, to get the five best scores on an exam, a user could `ORDER BY` a `score` column and then `LIMIT` the results to 5.
+Here, the `<num_rows>` indicates the maximum number of rows to display from the executed query. This is often used in conjunction with `ORDER BY` clauses to get the rows with the most extreme values in a certain column. For example, to get the five best scores on an exam, a user could `ORDER BY` a `score` column and then `LIMIT` the results to 5.
 
-While `LIMIT` counts from the top of the results by default, the optional `OFFSET` keyword can be used to offset the starting position it uses.  In effect, this allows you to paginate through results by displaying the number of results defined by `LIMIT` and then adding the `LIMIT` number to the `OFFSET` to retrieve the following page.
+While `LIMIT` counts from the top of the results by default, the optional `OFFSET` keyword can be used to offset the starting position it uses. In effect, this allows you to paginate through results by displaying the number of results defined by `LIMIT` and then adding the `LIMIT` number to the `OFFSET` to retrieve the following page.
 
 <PrismaOutlinks>
 
-If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client), you can use [pagination](https://www.prisma.io/docs/concepts/components/prisma-client/pagination) to iterate through results.
+If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), you can use [pagination](https://www.prisma.io/docs/orm/prisma-client/queries/pagination) to iterate through results.
 
 </PrismaOutlinks>
 
@@ -319,11 +325,12 @@ If you are connecting to your database with [Prisma Client](https://www.prisma.i
 
 We will use the `pet` table from earlier for the examples in this section.
 
-As mentioned above, `LIMIT` is often combined with an `ORDER BY` clause to explicitly define the ordering of the rows before slicing the appropriate number.  Here, we sort the `pet` entries according to their `age`, from oldest to youngest.  We then use `LIMIT` to display the top 5 oldest animals:
+As mentioned above, `LIMIT` is often combined with an `ORDER BY` clause to explicitly define the ordering of the rows before slicing the appropriate number. Here, we sort the `pet` entries according to their `age`, from oldest to youngest. We then use `LIMIT` to display the top 5 oldest animals:
 
 ```sql
 SELECT * FROM pet ORDER BY age DESC LIMIT 5;
 ```
+
 ```
 +----+--------+---------+--------+------+
 | id | type   | name    | color  | age  |
@@ -337,11 +344,12 @@ SELECT * FROM pet ORDER BY age DESC LIMIT 5;
 5 rows in set (0.00 sec)
 ```
 
-If we need a record for any single `dog` within the table, we could construct a query like this.  Keep in mind that while the result might be difficult to predict, this is not a random selection and should not be used as such:
+If we need a record for any single `dog` within the table, we could construct a query like this. Keep in mind that while the result might be difficult to predict, this is not a random selection and should not be used as such:
 
 ```sql
 SELECT * FROM pet WHERE type = 'dog' LIMIT 1;
 ```
+
 ```
 +----+------+------+-------+------+
 | id | type | name | color | age  |
@@ -351,13 +359,14 @@ SELECT * FROM pet WHERE type = 'dog' LIMIT 1;
 1 row in set (0.00 sec)
 ```
 
-We can use the `OFFSET` clause to paginate through results.  We include an `ORDER BY` clause to define a specific order for the results.
+We can use the `OFFSET` clause to paginate through results. We include an `ORDER BY` clause to define a specific order for the results.
 
 For the first query, we limit the results without specifying an `OFFSET` to get the first 3 youngest entries:
 
 ```sql
 SELECT * FROM pet ORDER BY age LIMIT 3;
 ```
+
 ```
 +----+--------+---------+-------+------+
 | id | type   | name    | color | age  |
@@ -374,6 +383,7 @@ To get the next 3 youngest, we can add the number defined in `LIMIT` to the `OFF
 ```sql
 SELECT * FROM pet ORDER BY age LIMIT 3 OFFSET 3;
 ```
+
 ```
 +----+--------+---------+-------+------+
 | id | type   | name    | color | age  |
@@ -390,6 +400,7 @@ If we add the `LIMIT` to the `OFFSET` again, we'll get the next 3 results:
 ```sql
 SELECT * FROM pet ORDER BY age LIMIT 3 OFFSET 6;
 ```
+
 ```
 +----+--------+---------+--------+------+
 | id | type   | name    | color  | age  |
@@ -405,6 +416,6 @@ This lets us retrieve rows of data from a query in manageable chunks.
 
 ## Conclusion
 
-Most of the time, when retrieving data from MySQL tables, you will likely be applying filtering conditions to pick out the appropriate records.  Whether that is an unambiguous `WHERE` clause that matches a specific `id` using the `=` equality operator, or a `GROUP BY` clause that helps you summarize multiple records in a single value, filtering data is a normal part of working with records.
+Most of the time, when retrieving data from MySQL tables, you will likely be applying filtering conditions to pick out the appropriate records. Whether that is an unambiguous `WHERE` clause that matches a specific `id` using the `=` equality operator, or a `GROUP BY` clause that helps you summarize multiple records in a single value, filtering data is a normal part of working with records.
 
-Understanding how to use these optional clauses to evaluate potential data against your criteria and mould the results accordingly allows MySQL to do the selection work for you.  Using these constructs, you can extract useful information from large, semi-organized collections of data.
+Understanding how to use these optional clauses to evaluate potential data against your criteria and mould the results accordingly allows MySQL to do the selection work for you. Using these constructs, you can extract useful information from large, semi-organized collections of data.

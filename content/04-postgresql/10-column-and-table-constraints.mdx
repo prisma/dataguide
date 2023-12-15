@@ -199,12 +199,6 @@ DETAIL:  Failing row contains (A poor film, Misguided director, 2019-07-16, 128,
 
 In this case, the film has satisfied every condition except for the number of votes required. PostgreSQL rejects the submission since it does not pass the final table check constraint.
 
-<PrismaOutlinks>
-
-If you are using Prisma, you can learn how to use check constraints with our [PostgreSQL data validation guide](https://www.prisma.io/docs/guides/other/advanced-database-tasks/data-validation/postgresql).
-
-</PrismaOutlinks>
-
 ### Not null constraints
 
 The `NOT NULL` constraint is much more focused. It guarantees that values within a column are not null. While this is a simple constraint, it is used very frequently.
@@ -250,7 +244,7 @@ CREATE TABLE national_capitals (
 
 <PrismaOutlinks>
 
-When working with Prisma Client, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#optional-and-mandatory-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
+When working with Prisma Client, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#optional-and-mandatory-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
 
 </PrismaOutlinks>
 
@@ -369,7 +363,7 @@ DETAIL:  Key (country, capital)=(Bolivia, Sucre) already exists.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-a-unique-field) in your Prisma schema.
+If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-a-unique-field) in your Prisma schema.
 
 </PrismaOutlinks>
 
@@ -429,7 +423,7 @@ CREATE TABLE national_capitals (
 
 <PrismaOutlinks>
 
-When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-an-id-field).
+When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-an-id-field).
 
 </PrismaOutlinks>
 
@@ -528,7 +522,7 @@ CREATE TABLE example (
 
 <PrismaOutlinks>
 
-We cover how to define [relations](https://www.prisma.io/docs/concepts/components/prisma-schema/relations) in the Prisma schema in our documentation.
+We cover how to define [relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations) in the Prisma schema in our documentation.
 
 </PrismaOutlinks>
 
