@@ -274,7 +274,7 @@ Although Bookshelf.js does have `@types` type definitions, these provide the bar
 
 ### What is Objection.js?
 
-Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to. [Objection to ORM Hatred](https://www.jakso.me/blog/objection-to-orm-hatred), written by the creator of the Objection.js library, concisely summarizes its design goals and where it fits in the raw SQL-to-ORM spectrum. Objection.js seems to be more actively maintained and better documented than Bookshelf.js, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](https://github.com/Vincit/objection.js/issues/1069)
+Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to. Objection.js seems to be more actively maintained and better documented than Bookshelf.js, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](https://github.com/Vincit/objection.js/issues/1069)
 
 ### Type definitions: built-in
 
@@ -350,7 +350,7 @@ Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built 
 
 ### What is MikroORM?
 
-MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
+MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
 
 ### Type definitions: built-in
 
@@ -472,7 +472,7 @@ For a more focused comparison of Prisma and Mongoose, you can look at our [Mongo
 
 </PrismaOutlinks>
 
-### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mongoose)
+### Type definitions: @types
 
 To use Typegoose you first have to install Mongoose and its `@types` type definitions. These can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository. They are not built-in to the library.
 
