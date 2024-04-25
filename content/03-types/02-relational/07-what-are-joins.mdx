@@ -225,19 +225,14 @@ t1.r3 + t2.r2
 t1.r3 + t2.r3
 ```
 
-<PrismaOutlinks>
+> **Note:** In MySQL, the concept of a `CROSS JOIN` is combined with the `INNER JOIN`. Read more in the [data guide](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables#different-types-of-joins).
 
-In MySQL, the concept of a `CROSS JOIN` is combined with the `INNER JOIN`. Read more in the [data guide](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables#different-types-of-joins).
-
-</PrismaOutlinks>
 
 With a `CROSS JOIN`, each row from the `customers` table is combined with each row from the `orders` table, resulting in 9 rows. However, we won’t show the result table as a `CROSS JOIN` wouldn’t accurately pair the customer with their respective orders.
 
-<PrismaOutlinks>
 
-💡 To learn more about JOINs in PostgreSQL, read more in the data guide [here](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables). To learn more about JOINs in MySQL, read more in the data guide [here](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables).
+To learn more about JOINs in PostgreSQL, read more in the data guide [here](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables). To learn more about JOINs in MySQL, read more in the data guide [here](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables).
 
-</PrismaOutlinks>
 
 ### LATERAL JOINs
 
@@ -283,15 +278,10 @@ In this case, the result would be the same as a `LEFT JOIN` and `FULL JOIN`.
 
 ## Implementing JOINs for different relations
 
-It’s important to understand database relations when selecting the appropriate JOIN type. In the context of databases, relations describe a relationship between tables in a database. These are defined as relations within data models in the Prisma schema.
+It’s important to understand database relations when selecting the appropriate JOIN type. In the context of databases, relations describe a relationship between tables in a database. 
 
 In this section, we will illustrate both the one-to-one and the one-to-many relations along with considerations for selecting the appropriate JOIN type for each.
 
-<PrismaOutlinks>
-
-You can learn more about relations in Prisma ORM [here](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations).
-
-</PrismaOutlinks>
 
 ### One-to-one (1-1)
 
