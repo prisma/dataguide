@@ -23,5 +23,10 @@
       "name": "Dian Fay",
       "avatar": "/authors/dmfay.jpg",
       "bio": "Dian didn't exactly plan to drop out of college to specialize in SQL and backend development, but that’s how it happened. Fifteen years later, she's designed databases supporting everything from industrial logistics and traceability systems to million-plus user social media games. She is the current maintainer of MassiveJS, an open source data mapper for Node.js focused on using PostgreSQL to the fullest."
-    }
+    },
+    "grishmapatel": {
+      "name": "Grishma Patel",
+      "avatar": "https://github.com/grpatel.png",
+      "bio": "Grishma is a recent Computer Science graduate and worked as a Developer Advocate intern at Prisma."
+    },
 }
