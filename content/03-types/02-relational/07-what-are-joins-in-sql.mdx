@@ -280,39 +280,39 @@ In this section, we will illustrate both the one-to-one and the one-to-many rela
 
 ### One-to-one (1-1)
 
-In a one-to-one relation, each record in one table is associated with exactly one record in another table, and vice versa. Here is an example SQL schema demonstrating a one-to-one relation between `User` and `Profile` models:
+In a one-to-one relation, each record in one table is associated with exactly one record in another table, and vice versa. Here is an example SQL schema demonstrating a one-to-one relation between `customers` and `profiles` tables:
 
 ```sql
-CREATE TABLE "User" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL
+CREATE TABLE customers (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL
 );
 
-CREATE TABLE "Profile" (
-    "name" TEXT NOT NULL,
-    "gender" TEXT NOT NULL,
-    "age" TEXT NOT NULL,
-    "userEmail" TEXT NOT NULL,
-    CONSTRAINT "Profile_userEmail_fkey" FOREIGN KEY ("userEmail") REFERENCES "User" ("email") ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE profiles (
+    name TEXT NOT NULL,
+    gender TEXT NOT NULL,
+    age TEXT NOT NULL,
+    customer_email TEXT NOT NULL,
+    CONSTRAINT fk_profiles_customer_email FOREIGN KEY (customer_email) REFERENCES customers (email) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX customers_email_key ON customers(email);
 
-CREATE UNIQUE INDEX "Profile_userEmail_key" ON "Profile"("userEmail");
+CREATE UNIQUE INDEX profiles_customer_email_key ON profiles(customer_email);
 
 ```
 
-This means that a user can have only one profile, and a profile can belong to only one user.
+In this example, we use the unique field (`email`) from the `customers` table as a foreign key (`customer_email`) in the `profiles` table. This is possible because each email uniquely identifies a customer. This represents a one-to-one relation because each customer can have only one profile, and a profile can belong to only one customer.
 
-In one-to-one relations, JOINs are straightforward. You can use a traditional `INNER JOIN` to combine the users with their profiles. Here is an example query:
+In one-to-one relations, JOINs are straightforward. You can use a traditional `INNER JOIN` to combine the customers with their profiles. Here is an example query:
 
 ```sql
 SELECT
     *
 FROM
-    user
+    customers
 INNER JOIN profile
-    ON user.email = profile.user_email;
+    ON customers.email = profiles.customer_email;
 ```
 
 When performing an `INNER JOIN` between the two tables, we would get a result set where each row contains columns from both tables, matched based on the relationship criteria. Here is an example result set:
@@ -324,26 +324,26 @@ When performing an `INNER JOIN` between the two tables, we would get a result se
 | 3   | zara@prisma.io    | Zara    | Female | 32  |
 | 4   | artemis@prisma.io | Artemis | Male   | 32  |
 
-When you join the `User` and `Profile` tables using the `INNER JOIN` and the specified join condition, each row in the result set represents a user along with their corresponding profile. In other words, we include the `id` and `email` columns from the user table, along with the `name`, `gender`, and `age` of those users from the `Profile` table.
+When you join the `customers` and `profiles` tables using the `INNER JOIN` and the specified join condition, each row in the result set represents a customer along with their corresponding profile. In other words, we include the `id` and `email` columns from the `customers` table, along with the `name`, `gender`, and `age` of those customers from the `profiles` table.
 
 ### One-to-many (1-n)
 
-In a one-to-many relationship, each record in one table can be associated with multiple records in another table. Here is an example SQL schema demonstrating a one-to-many relation between `User` and `Post` models:
+In a one-to-many relationship, each record in one table can be associated with multiple records in another table. Here is an example SQL schema demonstrating a one-to-many relation between `users` and `posts` tables:
 
 ```sql
-CREATE TABLE "User" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL
+CREATE TABLE users (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL
 );
 
-CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "title" TEXT NOT NULL,
-    "authorId" INTEGER NOT NULL,
-    CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE posts (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author_id INTEGER NOT NULL,
+    CONSTRAINT fk_posts_author_id" FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX users_email_key" ON users(email);
 
 ```
 
