@@ -237,9 +237,8 @@ To learn more about database-specific details of JOIN operations, check out thes
 
 Lateral JOINs offer a different syntax to combining tables compared to traditional JOINs. In a `LATERAL JOIN`, the second table is presented as a _subquery_, and the JOIN criteria is defined within the `WHERE` clause of the subquery.
 
-According to the [PostgreSQL](https://www.postgresql.org/docs/9.3/sql-select.html#SQL-FROM) docs, “The `LATERAL` key word can precede a sub-`SELECT FROM` item. This allows the sub-`SELECT` to refer to columns of `FROM` items that appear before it in the `FROM` list. (Without `LATERAL`, each sub-`SELECT` is evaluated independently and so cannot cross-reference any other `FROM` item.)”
-
-> **Note:** `LATERAL JOIN`s are supported by Postgres but only supported in [MySQL versions >8](https://dev.mysql.com/blog-archive/support-for-lateral-derived-tables-added-to-mysql-8-0-14/)
+According to the [PostgreSQL](https://www.postgresql.org/docs/9.3/sql-select.html#SQL-FROM) docs:
+> “The `LATERAL` key word can precede a sub-`SELECT FROM` item. This allows the sub-`SELECT` to refer to columns of `FROM` items that appear before it in the `FROM` list. (Without `LATERAL`, each sub-`SELECT` is evaluated independently and so cannot cross-reference any other `FROM` item.)”
 
 In other words, a `LATERAL JOIN` is like a foreach loop, where PostgreSQL iterates over each row in a result set and uses each row to evaluate the subquery.
 
@@ -264,6 +263,8 @@ Here is the result table after using a `LATERAL JOIN`:
 | 3           | Synniva | 25  | synniva@prisma.io | NULL     | NULL    | NULL       |
 
 In this case, the result would be the same as a `LEFT JOIN` and `FULL JOIN`.
+
+> **Note:** `LATERAL JOIN`s are supported by Postgres but only supported in [MySQL versions >8](https://dev.mysql.com/blog-archive/support-for-lateral-derived-tables-added-to-mysql-8-0-14/)
 
 <PrismaOutlinks>
 
