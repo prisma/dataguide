@@ -69,7 +69,7 @@ The result set for the tables would be:
 
 The result set combines the columns from both the `orders` table and `customers` table based on the matching rows from the `customer_id` column. This allows you to see order information alongside the customer information.
 
-## Different Types of JOINs in MySQL and PostgreSQL
+## Types of JOINs in PostgreSQL and MySQL
 
 Sometimes you may want to get different rows from each table. There are different types of JOIN operations that will help you achieve this. In this section, we will discuss traditional JOINs supported by MySQL and PostgreSQL (two relational databases) as well as lateral JOINs (only supported by PostgreSQL).
 
@@ -116,7 +116,7 @@ When depicted as a Venn diagram, an `INNER JOIN` represents the overlapping regi
 
 #### `LEFT JOIN`
 
-A `LEFT JOIN` returns all rows found using the `INNER JOIN` and all records from the first table*.* Here is the associated query for the `customers` and `orders` table:
+A `LEFT JOIN` returns all rows found using the `INNER JOIN` and all records from the first table. Here is the associated query for the `customers` and `orders` table:
 
 ```sql
 SELECT
@@ -224,7 +224,7 @@ t1.r3 + t2.r2
 t1.r3 + t2.r3
 ```
 
-> **Note:** In MySQL, the concept of a `CROSS JOIN` is combined with the `INNER JOIN`. Read more in the [here](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables#different-types-of-joins).
+> **Note:** In MySQL, the concept of a `CROSS JOIN` is combined with the `INNER JOIN`. Read more in the [data guide](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables#different-types-of-joins).
 
 With a `CROSS JOIN`, each row from the `customers` table is combined with each row from the `orders` table, resulting in a total of 9 rows. However, we won’t show the result table as a `CROSS JOIN` wouldn’t accurately pair the customer with their respective orders.
 
