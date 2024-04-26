@@ -180,7 +180,7 @@ FULL JOIN orders
     ON customers.customer_id = orders.customer_id;
 ```
 
-MySQL does not natively support `FULL JOIN`s. As a workaround, we can use a `LEFT JOIN` combined with an “anti-JOIN,” or a JOIN operation that finds results that are _not_ in common between tables (specified by the NULL). The `UNION ALL` allows us to combine these together.
+MySQL does not natively support `FULL JOIN`s. As a workaround, we can use a `LEFT JOIN` combined with an “anti-JOIN,” which is a JOIN operation that finds results that are _not_ in common between tables (specified by the `NULL`). The `UNION ALL` allows us to combine these together.
 
 ```sql
   (SELECT *
