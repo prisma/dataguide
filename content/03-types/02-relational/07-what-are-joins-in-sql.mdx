@@ -32,7 +32,7 @@ All tables in a relational database have a column known as the _primary key_ whi
 
 A _foreign key_ is used to create a relationship between tables by referencing the primary key of another table. To demonstrate the concept of foreign keys, let’s say we have another table called `orders` with columns: `order_id`, `cost`, and `order_date`. We can link the `orders` table (left table in diagram) with the `customers` table (right table in diagram) by including a `customer_id` column (foreign key), associating each order with the corresponding customer.
 
-![relationship-between-tables](../../dataguide-images/types/relational/what-are-joins/relationship-between-tables.png)
+![relationship-between-tables](../../dataguide-images/types/relational/what-are-joins/relationship_between_tables.svg)
 
 ## What are JOINs?
 
@@ -50,6 +50,7 @@ FROM
 ```
 
 Here is what each part of the query means:
+
 - `SELECT`: specifies which columns you would like to include from the resulting dataset. In our case, it selects all (`*`) columns from the resulting dataset.
 - `FROM`: specifies the source table from which data will be retrieved. In our case, it is the first table.
 - `<join_type>`: specifies the specific type of JOIN operation you want to perform with the second table.
