@@ -247,6 +247,7 @@ LEFT JOIN LATERAL
   (SELECT *
    FROM orders
    WHERE orders.customer_id = customers.customer_id ) AS ALIAS ON TRUE;
+```
 
 Here is the result table after using a `LATERAL JOIN`:
 
