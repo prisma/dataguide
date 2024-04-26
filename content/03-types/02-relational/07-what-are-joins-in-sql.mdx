@@ -49,7 +49,11 @@ FROM
     <join_condition>
 ```
 
-Going top-down, the first part of the query specifies which columns you would like to include from the resulting dataset. In our case, the `SELECT` selects all (`*`) columns from the resulting dataset. In the `FROM` clause, you specify the source table from which data will be retrieved, which is the first table. Afterwards, you specify the specific type of JOIN operation you want to perform with the second table. Lastly, the JOIN condition represents how the two tables should be joined. It typically consists of equality comparison between columns from the two tables.
+Here is what each part of the query means:
+- `SELECT`: specifies which columns you would like to include from the resulting dataset. In our case, it selects all (`*`) columns from the resulting dataset.
+- `FROM`: specifies the source table from which data will be retrieved. In our case, it is the first table.
+- `<join_type>`: specifies the specific type of JOIN operation you want to perform with the second table.
+- `<join_condition>`: represents how the two tables should be joined. It typically consists of equality comparison between columns from the two tables.
 
 Using our example from earlier, when you perform a standard JOIN between the `customers` and `orders` tables, the database looks for matching values in the `customer_id` column of the `orders` table (foreign key) and the `customer_id` column of the `customers` table (primary key). It then combines the rows where these values match into a single result set.
 
