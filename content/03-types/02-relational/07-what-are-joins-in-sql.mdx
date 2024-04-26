@@ -370,7 +370,7 @@ Here is an example result set based on the query above:
 | 1   | jenny@prisma.io | 3       | Introduction to SQL        |
 | 2   | meera@prisma.io | 4       | Using Prisma Client        |
 
-As you can see in the result set, Jenny's email gets duplicated over multiple rows for each of her posts. As we incorporate more nested relations, result sets may become bloated. This can make it harder to interpret the data.
+As you can see in the result set, Jenny's `email` and `id` get duplicated over multiple rows for each of her posts. As we incorporate more nested relations, result sets may become bloated with redundant data. This makes the query less efficient (because it requires more bandwidth for the transmission of the results) and can make it harder to interpret the data.
 
 To address this duplication, we can pair `LATERAL JOIN`s with JSON aggregation. JSON aggregation helps avoid duplication by consolidating multiple related records into a single field as a JSON array, while `LATERAL JOIN`s help improve readability and can optimize performance.
 
