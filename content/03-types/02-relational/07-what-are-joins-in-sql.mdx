@@ -351,10 +351,10 @@ CREATE TABLE posts (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     author_id INTEGER NOT NULL,
-    CONSTRAINT fk_posts_author_id" FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT fk_posts_author_id FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX users_email_key" ON users(email);
+CREATE UNIQUE INDEX users_email_key ON users(email);
 
 ```
 
