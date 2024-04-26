@@ -58,7 +58,18 @@ Here is what each part of the query means:
 
 Using our example from earlier, when you perform a standard JOIN between the `customers` and `orders` tables, the database looks for matching values in the `customer_id` column of the `orders` table (foreign key) and the `customer_id` column of the `customers` table (primary key). It then combines the rows where these values match into a single result set.
 
-The result set for the tables would be:
+Here is an example query:
+
+```sql
+SELECT
+    *
+FROM
+    customers
+INNER JOIN orders
+    ON customers.customer_id = orders.customer_id;
+```
+
+Here is the result set based on the associated query:
 
 | customer_id | name    | age | email_address     | order_id | cost    | order_date |
 | ----------- | ------- | --- | ----------------- | -------- | ------- | ---------- |
