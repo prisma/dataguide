@@ -24,7 +24,7 @@ Let’s demonstrate this concept with a table holding customer information. In t
 | Adrian  | 28  | adrian@prisma.io  |
 | Synniva | 25  | synniva@prisma.io |
 
-A relational database has the ability to define relationships, or connections, between different tables using _primary_ and _foreign keys_. 
+A relational database has the ability to define relationships, or connections, between different tables using _primary_ and _foreign keys_.
 
 All tables in a relational database have a column known as the _primary key_ which uniquely identifies each row. To see how this works in practice, let’s use our previous example: The primary key for the `customers` table would be a column of unique IDs for each customer, called `customer_id`. In other words, no customer would share the same ID as another.
 
@@ -79,10 +79,10 @@ The most common form of JOIN operations you will encounter are `INNER JOIN`, `LE
 | 3           | Synniva | 25  | synniva@prisma.io |
 
 | order_id (primary key) | cost    | order_date | customer_id (foreign key) |
-| --------------------- | ------- | ---------- | ------------------------ |
-| 1                     | $150.00 | 4/1/2024   | 1                        |
-| 2                     | $200.00 | 3/29/2024  | 2                        |
-| 3                     | $20.00  | 4/2/2024   | 1                        |
+| ---------------------- | ------- | ---------- | ------------------------- |
+| 1                      | $150.00 | 4/1/2024   | 1                         |
+| 2                      | $200.00 | 3/29/2024  | 2                         |
+| 3                      | $20.00  | 4/2/2024   | 1                         |
 
 #### `INNER JOIN`
 
@@ -224,9 +224,9 @@ t1.r3 + t2.r3
 With a `CROSS JOIN`, each row from the `customers` table is combined with each row from the `orders` table, resulting in a total of 9 rows. However, we won’t show the result table as a `CROSS JOIN` wouldn’t accurately pair the customer with their respective orders.
 
 To learn more about database-specific details of JOIN operations, check out these additional pages in the data guide:
+
 - [JOINs in PostgreSQL](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables)
 - [JOINs in MySQL](https://www.prisma.io/dataguide/mysql/reading-and-querying-data/joining-tables)
-
 
 ### LATERAL JOINs
 
@@ -268,10 +268,9 @@ In this case, the result would be the same as a `LEFT JOIN` and `FULL JOIN`.
 
 ## Implementing JOINs for different relations
 
-It’s important to understand database _relations_ when selecting the appropriate JOIN type. In the context of databases, relations describe a relationship between tables in a database. 
+It’s important to understand database _relations_ when selecting the appropriate JOIN type. In the context of databases, relations describe a relationship between tables in a database.
 
 In this section, we will illustrate both the one-to-one and the one-to-many relations along with considerations for selecting the appropriate JOIN type for each.
-
 
 ### One-to-one (1-1)
 
@@ -371,8 +370,8 @@ To address this duplication, we can pair `LATERAL JOIN`s with JSON aggregation. 
 
 Here is an example of what the result set would look like using `LATERAL JOIN`s with JSON aggregation:
 
-| id  | email           | post_titles                                                                                                                    |
-| --- | --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| id  | email           | post_titles                                                                                                                      |
+| --- | --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | jenny@prisma.io | `[{"post title": "Introduction to Prisma ORM"}, {"post title": "Introduction to JOINs"}, {"post title": "Introduction to SQL"}]` |
 | 2   | meera@prisma.io | `[{"post title": "Using Prisma Client"}]`                                                                                        |
 
