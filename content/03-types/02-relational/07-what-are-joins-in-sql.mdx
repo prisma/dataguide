@@ -308,11 +308,11 @@ In one-to-one relations, JOINs are straightforward. You can use a traditional `I
 
 ```sql
 SELECT
-		user.id, user.email, profile.name, profile.gender, profile.age
+    *
 FROM
-		user
+    user
 INNER JOIN profile
-		ON user.email = profile.user_email;
+    ON user.email = profile.user_email;
 ```
 
 When performing an `INNER JOIN` between the two tables, we would get a result set where each row contains columns from both tables, matched based on the relationship criteria. Here is an example result set:
@@ -353,11 +353,11 @@ When dealing with one-to-many relations, traditional JOINs can lead to duplicate
 
 ```sql
 SELECT
-		user.id, user.email, post.id AS post_id, post.title AS post_title
+    user.id, user.email, post.id AS post_id, post.title AS post_title
 FROM
-		user
+    user
 INNER JOIN post
-		ON user.id = post.authorId;
+    ON user.id = post.authorId;
 
 ```
 
