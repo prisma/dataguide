@@ -109,7 +109,7 @@ When depicted as a Venn diagram, an `INNER JOIN` represents the overlapping regi
 
 ![inner-join](../../dataguide-images/types/relational/what-are-joins/inner-join.png)
 
-#### **LEFT JOIN**
+#### `LEFT JOIN`
 
 A `LEFT JOIN` returns all rows found using the `INNER JOIN` and all records from the first table*.* Here is the associated query for the `customers` and `orders` table:
 
@@ -135,7 +135,7 @@ When depicted as a Venn diagram, a `LEFT JOIN` represents the entire left circle
 
 ![left-join](../../dataguide-images/types/relational/what-are-joins/left-join.png)
 
-#### **RIGHT JOIN**
+#### `RIGHT JOIN`
 
 A `RIGHT JOIN` returns all rows found using the `INNER JOIN` and all records from the second table*.* Here is the associated query for the `customers` and `orders` table:
 
@@ -162,7 +162,7 @@ When depicted as a Venn diagram, a `RIGHT JOIN` represents the entire right circ
 
 ![right-join](../../dataguide-images/types/relational/what-are-joins/right-join.png)
 
-#### **FULL JOIN**
+#### `FULL JOIN`
 
 A `FULL JOIN` returns all rows when there is a match in either table. Here is the associated query for the `customers` and `orders` table in PostgreSQL:
 
@@ -203,7 +203,7 @@ When depicted as a Venn diagram, a `FULL JOIN` represents both circles. In other
 
 ![full-join](../../dataguide-images/types/relational/what-are-joins/full-join.png)
 
-#### **CROSS JOIN**
+#### `CROSS JOIN`
 
 A `CROSS JOIN` returns the [Cartesian product](https://www.sciencedirect.com/topics/computer-science/cartesian-product) of the two tables, meaning every row from the first table is combined with every row from the second table. In this syntax, the result is formed by adding each of the rows in the first table with each of the rows from the second table like so:
 
