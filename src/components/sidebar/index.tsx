@@ -5,6 +5,7 @@ import { StickyContainer, Sticky } from 'react-sticky'
 import { useAllArticlesQuery } from '../../hooks/useAllArticlesQuery'
 import { AllArticles } from '../../interfaces/AllArticles.interface'
 import config from '../../../config'
+import { Promo } from './promo'
 const SidebarContainer = styled.aside`
   width: 231px;
   margin: 0px 16px 0 -16px;
@@ -72,6 +73,7 @@ const SidebarLayout = ({ isMobile }: any) => {
         <Sticky topOffset={0}>
           {({ style, isSticky }: any) => (
             <Sidebar style={style} isSticky={isSticky} id="sidebar-container">
+              <Promo />
               <List>
                 <Tree edges={allMdx.edges} />
               </List>
