@@ -112,9 +112,8 @@ const promoOptions: PromoOptions = [
   },
 ]
 
-let promo = promoOptions[Math.floor(Math.random() * promoOptions.length)]
-
 export const Promo = () => {
+  const promo = promoOptions[Math.floor(Math.random() * promoOptions.length)]
   return (
     <PromoLink
       className={`sidebar-promo sidebar-promo-${promo.color}`}
