@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 const PromoLink = styled.a`
@@ -53,13 +53,13 @@ const PromoLink = styled.a`
     color: #4c51bf;
   }
 `
-type PromoOptions = {
+type PromoOption = {
   text: string
   link: string
   color: 'teal' | 'indigo'
-}[]
+}
 
-const promoOptions: PromoOptions = [
+const promoOptions: PromoOption[] = [
   {
     text: `Want real-time updates from your database without manual polling?`,
     link: 'https://pris.ly/dataguide-sidebar-promo/real-time-updates-without-polling',
@@ -113,7 +113,17 @@ const promoOptions: PromoOptions = [
 ]
 
 export const Promo = () => {
-  const promo = promoOptions[Math.floor(Math.random() * promoOptions.length)]
+  const [promo, setPromo] = useState(promoOptions[0])
+  const hasMounted = useRef(false)
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      const newState = promoOptions[Math.floor(Math.random() * promoOptions.length)]
+      setPromo(newState)
+      hasMounted.current = true
+    }
+  }, [])
+
   return (
     <PromoLink
       className={`sidebar-promo sidebar-promo-${promo.color}`}
