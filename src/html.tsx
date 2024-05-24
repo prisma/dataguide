@@ -7,12 +7,11 @@ const HTML = (props: any) => {
       <head>
         <meta charSet="utf-8" />
 
-        <script>
-        async
-        id="cookies"
-        src="https://app.enzuzo.com/apps/enzuzo/static/js/__enzuzo-cookiebar.js?uuid=5606ab18-eb9a-11ee-98cc-b303d4429aa8"
-        type="text/javascript"
-        </script>
+        <script
+          id="cookies"
+          src="https://app.enzuzo.com/apps/enzuzo/static/js/__enzuzo-cookiebar.js?uuid=5606ab18-eb9a-11ee-98cc-b303d4429aa8"
+          type="text/javascript"
+        ></script>
         
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         {props.headComponents}
