@@ -330,7 +330,7 @@ You can either choose to use the version of PostgreSQL available in your distrib
 
 Both CentOS and Fedora provide versions of PostgreSQL server as packages within their default repositories. The PostgreSQL version may be older than those found on the PostgreSQL website, but this is the simplest way to install on these distributions.
 
-To install PostgreSQL server, use your distribution's package manager to install the `mysql-server` package:
+To install PostgreSQL server, use your distribution's package manager to install the `postgresql-server` package:
 
 For **CentOS** use the `yum` package manager:
 
@@ -344,7 +344,7 @@ For **Fedora** use the `dnf` package manager:
 sudo dnf install postgresql-server
 ```
 
-Once the MySQL package is installed, initialize the database by typing:
+Once the PostgreSQL package is installed, initialize the database by typing:
 
 ```
 sudo postgresql-setup initdb
