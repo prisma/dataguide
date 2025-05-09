@@ -55,7 +55,7 @@ const HeaderWrapper = styled.div`
       width: 370px;
     }
   }
-  
+
   @media (min-width: 0) and (max-width: 1024px) {
     .sub-wrapper {
       width: 100%;
@@ -73,21 +73,21 @@ const HeaderWrapper = styled.div`
           width: auto;
         }
       }
-      svg{
-        margin-top:0;
+      svg {
+        margin-top: 0;
       }
     }
   }
   @media (min-width: 0px) and (max-width: 500px) {
     .container h1 {
-      font-size:48px;
+      font-size: 48px;
     }
     .container .content {
       padding: 0 20px;
     }
     .container .main-image {
       width: 400px;
-      height:300px
+      height: 300px;
     }
   }
 `
@@ -105,12 +105,13 @@ const SearchComponent = styled(Search)`
 `
 
 const SearchWrapper = styled.div`
-> * {
-  width: 100%;
-  &.show {
-    width: calc(100% - 32px);
+  > * {
+    width: 100%;
+    display: none; // Temporarily hidden
+    &.show {
+      width: calc(100% - 32px);
+    }
   }
-}
 `
 
 const HeaderNavWrapper = styled.div`
@@ -130,7 +131,9 @@ const HomePageHeader = () => {
     <HeaderWrapper>
       <div className="sub-wrapper">
         <HeaderNavWrapper>
-          <a href="https://www.prisma.io" target="_blank"><PrismaLogo /></a>
+          <a href="https://www.prisma.io" target="_blank">
+            <PrismaLogo />
+          </a>
           <SearchWrapper>
             <SearchComponent hitsStatus={changeHitsStatus} location={location} />
           </SearchWrapper>
@@ -151,7 +154,7 @@ const HomePageHeader = () => {
           </p> */}
           </div>
           <div>
-            <HeaderDiagram className="main-image"/>
+            <HeaderDiagram className="main-image" />
           </div>
         </div>
       </div>
