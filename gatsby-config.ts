@@ -120,6 +120,44 @@ let plugins: any = [
     __key: 'pages',
   },
   'gatsby-plugin-meta-redirect',
+  {
+    resolve: 'gatsby-plugin-redirect',
+    options: {
+      redirects: [
+        {
+          fromPath: '/postgresql/setting-up-a-local-postgresql-database',
+          toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database',
+          isPermanent: false,
+        },
+        {
+          fromPath: '/postgresql/introduction-to-data-types',
+          toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types',
+          isPermanent: false,
+        },
+        {
+          fromPath: '/postgresql/date-type',
+          toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types',
+          isPermanent: false,
+        },
+        {
+          fromPath: '/postgresql/connecting-to-postgresql-databases',
+          toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases',
+          isPermanent: false,
+        },
+        {
+          fromPath: '/postgresql/short-guides/connection-uris',
+          toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris',
+          isPermanent: false,
+        },
+        {
+          fromPath: "/intro/database-glossary",
+          toPath: "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary",
+          isPermanent: false,
+        }
+        // Add more redirects as needed
+      ],
+    },
+  },
   'gatsby-plugin-page-list',
 ]
 
