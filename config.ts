@@ -15,7 +15,7 @@ const siteConfig = {
       isPermanent: false,
     },
     {
-      fromPath: '/postgresql/date-type',
+      fromPath: '/postgresql/date-types',
       toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types',
       isPermanent: false,
     },
