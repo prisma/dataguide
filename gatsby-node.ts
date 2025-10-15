@@ -1,3 +1,5 @@
+import siteConfig from "./config"
+
 const path = require('path')
 
 exports.onCreateNode = ({ node, getNode, actions }: any) => {
@@ -28,8 +30,13 @@ exports.onCreateNode = ({ node, getNode, actions }: any) => {
 }
 
 exports.createPages = async ({ graphql, actions, reporter }: any) => {
-  const { createPage } = actions
+  const { createPage, createRedirect } = actions
 
+  const redirects = siteConfig.redirects
+
+  redirects.forEach(redirect => {
+    createRedirect(redirect)
+  });
   const result = await graphql(`
     query {
       allMdx {
