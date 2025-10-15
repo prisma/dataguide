@@ -3,7 +3,38 @@ const siteConfig = {
     pathPrefix: '/dataguide',
     siteUrl: 'https://www.prisma.io',
   },
-  redirects: [],
+  redirects: [
+    {
+      fromPath: '/postgresql/setting-up-a-local-postgresql-database',
+      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database',
+      isPermanent: false,
+    },
+    {
+      fromPath: '/postgresql/introduction-to-data-types',
+      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types',
+      isPermanent: false,
+    },
+    {
+      fromPath: '/postgresql/date-types',
+      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types',
+      isPermanent: false,
+    },
+    {
+      fromPath: '/postgresql/connecting-to-postgresql-databases',
+      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases',
+      isPermanent: false,
+    },
+    {
+      fromPath: '/postgresql/short-guides/connection-uris',
+      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris',
+      isPermanent: false,
+    },
+    {
+      fromPath: '/intro/database-glossary',
+      toPath: "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary",
+      isPermanent: false,
+    }
+  ],
   header: {
     logoLink: '/',
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",
