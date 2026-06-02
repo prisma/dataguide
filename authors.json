@@ -1,17 +1,17 @@
 {
     "justinellingwood": {
       "name": "Justin Ellingwood",
-      "avatar": "https://github.com/imchairmanm.png",
+      "avatar": "/authors/justinellingwood.jpg",
       "bio": "Justin has been writing about databases, Linux, infrastructure, and developer tools since 2013.  He currently lives in Berlin with his wife and two rabbits.  He doesn't usually have to write in the third person, which is a relief for all parties involved."
     },
     "alexemerich": {
       "name": "Alex Emerich",
-      "avatar": "https://github.com/alex-emerich.png",
+      "avatar": "/authors/alexemerich.jpg",
       "bio": "Alex is your typical bird watching, hip-hop loving bookworm that also enjoys writing about databases. He currently lives in Berlin, where he can be seen walking through the city aimlessly like Leopold Bloom."
     },
     "danielnorman": {
       "name": "Daniel Norman",
-      "avatar": "https://github.com/2color.png",
+      "avatar": "/authors/danielnorman.jpg",
       "bio": "Daniel is a software engineer with broad experience across modern web and cloud environments. He's been developing with databases for over 15 years and is passionate about open source and modern development tooling."
     },
     "ryanchenkie": {
@@ -26,7 +26,7 @@
     },
     "grishmapatel": {
       "name": "Grishma Patel",
-      "avatar": "https://github.com/grpatel.png",
+      "avatar": "/authors/grishmapatel.jpg",
       "bio": "Grishma is a recent Computer Science graduate and worked as a Developer Advocate intern at Prisma."
     }
 }

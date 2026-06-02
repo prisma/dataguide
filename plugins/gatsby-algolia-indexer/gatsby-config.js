@@ -134,6 +134,7 @@ module.exports = (options) => {
           appId,
           apiKey: adminKey,
           queries,
+          continueOnFailure: true,
         },
       },
     ],
