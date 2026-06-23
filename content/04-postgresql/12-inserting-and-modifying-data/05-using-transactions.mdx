@@ -22,6 +22,8 @@ These features help databases achieve [ACID compliance](/intro/database-glossary
 
 To achieve these goals, transactions employ a number of different strategies and different database systems use different methods. PostgreSQL uses a system called [Multiversion Concurrency Control (MVCC)](/intro/database-glossary#multiversion-concurrency-control), which allows the database to perform these actions without unnecessary locking using data snapshots. All together, these systems comprise one of the fundamental building blocks of modern relational databases, allowing them to safely process complex data in a crash-resistant manner.
 
+<PostgresCallout />
+
 ## Types of consistency failures
 
 One reason people use transactions is to gain certain guarantees about the consistency of their data and the environment in which it is processed. Consistency can be broken in many different ways, which affects how databases attempt to prevent them.

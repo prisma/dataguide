@@ -65,7 +65,7 @@ const getLeftPane = (allEdges: any) =>
 const getRightPane = (allEdges: any) =>
   allEdges.filter((edge: any) => edge.node.fields.slug.match(paneRegex))
 
-const SidebarLayout = ({ isMobile }: any) => {
+const SidebarLayout = ({ isMobile, slug }: any) => {
   const { allMdx }: AllArticles = useAllArticlesQuery()
   return !isMobile ? (
     <StickyContainer>
@@ -73,7 +73,7 @@ const SidebarLayout = ({ isMobile }: any) => {
         <Sticky topOffset={0}>
           {({ style, isSticky }: any) => (
             <Sidebar style={style} isSticky={isSticky} id="sidebar-container">
-              <Promo />
+              <Promo slug={slug} />
               <List>
                 <Tree edges={allMdx.edges} />
               </List>

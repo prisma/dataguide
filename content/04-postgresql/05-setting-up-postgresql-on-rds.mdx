@@ -10,6 +10,8 @@ authors: ['justinellingwood']
 
 Amazon Web Service's Relational Database Service (RDS) is a popular option for database hosting because of its flexibility and robust feature set. Development teams can provision new databases for personal use, staging environments, and production workloads and integrate them seamlessly with the rest of AWS's product suite.
 
+RDS is just one of [several ways to host PostgreSQL](/postgresql/5-ways-to-host-postgresql). It's worth weighing it against self-managed and fully managed alternatives before committing, since each option differs in setup effort, ongoing operations, and how much control you retain.
+
 In this guide, we'll discuss how to use Amazon's RDS to configure a production-capable PostgreSQL database. We will walk through important options in the creation process, discuss trade-offs, and configure a reliable, robust database setup designed for early production deployments.
 
 ## Why Amazon Web Service's RDS?
@@ -26,6 +28,8 @@ Some of the core features that make RDS an attractive option include:
 - **Costs based on usage**: costs are tied directly to the features and usage of the database, alleviating uncertainty over long-term capacity planning.
 
 With these benefits in mind, let's get started setting up a PostgreSQL database instance to walk through the process.
+
+<PostgresCallout />
 
 ## Starting the database creation process
 
@@ -367,7 +371,7 @@ With this information, you can connect to your PostgreSQL instance. For an examp
 postgresql://postgres:Pa38iSJWm8qtq90LnmZ8@production-db1.cddm7tgh3j5j.us-east-1.rds.amazonaws.com:5432/postgres
 ```
 
-You can learn more about how to construct connection URIs from connection details in our guide on [PostgreSQL connection URIs](/postgresql/short-guides/connection-uris).
+You can learn more about how to construct connection URIs from connection details in our guide on [PostgreSQL connection URIs](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris).
 
 ## Conclusion
 

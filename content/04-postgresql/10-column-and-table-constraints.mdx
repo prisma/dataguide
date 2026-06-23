@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## What are PostgreSQL column and table constraints?
 
-[Constraints](/intro/database-glossary#constraint) are _additional_ requirements for acceptable values in addition to those provided by [data types](/postgresql/introduction-to-data-types). They allow you to define narrower conditions for your data than those found in the general purpose data types.
+[Constraints](/intro/database-glossary#constraint) are _additional_ requirements for acceptable values in addition to those provided by [data types](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types). They allow you to define narrower conditions for your data than those found in the general purpose data types.
 
 These are often reflections on the specific characteristics of a field based on additional context provided by your applications. For example, an `age` field might use the `int` data type to store whole numbers. However, certain ranges of acceptable integers do not make sense as valid ages. For instance, negative integers would not be reasonable in this scenario. We can express this logical requirement in PostgreSQL using constraints.
 
@@ -78,6 +78,8 @@ CREATE TABLE qualified_borrowers (
 Here, we use the `CHECK` constraint again to check that the `account_number` is not null and that the loan officer has marked the client as having acceptable collateral by checking the `acceptable_collateral` column. A table constraint is necessary since multiple columns are being checked.
 
 Now is a good time to mention that although we'll mainly be using the `CREATE TABLE` SQL command in these examples to create a new table, you can also add constraints to an existing table with [`ALTER TABLE`](https://www.postgresql.org/docs/current/sql-altertable.html). When using `ALTER TABLE`, by default, new constraints cause the values currently in the table to be checked against the new constraint. You can skip this behavior by including the `NOT VALID` clause.
+
+<PostgresCallout />
 
 ## Creating names for constraints
 

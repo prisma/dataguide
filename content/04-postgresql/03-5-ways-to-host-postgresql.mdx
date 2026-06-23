@@ -1,7 +1,7 @@
 ---
 title: '5 ways to host PostgreSQL databases'
 metaTitle: '5 Ways to Host PostgreSQL Databases | PostgreSQL Hosting Guide'
-metaDescription: 'From self-managed to managed services, there are many ways to get PostgreSQL servers for your projects. Find out the pros and cons of various hosting options with our guide.'
+metaDescription: 'Compare PostgreSQL hosting options — self-managed, Docker, cloud-provider managed like AWS RDS, and fully managed Prisma Postgres — with a decision table, a "when to choose" guide, and an FAQ to help you pick the right one.'
 authors: ['justinellingwood', 'danielnorman']
 metaImage: '/social/generic-postgresql.png'
 toc: false
@@ -20,12 +20,16 @@ This guide will cover different ways to run PostgreSQL and their respective bene
 - [Managed services](#managed-services)
   - [Databases managed by cloud providers](#databases-managed-by-cloud-providers)
   - [Third-party managed databases](#third-party-managed-databases)
+- [Comparing your options at a glance](#comparing-your-options-at-a-glance)
+- [When to choose Prisma Postgres](#when-to-choose-prisma-postgres)
+- [Create your first Prisma Postgres database](#create-your-first-prisma-postgres-database)
+- [Frequently asked questions](#frequently-asked-questions)
 
 ## Self-managed PostgreSQL
 
 The most flexible and simplest to describe option is self-hosting your PostgreSQL server. Self-hosting PostgreSQL means that you install and configure your databases on computers that you control, just like any other piece of software.
 
-Self-hosting gives you a lot of choice as to where you will install and run your databases. If you choose one of the options in this section, you can use this guide to learn [how to install PostgreSQL on your systems](/postgresql/setting-up-a-local-postgresql-database).
+Self-hosting gives you a lot of choice as to where you will install and run your databases. If you choose one of the options in this section, you can use this guide to learn [how to install PostgreSQL on your systems](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database).
 
 ### Installing PostgreSQL on your local development computer
 
@@ -140,6 +144,8 @@ While Docker simplifies certain aspects of running PostgreSQL, there are a few t
 #### Containers and Kubernetes
 
 With [Kubernetes](https://kubernetes.io/), you can run Docker containers on a cluster consisting of multiple servers. If one server in the cluster needs to be taken down for maintenance, Kubernetes will move the PostgreSQL container to another server as long as the underlying data partition is accessible. You can also run your application that uses PostgreSQL on Kubernetes, which can reduce network latency between the application and PostgreSQL.
+
+<PostgresCallout />
 
 ## Managed services
 
@@ -263,6 +269,69 @@ Here is an overview of how the various options discussed here compare to one ano
 ![Chart comparing PostgreSQL hosting options](../dataguide-images/postgresql/ways-to-host-postgresql-databases/comparison-chart.png)
 
 The right choice for hosting your database depends significantly on your applications' requirements, the stage of your development, and your ability to manage PostgreSQL on your own. Different choices offer trade-offs between these factors that make them more appropriate at certain times or for certain organizations.
+
+## Comparing your options at a glance
+
+The table below summarizes how the main hosting approaches compare across the factors that usually drive the decision. "Ops burden" is how much of the database's day-to-day operation — patching, backups, scaling, pooling — falls on you versus the provider.
+
+| Option                                                 | Setup time       | Ops burden                        | Connection pooling          | Backups   | Scaling      | Best for                                                   |
+| ------------------------------------------------------ | ---------------- | --------------------------------- | --------------------------- | --------- | ------------ | ---------------------------------------------------------- |
+| **Self-managed (local / Docker)**                      | Minutes          | You (all of it)                   | DIY (e.g. PgBouncer)        | You       | Manual       | Local development, learning, prototypes                    |
+| **Self-managed on a server / VM**                      | Hours to days    | You (high)                        | DIY                         | You       | Manual       | Teams needing full OS-level control and in-house expertise |
+| **Cloud-provider managed (AWS RDS, Cloud SQL, Azure)** | Minutes to hours | Provider runs it, you tune & size | Often an add-on or self-run | Automated | Configurable | Teams already standardized on a cloud                      |
+| **Third-party managed Postgres**                       | Minutes          | Provider                          | Varies by provider          | Automated | Good         | Multi-cloud or portability needs                           |
+| **Prisma Postgres (fully managed)**                    | Seconds          | Fully managed                     | Built in                    | Automated | Automatic    | Serverless/edge apps, fast starts, TypeScript stacks       |
+
+No single row is "best" — a local install is the right tool for early development, and a self-managed server is the right tool when you need full control. The table is meant to help you match the stage and constraints of your project to an approach.
+
+## When to choose Prisma Postgres
+
+[Prisma Postgres](https://www.prisma.io/postgres?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:product) is a fully managed PostgreSQL service designed to remove the operational work of running Postgres. It tends to be a good fit when:
+
+- **You're building for serverless or edge.** Connection pooling is built in, so functions can use a normal Postgres connection string without you running a separate pooler.
+- **You want to start in seconds with zero infrastructure.** Databases are provisioned instantly — there are no instances, networks, or backups to configure first.
+- **You're working in a TypeScript/JavaScript stack.** It pairs directly with [Prisma ORM](https://www.prisma.io/docs/orm) for an end-to-end type-safe data layer.
+- **You want slow queries surfaced for you.** Built-in Query Insights highlights expensive queries without you wiring up separate monitoring.
+- **You want backups handled automatically** rather than scripting and testing your own.
+
+It's likely **not** the right fit if you need OS-level access to the database host, depend on a specific PostgreSQL extension or region your provider must support, or have already invested heavily in a self-managed setup that meets your needs. As with any managed service, confirm it supports the extensions, regions, and compliance requirements your project depends on.
+
+## Create your first Prisma Postgres database
+
+You can have a working database in well under a minute:
+
+1. **Sign in to the [Prisma Console](https://console.prisma.io/login?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:create).** A free tier is available to get started.
+2. **Create a new database** and choose the region closest to your application.
+3. **Copy the connection string** shown for your new database.
+4. **Connect from your app.** Use it like any Postgres connection string, or with Prisma ORM set it as your `DATABASE_URL` and run your first migration.
+
+The [Prisma Postgres documentation](https://www.prisma.io/docs/postgres) walks through each step in detail, and [pricing](https://www.prisma.io/pricing?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:pricing) covers the free tier and usage-based plans as you grow.
+
+## Frequently asked questions
+
+### Is there a free way to host PostgreSQL?
+
+Yes. For development, a local install or Docker container is free aside from your own machine's resources. For a hosted database, several managed providers offer a free tier — including Prisma Postgres, which has a free tier you can [start on](https://console.prisma.io/login?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:faq-free) before moving to usage-based pricing.
+
+### What's the best PostgreSQL hosting for serverless or edge apps?
+
+Serverless and edge environments open many short-lived connections, which can exhaust a traditional database's connection limit. A managed option with built-in connection pooling handles this without extra setup. Prisma Postgres includes pooling so your functions can use a standard connection string directly.
+
+### Do I need a separate connection pooler?
+
+With self-managed PostgreSQL you typically run a pooler such as PgBouncer yourself. Some managed services offer pooling as an add-on, while Prisma Postgres includes it by default, so there's nothing extra to deploy.
+
+### How are backups handled?
+
+With self-managed PostgreSQL, backups are your responsibility to schedule, store, and test. Managed services — cloud-provider databases, third-party providers, and Prisma Postgres — automate backups for you, though you should still confirm the retention and restore options match your needs.
+
+### Can I develop locally and deploy to a hosted database?
+
+Yes, and it's a common workflow: develop against a local or Docker PostgreSQL instance, then point your app at a hosted database for staging and production by swapping the connection string. Prisma Postgres supports both local development and hosted databases.
+
+### Is managed PostgreSQL production-ready?
+
+Yes. Managed PostgreSQL — whether from a cloud provider or a service like Prisma Postgres — runs the same PostgreSQL you'd run yourself, with the provider handling high availability, backups, and scaling. Confirm the specific guarantees (uptime SLA, backup retention, supported versions and extensions) before committing.
 
 <PrismaOutlinks>
 

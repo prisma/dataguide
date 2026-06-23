@@ -12,6 +12,8 @@ import { CreatePageContext } from '../interfaces/Layout.interface'
 import SocialShareSection from '../components/socialShareSection'
 import NextPrevious from '../components/nextPrevious'
 import AuthorDetails from '../components/authorDetails'
+import EndCta from '../components/cta/EndCta'
+import MobileStickyCta from '../components/cta/MobileStickyCta'
 
 type ArticleLayoutProps = ArticleQueryData & RouterProps & CreatePageContext
 
@@ -47,6 +49,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
         </section>
       )}
       <MDXRenderer>{body}</MDXRenderer>
+      {!isHomePage && <EndCta slug={modSlug} />}
       {authors && (
         <section>
           <AuthorDetails authors={authors} />
@@ -54,6 +57,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
       )}
       {!slug.includes('index') && <NextPrevious slug={modSlug} />}
       <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
+      {!isHomePage && <MobileStickyCta slug={modSlug} />}
     </Layout>
   )
 }

@@ -42,7 +42,7 @@ This comes at the cost of a greater management burden. All levels of the system 
 
 ### Managed databases
 
-_Managed databases_ are a product offered by most cloud providers as an alternative to managing your own infrastructure. Instead, the provider manages the server configuration and database software and exposes options to the user to allow them to configure and tweak the behavior.
+_Managed databases_ are a product offered by most cloud providers as an alternative to managing your own infrastructure — one of [the main ways to host PostgreSQL](/postgresql/5-ways-to-host-postgresql). Instead, the provider manages the server configuration and database software and exposes options to the user to allow them to configure and tweak the behavior.
 
 With managed databases, the provider takes responsibility for:
 
@@ -68,6 +68,8 @@ _Serverless databases_ are a relatively new approach offered by cloud providers 
 In practice, this allows serverless databases to be treated as an infinitely large repository where data can be stored, operated on, and retrieved. The backend storage will be scaled out as needed and the number of query executors will also be adjusted according to demand. The user only needs to access the database through an API-like interface that routes commands to the correct components automatically.
 
 Serverless databases require the least amount of operational management of any of the options we've discussed. This allows you to use your database as if it were an external service rather than as a component of your infrastructure that you must keep operational.
+
+<PostgresCallout />
 
 ## When to use traditional databases and serverless databases
 

@@ -171,6 +171,8 @@ Because of the dependency on locale settings of the PostgreSQL installation or e
 
 Care must also be taken when casting values in and out of the `money` type since it can lose precision data when converting between certain types. It is safe for `money` values to cast to and from the `numeric` type (used for arbitrary precision, as shown above), so it is recommended to always use `numeric` as an intermediary before performing converting to other types.
 
+<PostgresCallout />
+
 ## Text and characters
 
 PostgreSQL's character types and string types can be placed into two categories: _fixed length_ and _variable length_. The choice between these two affects how PostgreSQL allocates space for each value and how it validates input.

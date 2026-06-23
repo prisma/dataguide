@@ -36,6 +36,8 @@ These solutions start to blur the line a bit as to what constitutes a serverless
 
 A recent alternative to preallocating resources has been to sidestep the problem by switching to a lighter runtime environment. Runtimes like V8 have a much different execution strategy than traditional serverless and are able to avoid cold start problems by using different isolation technologies and a more pared down environment. They avoid cold start issues at the expense of compatibility with functions that have dependencies on a more robust environment.
 
+<PostgresCallout />
+
 ## Application design constraints
 
 Another challenge that is fundamental to the serverless model is the application design it imposes. Serverless platforms are only useful for applications that can work within their constraints. Some of these are inherent in cloud computing in general, while other requirements are dictated by the serverless model specifically.
