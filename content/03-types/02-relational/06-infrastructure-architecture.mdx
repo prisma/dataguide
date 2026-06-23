@@ -22,6 +22,8 @@ As a general rule, scaling up your database is a good first step as it increases
 
 Scaling up has its limitations however because the amount of resources that can be reasonably allocated to one machine is constricted. It also represents a single point of failure if no replication followers are configured to take over when problems occur. These concerns are addressed by some of the other scaling options.
 
+<PostgresCallout />
+
 ## Command query responsibility segregation (CQRS) and Read-only replicas
 
 The other primary way of scaling your database infrastructure is to scale out. _Scaling out_ means that instead of increasing the capacity of a single server, you increase the number of servers dedicated to serving a specific need. So you add capacity by adding additional machines to your infrastructure.

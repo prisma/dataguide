@@ -45,6 +45,8 @@ Using this information, you could export the schema of a database called `SALES`
 pg_dump --username=sales_reporter --password --schema-only SALES > sales_database_schema.sql
 ```
 
+<PostgresCallout />
+
 ## Modifying the export behavior
 
 The basic usage discussed above will output every structure related to the database in question. We can modify this behavior with a number of additional options and in some cases, with the related `pg_dumpall` command.

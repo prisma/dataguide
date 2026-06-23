@@ -7,6 +7,7 @@ import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 import { withPrefix } from 'gatsby'
 import { useLocation } from '@reach/router'
+import { headerCtaUrl } from '../cta'
 
 type HeaderViewProps = {
   headerProps: HeaderProps
@@ -199,8 +200,14 @@ const Header = ({ headerProps }: HeaderViewProps) => {
         )}
         <PrismaLink>
           <SearchComponent hitsStatus={changeHitsStatus} location={location} header />
-          <PrismaButton href="https://www.prisma.io" target="_blank">
-            Explore Prisma
+          <PrismaButton
+            href={headerCtaUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cta-cluster="postgres_global"
+            data-cta-placement="header_cta"
+          >
+            Prisma Postgres
           </PrismaButton>
         </PrismaLink>
       </div>

@@ -92,7 +92,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
       <Wrapper>
         {!isHomePage && (
           <NotMobile>
-            <Sidebar isMobile={false} />
+            <Sidebar isMobile={false} slug={slug} />
           </NotMobile>
         )}
         <Content moveUp={isHomePage}>

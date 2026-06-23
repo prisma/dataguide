@@ -21,6 +21,8 @@ Migrations manage incremental, often reversible, changes to data structures in a
 
 While preventing data loss is generally one of the goals of migration software, changes that drop or destructively modify structures that currently house data can result in deletion. To cope with this, migration is often a supervised process involving inspecting the resulting change scripts and making any modifications necessary to preserve important information.
 
+<PostgresCallout />
+
 ## What are the advantages of migration tools?
 
 Migrations are helpful because they allow database schemas to evolve as requirements change. They help developers plan, validate, and safely apply schema changes to their environments. These compartmentalized changes are defined on a granular level and describe the transformations that must take place to move between various "versions" of the database.

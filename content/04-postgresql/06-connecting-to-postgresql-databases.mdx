@@ -14,7 +14,7 @@ Because of this, you need to understand how to connect as a client by providing 
 
 In a companion guide, you can find out how to [configure PostgreSQL's authentication to meet your project's needs](/postgresql/authentication-and-authorization/configuring-user-authentication). Consider reading both guides for a more complete picture of how authentication works in PostgreSQL.
 
-If your database client or library requests a connection URI, you may want to look at our guide on [understanding PostgreSQL connection URIs](https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris) instead.
+If your database client or library requests a connection URI, you may want to look at our guide on [understanding PostgreSQL connection URIs](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris) instead.
 
 ## Basic information about the `psql` client
 
@@ -26,6 +26,8 @@ The way that you connect depends on the configuration of the PostgreSQL server a
 - **remote connection**: where the client is connecting to a network-accessible PostgreSQL instance running on a different computer
 
 Let's start with connecting to a database from the same computer.
+
+<PostgresCallout />
 
 ## Connecting to a local database with `psql`
 
@@ -102,7 +104,7 @@ Upon pressing enter, you'd be prompted a password where you can authenticate wit
 
 ### Passing connection information to `psql` with a connection string
 
-This same information can also be encoded into a [PostgreSQL _connection string_](https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris). A connection string provides the same information in a single URI string that uses certain characters as delimiters between the different fields.
+This same information can also be encoded into a [PostgreSQL _connection string_](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris). A connection string provides the same information in a single URI string that uses certain characters as delimiters between the different fields.
 
 Connection strings have the following general format:
 

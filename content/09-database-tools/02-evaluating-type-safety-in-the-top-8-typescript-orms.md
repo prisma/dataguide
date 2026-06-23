@@ -91,6 +91,8 @@ This means that attempting to access `post` fields that weren't selected, like `
 
 Prisma's unique design of generating a local CRUD client that encodes your data model allows it to achieve an unparalleled level of type safety among TypeScript ORMs. When using Prisma to manipulate and query data from your database, you'll have accurate typings for nested relation queries and also partial queries that modify the shape of returned models.
 
+<PostgresCallout />
+
 ## Sequelize
 
 ### Evaluation summary

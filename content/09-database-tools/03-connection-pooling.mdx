@@ -62,6 +62,8 @@ As discussed earlier, when forming a connection, a fairly long series of operati
 
 In this system, clients connect to the connection pooler instead of directly to the database. The client treats the pooler as if it were the database itself and the pooler interprets queries to hand an appropriate connection to the client. One thing to notice is that there is still overhead involved in opening and closing connections between the clients and the pooler. These connections, however, typically have lower overhead because the majority of the heavy processes occur when establishing connections to the database itself.
 
+<PostgresCallout />
+
 ## How does connection pooling work?
 
 A connection pooler is responsible for opening, closing and maintaining connections to the database on behalf of clients. It does so by following algorithms similar to that which a caching system might use.

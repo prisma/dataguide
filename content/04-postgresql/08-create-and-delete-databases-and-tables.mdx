@@ -32,7 +32,7 @@ In PostgreSQL, there is also an intermediary object between databases and tables
 
 This guide won't deal directly with PostgreSQL's concept of a schema, but it's good to know it's there.
 
-Instead, we'll be focusing on how to create and destroy PostgreSQL databases and tables. The examples will primarily use SQL, but [towards the end](#using-administrative-command-line-tools-to-create-and-delete-databases), we'll show you how to do a few of these tasks using the [command line](https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases). These alternatives use tools included in the standard PostgreSQL installation that are available if you have administrative access to the PostgreSQL host.
+Instead, we'll be focusing on how to create and destroy PostgreSQL databases and tables. The examples will primarily use SQL, but [towards the end](#using-administrative-command-line-tools-to-create-and-delete-databases), we'll show you how to do a few of these tasks using the [command line](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases). These alternatives use tools included in the standard PostgreSQL installation that are available if you have administrative access to the PostgreSQL host.
 
 Some of the statements covered in this guide, particularly the PostgreSQL `CREATE TABLE` statement, have many additional options that were outside of the scope of this article. If you'd like additional information, find out more by checking out the [official PostgreSQL documentation](https://www.postgresql.org/docs/current/sql-createtable.html).
 
@@ -54,6 +54,8 @@ Specifically, your PostgreSQL user will need the `CREATE DB` privilege or be a `
 ```
 
 The `postgres` superuser, which is created automatically upon installation, has the required privileges, but you can use any user with the `Create DB` privilege.
+
+<PostgresCallout />
 
 ## Create a new database
 
@@ -152,7 +154,7 @@ The `school` database that we created is displayed among the other databases on 
 
 ## Create tables within databases
 
-After creating one or more databases, you can begin to define tables to store your data. Tables consist of a name and a defined schema which determines the fields and [data types](/postgresql/introduction-to-data-types) that each record must contain.
+After creating one or more databases, you can begin to define tables to store your data. Tables consist of a name and a defined schema which determines the fields and [data types](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types) that each record must contain.
 
 ### PostgreSQL `CREATE TABLE` syntax
 
@@ -168,7 +170,7 @@ CREATE TABLE table_name (
 The components of the above syntax include the following:
 
 - **`CREATE TABLE table_name`**: The basic creation statement that signals that you wish to define a table. The `table_name` placeholder should be replaced with the name of the table you wish to use.
-- **`column_name TYPE`**: Defines a basic column within the table. The `column_name` placeholder should be replaced with the name you wish to use for your column. The `TYPE` specifies the [PostgreSQL data type](/postgresql/introduction-to-data-types) for the column. Data stored within the table must conform to the column structure and column data types to be accepted.
+- **`column_name TYPE`**: Defines a basic column within the table. The `column_name` placeholder should be replaced with the name you wish to use for your column. The `TYPE` specifies the [PostgreSQL data type](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types) for the column. Data stored within the table must conform to the column structure and column data types to be accepted.
 - **`column_constraint`**: [Column constraints](/postgresql/column-and-table-constraints#column-constraints) are optional restraints to add further restrictions on the data that can be stored in the column. For example, you can require that entries be not null, unique, or positive integers.
 - **`table_constraints`**: [Table constraints](/postgresql/column-and-table-constraints#table-constraints) are similar to column constraints but involve the interaction of multiple columns. For instance, you could have a table constraint that checks that a `DATE_OF_BIRTH` is before `DATE_OF_DEATH` in a table.
 

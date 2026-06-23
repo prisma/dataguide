@@ -234,6 +234,8 @@ AND query wait_event != ''
 
 This can help you see queries that are not currently progressing because of other parts of the system (for instance, lock contention).
 
+<PostgresCallout />
+
 ## Check other system statistics
 
 While the `pg_stat_activity` view will probably provide most of the information you need to identify slower queries, it can be useful to look at other system statistics as well to help identify additional targets for optimization.

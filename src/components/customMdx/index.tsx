@@ -14,6 +14,7 @@ import AuthorInfo from './authorInfo'
 import Footnote from './footnote'
 import Sidenote from './sideNote'
 import PrismaOutlinks from './prismaOutlinks'
+import PostgresCallout from '../cta/PostgresCallout'
 import AnchorItem from './anchor-item'
 import { withPrefix } from 'gatsby'
 
@@ -34,6 +35,7 @@ export default {
   ButtonLink,
   Subsections,
   PrismaOutlinks,
+  PostgresCallout,
   DocLink,
   footnote: Footnote,
   Sidenote,

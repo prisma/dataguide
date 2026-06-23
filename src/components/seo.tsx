@@ -9,6 +9,17 @@ type SEOProps = {
   image?: string
 }
 
+// Build a well-formed absolute OG/Twitter image URL.
+// Frontmatter `metaImage` is sometimes a content-relative path
+// (e.g. ../dataguide-images/...); left raw it concatenates into malformed
+// "dataguide.." URLs. Mirror the in-article <img> handling by stripping the
+// relative `../` prefixes, then join cleanly to siteUrl + pathPrefix.
+const buildMetaImageURL = (siteUrl: string, pathPrefix: string, img: string): string => {
+  if (/^https?:\/\//.test(img)) return img
+  const cleaned = img.replace(/\.\.\//g, '').replace(/^\/+/, '')
+  return `${siteUrl}${pathPrefix}/${cleaned}`.replace(/([^:])\/{2,}/g, '$1/')
+}
+
 const SEO = ({ title, description, image }: SEOProps) => {
   const location = useLocation()
   const { site } = useStaticQuery(query)
@@ -26,7 +37,7 @@ const SEO = ({ title, description, image }: SEOProps) => {
     },
   } = site
 
-  const metaImageURL = image ? `${siteUrl + pathPrefix}${image}` : `${siteUrl + pathPrefix}${oUrl}`
+  const metaImageURL = buildMetaImageURL(siteUrl, pathPrefix, image || oUrl)
 
   let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`.replace(
     /\/$/,

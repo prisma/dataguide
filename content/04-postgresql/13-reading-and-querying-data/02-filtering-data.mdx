@@ -107,6 +107,8 @@ Here, we can display any `customer` entries that have social security numbers th
 SELECT * FROM customer WHERE LENGTH(SSN) <> 9;
 ```
 
+<PostgresCallout />
+
 ## Using the `GROUP BY` clause to summarize multiple records
 
 The `GROUP BY` clause is another very common way to filter results by representing multiple results with a single row. The basic syntax of the `GROUP BY` clause looks like this:
@@ -439,6 +441,6 @@ PostgreSQL's `array_agg()` is a [user-defined aggregate function](https://www.po
 
 Yes, you can `GROUP BY` a timestamp value in PostgreSQL. However, this value includes a time element that would need timestamps to be identical to the millisecond to get grouped together.
 
-Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PosgreSQL's `DATE` data type](https://www.prisma.io/dataguide/postgresql/date-types#postgresql-date-data-type) which has no associated time value.
+Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PosgreSQL's `DATE` data type](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types#postgresql-date-data-type) which has no associated time value.
 
 </details>

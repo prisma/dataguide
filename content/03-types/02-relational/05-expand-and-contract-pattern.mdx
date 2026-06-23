@@ -21,6 +21,8 @@ The expand and contract pattern is a process that [database administrators](/int
 
 This process can be used to make changes to many in-use interfaces, but it is especially helpful for database schema changes. Beyond just migrating data and clients to a new data structure, the expand and contract pattern is also helpful in that it allows you to rollback changes easily at most points in the process if something doesn't go as planned or if your requirements change.
 
+<PostgresCallout />
+
 ## How to use the expand and contract pattern
 
 In this section, we'll outline how you actually use the expand and contract pattern and what it is able to achieve. The individual steps involve coordination between the client applications and the schemas being used within the database. It is important to understand both the purpose of each step as well as the reason why it should be applied independently of its siblings.
