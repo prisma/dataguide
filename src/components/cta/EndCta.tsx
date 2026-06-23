@@ -11,7 +11,7 @@ const Panel = styled.div`
   background: #e1f5ee;
   border-radius: 8px;
   padding: 24px;
-  margin: 2.5rem 0 1rem;
+  margin: 1rem 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -78,7 +78,7 @@ const SecondaryLink = styled.a`
 `
 
 const SoftCta = styled.p`
-  margin: 2.5rem 0 1rem;
+  margin: 1rem 0;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
   font-size: 14px;
