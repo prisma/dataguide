@@ -4,10 +4,11 @@ import HeaderDiagram from '../icons/HeaderDiagram'
 import PrismaLogo from '../icons/PrismaLogo'
 import SocialShareSection from './socialShareSection'
 import Search from '../components/search'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../hooks/useLocation'
 
 const HeaderWrapper = styled.div`
-  background: linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
+  background:
+    linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
     linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
   min-height: 510px;
   display: flex;

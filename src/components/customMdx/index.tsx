@@ -3,8 +3,7 @@ import React from 'react'
 import ParallelBlocks from './parallelBlocks'
 import TabbedContent from './tabbedContent'
 import Code from './code'
-import CodeWithResult from './codeWithResult'
-import CollapseBox from './collapsible'
+import CodeWithResult, { Cmd, CmdResult } from './codeWithResult'
 import Table from './table'
 import ButtonLink from './button'
 import FileWithIcon from './fileWithIcon'
@@ -16,7 +15,6 @@ import Sidenote from './sideNote'
 import PrismaOutlinks from './prismaOutlinks'
 import PostgresCallout from '../cta/PostgresCallout'
 import AnchorItem from './anchor-item'
-import { withPrefix } from 'gatsby'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
@@ -27,23 +25,32 @@ export default {
   TabbedContent,
   ParallelBlocks,
   CodeWithResult,
+  Cmd,
+  CmdResult,
   FileWithIcon,
-  inlineCode: (props: any) => <code className="inline-code" {...props} />,
-  code: Code,
-  details: CollapseBox,
+  // MDX 2 renders fenced code as <pre><code>, and inline code as a bare <code>
+  pre: ({ children }: any) => {
+    const code = React.Children.only(children)
+    return (
+      <pre>
+        <Code {...code.props} />
+      </pre>
+    )
+  },
+  code: (props: any) => <code className="inline-code" {...props} />,
   table: Table,
   ButtonLink,
   Subsections,
   PrismaOutlinks,
   PostgresCallout,
   DocLink,
-  footnote: Footnote,
+  Footnote,
   Sidenote,
   AnchorItem,
   img: ({ src, ...props }: any) => {
     const newSrc = src.replace(/(\..\/)/g, '')
     return (
-      <a href={newSrc} target="_blank">
+      <a href={newSrc} target="_blank" className="mdx-image">
         <img src={newSrc} {...props} />
       </a>
     )

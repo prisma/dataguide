@@ -6,7 +6,7 @@ import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 import { withPrefix } from 'gatsby'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../hooks/useLocation'
 import { headerCtaUrl } from '../cta'
 
 type HeaderViewProps = {
@@ -73,7 +73,9 @@ const LogoContainer = styled.div`
 const DocsMobileButton = styled.div`
   cursor: pointer;
   background: var(--main-theme-color);
-  box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
+  box-shadow:
+    0px 4px 8px rgba(60, 45, 111, 0.1),
+    0px 1px 3px rgba(60, 45, 111, 0.15);
   border-radius: 5px;
   color: white;
   display: none;
@@ -99,7 +101,9 @@ const MobileOnlyNav = styled.div`
   top: 0px;
   transition: top 0.35s;
   background: var(--main-theme-color);
-  box-shadow: 0px 4px 8px rgba(60, 45, 111, 0.1), 0px 1px 3px rgba(60, 45, 111, 0.15);
+  box-shadow:
+    0px 4px 8px rgba(60, 45, 111, 0.1),
+    0px 1px 3px rgba(60, 45, 111, 0.15);
   color: black;
   width: 100%;
   left: 0;
@@ -136,21 +140,22 @@ const PrismaButton = styled.a`
   }
 `
 
-const SearchContainer = styled.div<{ isSticky: boolean }>`
+const SearchContainer = styled.div<{ $isSticky?: boolean }>`
   display: flex;
   justify-content: space-between;
   @media only screen and (min-width: 1024px) {
     display: none;
   }
-  ${({ isSticky }: any) =>
-    isSticky &&
+  ${({ $isSticky }) =>
+    $isSticky &&
     css`
       z-index: 120;
       padding: 8px;
       margin-top: 0;
       margin-left: -8px;
       width: 100% !important;
-      background: linear-gradient(180deg, rgba(13, 15, 20, 0.18) 0%, rgba(27, 32, 43, 0) 100%),
+      background:
+        linear-gradient(180deg, rgba(13, 15, 20, 0.18) 0%, rgba(27, 32, 43, 0) 100%),
         var(--header-gradient-color);
     `};
 `
@@ -163,7 +168,6 @@ const Header = ({ headerProps }: HeaderViewProps) => {
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
   const changeHitsStatus = (status: boolean) => setShowDataguideBtn(!status)
-  console.log(headerProps.logoLink)
   return (
     <HeaderWrapper>
       <div className={'container'}>

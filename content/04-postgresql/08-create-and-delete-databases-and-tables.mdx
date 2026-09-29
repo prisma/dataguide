@@ -581,7 +581,8 @@ When using Prisma to develop with PostgreSQL, you will usually create databases 
 
 ## FAQ
 
-<details><summary>Does PostgreSQL support the `IF NOT EXISTS` clause when using the `CREATE DATABASE` command?</summary>
+<details>
+<summary>Does PostgreSQL support the `IF NOT EXISTS` clause when using the `CREATE DATABASE` command?</summary>
 
 Yes, PostgreSQL supports the use of [`IF NOT EXISTS`](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#create-tables-conditionally-with-the-if-not-exists-clause) when creating both databases and tables. The below demonstrates using the clause for table creation.
 
@@ -594,7 +595,8 @@ CREATE TABLE IF NOT EXISTS table_name (
 
 </details>
 
-<details><summary>How do you create a database from a dump in PostgreSQL?</summary>
+<details>
+<summary>How do you create a database from a dump in PostgreSQL?</summary>
 
 To create a database from a dump ([pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html)), PostgreSQL provides the [utility program `pg_restore`](https://www.postgresql.org/docs/current/app-pgrestore.html).
 
@@ -606,7 +608,8 @@ pg_restore [connection-option...][option...][filename]
 
 </details>
 
-<details><summary>Which command line creates a database in PostgreSQL?</summary>
+<details>
+<summary>Which command line creates a database in PostgreSQL?</summary>
 
 To create a database in PostgreSQL, use the [`createdb` command](https://www.postgresql.org/docs/current/app-createdb.html). The syntax is as follows:
 
@@ -616,7 +619,8 @@ createdb db_name
 
 </details>
 
-<details><summary>How do you drop a database in PostgreSQL?</summary>
+<details>
+<summary>How do you drop a database in PostgreSQL?</summary>
 
 The [`DROP DATABASE`](https://www.prisma.io/dataguide/postgresql/create-and-delete-databases-and-tables#drop-databases) statement tells PostgreSQL to delete the specified database. The basic syntax looks like this:
 
@@ -626,7 +630,8 @@ DROP DATABASE database_name;
 
 </details>
 
-<details><summary>How do you change a column's data type in PosgreSQL?</summary>
+<details>
+<summary>How do you change a column's data type in PosgreSQL?</summary>
 
 To change the [data type](/intro/database-glossary#data-type) for a specific column, use the `ALTER COLUMN` change command with the `SET DATA TYPE` column command.
 

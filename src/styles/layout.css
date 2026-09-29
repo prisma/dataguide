@@ -185,7 +185,9 @@ li {
 
 kbd {
   background: var(--white-color);
-  box-shadow: 0px 1px 1px rgba(47, 55, 71, 0.6), 0px 1px 4px rgba(47, 55, 71, 0.2);
+  box-shadow:
+    0px 1px 1px rgba(47, 55, 71, 0.6),
+    0px 1px 4px rgba(47, 55, 71, 0.2);
   border-bottom: 1px solid rgba(47, 55, 71, 0.2);
   border-radius: 4px;
   padding: 2px 6px;
@@ -278,6 +280,77 @@ hr {
 
 .o-list li {
   margin-top: 10px;
+}
+
+/* MDX 2 no longer wraps standalone images in a paragraph; keep the paragraph spacing */
+:not(p) > span > .gatsby-resp-image-wrapper {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+:not(p) > .mdx-image {
+  display: block;
+  margin: 1.5rem 0;
+  line-height: 24px;
+}
+
+/* Collapsible blocks, written as <details><summary>…</summary>…</details> in MDX */
+details {
+  position: relative;
+  overflow: hidden;
+  padding: 0 0 24px 36px;
+  color: var(--grey-color);
+}
+
+details[open] {
+  padding-bottom: 32px;
+}
+
+details::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 24px;
+  left: 0;
+  width: 8px;
+  background: var(--code-bgd-color);
+  border-radius: 5px;
+}
+
+details > summary {
+  position: relative;
+  display: block;
+  list-style: none;
+  margin-left: -36px;
+  padding-left: 36px;
+  color: var(--selection-bgd-color);
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details > summary::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 18px;
+  width: 5px;
+  height: 8px;
+  background: url("data:image/svg+xml,%3Csvg width='5' height='8' viewBox='0 0 5 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.724246C0 0.111374 0.681914 -0.223425 1.13107 0.168926L4.66916 3.25957C5.11028 3.6449 5.11028 4.3551 4.66916 4.74043L1.13107 7.83107C0.681913 8.22342 0 7.88863 0 7.27575V0.724246Z' fill='%23A0AEC0'/%3E%3C/svg%3E")
+    no-repeat;
+  transition: transform 0.15s;
+}
+
+details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+details p {
+  margin-top: 8px;
 }
 .clearfix {
   clear: both;

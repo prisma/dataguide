@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../../hooks/useLocation'
 import PrismaLogo from '../../icons/PrismaLogo'
 import { resolveCta, buildCtaUrl, CONSOLE_URL, ClusterId } from '../../cta'
 

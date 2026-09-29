@@ -1,9 +1,10 @@
 import * as React from 'react'
 import favicon from '../images/favicon-32x32.png'
 import { useStaticQuery, graphql } from 'gatsby'
-import { useLocation } from '@reach/router'
+import { PageLocation } from '../hooks/useLocation'
 
 type SEOProps = {
+  location: PageLocation
   title?: string
   description?: string
   image?: string
@@ -24,8 +25,7 @@ const buildMetaImageURL = (siteUrl: string, pathPrefix: string, img: string): st
   return `${siteUrl}${pathPrefix}/${cleaned}`
 }
 
-const SEO = ({ title, description, image }: SEOProps) => {
-  const location = useLocation()
+const SEO = ({ location, title, description, image }: SEOProps) => {
   const { site } = useStaticQuery(query)
   const {
     siteMetadata: {

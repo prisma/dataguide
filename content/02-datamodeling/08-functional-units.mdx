@@ -34,7 +34,8 @@ Using non-SQL languages is an option if SQL is inadequate for some task or if yo
 
 ## Functions vs procedures
 
-<details><summary>One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. </summary>
+<details>
+<summary>One named block of SQL managed and executed in the database seems like it shouldn't be too different from another, but most RDBMSs have distinguished functions and stored procedures for decades. </summary>
 
 As with other aspects of implementing the SQL standard, the exact details vary a bit from RDBMS to RDBMS. In general:
 
@@ -67,7 +68,7 @@ Most RDBMSs offer a choice between "stored" and "virtual" generated columns. In 
 
 Generated columns are a specialized tool. More often, all that's needed is a default in case a value isn't supplied on insert. Functions like `now()` show up frequently as column defaults, but most databases allow custom as well as built-in functions (except MySQL, where only `current_timestamp` may be a default value).
 
-Let's take the rather dry but simple example of a lot number in the format YYYYXXX, where the first four digits represent the current year and the latter three an incrementing counter: the first lot produced this year is 2020001, the second 2020002, and so on. There's no default type or built-in function which generates a value like this, but a user-defined function can number each lot <footnote> <note> If you are more familiar with a C-family language than you are with PostgreSQL, the <inlineCode>||</inlineCode> might throw you. That's concatenation here.</note> <text> as it's created </text> </footnote>:
+Let's take the rather dry but simple example of a lot number in the format YYYYXXX, where the first four digits represent the current year and the latter three an incrementing counter: the first lot produced this year is 2020001, the second 2020002, and so on. There's no default type or built-in function which generates a value like this, but a user-defined function can number each lot <Footnote> <note> If you are more familiar with a C-family language than you are with PostgreSQL, the `||` might throw you. That's concatenation here.</note> <text> as it's created </text> </Footnote>:
 
 ```
 CREATE SEQUENCE lot_counter;
@@ -99,7 +100,7 @@ If you're using Prisma, our documentation covers the equivalent method of [defin
 
 ## Referencing data in functions
 
-The sequence approach above has one important weakness (and <footnote> <note> If an insert fails, for example by supplying a negative <inlineCode>target_quantity</inlineCode>, <inlineCode>lot_counter</inlineCode> will still have incremented. This leaves a confusing but otherwise harmless gap in <inlineCode>lot_number</inlineCode>.</note> <text> at least one less important </text> </footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
+The sequence approach above has one important weakness (and <Footnote> <note> If an insert fails, for example by supplying a negative `target_quantity`, `lot_counter` will still have incremented. This leaves a confusing but otherwise harmless gap in `lot_number`.</note> <text> at least one less important </text> </Footnote>): come the new year, `lot_counter` will still have the same value it did on December 31. There's more than one way to track how many lots have been created in a year, though, and by querying `lots` itself the `next_lot_number` function can guarantee a correct value after the year rolls over.
 
 ```
 CREATE OR REPLACE FUNCTION next_lot_number () RETURNS TEXT AS $$
@@ -120,7 +121,7 @@ ALTER TABLE lots
 
 ## Workflows
 
-Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing <footnote> <note> "What about <inlineCode>SELECT ... INSERT</inlineCode>?", I hear you cry. Yes, as long as you <inlineCode>UNION</inlineCode> a dummy value in for the first lot of the year when <inlineCode>count()</inlineCode> has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text>one SQL statement</text> </footnote> to tally the number of lots this year to date followed by a second which inserts the new lot. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
+Even a single-statement function has a crucial advantage over external code: execution never leaves the safety of the database's ACID guarantees. Compare `next_lot_number` above to the possibilities of a client application or even a manual process, executing <Footnote> <note> "What about `SELECT ... INSERT`?", I hear you cry. Yes, as long as you `UNION` a dummy value in for the first lot of the year when `count()` has nothing to count, that will indeed work! Pretending it doesn't is much easier than coming up with another example.</note> <text>one SQL statement</text> </Footnote> to tally the number of lots this year to date followed by a second which inserts the new lot. If orders are being placed fast enough, the number of lots could change underneath you in between counting and inserting.
 
 Multi-statement stored programs open up an immense space of possibilities, since SQL includes all the tools you need to write procedural code, from exception handling to savepoints (it's even [Turing complete with window functions and common table expressions](https://cdn.oreillystatic.com/en/assets/1/event/27/High%20Performance%20SQL%20with%20PostgreSQL%20Presentation.pdf)!). Entire data-processing workflows can be performed in the database, minimizing exposure to other areas of the system and eliminating time-consuming roundtrips between the database and other domains.
 
@@ -140,9 +141,9 @@ It has to be said: if you're working with an application backend, its data acces
 
 Functions and procedures are contentious enough among database designers and users, but things _really_ take off with triggers. A trigger defines an automatic action, usually a procedure (SQLite allows only a single statement), to be executed before, after, or instead of another action.
 
-The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or <footnote> <note> Data Definition Language: the structural half of SQL with the <inlineCode>DROP TABLE</inlineCode>s and the <inlineCode>CREATE OR REPLACE FUNCTION</inlineCode>s and so forth.</note> <text>DDL</text> </footnote> trigger which can react to changes in the database structure.
+The initiating action is generally an insert, update, or delete to a table, and the trigger procedure can usually be set to execute either for each record or for the statement as a whole. SQL Server also allows triggers on updatable views, mostly as a way to enforce more detailed security measures; and it, PostgreSQL, and Oracle all offer some form of event or <Footnote> <note> Data Definition Language: the structural half of SQL with the `DROP TABLE`s and the `CREATE OR REPLACE FUNCTION`s and so forth.</note> <text>DDL</text> </Footnote> trigger which can react to changes in the database structure.
 
-A common low-risk usage for triggers is as an extra-powerful constraint preventing invalid data from being stored. In all major relational databases, only primary and foreign keys and `UNIQUE` constraints can evaluate information outside the candidate record. It's not possible to declare in a table definition that, for example, only two lots may be created in a month -- and the simplest database-and-code solution is vulnerable to a similar race condition as the count-then-set approach to `lot_number` above. To enforce any other constraint which involves the entire table, or other tables, you need a <footnote> <note> In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of <inlineCode>TRIGGER</inlineCode>; MySQL instead accepts a <inlineCode>BEGIN ... END</inlineCode> block as a trigger body; Oracle and SQL Server can do either.</note> <text>trigger</text> </footnote> to see outside the scope of the record:
+A common low-risk usage for triggers is as an extra-powerful constraint preventing invalid data from being stored. In all major relational databases, only primary and foreign keys and `UNIQUE` constraints can evaluate information outside the candidate record. It's not possible to declare in a table definition that, for example, only two lots may be created in a month -- and the simplest database-and-code solution is vulnerable to a similar race condition as the count-then-set approach to `lot_number` above. To enforce any other constraint which involves the entire table, or other tables, you need a <Footnote> <note> In keeping with this chapter's theme of vendor fragmentation, PostgreSQL requires the trigger invoke a separate function with a return type of `TRIGGER`; MySQL instead accepts a `BEGIN ... END` block as a trigger body; Oracle and SQL Server can do either.</note> <text>trigger</text> </Footnote> to see outside the scope of the record:
 
 ```
 CREATE FUNCTION enforce_monthly_lot_limit () RETURNS TRIGGER
@@ -169,7 +170,7 @@ EXECUTE PROCEDURE enforce_monthly_lot_limit();
 
 ```
 
-Once you start executing <footnote> <note> Data Manipulation Language: the other half of SQL, <inlineCode>SELECT</inlineCode>, <inlineCode>INSERT</inlineCode>, <inlineCode>UPDATE</inlineCode>, and <inlineCode>DELETE</inlineCode>.</note> <text>DML</text> </footnote> and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
+Once you start executing <Footnote> <note> Data Manipulation Language: the other half of SQL, `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.</note> <text>DML</text> </Footnote> and using flow control, it's a hop skip and jump to kicking off much more complicated sequences of steps and expanding the scope to include still other tables. Perhaps the insertion of a record into `lots` itself may be the final operation of a trigger initiated by an insert into `orders`, with no human user or application backend empowered to write to `lots` directly. Or as `items` are added to a lot, a trigger there might handle updating `current_quantity`, and start some other process when it reaches the `target_quantity`.
 
 Triggers and functions can run at the access level of their definer (in PostgreSQL, a `SECURITY DEFINER` declaration next to a function's `LANGUAGE`), which gives otherwise limited users the power to initiate wider-ranging processes -- and makes validating and testing those processes all the more important.
 
@@ -199,7 +200,8 @@ You can also learn about the specific data model component of a Prisma schema in
 
 ## FAQ
 
-<details><summary>What is a stored procedure in a database?</summary>
+<details>
+<summary>What is a stored procedure in a database?</summary>
 
 A stored procedure is a prepared piece of SQL code that you can save and reference to be used when needed.
 
@@ -221,7 +223,8 @@ EXEC procedute_name
 
 </details>
 
-<details><summary>What are database functions?</summary>
+<details>
+<summary>What are database functions?</summary>
 
 Database functions are a set of SQL statements that perform a specific task. They are efficient ways to packages lines of SQL code that you can reference rather than rewriting the actual SQL.
 
@@ -229,7 +232,8 @@ Database functions are a good way to promote reusability in your code. [Function
 
 </details>
 
-<details><summary>What is database generated column?</summary>
+<details>
+<summary>What is database generated column?</summary>
 
 A [generated column](https://www.prisma.io/dataguide/datamodeling/functional-units#defaults-and-generation) is a database column that is computed based on a predefined expression or from other columns.
 
@@ -237,7 +241,8 @@ It is a way of storing data without actually sending it through the `INSERT` or 
 
 </details>
 
-<details><summary>What are the default databases in SQL?</summary>
+<details>
+<summary>What are the default databases in SQL?</summary>
 
 Depending on your choice of database provider, you will notice default databases that come with your instance.
 
@@ -245,7 +250,8 @@ Most RDBMs ship default databases that store required information by the server.
 
 </details>
 
-<details><summary>What is a trigger in a database?</summary>
+<details>
+<summary>What is a trigger in a database?</summary>
 
 A database trigger is procedural code that is automatically executed in response to certain events or criteria on a table or database.
 

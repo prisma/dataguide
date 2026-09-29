@@ -4,7 +4,7 @@ import ArrowRight from '../../icons/ArrowRight'
 import ArrowDown from '../../icons/ArrowDown'
 import Link from '../link'
 import { urlGenerator } from '../../utils/urlGenerator'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../../hooks/useLocation'
 import { withPrefix } from 'gatsby'
 
 const List = styled.ul`
@@ -108,7 +108,8 @@ const ListItem = styled.li`
       color: var(--section-main-color) !important;
       font-weight: 500;
       line-height: 20px;
-      &:hover, &.active-item {
+      &:hover,
+      &.active-item {
         text-decoration: underline;
       }
       @media (min-width: 0px) and (max-width: 1024px) {
@@ -165,7 +166,7 @@ const TreeNode = ({
 }: any) => {
   const isCollapsed = collapsed[label]
   const collapse = () => {
-    Object.keys(collapsed).map(lbl => {
+    Object.keys(collapsed).map((lbl) => {
       if (lbl !== label) {
         collapsed[lbl] = collapsed[lbl] == false ? (collapsed[lbl] = true) : collapsed[lbl]
       }

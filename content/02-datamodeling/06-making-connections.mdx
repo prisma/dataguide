@@ -30,9 +30,7 @@ On occasion, natural primary key values may also change as standards and formats
 ### The future is here and everything needs to be destroyed
 
 <details>
-<summary>
-`CASCADE` is sometimes unduly ignored.
-</summary>
+<summary>`CASCADE` is sometimes unduly ignored.</summary>
 
 Even if real `libraries` or `authors` are never supposed to be deleted (only deactivated, or "soft-deleted"), both automated and manual tests often require a fresh, empty database up front or even for each individual test. Dropping and recreating the database breaks connections, requires elevated permissions, and is the slowest possible solution to boot.
 
@@ -44,7 +42,7 @@ The usual recourse is a "teardown" function or script which deletes anything pre
 
 Both libraries and authors preexist any useful record of the books they lend and write respectively. These cases correspond to the ["has-a"](https://en.wikipedia.org/wiki/Has-a) relationship type in object-oriented programming, which in database design requires the foreign key to be stored in the dependent table, `books`.
 
-Other cases aren't so clear. Imagine that some books are themselves on loan to libraries from outside collections, and that their original <footnote><note><a href="https://en.wikipedia.org/wiki/Provenance">Provenance</a> is the term used in archiving to describe who had an item before you did. Tracking provenance matters for rare books, museum artifacts, works of art, fine wines, data sets, and other less-than-building-sized things of value which change owners or holders.</note><text>provenances</text></footnote> are tracked separately. Should all `books` have a `provenance_id`, or should the `provenances` table have a `book_id` column?
+Other cases aren't so clear. Imagine that some books are themselves on loan to libraries from outside collections, and that their original <Footnote><note><a href="https://en.wikipedia.org/wiki/Provenance">Provenance</a> is the term used in archiving to describe who had an item before you did. Tracking provenance matters for rare books, museum artifacts, works of art, fine wines, data sets, and other less-than-building-sized things of value which change owners or holders.</note><text>provenances</text></Footnote> are tracked separately. Should all `books` have a `provenance_id`, or should the `provenances` table have a `book_id` column?
 
 ![Expanding the libraries schema to begin tracking provenance for individual books.](../dataguide-images/modeling/libraries-provenances.png)
 
@@ -59,7 +57,7 @@ CREATE TABLE provenances (
 );
 ```
 
-Properly speaking, provenance includes the entire chain of custody of an artifact, not just who had it last. If necessary for our purposes, this complicates the picture somewhat: with multiple records per book in `provenances`, `book_id` is <footnote><note>[Semi-structured data types](tables-tuples-types#semi-structured-data-types) would allow a `book_id` primary key, but cannot be constrained or a consistent schema guaranteed, so these are not always suitable.</note><text>no longer a primary key</text></footnote>. A `provenances` table in which records are not (or not only) identified by the foreign key is no longer a specialization, but the "many" side of a "one-to-many" relationship -- or, viewed from the other direction, of a "many-to-one".
+Properly speaking, provenance includes the entire chain of custody of an artifact, not just who had it last. If necessary for our purposes, this complicates the picture somewhat: with multiple records per book in `provenances`, `book_id` is <Footnote><note>[Semi-structured data types](tables-tuples-types#semi-structured-data-types) would allow a `book_id` primary key, but cannot be constrained or a consistent schema guaranteed, so these are not always suitable.</note><text>no longer a primary key</text></Footnote>. A `provenances` table in which records are not (or not only) identified by the foreign key is no longer a specialization, but the "many" side of a "one-to-many" relationship -- or, viewed from the other direction, of a "many-to-one".
 
 ```sql
 CREATE TABLE provenances (

@@ -1,7 +1,6 @@
 import React from 'react'
 import Tree from './tree'
-import styled, { css } from 'styled-components'
-import { StickyContainer, Sticky } from 'react-sticky'
+import styled from 'styled-components'
 import { useAllArticlesQuery } from '../../hooks/useAllArticlesQuery'
 import { AllArticles } from '../../interfaces/AllArticles.interface'
 import config from '../../../config'
@@ -11,14 +10,15 @@ const SidebarContainer = styled.aside`
   margin: 0px 16px 0 -16px;
 `
 
-const Sidebar = styled.div<{ isSticky?: boolean }>`
+const Sidebar = styled.div<{ $sticky?: boolean }>`
   margin: 0;
   overflow: auto;
   height: 100vh;
-  ${({ isSticky }: any) =>
-    isSticky &&
-    css`
-      max-height: 100vh;
+  ${({ $sticky }) =>
+    $sticky &&
+    `
+      position: sticky;
+      top: 0;
     `};
 
   .tablet-only {
@@ -68,20 +68,14 @@ const getRightPane = (allEdges: any) =>
 const SidebarLayout = ({ isMobile, slug }: any) => {
   const { allMdx }: AllArticles = useAllArticlesQuery()
   return !isMobile ? (
-    <StickyContainer>
-      <SidebarContainer>
-        <Sticky topOffset={0}>
-          {({ style, isSticky }: any) => (
-            <Sidebar style={style} isSticky={isSticky} id="sidebar-container">
-              <Promo slug={slug} />
-              <List>
-                <Tree edges={allMdx.edges} />
-              </List>
-            </Sidebar>
-          )}
-        </Sticky>
-      </SidebarContainer>
-    </StickyContainer>
+    <SidebarContainer>
+      <Sidebar $sticky id="sidebar-container">
+        <Promo slug={slug} />
+        <List>
+          <Tree edges={allMdx.edges} />
+        </List>
+      </Sidebar>
+    </SidebarContainer>
   ) : (
     <Sidebar>
       <div className="tablet-only">

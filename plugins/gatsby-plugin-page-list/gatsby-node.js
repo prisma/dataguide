@@ -1,6 +1,5 @@
 const path = require('path')
 const fsPromises = require('fs').promises
-const url = require('url')
 
 const publicPath = `./public`
 
@@ -38,10 +37,10 @@ exports.onPostBuild = async ({ graphql, pathPrefix, basePath = pathPrefix }, plu
 
       return {
         title: edge.node.pageContext.seoTitle,
-        url: url.resolve(
-          data.site.siteMetadata.siteUrl,
-          path.join(data.site.siteMetadata.pathPrefix, edge.node.path)
-        ),
+        url: new URL(
+          path.join(data.site.siteMetadata.pathPrefix, edge.node.path),
+          data.site.siteMetadata.siteUrl
+        ).href,
       }
     })
     .filter((edge) => edge !== null)

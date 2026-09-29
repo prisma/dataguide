@@ -306,7 +306,8 @@ In the data model used by Prisma schema, data types are represented by [field ty
 
 ## FAQ
 
-<details><summary>What is the range of the `DECIMAL` data type in MySQL?</summary>
+<details>
+<summary>What is the range of the `DECIMAL` data type in MySQL?</summary>
 
 The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D)`. The ranges of values for the arguments are as follows:
 
@@ -315,7 +316,8 @@ The declaration syntax for a `DECIMAL` column is `DECIMAL(M, D)`. The ranges of 
 
 </details>
 
-<details><summary>How does MySQL store `TEXT`?</summary>
+<details>
+<summary>How does MySQL store `TEXT`?</summary>
 
 The [storage requirements](https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html) for string types in MySQL can be represented in the following table with _L_ representing the actual length in bytes of a given string value.
 
@@ -328,7 +330,8 @@ The [storage requirements](https://dev.mysql.com/doc/refman/8.0/en/storage-requi
 
 </details>
 
-<details><summary>What is the difference between `TEXT` and `VARCHAR` in MySQL?</summary>
+<details>
+<summary>What is the difference between `TEXT` and `VARCHAR` in MySQL?</summary>
 
 `TEXT` and `VARCHAR` similarly store characters with no fixed size.
 
@@ -342,7 +345,8 @@ VARCHAR(10)
 
 </details>
 
-<details><summary>What is the maximum length of `VARCHAR` in MySQL?</summary>
+<details>
+<summary>What is the maximum length of `VARCHAR` in MySQL?</summary>
 
 Values in `VARCHAR` columns are variable-length strings. The maximum length can be specified as a value from 0 to 65,535.
 
@@ -350,7 +354,8 @@ The effective maximum length of a `VARCHAR` is subject to the maximum row size a
 
 </details>
 
-<details><summary>How are `ENUM` types stored in MySQL?</summary>
+<details>
+<summary>How are `ENUM` types stored in MySQL?</summary>
 
 `ENUM` is an advantageous storage type in situations where a column has a limited set of possible values.
 

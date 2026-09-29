@@ -8,11 +8,7 @@ const settings = {
   hitsPerPage: 20,
   attributeForDistinct: 'slug',
   distinct: 2,
-  customRanking: [
-    'asc(content)',
-    'asc(title)',
-    'asc(heading)'
-  ],
+  customRanking: ['asc(content)', 'asc(title)', 'asc(heading)'],
   separatorsToIndex: '!#()[]{}*+-_一,:;<>?@/^|%&~£¥$§€†‡',
 }
 
@@ -38,8 +34,6 @@ const isApiTerm = (term) => term.includes('AlgoliaTerm') && term.split('"')[1] =
 
 const getApiVal = (term) => term.split('"')[3]
 
-const removeFrontmatter = (rawMdx) => rawMdx.split('---').slice(2).join('---')
-
 const unnestFrontmatter = (node) => {
   const { fields, frontmatter, ...rest } = node
 
@@ -52,8 +46,8 @@ const unnestFrontmatter = (node) => {
 
 // Transform function
 
-const handleRawBody = (node) => {
-  const { rawBody, ...rest } = node
+const handleBody = async (node) => {
+  const { body, ...rest } = node
 
   const getTitlePath = (item) => {
     const tocItem =
@@ -66,7 +60,8 @@ const handleRawBody = (node) => {
     return tocItem && tocItem.url ? removeInlineCode(tocItem.url, true) : ''
   }
 
-  const data = mdxToSearchable(removeFrontmatter(rawBody))
+  // `body` is the raw MDX source without frontmatter
+  const data = await mdxToSearchable(body)
 
   const records = data.map((item, index) => {
     const record = {
@@ -79,7 +74,7 @@ const handleRawBody = (node) => {
       dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
       internal: {
         contentDigest: rest.internal.contentDigest,
-      }
+      },
     }
     return record
   })
@@ -96,7 +91,7 @@ module.exports = (options) => {
           edges {
             node {
               id
-              rawBody
+              body
               fields {
                 slug
                 modSlug
@@ -114,15 +109,15 @@ module.exports = (options) => {
       }`,
       indexName,
       settings,
-      transformer: ({ data }) => {
+      transformer: async ({ data }) => {
         const noSearchFlag = Array.from(data.allMdx.edges).filter(
           (e) => e.node.frontmatter.search !== false
         )
-        return noSearchFlag
-          .map((edge) => edge.node)
-          .map(unnestFrontmatter)
-          .map(handleRawBody)
-          .reduce((acc, cur) => [...acc, ...cur], [])
+        const records = []
+        for (const node of noSearchFlag.map((edge) => edge.node).map(unnestFrontmatter)) {
+          records.push(...(await handleBody(node)))
+        }
+        return records
       },
     },
   ]

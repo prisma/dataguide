@@ -21,10 +21,9 @@ const Footnote = ({ children }: FootnoteProps) => {
     }
   }, [ref])
 
-  const note =
-    children && children.filter((child: any) => child.props && child.props.originalType === 'note')
-  const text =
-    children && children.filter((child: any) => child.props && child.props.originalType === 'text')
+  const childArray = React.Children.toArray(children)
+  const note = childArray.filter((child: any) => child.type === 'note')
+  const text = childArray.filter((child: any) => child.type === 'text')
 
   return (
     <FootnoteWrapper ref={ref}>

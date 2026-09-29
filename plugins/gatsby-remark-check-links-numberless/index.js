@@ -1,4 +1,3 @@
-var visit = require('unist-util-visit')
 const path = require('path')
 
 function getCacheKey(node) {
@@ -19,6 +18,10 @@ function getHeadingsMapKey(link, pathUrl) {
     hashIndex,
   }
 }
+
+// gatsby-plugin-mdx compiles every file more than once (for GraphQL and for
+// the page bundle), so only print a report when its content changed.
+let lastReport = null
 
 function createPathPrefixer(pathPrefix) {
   return function withPathPrefix(url) {
@@ -57,6 +60,7 @@ module.exports = async function plugin(
     }
   }
 
+  const { visit } = await import('unist-util-visit')
   visit(markdownAST, 'link', visitor)
 
   const parent = await getNode(markdownNode.parent)
@@ -84,8 +88,8 @@ module.exports = async function plugin(
         visited = await mdxCache.get(key)
       }
       if (visited && setAt >= visited.setAt) {
-        linksMap[visited.path.replace(/\/$/, "")] = visited.links
-        headingsMap[visited.path.replace(/\/$/, "")] = visited.headings
+        linksMap[visited.path.replace(/\/$/, '')] = visited.links
+        headingsMap[visited.path.replace(/\/$/, '')] = visited.headings
         continue
       }
 
@@ -94,11 +98,14 @@ module.exports = async function plugin(
     }
   }
 
+  const report = []
   let totalBrokenLinks = 0
   const prefixedIgnore = ignore.map(withPathPrefix)
   const prefixedExceptions = exceptions.map(withPathPrefix)
   const pathKeys = Object.keys(linksMap)
-  const pathKeysWithoutIndex = pathKeys.map(p => p.replace(`index${pathSep}`, '').replace(/.$/,''))
+  const pathKeysWithoutIndex = pathKeys.map((p) =>
+    p.replace(`index${pathSep}`, '').replace(/.$/, '')
+  )
   for (const pathL in linksMap) {
     if (prefixedIgnore.includes(pathL)) {
       // don't count broken links for ignored pages
@@ -107,7 +114,7 @@ module.exports = async function plugin(
 
     const linksForPath = linksMap[pathL]
     if (linksForPath.length) {
-      const brokenLinks = linksForPath.filter(link => {
+      const brokenLinks = linksForPath.filter((link) => {
         // return true for broken links, false = pass
         const { key, hasHash, hashIndex } = getHeadingsMapKey(link.tranformedUrl, pathL)
         if (prefixedExceptions.includes(key)) {
@@ -125,14 +132,14 @@ module.exports = async function plugin(
 
           return false
         }
-    
-        return !pathKeysWithoutIndex.includes(urlToCheck) 
+
+        return !pathKeysWithoutIndex.includes(urlToCheck)
       })
 
       const brokenLinkCount = brokenLinks.length
       totalBrokenLinks += brokenLinkCount
       if (brokenLinkCount && verbose) {
-        console.warn(`${brokenLinkCount} broken links found on ${pathL}`)
+        report.push(['warn', `${brokenLinkCount} broken links found on ${pathL}`])
         for (const link of brokenLinks) {
           let prefix = '-'
           if (link.position) {
@@ -145,9 +152,9 @@ module.exports = async function plugin(
               ':'
             )
           }
-          console.warn(`${prefix} ${link.originalUrl}`)
+          report.push(['warn', `${prefix} ${link.originalUrl}`])
         }
-        console.log('')
+        report.push(['log', ''])
       }
     }
   }
@@ -157,14 +164,22 @@ module.exports = async function plugin(
     if (process.env.NODE_ENV === 'production') {
       // break builds with broken links before they get deployed for reals
       // throw new Error(message);
-      console.info('Broken links found. Please fix before deploy!')
+      report.push(['info', 'Broken links found. Please fix before deploy!'])
     }
 
     if (verbose) {
-      console.error(message)
+      report.push(['error', message])
     }
   } else if (verbose) {
-    console.info('No broken links found')
+    report.push(['info', 'No broken links found'])
+  }
+
+  const reportKey = JSON.stringify(report)
+  if (reportKey !== lastReport) {
+    lastReport = reportKey
+    for (const [method, message] of report) {
+      console[method](message)
+    }
   }
 
   return markdownAST

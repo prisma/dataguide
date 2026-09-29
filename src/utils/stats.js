@@ -1,16 +1,34 @@
-const ReactGA = require('react-ga')
-
 const GA_TRACKING_ID = 'UA-74131346-14'
 const GA_ADDRESS = 'https://www.prisma.io/gastats.js'
 const COLLECT_ADDRESS = 'https://stats.prisma.workers.dev'
 
+// Thin replacement for the (unmaintained) react-ga package: queue commands on
+// window.ga until the self-hosted analytics.js script has loaded.
+const ga = (...args) => {
+  if (typeof window === 'undefined' || !window.ga) return
+  window.ga(...args)
+}
+
+const loadAnalytics = () => {
+  if (window.ga) return
+  window.GoogleAnalyticsObject = 'ga'
+  window.ga = function () {
+    ;(window.ga.q = window.ga.q || []).push(arguments)
+  }
+  window.ga.l = 1 * new Date()
+  const script = document.createElement('script')
+  script.async = true
+  script.src = GA_ADDRESS
+  const firstScript = document.getElementsByTagName('script')[0]
+  firstScript.parentNode.insertBefore(script, firstScript)
+}
+
 module.exports = {
   init() {
-    ReactGA.initialize(GA_TRACKING_ID, {
-      gaAddress: GA_ADDRESS,
-    })
+    if (typeof window === 'undefined') return
+    loadAnalytics()
 
-    const ga = ReactGA.ga()
+    ga('create', GA_TRACKING_ID, 'auto')
     ga('set', 'anonymizeIp', true)
     ga((u) => {
       // Override sendHitTask to proxy tracking requests
@@ -28,6 +46,6 @@ module.exports = {
     if (host.includes('localhost') || host.includes('vercel')) {
       return
     }
-    ReactGA.pageview(page)
+    ga('send', { hitType: 'pageview', page: page.trim() })
   },
 }

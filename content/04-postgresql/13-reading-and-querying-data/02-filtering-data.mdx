@@ -401,7 +401,8 @@ Learning how these clauses can be applied, individually or in combination, will 
 
 ## FAQ
 
-<details><summary>How do you filter multiple columns in PostgreSQL?</summary>
+<details>
+<summary>How do you filter multiple columns in PostgreSQL?</summary>
 
 You can filter multiple columns in PostgreSQL by adding additional conditions to create compound expressions using [operators](https://www.postgresql.org/docs/current/functions.html).
 
@@ -413,7 +414,8 @@ SELECT * FROM customer WHERE first_name = 'John' AND last_name = 'Smith';
 
 </details>
 
-<details><summary>How do I limit row results in PostgreSQL?</summary>
+<details>
+<summary>How do I limit row results in PostgreSQL?</summary>
 
 You can limit the number of records a query returns by using the `LIMIT` clause. Rather than eliminating rows of data based on criteria within the row itself, the `LIMIT` clause sets the maximum number of records returned.
 
@@ -425,19 +427,22 @@ SELECT * FROM my_table LIMIT <num_rows> [OFFSET <num_rows_to_skip>];
 
 </details>
 
-<details><summary>What is an aggregate function in PostgreSQL?</summary>
+<details>
+<summary>What is an aggregate function in PostgreSQL?</summary>
 
 [Aggregate functions](https://www.postgresql.org/docs/current/functions-aggregate.html) in PostgreSQL are functions that compute a single result from a set of input values.
 
 </details>
 
-<details><summary>What is `array_agg()` in PostgreSQL?</summary>
+<details>
+<summary>What is `array_agg()` in PostgreSQL?</summary>
 
 PostgreSQL's `array_agg()` is a [user-defined aggregate function](https://www.postgresql.org/docs/current/xaggr.html) that accepts a set of values and returns an array where each value in the input set is assigned to an element of the array.
 
 </details>
 
-<details><summary>Can you `GROUP BY` timestamp values in PostgreSQL?</summary>
+<details>
+<summary>Can you `GROUP BY` timestamp values in PostgreSQL?</summary>
 
 Yes, you can `GROUP BY` a timestamp value in PostgreSQL. However, this value includes a time element that would need timestamps to be identical to the millisecond to get grouped together.
 

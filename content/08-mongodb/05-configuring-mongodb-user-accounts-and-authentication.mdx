@@ -487,7 +487,8 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## FAQ
 
-<details><summary>How do you list existing users in MongoDB?</summary>
+<details>
+<summary>How do you list existing users in MongoDB?</summary>
 
 To list existing users in MongoDB, you can use the `db.getUsers()` method to show all of the users within the current database.
 
@@ -502,7 +503,8 @@ For more details on [`db.getUsers()`](https://www.prisma.io/dataguide/mongodb/co
 
 </details>
 
-<details><summary>How do you create a database admin user in MongoDB?</summary>
+<details>
+<summary>How do you create a database admin user in MongoDB?</summary>
 
 In order to create a [database admin user](https://www.prisma.io/dataguide/mongodb/authorization-and-privileges#what-roles-are-available-in-mongodb-by-default) in MongoDB, you will want to use the `db.createUser()` method in the `admin` database.
 
@@ -519,7 +521,8 @@ db.createUser(
 
 </details>
 
-<details><summary>How do you drop a user in MongoDB?</summary>
+<details>
+<summary>How do you drop a user in MongoDB?</summary>
 
 To remove a MongoDB user you can use the `db.dropUser()` method. This needs to be done in the `admin` database, and the syntax would look like this:
 
@@ -530,7 +533,8 @@ db.dropUser("tom")
 
 </details>
 
-<details><summary>How do you check if a database user exists in MongoDB?</summary>
+<details>
+<summary>How do you check if a database user exists in MongoDB?</summary>
 
 To get a list of all existing users in MongoDB, you can use the `db.getUsers()` method.
 
@@ -543,7 +547,8 @@ db.getUsers()
 
 </details>
 
-<details><summary>How can you check user privileges in MongoDB?</summary>
+<details>
+<summary>How can you check user privileges in MongoDB?</summary>
 
 To query for a [specific user](https://www.prisma.io/dataguide/mongodb/configuring-mongodb-user-accounts-and-authentication#how-do-you-show-existing-users), you can use the `db.getUser()` method with the `showPrivileges` `arg` set to `true`.
 

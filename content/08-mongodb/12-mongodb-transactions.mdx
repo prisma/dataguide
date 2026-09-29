@@ -264,7 +264,8 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## FAQ
 
-<details><summary> Can you use MongoDB transactions in Node.js? </summary>
+<details>
+<summary> Can you use MongoDB transactions in Node.js? </summary>
 
 Yes, MongoDB transactions can be used in Node.js.
 
@@ -272,7 +273,8 @@ MongoDB provides a helpful getting started guide for [“How to Use MongoDB Tran
 
 </details>
 
-<details><summary> What are MongoDB ACID transactions? </summary>
+<details>
+<summary> What are MongoDB ACID transactions? </summary>
 
 ACID is an acronym for atomicity, consistency, isolation, and durability. All of these properties have to do with keeping the database in a valid state.
 
@@ -280,7 +282,8 @@ Because a transaction is a group of database operation being conducted together,
 
 </details>
 
-<details><summary> How do you rollback transactions in MongoDB? </summary>
+<details>
+<summary> How do you rollback transactions in MongoDB? </summary>
 
 MongoDB transactions exist within sessions. You create a session using `startSession()` and follow with `session.startTransaction()` to stage your transaction operations to be committed.
 
@@ -288,7 +291,8 @@ To intentionally rollback those changes, you can use the `session.abortTransacti
 
 </details>
 
-<details><summary> What are some MongoDB transaction performance best practices? </summary>
+<details>
+<summary> What are some MongoDB transaction performance best practices? </summary>
 
 There are several transactions best practices to consider when using MongoDB. You will want make sure that you are optimizing to keep transaction runtime within 60 seconds of starting because MongoDB will automatically abort anything longer.
 
@@ -296,7 +300,8 @@ The number of operations in a transaction should be no more than 1,000 documents
 
 </details>
 
-<details><summary> Does MongoDB support multi-document transactions? </summary>
+<details>
+<summary> Does MongoDB support multi-document transactions? </summary>
 
 Yes, MongoDB supports [multi document ACID transactions](https://www.mongodb.com/blog/post/mongodb-multi-document-acid-transactions-general-availability) in MongoDB 4.0 versions and later.
 

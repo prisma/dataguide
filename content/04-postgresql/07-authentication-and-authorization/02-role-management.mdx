@@ -458,7 +458,8 @@ PostgreSQL's system of roles, role attributes, grants, and authentication create
 
 ## FAQ
 
-<details><summary>How can you alter a role's password in PostgreSQL?</summary>
+<details>
+<summary>How can you alter a role's password in PostgreSQL?</summary>
 
 To [change a role's password](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#changing-existing-roles) in PostgreSQL, you can user the `ALTER` statement with `PASSWORD`. The syntax would look like this:
 
@@ -477,7 +478,8 @@ Alternatively, you can also use the `psql` meta-command like so:
 
 </details>
 
-<details><summary>How do check your current user attributes in PostgreSQL?</summary>
+<details>
+<summary>How do check your current user attributes in PostgreSQL?</summary>
 
 To find the [attributes of the current role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#listing-your-own-attributes), you can use `psql` meta-commands with the `USER` variable which will be substitued with the current connected role.
 
@@ -496,7 +498,8 @@ The basic syntax and result would look like:
 
 </details>
 
-<details><summary>How can you check if you have grant user privileges in PostgreSQL?</summary>
+<details>
+<summary>How can you check if you have grant user privileges in PostgreSQL?</summary>
 
 To check whether a role can [grant user privileges or create roles](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#check-whether-you-have-role-management-privileges), you can use use the following SQL statement:
 
@@ -512,7 +515,8 @@ SELECT 'Yes' AS "Can I manage roles?" FROM pg_roles WHERE rolname = :'USER' AND 
 
 </details>
 
-<details><summary>What is the replication role attribute in PostgreSQL?</summary>
+<details>
+<summary>What is the replication role attribute in PostgreSQL?</summary>
 
 `REPLICATION` is a role attribute in PostgreSQL that allows the role to initiate streaming [replication](/intro/database-glossary#replication).
 
@@ -520,7 +524,8 @@ Roles with this attribute must also have the `LOGIN` attribute.
 
 </details>
 
-<details><summary>How do you create user roles in PostgreSQL?</summary>
+<details>
+<summary>How do you create user roles in PostgreSQL?</summary>
 
 You can create roles in PostgreSQL by using the [`CREATE ROLE`](https://www.postgresql.org/docs/current/sql-createrole.html) command.
 

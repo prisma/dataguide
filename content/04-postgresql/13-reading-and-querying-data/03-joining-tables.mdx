@@ -367,7 +367,8 @@ Prisma allows you to [define relations](https://www.prisma.io/docs/orm/prisma-sc
 
 ## FAQ
 
-<details><summary>Does PostgreSQL support outer joins?</summary>
+<details>
+<summary>Does PostgreSQL support outer joins?</summary>
 
 Yes, PostgreSQL supports outer joins. For example, you can use `LEFT OUTER JOIN` or just `LEFT JOIN` like in the following:
 
@@ -382,13 +383,15 @@ LEFT JOIN table_2
 
 </details>
 
-<details><summary>What is a lateral join in PostgreSQL?</summary>
+<details>
+<summary>What is a lateral join in PostgreSQL?</summary>
 
 The `LATERAL` key word in [PostgreSQL](https://www.postgresql.org/docs/current/app-createdb.html#SQL-FROM) can precede a sub-SELECT FROM item and allows the sub-SELECT to refer to columns of FROM items that appear before it in the FROM list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot cross-reference any other FROM item.)
 
 </details>
 
-<details><summary>Does PostgreSQL support cross joins?</summary>
+<details>
+<summary>Does PostgreSQL support cross joins?</summary>
 
 Yes, a `CROSS JOIN` can be done in PostgreSQL. The syntax will look something like:
 
@@ -402,7 +405,8 @@ The above example would display something like this [example output](https://www
 
 </details>
 
-<details><summary>Does PostgreSQL support full joins?</summary>
+<details>
+<summary>Does PostgreSQL support full joins?</summary>
 
 Yes, PostgreSQL support [full joins](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#full-join). They can be specified as `FULL OUTER JOIN` or as `FULL JOIN`.
 
@@ -419,7 +423,8 @@ FULL JOIN table_2
 
 </details>
 
-<details><summary>How do you specify an inner join in PostgreSQL?</summary>
+<details>
+<summary>How do you specify an inner join in PostgreSQL?</summary>
 
 The default join in PostgreSQL is an [**inner join**](https://www.prisma.io/dataguide/postgresql/reading-and-querying-data/joining-tables#inner-join), and it can be specified by using `INNER JOIN` or just `JOIN`.
 

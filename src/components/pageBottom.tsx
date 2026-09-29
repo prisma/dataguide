@@ -6,7 +6,6 @@ import Link from './link'
 // import config from '../../config'
 // import { ButtonWrapper } from './customMdx/button'
 // import Twitter from '../icons/Twitter'
-// import { useLocation } from '@reach/router'
 
 // const sentiments: any = {
 //   unhappy: 'Unhappy',
@@ -46,7 +45,7 @@ const PageBottomWrapper = styled.div`
     font-weight: 800;
     font-size: 14px;
     line-height: 17px;
-    color: #5D6571;
+    color: #5d6571;
     text-decoration: underline;
   }
   .return-home {
@@ -54,23 +53,23 @@ const PageBottomWrapper = styled.div`
     font-weight: 800;
     font-size: 14px;
     line-height: 17px;
-    color: #5D6571;
+    color: #5d6571;
     position: relative;
     &:after {
-      content: "";
+      content: '';
       position: absolute;
       width: 8px;
-      background: #5D6571;
+      background: #5d6571;
       height: 2px;
       left: -12px;
       top: 8.5px;
     }
     &:before {
-      border-top: 2px solid #5D6571;
+      border-top: 2px solid #5d6571;
       width: 5px;
       height: 5px;
-      border-right: 2px solid #5D6571;
-      content: "";
+      border-right: 2px solid #5d6571;
+      content: '';
       position: absolute;
       left: -13px;
       transform: rotate(-135deg);
@@ -80,12 +79,13 @@ const PageBottomWrapper = styled.div`
 `
 
 const PageBottom = ({ editDocsPath, pageUrl }: any) => {
-
   return (
     <PageBottomWrapper>
-      {pageUrl === '/' && (<a href="https://www.prisma.io" className="return-home">
-       Return to Prisma
-      </a>)}
+      {pageUrl === '/' && (
+        <a href="https://www.prisma.io" className="return-home">
+          Return to Prisma
+        </a>
+      )}
       {editDocsPath && (
         <Link className="edit-git" to={`${editDocsPath}`}>
           Edit this page on GitHub
