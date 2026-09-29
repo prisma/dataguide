@@ -4,6 +4,7 @@ metaTitle: 'Using Transactions | Inserting and modifying data | PostgreSQL'
 metaDescription: "Transactions help provide the atomicity, consistency, isolation, and durability promises of ACID-compliant databases.  In this guide, we'll look at what transactions are, the various levels of isolation possible, and how to use them in PostgreSQL."
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -14,7 +15,7 @@ In this guide, we'll start by discussing what transactions are and why they are 
 
 ## What are transactions?
 
-[Transactions](/intro/database-glossary#transaction) are a way to group together and isolate multiple statements for processing as a single operation. Instead of executing each command individually as it is sent to the server, in a transaction, commands are bundled together and executed in a separate context than other requests.
+[Transactions](/intro/database-glossary#transaction) are a way to group together and isolate multiple statements for processing as a single operation. Each statement in a transaction still runs as soon as it is sent to the server, but its changes stay inside the transaction: they only become permanent, and visible to other sessions, when the whole transaction is committed.
 
 Isolation is an important part of transactions. Within a transaction, the executed statements can only affect the environment within the transaction itself. From inside the transaction, statements can modify data and the results are immediately visible. From the outside, no changes are made until the transaction is committed, at which time all of the actions within the transaction become visible at once.
 
@@ -95,7 +96,7 @@ This means that no changes committed outside of the transaction will ever impact
 
 While the standard definition of the `repeatable read` isolation level requires only that dirty and non-repeatable reads are prevented, PostgreSQL also prevents phantom reads at this level. This means that commits outside of the transaction cannot alter the number of rows that satisfy a query.
 
-Since the state of the data seen within the transaction can deviate from the up-to-date data in the database, transactions can fail on commit if the two datasets cannot be reconciled. Because of this, one drawback of this isolation level is that you may have to retry transactions if there is a serialization failure on commit.
+Since the state of the data seen within the transaction can deviate from the up-to-date data in the database, a transaction fails with a serialization error if it tries to modify or lock a row that another transaction changed and committed after it started (`ERROR: could not serialize access due to concurrent update`). Because of this, one drawback of this isolation level is that you may have to retry transactions that fail this way.
 
 PostgreSQL's `repeatable read` isolation level blocks most types of consistency issues but serialization anomalies can still occur.
 
@@ -123,6 +124,17 @@ COMMIT;
 
 As a more concrete example, imagine that we are attempting to transfer $1000 from one account to another. We want to ensure that the money will always be in one of the two accounts but never in both of them.
 
+The examples in this guide use a simple `accounts` table. If you want to follow along, you can create it like this (the `CHECK` constraint prevents balances from going below zero):
+
+```sql
+CREATE TABLE accounts (
+    id integer PRIMARY KEY,
+    balance numeric(12, 2) NOT NULL CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (id, balance) VALUES (1, 5000), (2, 5000), (3, 5000), (4, 5000);
+```
+
 We can wrap the two statements that together encapsulate this transfer in a transaction that looks like this:
 
 ```sql
@@ -139,15 +151,73 @@ UPDATE accounts
 COMMIT;
 ```
 
-Here, the $1000 will not be taken out of the account with `id = 1` without also putting $1000 into the account with `id = 2`. While these two statements are executed sequentially _within_ the transaction, they will be committed, and thus be executed on the underlying data set, simultaneously.
+Here, the $1000 will not be taken out of the account with `id = 1` without also putting $1000 into the account with `id = 2`.
+
+This is what atomicity means: the two changes succeed or fail as a unit. It doesn't mean that the statements run at the same time. Each `UPDATE` runs as soon as you send it, and the session running the transaction sees its own changes right away. For instance, after the first `UPDATE`, running `SELECT * FROM accounts WHERE id IN (1, 2) ORDER BY id;` inside the transaction returns:
+
+```text
+ id | balance
+----+---------
+  1 | 4000.00
+  2 | 5000.00
+(2 rows)
+```
+
+If a second session runs the same query at that moment, it still sees the last committed state of both accounts:
+
+```text
+ id | balance
+----+---------
+  1 | 5000.00
+  2 | 5000.00
+(2 rows)
+```
+
+Once the first session runs the second `UPDATE` and `COMMIT`, the second session sees both changes at once:
+
+```text
+ id | balance
+----+---------
+  1 | 4000.00
+  2 | 6000.00
+(2 rows)
+```
 
 ## Rolling back transactions
 
 Within a transaction, either all or none of the statements will be committed to the database. Abandoning the statements and modifications made within a transaction instead of applying them to the database is known as "rolling back" the transaction.
 
-Transactions can be rolled back either automatically or manually. PostgreSQL automatically rolls back transactions if one of the statements within results in an error. It also rolls back the transaction if serialization error would occur if the chosen isolation level does not allow them.
+Transactions can be rolled back either automatically or manually. If a session disconnects before committing its transaction, PostgreSQL rolls the transaction back automatically.
 
-To manually roll back statements that have been given during the current transaction, you can use the `ROLLBACK` command. This will cancel all of the statements within the transaction, in essence turning back the clock to the start of the transaction.
+Errors work differently. If a statement inside a transaction block fails, including with a serialization failure under the stricter isolation levels, PostgreSQL doesn't quietly undo the transaction and carry on. Instead, it marks the transaction as _aborted_ and rejects every further command until you end the transaction block. For example, this transfer tries to take more money out of account `1` than it holds, which violates the table's `CHECK` constraint:
+
+```sql
+BEGIN;
+
+UPDATE accounts
+   SET balance = balance - 6000
+ WHERE id = 1;
+
+UPDATE accounts
+   SET balance = balance + 6000
+ WHERE id = 2;
+
+COMMIT;
+```
+
+In `psql`, this prints:
+
+```text
+BEGIN
+ERROR:  new row for relation "accounts" violates check constraint "accounts_balance_check"
+DETAIL:  Failing row contains (1, -1000.00).
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ROLLBACK
+```
+
+The second `UPDATE` is rejected even though it would have succeeded on its own, and `psql`'s default prompt shows a `!` while the transaction is in this state (instead of the `*` it shows during a normal transaction). An aborted transaction can't be committed: `COMMIT` rolls it back instead, which is why the response to `COMMIT` above is `ROLLBACK`. None of the changes are saved. To end an aborted transaction, issue `ROLLBACK` (or, to keep the work done before the error, roll back to a save point, as described [below](#recovering-from-errors-with-save-points)).
+
+To manually roll back statements that have been given during the current transaction, you can use the `ROLLBACK` command. This will cancel all of the statements within the transaction and end it, in essence turning back the clock to before the transaction started.
 
 For instance, supposing we're using the same bank accounts example we were using before, if we find out after issuing the `UPDATE` statements that we accidentally transferred the wrong amount or used the wrong accounts, we could rollback the changes instead of committing them:
 
@@ -170,7 +240,7 @@ Once we `ROLLBACK`, the $1500 will still be in the account with `id = 1`.
 
 ## Using save points when rolling back
 
-By default, the `ROLLBACK` command resets the transaction to where it was when the `BEGIN` or `START TRANSACTION` commands were first called. But what if we only want to revert some of the statements within the transaction?
+The `ROLLBACK` command discards everything done since the `BEGIN` or `START TRANSACTION` command and ends the transaction. But what if we only want to revert some of the statements within the transaction?
 
 While you cannot specify arbitrary places to roll back to when issuing `ROLLBACK` command, you _can_ roll back to any "save points" that you've set throughout the transaction. You can mark places in your transaction ahead of time with the `SAVEPOINT` command and then reference those specific locations when you need to roll back.
 
@@ -182,11 +252,19 @@ To specify a save point, issue the `SAVEPOINT` command followed by a name for th
 SAVEPOINT save_1;
 ```
 
-To roll back to that save point, use the `ROLLBACK TO` command:
+To roll back to that save point, use the `ROLLBACK TO SAVEPOINT` command (the `SAVEPOINT` keyword is optional, so `ROLLBACK TO save_1` works too):
 
 ```sql
-ROLLBACK TO save_1;
+ROLLBACK TO SAVEPOINT save_1;
 ```
+
+Rolling back to a save point undoes the changes made after it but keeps the save point, so you can roll back to it again if you need to. When you no longer need a save point, you can remove it with `RELEASE SAVEPOINT`:
+
+```sql
+RELEASE SAVEPOINT save_1;
+```
+
+Releasing a save point keeps the changes made after it. Like everything else in the transaction, they're only made permanent when the transaction commits.
 
 Let's continue the account-focused example we've been using:
 
@@ -205,17 +283,54 @@ SAVEPOINT save_1;
     WHERE id = 3;  -- Wrong account number here!  We can rollback to the save point though!
 
 /* Gets us back to the state of the transaction at `save_1` */
- ROLLBACK TO save_1;
+ ROLLBACK TO SAVEPOINT save_1;
 
 /* Continue the transaction with the correct account number */
    UPDATE accounts
       SET balance = balance + 1500
     WHERE id = 4;
 
+/* We no longer need the save point */
+  RELEASE SAVEPOINT save_1;
+
    COMMIT;
 ```
 
 Here, we're able to recover from a mistake we made without losing all of the work we've done in the transaction so far. After rolling back, we continue with the transaction as planned using the correct statements.
+
+### Recovering from errors with save points
+
+Save points are also how you recover from an error without losing the whole transaction. As described [above](#rolling-back-transactions), a failed statement puts the transaction into an aborted state. Rolling back to a save point that was set before the failure discards the failed statement and makes the transaction usable again:
+
+```sql
+BEGIN;
+
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+
+SAVEPOINT second_transfer;
+
+UPDATE accounts SET balance = balance - 6000 WHERE id = 3;
+
+ROLLBACK TO SAVEPOINT second_transfer;
+
+COMMIT;
+```
+
+In `psql`, this prints:
+
+```text
+BEGIN
+UPDATE 1
+UPDATE 1
+SAVEPOINT
+ERROR:  new row for relation "accounts" violates check constraint "accounts_balance_check"
+DETAIL:  Failing row contains (3, -1000.00).
+ROLLBACK
+COMMIT
+```
+
+The `ROLLBACK` line is the response to `ROLLBACK TO SAVEPOINT`, and this time `COMMIT` really commits: the transfer from account `1` to account `2` is saved, while account `3` is unchanged. If an application wraps a statement that might fail in a save point like this, it can decide what to do about the error without starting the whole transaction over.
 
 ## Setting the isolation level of transactions
 
@@ -236,7 +351,7 @@ The `<isolation_level>` can be any of these (described in detail earlier):
 - `REPEATABLE READ`
 - `SERIALIZABLE`
 
-The `SET TRANSACTION` command can also used to set the isolation level after a transaction is started. However, you can only use `SET TRANSACTION` before any queries or data modifying commands are executed, so it doesn't allow for increased flexibility.
+The `SET TRANSACTION` command can also be used to set the isolation level after a transaction is started. However, you can only use `SET TRANSACTION` before any queries or data modifying commands are executed, so it doesn't allow for increased flexibility.
 
 ## Chaining transactions
 
@@ -244,7 +359,7 @@ If you have multiple transactions that should be executed sequentially, you can 
 
 The `COMMIT AND CHAIN` command completes the current transaction by committing the statements within. After the commit has been processed, it immediately opens a new transaction. This allows you to group another set of statements together in a transaction.
 
-The statement works exactly as if you'd issued `COMMIT; BEGIN`:
+The statement works like `COMMIT` followed by `BEGIN`, except that the new transaction keeps the characteristics of the one that just ended, such as its isolation level:
 
 ```sql
     BEGIN;
@@ -281,6 +396,6 @@ That being said, the transaction mechanic offers a lot of flexibility and power.
 
 <PrismaOutlinks>
 
-If you are using JavaScript or TypeScript, you can use [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/orm/overview/databases/postgresql). Any operations using the [transactions API](https://www.prisma.io/docs/orm/prisma-client/queries/transactions#the-transaction-api) will use the PostgreSQL server's default isolation level. As an alternative to using transactions interactively, Prisma also provides transaction behavior through [nested writes](https://www.prisma.io/docs/orm/prisma-client/queries/transactions#nested-writes) and with [bulk or batch operations](https://www.prisma.io/docs/orm/prisma-client/queries/transactions#batchbulk-operations). You can learn more by reading [Prisma's transaction guide](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
+If you are using JavaScript or TypeScript, you can use [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/orm/overview/databases/postgresql). Prisma ORM can run a group of queries in a single database transaction. Unless told otherwise, it uses the isolation level configured in your database (`READ COMMITTED` by default in PostgreSQL). The transaction API, and whether you can request a different isolation level, differ between Prisma ORM versions, so check [Prisma's transactions documentation](https://www.prisma.io/docs/orm/fundamentals/transactions) for the version you use.
 
 </PrismaOutlinks>
