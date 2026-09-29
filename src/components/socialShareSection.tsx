@@ -29,6 +29,14 @@ const SocialWrapper = styled.div`
       width: 16px;
     }
   }
+  .updated {
+    margin-left: auto;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
   .buttons {
     display: flex;
     gap: 8px;
@@ -58,7 +66,7 @@ const SocialWrapper = styled.div`
 
 const twitterShareUrl = `https://twitter.com/intent/tweet?text=I%27ve%20found%20this%20page%20on%20%40prisma%27s%20%23DataGuide%20useful%21%20`
 
-const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
+const SocialShareSection = ({ homePage, hnPostId, slug, lastUpdated, lastUpdatedLabel }: any) => {
   const currentDocsPageURL =
     slug && slug !== '/'
       ? `https://www.prisma.io/dataguide${urlGenerator(slug)}`
@@ -95,6 +103,11 @@ const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
               <TwitterShareIcon />
             </a>
           </div>
+          {lastUpdated && (
+            <span className="updated">
+              Updated <time dateTime={lastUpdated}>{lastUpdatedLabel}</time>
+            </span>
+          )}
         </>
       )}
     </SocialWrapper>

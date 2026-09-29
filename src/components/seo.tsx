@@ -3,12 +3,26 @@ import favicon from '../images/favicon-32x32.png'
 import faviconSvg from '../images/favicon.svg'
 import { useStaticQuery, graphql } from 'gatsby'
 import { PageLocation } from '../hooks/useLocation'
+import {
+  articleStructuredData,
+  serializeJsonLd,
+  websiteStructuredData,
+} from '../utils/structuredData'
 
 type SEOProps = {
   location: PageLocation
   title?: string
   description?: string
   image?: string
+  // Structured data: the site for the homepage, an article for everything else
+  article?: {
+    type?: 'TechArticle' | 'CollectionPage'
+    headline: string
+    authors: string[]
+    dateModified?: string
+    // Parent sections, as paths within the Data Guide
+    breadcrumbs: { name: string; path: string }[]
+  }
 }
 
 // Build a well-formed absolute OG/Twitter image URL.
@@ -26,7 +40,7 @@ const buildMetaImageURL = (siteUrl: string, pathPrefix: string, img: string): st
   return `${siteUrl}${pathPrefix}/${cleaned}`
 }
 
-const SEO = ({ location, title, description, image }: SEOProps) => {
+const SEO = ({ location, title, description, image, article }: SEOProps) => {
   const { site } = useStaticQuery(query)
   const {
     siteMetadata: {
@@ -48,6 +62,26 @@ const SEO = ({ location, title, description, image }: SEOProps) => {
     /\/$/,
     ''
   )
+
+  const siteRoot = `${siteUrl}${pathPrefix}`
+  const structuredData = article
+    ? articleStructuredData({
+        type: article.type,
+        url: canonicalUrl,
+        title: article.headline,
+        description,
+        image: metaImageURL,
+        authors: article.authors,
+        dateModified: article.dateModified,
+        breadcrumbs: [
+          { name: oSite, url: siteRoot },
+          ...article.breadcrumbs.map((crumb) => ({
+            name: crumb.name,
+            url: `${siteRoot}${crumb.path}`,
+          })),
+        ],
+      })
+    : websiteStructuredData(oSite, siteRoot, description)
 
   return (
     <>
@@ -78,6 +112,13 @@ const SEO = ({ location, title, description, image }: SEOProps) => {
       <link rel="icon" href={faviconSvg} type="image/svg+xml" />
       <link rel="icon" href={favicon} type="image/png" sizes="32x32" />
       <meta name="theme-color" content="#f9faf5" />
+      {article?.dateModified && (
+        <meta property="article:modified_time" content={article.dateModified} />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
+      />
     </>
   )
 }

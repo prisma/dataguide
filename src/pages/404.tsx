@@ -61,3 +61,10 @@ const NotFoundPage = ({ location }: PageProps) => (
 )
 
 export default NotFoundPage
+
+export const Head = () => (
+  <>
+    <title>Page not found | Prisma's Data Guide</title>
+    <meta name="robots" content="noindex" />
+  </>
+)

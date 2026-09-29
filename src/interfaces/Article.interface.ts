@@ -15,6 +15,8 @@ export interface ArticleFrontmatter {
   hidePage?: boolean
   hnPostId?: string
   authors?: string[]
+  lastUpdated?: string | null
+  lastUpdatedLabel?: string | null
 }
 
 export interface ArticleData {
