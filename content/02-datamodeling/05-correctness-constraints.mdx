@@ -14,7 +14,7 @@ Constraints don't render other input validation techniques useless by any means,
 
 ## On tuples: not null, default, and check
 
-Non-null constraints are the simplest category. A tuple must have a value for the constrained attribute, or put another way, the set of allowed values for the column no longer includes the empty set. No value means no tuple: the insert or update is rejected.
+Non-null constraints are the simplest category. A tuple must have a value for the constrained attribute, or put another way, `NULL` is no longer one of the allowed values for the column. No value means no tuple: the insert or update is rejected.
 
 Protecting against null values is as easy as declaring `column_name COLUMN_TYPE NOT NULL` in `CREATE TABLE` or `ADD COLUMN`. [Null values cause entire categories of problems](https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare/) between the database and end users, so reflexively defining non-null constraints on any column without a good reason to allow nulls is a good habit to get into.
 
@@ -66,13 +66,13 @@ SELECT * FROM tickets ORDER BY ticket_id;
 
 MySQL 8.4 behaves the same way in its default strict mode, rejecting the fourth insert with error 1048, `Column 'priority' cannot be null`. With [strict mode](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sql-mode-strict) turned off, MySQL still rejects a single-row insert like this one, but a multi-row `INSERT` or an `UPDATE` that writes `NULL` to a non-null column only raises a warning and stores the data type's implicit default -- an empty string for `VARCHAR` -- instead of the column's declared default.
 
-Any other validation rule which depends only on the values within a single tuple can be implemented as a `CHECK` constraint. In a sense, `NOT NULL` itself is a shorthand for `CHECK (column_name IS NOT NULL)`; the error message received in violation makes most of the difference. `CHECK`, however, can apply and enforce the truth of any Boolean predicate over a single tuple. For example, a table storing geographic locations should `CHECK (latitude >= -90 AND latitude < 90)`, and similarly for longitude between -180 and 180 -- or, if available, use and validate a `GEOGRAPHY` data type.
+Any other validation rule which depends only on the values within a single tuple can be implemented as a `CHECK` constraint. In a sense, `NOT NULL` itself is a shorthand for `CHECK (column_name IS NOT NULL)`; the error message received in violation makes most of the difference. `CHECK`, however, can apply and enforce the truth of any Boolean predicate over a single tuple. For example, a table storing geographic locations should `CHECK (latitude >= -90 AND latitude <= 90)`, and similarly for longitude between -180 and 180 -- or, if available, use and validate a `GEOGRAPHY` data type.
 
 ## On tables: unique and exclusion
 
 Table-level constraints test tuples against each other. In a unique constraint, only one record may have any given set of values for the constrained columns. Nullability can cause problems here, since `NULL` never equals anything else, up to and including `NULL` itself. A unique constraint on `(batman, robin)` therefore allows for infinite copies of any Robinless Batman.
 
-Exclusion constraints are only supported in PostgreSQL and DB2, but fill a very useful niche: they can prevent overlaps. Specify the constrained fields and the operations by which each will be evaluated, and a new record will only be accepted if no existing record compares successfully with each field and operation. For instance, a `schedules` table can be configured to reject conflicts:
+Exclusion constraints, which PostgreSQL supports with `EXCLUDE`, fill a very useful niche: they can prevent overlaps. Specify the constrained fields and the operations by which each will be evaluated, and a new record will only be accepted if no existing record compares successfully with each field and operation. For instance, a `schedules` table can be configured to reject conflicts:
 
 ```sql
 
@@ -166,9 +166,9 @@ You can also learn about the specific data model component of a Prisma schema in
 <details>
 <summary>What is the definition of a tuple?</summary>
 
-A tuple is a data structure that stores a specific number of elements. These elements may include integers, characters, strings, or other data types.
+A tuple is a finite, ordered list of elements. In the relational model, a tuple is one row of a relation: it holds one value for each of the relation's attributes.
 
-Tuples are static and cannot be modified, typically resulting in lower memory requirements than arrays.
+Programming languages such as Python also use the name for a data structure: a fixed-length sequence of values that can't be modified after it's created.
 
 </details>
 
