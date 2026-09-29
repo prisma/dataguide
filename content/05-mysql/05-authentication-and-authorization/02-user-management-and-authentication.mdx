@@ -4,6 +4,7 @@ metaTitle: 'How to manage users and login to MySQL'
 metaDescription: "This guide demonstrates how to use MySQL's robust system for defining users and controlling their authentication options."
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -105,8 +106,8 @@ So as an example, MySQL will sort the following accounts into the following orde
 | 3        | `'emily'@'%.example.com'`                         | This entry has a wildcard in the host component, so it's given lower priority than entries with exact host values.                                                                                                                                                                                                                    |
 | 4        | `''@'%.example.com'`                              | This entry is grouped with the entries that have a wildcard within their host value. Since it has no user component, it is at the bottom of this group.                                                                                                                                                                               |
 | 5        | `'emily'@'%'`                                     | This entry has a host value consisting only of a wildcard. Since it matches any host, it has a very low priority.                                                                                                                                                                                                                     |
-| 7        | `''@'%'`                                          | This entry can be used authenticate any user from any host as an anonymous user. It's of extremely low priority since it matches any connection.                                                                                                                                                                                      |
-| 6        | `'emily'@''`                                      | This entry has an entirely blank host value, which is of even lower priority than a host that only contains a wildcard host.                                                                                                                                                                                                          |
+| 6        | `''@'%'`                                          | This entry can be used authenticate any user from any host as an anonymous user. It's of extremely low priority since it matches any connection.                                                                                                                                                                                      |
+| 7        | `'emily'@''`                                      | This entry has an entirely blank host value, which is of even lower priority than a host that only contains a wildcard host.                                                                                                                                                                                                          |
 | 8        | `''@''`                                           | This is the lowest possible priority user. It contains no host information so it is place at the end during the host sorting. Since it also contains a blank user, it is placed below other entries in this group. Like all entries without a user, connections authenticated with this entry will be signed in as an anonymous user. |
 
 ## How do you create users?
@@ -115,23 +116,27 @@ Now that you have a feel for the way that MySQL handles user accounts, we can be
 
 ### Basic syntax
 
-The basic syntax for creating a new user is relatively simple. You use the `CREATE USER` command and then specify the user and host for the new account:
+The basic syntax for creating a new user is relatively simple. You use the `CREATE USER` command, specify the user and host for the new account, and set a password for it:
 
 ```sql
-CREATE USER '<user>'@'<host>';
+CREATE USER '<user>'@'<host>' IDENTIFIED BY '<password>';
 ```
 
-This will create a basic account without configuring any details beyond its user and host at creation.
+This creates a new user account and assigns a password for the account at the same time.
 
 ### How do you create a user with a password?
 
-Often, you want to configure authentication while you're creating the user. You can do this by adding the optional `IDENTIFIED BY` clause onto `CREATE USER` statement:
+The `IDENTIFIED BY` clause in the example above configures authentication for the new account by setting its password. The clause is optional, but you should always include it (or configure another authentication method, as shown below). An account created without it has no password, so anyone who connects from a matching host can log in as that user without one. We will cover how to assign a password after the fact or how to change a user's password later on.
+
+As discussed [earlier](#what-is-mysqls-syntax-for-user-accounts), the host part of the account name controls where the user can connect from. Use `localhost` for a user that connects from the database server itself, or the specific host name or IP address that the user connects from, and only use the `%` wildcard for accounts that really need to connect from anywhere.
+
+A new account can log in, but it can't read or change the data in your databases until you grant it privileges. Grant it only what it needs, for example read and write access to the tables in a single database:
 
 ```sql
-CREATE USER '<user>'@'<host>' IDENTIFED BY '<password>';
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_db.* TO '<user>'@'<host>';
 ```
 
-This creates a new user account, as before, and assigns a password for the account at the same time. We will cover how to assign a password after the fact or how to change a user's password later on.
+We cover this in more detail in our guide to [managing privileges in MySQL](/mysql/authentication-and-authorization/privilege-management).
 
 ### How do you create a user with Unix socket authentication?
 
@@ -170,7 +175,7 @@ Next, let's take a look at how to find information about the existing users.
 To show all of the existing MySQL users, consisting of their user and host component, as well as the authentication plugin they're currently using, you can `SELECT` those fields from the `mysql.user` database:
 
 ```sql
-SELECT user,host,plugin FROM mysql.user
+SELECT user,host,plugin FROM mysql.user;
 ```
 
 ```
@@ -197,7 +202,7 @@ The `SHOW CREATE USER` command takes an account name as an argument:
 SHOW CREATE USER '<user>'@'<host>'\G
 ```
 
-It's usually best to end the command with the `\G` statement terminator instead of the usual colon (`;`) so that you can view the results a bit more clearly.
+It's usually best to end the command with the `\G` statement terminator instead of the usual semicolon (`;`) so that you can view the results a bit more clearly.
 
 To display the properties for the `'useradmin'@'localhost'` account, you would type:
 
@@ -336,13 +341,17 @@ DROP USER 'mary'@'localhost';
 
 If you try to delete a user that does not exist, you will receive an error:
 
-```
+```text
 ERROR 1396 (HY000): Operation DROP USER failed for 'mary'@'localhost'
 ```
 
 To avoid this, you can add the `IF EXISTS` clause before the account name. If the user exists, it will be deleted. If it does not, only a warning will be given:
 
+```sql
+DROP USER IF EXISTS 'mary'@'localhost';
 ```
+
+```text
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 ```
 
