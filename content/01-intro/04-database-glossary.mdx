@@ -23,7 +23,7 @@ This glossary is a work in progress and a living document. We intend to update i
 
 <AnchorItem id="2nf" title="2NF">
   2NF, or second normal form, describes a type of database normalization that:
-  1) satisfies the requirements of 1NF, 2) has no values that are tied directly
+  1\) satisfies the requirements of 1NF, 2) has no values that are tied directly
   to a subset of a candidate key. In other words, a relation is in 2NF if it is
   in 1NF and all of the non-candidate values are dependent on the composite key
   in whole, not just a portion of the candidate key. For example, a `book` table
@@ -34,8 +34,8 @@ This glossary is a work in progress and a living document. We intend to update i
 </AnchorItem>
 
 <AnchorItem id="3nf" title="3NF">
-  3NF, or third normal form, describes a type of database normalization that: 1)
-  satisfies the requirements of 2NF, 2) each non-key attribute is not
+  3NF, or third normal form, describes a type of database normalization that:
+  1\) satisfies the requirements of 2NF, 2) each non-key attribute is not
   transitively dependent on a key attribute. For example, if a `user` table has
   a `user_id` column as a primary key, a `user_city` column, and a `user_state`
   column, it would not be in 3NF because `user_state` is transitively dependent
@@ -45,7 +45,7 @@ This glossary is a work in progress and a living document. We intend to update i
 
 <AnchorItem id="4nf" title="4NF">
   4NF, or fourth normal form, describes a type of database normalization that:
-  1) satisfies the requirements of BCNF, 2) for every non-trivial multivalued
+  1\) satisfies the requirements of BCNF, 2) for every non-trivial multivalued
   dependency, the determining attribute in the dependency is either a candidate
   key or a superset of it. In other words, if a field has multiple dependent
   fields that are independent from one another, it can lead to redundancies that

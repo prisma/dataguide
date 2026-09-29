@@ -327,7 +327,8 @@ These two commands are the primary mechanisms used to manage increase or decreas
 
 ## FAQ
 
-<details><summary>How do you perform a batch insert in PostgreSQL?</summary>
+<details>
+<summary>How do you perform a batch insert in PostgreSQL?</summary>
 
 The basic syntax for multi-record insertion looks like this:
 
@@ -353,7 +354,8 @@ VALUES
 
 </details>
 
-<details><summary>How do you check if a record exists before inserting in PostgreSQL?</summary>
+<details>
+<summary>How do you check if a record exists before inserting in PostgreSQL?</summary>
 
 One way to check if a record exists in PostgreSQL before inserting is by using the [`EXISTS` subquery expression](https://www.postgresql.org/docs/8.1/functions-subquery.html).
 
@@ -367,7 +369,8 @@ WHERE EXISTS ( subquery );
 
 </details>
 
-<details><summary>How do I delete duplicate rows in PostgreSQL?</summary>
+<details>
+<summary>How do I delete duplicate rows in PostgreSQL?</summary>
 
 There are [several methods for deleting duplicate rows](https://www.postgresqltutorial.com/postgresql-tutorial/how-to-delete-duplicate-rows-in-postgresql/) in PostgreSQL. You can use a `DELETE USING` statement to check if two different rows have the same value and then delete the duplicate.
 
@@ -380,7 +383,8 @@ In addition, you can use a subquery to delete duplicates or by using an immediat
 
 </details>
 
-<details><summary>How do I delete a record if it exists in PostgreSQL?</summary>
+<details>
+<summary>How do I delete a record if it exists in PostgreSQL?</summary>
 
 You can delete a record in PostgreSQL if it exists by using a `DELETE` statement with a `WHERE` clause including `EXISTS` . The `EXISTS` clause requires a subquery.
 
@@ -393,7 +397,8 @@ DELETE FROM table_name
 
 </details>
 
-<details><summary>How do I delete records with a limit in PostgreSQL?</summary>
+<details>
+<summary>How do I delete records with a limit in PostgreSQL?</summary>
 
 PostgreSQL only allows for a `LIMIT` clause in its `SELECT` statements. Therefore, in order to use it in a `DELETE` statement you will have to include a `SELECT`.
 

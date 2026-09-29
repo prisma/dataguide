@@ -498,7 +498,8 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## FAQ
 
-<details><summary>What is an embedded document in MongoDB?</summary>
+<details>
+<summary>What is an embedded document in MongoDB?</summary>
 
 An [embedded, or nested, document](https://www.mongodb.com/basics/embedded-mongodb) in MongoDB is a document which contains another document inside of it.
 
@@ -523,7 +524,8 @@ db.user.findOne({_id: 111111})
 
 </details>
 
-<details><summary>What is the MongoDB maximum document size limit?</summary>
+<details>
+<summary>What is the MongoDB maximum document size limit?</summary>
 
 The maximum document size in MongoDB is 16 megabytes.
 
@@ -533,7 +535,8 @@ To store documents larger than 16mb, MongoDB provides the [GridFS API](https://d
 
 </details>
 
-<details><summary>How do you delete a document in MongoDB?</summary>
+<details>
+<summary>How do you delete a document in MongoDB?</summary>
 
 To remove documents, you can either use the `deleteOne()` or `deleteMany()` methods. They have the same syntax, and differ only in how many documents they operate on.
 
@@ -555,7 +558,8 @@ db.students.deleteMany({
 
 </details>
 
-<details><summary>How do you append to a document in MongoDB?</summary>
+<details>
+<summary>How do you append to a document in MongoDB?</summary>
 
 To modify documents in MongoDB, there are a few [related update methods](https://www.prisma.io/dataguide/mongodb/managing-documents#how-to-update-existing-documents).
 
@@ -563,7 +567,8 @@ Specifically, for appending new data to a document, you can use the `$addToSet` 
 
 </details>
 
-<details><summary>How do you compare two documents in MongoDB?</summary>
+<details>
+<summary>How do you compare two documents in MongoDB?</summary>
 
 There is not a specific method to explicitly compare one document to another in MongoDB. It can be done by configuring a query comparing equality between any of the documents' fields with [operators](https://docs.mongodb.com/manual/reference/operator/query/).
 

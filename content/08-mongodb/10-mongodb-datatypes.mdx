@@ -608,7 +608,8 @@ To get started working with MongoDB and Prisma, checkout our [getting started fr
 
 ## FAQ
 
-<details><summary>Can you store regular expression patterns in MongoDB?</summary>
+<details>
+<summary>Can you store regular expression patterns in MongoDB?</summary>
 
 Yes, MongoDB allows for the storage of regular expression with the [`Regular Expression` data type](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#regular-expression).
 
@@ -629,7 +630,8 @@ db.mytestcoll.insertOne({exampleregext:/t+/})
 
 </details>
 
-<details><summary>How are dates represented as a data type in MongoDB?</summary>
+<details>
+<summary>How are dates represented as a data type in MongoDB?</summary>
 
 [BSON Date](https://docs.mongodb.com/manual/reference/bson-types/#std-label-document-bson-type-date) is a 64-bit integer that represents the number of milliseconds since the [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time).
 
@@ -645,7 +647,8 @@ The [returned data's display](https://www.prisma.io/dataguide/mongodb/mongodb-da
 
 </details>
 
-<details><summary>Does MongoDB support transactional data?</summary>
+<details>
+<summary>Does MongoDB support transactional data?</summary>
 
 Yes, MongoDB supports both single document structure and multi-document structure for transactional data.
 
@@ -653,7 +656,8 @@ An [API](https://docs.mongodb.com/manual/core/transactions/#transactions-api) an
 
 </details>
 
-<details><summary>How does MongoDB store images?</summary>
+<details>
+<summary>How does MongoDB store images?</summary>
 
 For images less than 16MB in size, MongoDB can store images using the [`BinData`](https://www.prisma.io/dataguide/mongodb/mongodb-datatypes#binary-data) data type.
 
@@ -661,7 +665,8 @@ For images greater than 16MB, MongoDB recommends using [GridFS](https://docs.mon
 
 </details>
 
-<details><summary>Can MongoDB store arrays?</summary>
+<details>
+<summary>Can MongoDB store arrays?</summary>
 
 Yes, MongoDB can store arrays with the BSON Array type. It is represented in MongoDB as follows:
 

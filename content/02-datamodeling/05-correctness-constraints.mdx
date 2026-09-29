@@ -77,7 +77,7 @@ An autoincrementing numeric counter is not without drawbacks: adding in records 
 
 ## On the database: foreign keys
 
-Relational databases implement only one class of multi-table constraint, the <footnote><note>We'll be talking more about some set theory concepts later on, but <a href='[https://www.apress.com/gp/book/9781430242840](https://www.apress.com/gp/book/9781430242840)'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></footnote> or foreign key. This sole constraint type is the guarantor of _referential integrity_, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
+Relational databases implement only one class of multi-table constraint, the <Footnote><note>We'll be talking more about some set theory concepts later on, but <a href='https://www.apress.com/gp/book/9781430242840'><i>Applied Mathematics for Database Professionals</i> by Lex de Haan and Toon Koppelaars</a> is the gold standard in-depth guide.</note><text>"subset requirement"</text></Footnote> or foreign key. This sole constraint type is the guarantor of _referential integrity_, the principle that protects against inconsistencies between tables and distinguishes a relational database from a spreadsheet.
 
 ![The first steps toward a database schema design for tracking books and patrons in a library system.](../dataguide-images/modeling/libraries-initial.png)
 
@@ -92,9 +92,7 @@ Constraining the foreign key can't prevent a book from being misattributed shoul
 ### Is this where the "relational" in "relational database" comes from?
 
 <details>
-<summary>
-As it happens, no!
-</summary>
+<summary>As it happens, no!</summary>
 
 Foreign keys create relationships between tables, but tables as we know them are mathematically _relations_ among the sets of possible values for each attribute. A single tuple relates a value for column A to a value for column B and onward. E.F. Codd's <a href="https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf">original paper</a> uses "relational" in this sense.
 
@@ -118,7 +116,8 @@ You can also learn about the specific data model component of a Prisma schema in
 
 ## FAQ
 
-<details><summary>What is the definition of a tuple?</summary>
+<details>
+<summary>What is the definition of a tuple?</summary>
 
 A tuple is a data structure that stores a specific number of elements. These elements may include integers, characters, strings, or other data types.
 
@@ -126,7 +125,8 @@ Tuples are static and cannot be modified, typically resulting in lower memory re
 
 </details>
 
-<details><summary>What is a named tuple?</summary>
+<details>
+<summary>What is a named tuple?</summary>
 
 A typical tuple uses numerical indexes to access its members.
 
@@ -134,7 +134,8 @@ A named tuple differs in that its members are assigned names in addition to the 
 
 </details>
 
-<details><summary>What is a tuple in a database?</summary>
+<details>
+<summary>What is a tuple in a database?</summary>
 
 In the context of a relational database, a tuple can be thought of as a single record or row of that database.
 
@@ -142,7 +143,8 @@ For example, in a customer database a row might include a customer’s first nam
 
 </details>
 
-<details><summary>What is a foreign key in a database?</summary>
+<details>
+<summary>What is a foreign key in a database?</summary>
 
 A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table.
 
@@ -150,7 +152,8 @@ However, it can also refer to any unique column that is also not null.
 
 </details>
 
-<details><summary>Why do relational databases use primary keys and foreign keys?</summary>
+<details>
+<summary>Why do relational databases use primary keys and foreign keys?</summary>
 
 Relational databases use primary and foreign keys to establish connections between tables in a database. These keys facilitate access to one table from another within a database.
 

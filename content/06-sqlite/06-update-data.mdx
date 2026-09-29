@@ -95,7 +95,8 @@ Here, we are directly updating the value of `column1` in `table1` to be the retu
 
 As an example, let's suppose that we have two tables called `book` and `author`.
 
-<details><summary>Expand to see the commands to create and populate these tables</summary>
+<details>
+<summary>Expand to see the commands to create and populate these tables</summary>
 
 ```sql
 CREATE TABLE author (
@@ -164,7 +165,8 @@ In this guide, we took a look at the basic ways that you can modify existing dat
 
 ## FAQ
 
-<details><summary>How do you edit records in SQLite?</summary>
+<details>
+<summary>How do you edit records in SQLite?</summary>
 
 You can edit records in SQLite by using an `UPDATE` statement.
 
@@ -181,7 +183,8 @@ WHERE
 
 </details>
 
-<details><summary>How do you perform a bulk update in SQLite?</summary>
+<details>
+<summary>How do you perform a bulk update in SQLite?</summary>
 
 In SQLite, you can use the `UPDATE` command looking something like the following:
 
@@ -198,7 +201,8 @@ This syntax allows you to update in bulk depending on the `WHERE` critera. In th
 
 </details>
 
-<details><summary>How do you return records modified by the `UPDATE` command in SQLite?</summary>
+<details>
+<summary>How do you return records modified by the `UPDATE` command in SQLite?</summary>
 
 By default, SQLite does not show the nummber of rows impacted by an `UPDATE` statement.
 
@@ -218,7 +222,8 @@ RETURNING *;
 
 </details>
 
-<details><summary>How do you insert or update in SQLite depending on whether data exists?</summary>
+<details>
+<summary>How do you insert or update in SQLite depending on whether data exists?</summary>
 
 In SQLite, there is not an `IF EXISTS` clause like many other relational databases.
 
@@ -226,7 +231,8 @@ To control an `INSERT` or `UPDATE` for data existing, you will want to add an [`
 
 </details>
 
-<details><summary>How do you update with join in SQLite?</summary>
+<details>
+<summary>How do you update with join in SQLite?</summary>
 
 To perform an `UPDATE` with a join in SQLite, you can use the [`UPDATE FROM` extension](https://www.sqlite.org/lang_update.html#upfrom). This extension to SQL allows an `UPDATE` statement to be driven by other tables in the database.
 
