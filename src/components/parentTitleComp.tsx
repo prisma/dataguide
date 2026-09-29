@@ -5,7 +5,7 @@ import { getParentTitle } from '../utils/parentTitle'
 import { AllArticles } from '../interfaces/AllArticles.interface'
 import Link from './link'
 
-const BreadcrumbTitle = styled.h2`
+const BreadcrumbTitle = styled.nav`
   color: var(--accent) !important;
   font-family: var(--font-sans);
   font-size: 14px;
@@ -39,8 +39,10 @@ interface ParentTitleProps {
 const ParentTitle = ({ slug, nonLink }: ParentTitleProps) => {
   const { allMdx }: AllArticles = useAllArticlesQuery()
   const parentTitle = getParentTitle(slug, allMdx)
+  if (parentTitle.length === 0) return null
+
   return (
-    <BreadcrumbTitle>
+    <BreadcrumbTitle as={nonLink ? 'div' : 'nav'} aria-label={nonLink ? undefined : 'Breadcrumb'}>
       {parentTitle.length > 0
         ? parentTitle.map((part: any, index: number) => (
             <span key={index}>

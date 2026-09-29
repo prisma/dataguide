@@ -51,7 +51,7 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
       <div className="gatsby-highlight pre-highlight">
         <Highlight code={code} language={language || 'text'} theme={themes.github}>
           {({ className: blockClassName, style, tokens, getLineProps, getTokenProps }) => (
-            <Pre className={blockClassName} style={style}>
+            <Pre className={blockClassName} style={style} tabIndex={0}>
               {hasCopy && (
                 <AbsoluteCopyButton className="copy-button">
                   <CopyButton text={copyableText(code, hasDiff)} />

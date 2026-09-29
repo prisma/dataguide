@@ -53,10 +53,16 @@ const ListItem = styled.li`
     .item-collapser {
       background: transparent;
       position: absolute;
-      left: -12px;
-      top: 12px;
+      left: -22px;
+      top: 4px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 0;
       border: 0;
+      border-radius: 6px;
       cursor: pointer;
       .right,
       .down {
@@ -72,13 +78,8 @@ const ListItem = styled.li`
         display: block;
         opacity: 1;
       }
-      .down.open {
-        margin-top: 2px;
-      }
-      &:hover,
-      &:focus,
-      &:active {
-        outline: none;
+      &:hover {
+        background: rgba(21, 21, 21, 0.06);
       }
     }
   }
@@ -214,7 +215,12 @@ const TreeNode = ({
         >
           {hasExpandButton ? (
             <span className="collapse-title" onClick={collapse}>
-              <button aria-label="collapse" className="item-collapser" onClick={justExpand}>
+              <button
+                aria-label={isOpen === 'open' ? `Collapse ${title}` : `Expand ${title}`}
+                aria-expanded={isOpen === 'open'}
+                className="item-collapser"
+                onClick={justExpand}
+              >
                 {/* Fix for issue https://github.com/prisma/prisma2-docs/issues/161 */}
                 <ArrowRight className={`right ${isOpen}`} />
                 <ArrowDown className={`down ${isOpen}`} />

@@ -71,13 +71,15 @@ const SidebarLayout = ({ isMobile, slug }: any) => {
     <SidebarContainer>
       <Sidebar $sticky id="sidebar-container">
         <Promo slug={slug} />
-        <List>
-          <Tree edges={allMdx.edges} />
-        </List>
+        <nav aria-label="Data Guide sections">
+          <List>
+            <Tree edges={allMdx.edges} />
+          </List>
+        </nav>
       </Sidebar>
     </SidebarContainer>
   ) : (
-    <Sidebar>
+    <Sidebar as="nav" aria-label="Data Guide sections">
       <div className="tablet-only">
         <List>
           <Tree edges={getLeftPane(allMdx.edges)} />

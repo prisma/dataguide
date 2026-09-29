@@ -91,7 +91,6 @@ let plugins: any = [
       entryLimit: 5000,
       excludes: [
         // Pages that aren't meant to be found
-        `/dummy`,
         `/intro/example`,
         // Pages that moved elsewhere: production redirects them
         ...dataguideConfig.redirects.map((redirect) => redirect.fromPath),

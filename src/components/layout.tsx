@@ -41,7 +41,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Content = styled.article<{ $moveUp?: boolean }>`
+const Content = styled.main<{ $moveUp?: boolean }>`
   max-width: 880px;
   width: 880px;
   margin: ${(p) => (p.$moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
@@ -53,7 +53,7 @@ const Content = styled.article<{ $moveUp?: boolean }>`
   }
 `
 
-const MaxWidth = styled.div<{ $noIndex: boolean }>`
+const MaxWidth = styled.article<{ $noIndex: boolean }>`
   > section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -80,7 +80,23 @@ const MaxWidth = styled.div<{ $noIndex: boolean }>`
   }
 `
 
-const NotMobile = styled.section`
+const SkipLink = styled.a`
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 1000;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+  &:focus {
+    top: 12px;
+  }
+`
+
+const NotMobile = styled.div`
   display: flex;
   @media (min-width: 0px) and (max-width: 1024px) {
     display: none;
@@ -98,6 +114,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
     // <ThemeProvider theme={theme}>
     <LocationProvider value={location}>
       <MDXProvider components={customMdx}>
+        <SkipLink href="#main-content">Skip to content</SkipLink>
         {!isHomePage && <Header headerProps={header} />}
         {isHomePage && <HomePageHeader />}
         <Wrapper>
@@ -106,7 +123,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
               <Sidebar isMobile={false} slug={slug} />
             </NotMobile>
           )}
-          <Content $moveUp={isHomePage}>
+          <Content $moveUp={isHomePage} id="main-content" tabIndex={-1}>
             <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
           </Content>
         </Wrapper>
