@@ -4,6 +4,7 @@ metaTitle: 'How to create and delete users in PostgreSQL'
 metaDescription: 'This short guide will cover how to create and delete users in PostgreSQL.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['alexemerich']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -14,7 +15,7 @@ In this short guide, we will cover the basics of creating and deleting database 
 
 ## How do you create PostgreSQL users?
 
-PostgreSQL has the `CREATE USER` `psql` command and `createuser` for the command line. Both options define a new database user account. In order to create users, you need to be a [superuser role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#what-is-a-superuser-role) for the database cluster. Alternatively, any user with the `CREATE ROLE` privilege is also able to create new users.
+PostgreSQL has the `CREATE USER` `psql` command and `createuser` for the command line. Both options define a new database user account. In order to create users, you need to be a [superuser role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#what-is-a-superuser-role) for the database cluster. Alternatively, any user with the `CREATEROLE` attribute is also able to create new users.
 
 The basic syntax for `createuser` looks like this:
 
@@ -30,11 +31,13 @@ CREATE USER <name> <options>
 
 The [options component](https://www.postgresql.org/docs/current/app-createuser.html) of either method is where you can define parameters such as whether this user can create databases, is a superuser, and the need for a password when connecting to the server.
 
-The command line syntax can look something like for creating `user1`:
+The command line syntax can look something like this for creating `user1`, allowing it to create databases and prompting for its password:
 
+```bash
+createuser --createdb --pwprompt user1
 ```
-createuser --createdb --password user1
-```
+
+The `--pwprompt` (`-P`) option asks for the new user's password. Don't confuse it with `--password` (`-W`), which only prompts for the password that `createuser` uses to connect to the server; a user created with `--password` alone has no password set.
 
 In addition to creating users, it is important to know the different privileges that can be granted so users are only able to work with the database in specified ways. For the purpose of this guide we are just covering the basics to get started, but you can read more about [granting privileges in PostgreSQL](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/managing-privileges) for more advanced settings.
 

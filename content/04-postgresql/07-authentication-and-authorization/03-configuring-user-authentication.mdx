@@ -4,6 +4,7 @@ metaTitle: 'Configuration | Authentication and authorization | PostgreSQL'
 metaDescription: "Managing authentication is one of the fundamental requirements of managing any database system.  In this guide, we'll show you how to configure PostgreSQL's authentication methods to allow different types of access."
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -20,7 +21,9 @@ If you want to modify the rules that dictate how users can authenticate to your 
 
 The specific file you need to modify is called `pg_hba.conf`.
 
-> Note that you will have to restart your PostgreSQL instance for any new authentication configuration to take effect. Different operating systems will handle this in different ways. In most Linux distributions, you can type `sudo systemctl restart postgresql`. If you've installed PostgreSQL through `brew`, you can try typing `brew services restart postgresql`. An alternative that might work on a broader set of systems is `pg_ctl restart`.
+> PostgreSQL reads `pg_hba.conf` when it starts and whenever it reloads its configuration, so you don't need to restart the server for changes to take effect. A reload is enough, and existing connections aren't interrupted. From a superuser session, you can run `SELECT pg_reload_conf();`. From the command line, `pg_ctl reload` works on most systems (pass your data directory with `-D` if the `PGDATA` environment variable isn't set), and in most Linux distributions you can type `sudo systemctl reload postgresql`. The new rules apply to connections made after the reload.
+>
+> If the file contains an error, PostgreSQL logs it and keeps using the previous rules, even though `pg_reload_conf()` still returns `t`. To check the file for errors, query the `pg_hba_file_rules` view: `SELECT line_number, error FROM pg_hba_file_rules WHERE error IS NOT NULL;`
 
 ### Finding the `pg_hba.conf` file
 
@@ -34,7 +37,7 @@ If you are on the command line, you can type the following, which queries for th
 psql -t -P format=unaligned -c 'SHOW hba_file;'
 ```
 
-```
+```text
 /etc/postgresql/10/main/pg_hba.conf
 ```
 
@@ -44,7 +47,7 @@ If you already have a PostgreSQL session open, you can simply type:
 SHOW hba_file;
 ```
 
-```
+```text
               hba_file
 -------------------------------------
  /etc/postgresql/10/main/pg_hba.conf
@@ -63,15 +66,15 @@ By default, the file contains the current configuration as well as a number of h
 
 The `pg_hba.conf` file uses a table-like structure implemented in plain text. With blank lines and comments removed, a basic file might look something like this:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 local     all         postgres                    peer
 local     all         all                         peer
-host      all         all         127.0.0.1/32    md5
-host      all         all         ::1/128         md5
+host      all         all         127.0.0.1/32    scram-sha-256
+host      all         all         ::1/128         scram-sha-256
 local     replication all                         peer
-host      replication all         127.0.0.1/32    md5
-host      replication all         ::1/128         md5
+host      replication all         127.0.0.1/32    scram-sha-256
+host      replication all         ::1/128         scram-sha-256
 ```
 
 Let's take a look at the different fields mean and how the file's contents are interpreted.
@@ -108,14 +111,16 @@ The first field in each record specifies the type of connection request to match
 The connection type must be one of the following:
 
 - **`local`**: Records with `local` match connections made over a local Unix domain socket file instead of over a network. Local connections are preferred when possible for security and performance reasons.
-- **`host`**: Lines that begin with `host` match any connection request made over the network. This is a general catch-all for network connections. More granular matching is available with the following types.
-- **`hostssl`**: The `hostssl` connection type matches any connections that are made over the network with TLS/SSL encryption. This is usually the best connection type to use when allowing external connections.
+- **`host`**: Lines that begin with `host` match any connection request made over the network (TCP/IP), whether or not it uses TLS/SSL encryption. This is a general catch-all for network connections. More granular matching is available with the following types.
+- **`hostssl`**: The `hostssl` connection type matches only connections that are made over the network with TLS/SSL encryption. This is usually the best connection type to use when allowing external connections.
 - **`hostnossl`**: The `hostnossl` type matches any network connection that is not secured by TLS/SSL.
 
 Starting with PostgreSQL 12, support has been added for [GSSAPI connections](https://git.postgresql.org/gitweb/?p=postgresql.git;a=commit;h=b0b39f72b9904bcb80f97b35837ccff1578aa4b8&utm_source=anzwix) as well, introducing these additional options:
 
-- **`hostgssenc`**: The `hostgssenc` connection type matches any network connection that uses [GSSAPI](https://en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface) encryption. This option only makes sense for those who already use GSSAPI ifor security.
-- **`hostnogssenc`**: The `hostnogssen` type matches every network connection that doesn't use GSSAPI encryption.
+- **`hostgssenc`**: The `hostgssenc` connection type matches any network connection that uses [GSSAPI](https://en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface) encryption. This option only makes sense for those who already use GSSAPI for security.
+- **`hostnogssenc`**: The `hostnogssenc` type matches every network connection that doesn't use GSSAPI encryption.
+
+The connection type is the only part of a line that controls whether the connection must be encrypted. The authentication method only decides how the client proves who it is. For example, `scram-sha-256` never sends the password itself over the network, but it doesn't encrypt the connection: on a `host` line, a client that connects without TLS/SSL authenticates successfully, and its queries and their results then travel unencrypted. To require encryption, use `hostssl` lines, and make sure that no `host` line elsewhere in the file also matches the same connections. Clients should connect with `sslmode=verify-full`, which encrypts the connection and also checks that the server's certificate is valid and matches the host name. With `sslmode=require`, the connection is encrypted, but the client doesn't verify which server it's talking to. The section on [allowing remote connections using SSL and passwords](#allow-remote-connections-using-ssl-and-passwords) shows an example.
 
 ### Database
 
@@ -126,7 +131,7 @@ The values can be any of the following:
 - **`all`**: A database value of `all` is a catch all value that matches any database requested. This is useful if you don't want the current match rule to evaluate the database value.
 - **`sameuser`**: The `sameuser` value matches connections where the requested database and username are the same.
 - **`samerole`**: The `samerole` database value will match a connection if the user specified is a member of a _role_ with the same name as the requested database.
-- **`replication`**: Using a value of `replication` will match any incoming connection used for database replication. Connections used for replication to not provide a database target, so this matches replication requests instead.
+- **`replication`**: Using a value of `replication` will match any incoming connection used for database replication. Connections used for replication do not provide a database target, so this matches replication requests instead.
 - **[specific database name]**: You can also provide one or more specific database names to match. These will only match connections if they request one of the listed databases. You can separate multiple database names with a comma or specify a file to read names from by preceding the filename with an `@` symbol.
 
 ### User
@@ -160,20 +165,20 @@ The authentication method is the way that PostgreSQL decides whether to accept c
 
 - **`trust`**: A value of `trust` immediately accepts the connection without further requirements. This assumes that other external authentication methods are in place. It is not recommended in most cases.
 - **`reject`**: A value of `reject` immediately rejects the connection. This is mainly used to filter out connections that match unwanted patterns.
-- **`scram-sha-256`**: The `scram-sha-256` method will check the password provided by the user using [`SCRAM-SHA-256` authentication](https://tools.ietf.org/html/rfc7677). If all of your clients support it, this is currently the most secure option for password authentication.
-- **`md5`**: The `md5` method also checks user passwords. This method is less secure than `scram-sha-256` but more widely supported. The current implementation will automatically use `scram-sha-256` even if `md5` is specified if the password is encrypted with SCRAM.
+- **`scram-sha-256`**: The `scram-sha-256` method will check the password provided by the user using [`SCRAM-SHA-256` authentication](https://tools.ietf.org/html/rfc7677). It's a challenge-response scheme, so the password itself is never sent to the server, and the server only stores a salted hash of it. It's the most secure of PostgreSQL's password methods, and the one to use when clients authenticate with a password. It needs a client library that supports SCRAM, which libpq has since PostgreSQL 10.
+- **`md5`**: The `md5` method is the legacy password method. It uses a weaker challenge-response mechanism based on MD5 password hashes, and support for MD5-hashed passwords is deprecated: PostgreSQL 18 warns whenever one is set, and a future release will remove them. For compatibility, an `md5` line automatically uses SCRAM authentication for users whose stored password is a SCRAM hash, so an `md5` line doesn't necessarily mean that MD5 is used. Keep `md5` lines only while you migrate an existing installation, as described in [migrating from MD5 to SCRAM](#migrating-from-md5-to-scram).
 - **`password`**: The `password` method is the least secure password authentication method. It sends passwords in plain text and should not be used unless the connection uses TLS/SSL to encrypt the entire connection.
 - **`gss`**: The `gss` method uses GSSAPI for authentication. This can be used for authentication regardless of whether GSSAPI encryption is used for the connection. This allows authenticating through Kerberos and similar software.
 - **`sspi`**: The `sspi` method uses the Windows-only Security Support Provider Interface API to authenticate clients.
 - **`ident`**: The `ident` method checks with a client's ident server for the user initiating the connection. Since this relies on the client's machine, it should only be used for trusted networks where the client machines are tightly controlled.
-- **`peer`**: The `peer` authentication method is used for local connections. It asks the local operating system for the client's system username. It checks if the name matches the requested database name.
+- **`peer`**: The `peer` authentication method is used for local connections. It asks the local operating system for the client's system username. It checks if the name matches the requested database username.
 - **`ldap`**: The `ldap` method authenticates by using an [LDAP server](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) to validate usernames and passwords.
 - **`radius`**: Select `radius` to use a [RADIUS server](https://en.wikipedia.org/wiki/RADIUS) to check username and password combinations.
 - **`cert`**: The `cert` method authenticates clients using TLS/SSL client certificates. This is only available for TLS/SSL connections. The client certificate must be a valid, trusted certificate to be accepted.
 - **`pam`**: The `pam` option will defer authentication to the operating system's [PAM service](https://en.wikipedia.org/wiki/Pluggable_authentication_module).
 - **`bsd`**: The `bsd` method uses the [BSD Authentication service](https://en.wikipedia.org/wiki/BSD_Authentication) to validate usernames and passwords. This method is only available on OpenBSD hosts.
 
-Some of the methods above are only applicable to certain types of connections or with additional pieces of infrastructure in place. For most deployments, `reject`, `peer`, and `scram-sha-256` or `md5` are sufficient to start with additional methods, like `ldap` available depending on your infrastructure.
+Some of the methods above are only applicable to certain types of connections or with additional pieces of infrastructure in place. For most deployments, `reject`, `peer`, and `scram-sha-256` are sufficient to start with. Additional methods, like `ldap`, are available depending on your infrastructure.
 
 ### Authentication options
 
@@ -189,29 +194,29 @@ We've introduced some of the main authentication options, but how do you use the
 
 ### Allow local users to connect to matching databases
 
-It is common to configure PostgreSQL to allow users on the same machine machine to authenticate to the same PostgreSQL username. For example, using `peer` authentication, an operating system user named `john` would be able to log in automatically without a password if PostgreSQL also has a username named `john`.
+It is common to configure PostgreSQL to allow users on the same machine to authenticate to the same PostgreSQL username. For example, using `peer` authentication, an operating system user named `john` would be able to log in automatically without a password if PostgreSQL also has a username named `john`.
 
-This will work for any local connections made using the PostgreSQL socket file. If you specify any network address, even if it is the `127.0.0.1` local loopback device, the connection will not use the socket and will not match the `peer` authentication line. Connections to `localhost`, however, will use the socket file and will match these lines.
+This will work for any local connections made using the PostgreSQL socket file. If you specify any network address, even if it is the `127.0.0.1` local loopback device or the name `localhost`, the connection will not use the socket and will not match the `peer` authentication line. To use the socket with a client like `psql`, leave out the host (for example, `psql -d mydb` rather than `psql -h localhost -d mydb`).
 
 To allow all PostgreSQL users to authenticate from a matching operating system user, add a line that matches the `local` connection type, allows all databases and usernames, and uses `peer` authentication:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 local     all         all                         peer
 ```
 
 If you want to limit this so that only the `john` and `sue` PostgreSQL users can authenticate in this way, limit the scope of the `USER` column:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 local     all         john,sue                    peer
 ```
 
-If you need allow an operating system user named `sue` to authenticate to a database user named `susan`, you can specify a `map` option at the end of the line. Choose a map name to identify this mapping:
+If you need to allow an operating system user named `sue` to authenticate to a database user named `susan`, you can specify a `map` option at the end of the line. Choose a map name to identify this mapping. Since the `USER` column is compared with the database user being requested, list `susan` there rather than `sue`:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
-local     all         john,sue                    peer    map=my-map-name
+local     all         john,susan                  peer    map=my-map-name
 ```
 
 Then, you can map your users by opening the `pg_ident.conf` file in the same directory:
@@ -220,34 +225,41 @@ Then, you can map your users by opening the `pg_ident.conf` file in the same dir
 vim pg_ident.conf
 ```
 
-Create the map you need by adding a line in this file specifying your chosen map name, the operating system username, and the PostgreSQL username, separated by spaces:
+Create the map you need by adding a line in this file specifying your chosen map name, the operating system username, and the PostgreSQL username, separated by spaces. Once a line uses a map, connections that match the line are only accepted if the map allows them, so `john` needs an entry too:
 
-```
+```text
 # MAPNAME       SYSTEM-USERNAME         PG-USERNAME
+my-map-name     john                    john
 my-map-name     sue                     susan
 ```
 
-Now, the `sue` operating system will be able to authenticate to the `susan` PostgreSQL user with `peer` authentication as if they matched.
+Now, the `sue` operating system user will be able to authenticate to the `susan` PostgreSQL user with `peer` authentication as if they matched, and `john` can still log in as `john`.
 
 ### Allow network connections from the same machine using passwords
 
-To authenticate network connections from the PostgreSQL server's machine (non-socket connections) using passwords, you need to match a `host` connection type instead of `local`. You can then limit the acceptable addresses to the local loopback devices and allow users to authenticate using `md5` or `scram-sha-256`.
+To authenticate network connections from the PostgreSQL server's machine (non-socket connections) using passwords, you need to match a `host` connection type instead of `local`. You can then limit the acceptable addresses to the local loopback devices and allow users to authenticate using `scram-sha-256`.
 
 For instance, if a user on the machine that PostgreSQL is hosted on tries to connect by specifying `127.0.0.1` as the host, PostgreSQL can perform password authentication.
 
 To set this up, we need to use the `host` connection type. Next, we need to specify the range of acceptable addresses. Since this rule should only match local connections, we'll specify the local loopback device. We will have to add two separate lines to match the IPv4 and IPv6 loopback devices.
 
-Afterwards, you can specify the password scheme you want to use for authentication. The `scram-sha-256` method is more secure, but the `md5` method is more widely supported.
+Afterwards, specify `scram-sha-256` as the authentication method.
 
-The finished authentication lines will look something like this:
+The finished authentication lines will look something like this, allowing the `app_user` role to connect to the `app_db` database:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
-host      all         all         127.0.0.1/32    md5
-host      all         all         ::1/128         md5
+host      app_db      app_user    127.0.0.1/32    scram-sha-256
+host      app_db      app_user    ::1/128         scram-sha-256
 ```
 
-You can limit the databases or users that are allowed to authenticate using this method by changing the appropriate columns from `all` to a comma-separated list of specific entities.
+You can change which databases or users are allowed to authenticate using this method by changing the appropriate columns to a comma-separated list of specific entities, or to `all`.
+
+To test the rule, connect over TCP/IP by naming the host, for example with `psql "host=127.0.0.1 dbname=app_db user=app_user"`, and enter the role's password when prompted. If no line in the file matches a connection's role and database, the connection is rejected before any password is checked:
+
+```text
+psql: error: connection to server at "127.0.0.1", port 5432 failed: FATAL:  no pg_hba.conf entry for host "127.0.0.1", user "other_user", database "app_db", no encryption
+```
 
 ### Allow automatic maintenance
 
@@ -255,7 +267,7 @@ An assortment of automated maintenance tasks are performed on a regular basis. T
 
 By default, the `postgres` account is configured for this role using `peer` authentication. This line is very likely already present in your `pg_hba.conf` file:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 local     all         postgres                    peer
 ```
@@ -268,51 +280,57 @@ Replication is a special processes that copies data from one database to another
 
 The `replication` keyword in the database column is used to match these replication connections. Any user with the [replication privilege](https://www.postgresql.org/docs/current/sql-createrole.html) is able to establish a replication connection.
 
-To allow for all local replication connections, in a way that mirrors our previous values for regular connections (`peer` for connections over the Unix socket and `md5` for connections over the local network), we can add the following lines:
+To allow for all local replication connections, in a way that mirrors our previous values for regular connections (`peer` for connections over the Unix socket and `scram-sha-256` for connections over the loopback network), we can add the following lines:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 local     replication all                         peer
-host      replication all         127.0.0.1/32    md5
-host      replication all         ::1/128         md5
+host      replication all         127.0.0.1/32    scram-sha-256
+host      replication all         ::1/128         scram-sha-256
 ```
 
-To allow replication from additional locations, you can add additional addresses. For example, to allow replication from any machines on the local `192.0.2.0/24` network, you can add a line that looks like this:
+To allow replication from additional locations, you can add additional addresses. For example, to allow a dedicated `replicator` role to replicate from machines on the local `192.0.2.0/24` network, you can add a line that looks like this:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
-host      replication all         192.0.2.0/24    md5
+host      replication replicator  192.0.2.0/24    scram-sha-256
 ```
 
-This will allow any replication connections coming from machines within that network to authenticate using `md5`-encrypted passwords.
+This will allow replication connections for the `replicator` role coming from machines within that network to authenticate using SCRAM passwords.
 
 ### Allow connections from local network using passwords
 
 Above, we demonstrated how to configure password authentication for local replication connections. This can be generalized to allow password authentication for any local network connections.
 
-To allow `md5` password authentication for any connections coming from the local `192.0.2.0/24` network, you can add a line like this:
+To allow password authentication for the `app_user` role and the `app_db` database from machines on the local `192.0.2.0/24` network, you can add a line like this:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
-host      all         all         192.0.2.0/24    md5
+host      app_db      app_user    192.0.2.0/24    scram-sha-256
 ```
 
-This will allow all hosts within the `192.0.2.0/24` network to authenticate to PostgreSQL over the network using `md5`-encrypted passwords.
+This will allow hosts within the `192.0.2.0/24` network to authenticate to the `app_db` database as `app_user` over the network using SCRAM passwords. Because the line uses the `host` connection type, it accepts connections with or without TLS/SSL. SCRAM prevents the password from being sniffed, but without TLS/SSL the rest of the session isn't encrypted. If the network isn't fully trusted, use `hostssl` instead, as shown in the next section.
 
 ### Allow remote connections using SSL and passwords
 
 To allow connections from outside of a trusted network, you should always tunnel the connection through secure encryption, like TLS/SSL. If you need to allow these connections, you should match against the `hostssl` connection type.
 
-For example, to allow password authentication from anywhere that can connect to the database server, but only if TLS/SSL is used, you can add a line like this to your authentication file:
+For example, to allow the `app_user` role to connect to the `app_db` database with a password from your application servers on the `198.51.100.0/24` network, but only if TLS/SSL is used, you can add a line like this to your authentication file:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
-hostssl   all         all         all             md5
+hostssl   app_db      app_user    198.51.100.0/24 scram-sha-256
 ```
 
-This will allow any external connections using TLS/SSL to authenticate using `md5`-encrypted passwords. You can easily limit the access by specifying more restrictive addresses.
+This will allow connections from that network that use TLS/SSL to authenticate using SCRAM passwords. Unencrypted connections from the same addresses don't match the line, and are rejected with an error ending in `no encryption` unless another line matches them. Only use `all` in the `ADDRESS` column if clients really need to connect from anywhere.
 
 If you use the `hostssl` connection type, you will have to configure SSL for your PostgreSQL instance. You will have to generate or otherwise obtain an SSL certificate, an SSL key, and an SSL root certificate and then modify the `postgresql.conf` configuration file, as specified in the [PostgreSQL documentation on configuring SSL](https://www.postgresql.org/docs/current/ssl-tcp.html).
+
+On the client side, connect with `sslmode=verify-full` and point the client at the certificate of the authority that signed the server's certificate, so that the client checks it's talking to the right server:
+
+```bash
+psql "host=db.example.com dbname=app_db user=app_user sslmode=verify-full sslrootcert=/path/to/root.crt"
+```
 
 ### Allow remote connections using SSL and SSL client certificates
 
@@ -320,7 +338,7 @@ If you are already forcing SSL for external connections, you may want to conside
 
 To set up SSL client authentication, we can use a similar line to the one we used before:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 hostssl   all         all         all             cert
 ```
@@ -329,7 +347,7 @@ With this configuration, the server will not prompt users for passwords, but wil
 
 For instance, for a certificate with a CN of `katherine` to authenticate to a PostgreSQL user named `kate`, you'd need to specify a map file in the `pg_hba.conf` file:
 
-```
+```text
 # TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
 hostssl   all         all         all             cert    map=my-map-name
 ```
@@ -340,12 +358,69 @@ Afterwards, you'd edit the `pg_ident.conf` file to explicitly map those two user
 vim pg_ident.conf
 ```
 
-```
+```text
 # MAPNAME       SYSTEM-USERNAME         PG-USERNAME
 my-map-name     katherine               kate
 ```
 
 You can learn how to create and configure client certificates in [PostgreSQL's documentation on TLS/SSL client certificates](https://www.postgresql.org/docs/current/ssl-tcp.html#SSL-CLIENT-CERTIFICATES).
+
+## Migrating from MD5 to SCRAM
+
+Servers that were set up before PostgreSQL 14, when `md5` was the default for the `password_encryption` setting, often still have `md5` lines in `pg_hba.conf` and roles with MD5-hashed passwords. A role whose stored password is still an MD5 hash can't log in through a `scram-sha-256` line (the client gets `password authentication failed`, and the server log adds a detail like `User "legacy_user" does not have a valid SCRAM secret.`), so the order of the following steps matters:
+
+**Step 1.** Make sure all of your clients support SCRAM. libpq has supported it since PostgreSQL 10, and so do current versions of other drivers.
+
+**Step 2.** Set `password_encryption = 'scram-sha-256'` in `postgresql.conf` (it's the default since PostgreSQL 14, but an older configuration file may still set it to `md5`), reload the configuration, and check the setting:
+
+```sql
+SHOW password_encryption;
+```
+
+```text
+ password_encryption
+---------------------
+ scram-sha-256
+(1 row)
+```
+
+From now on, passwords are stored as SCRAM hashes when they're set. If the setting is still `md5`, PostgreSQL 18 warns each time a password is set:
+
+```text
+WARNING:  setting an MD5-encrypted password
+DETAIL:  MD5 password support is deprecated and will be removed in a future release of PostgreSQL.
+HINT:  Refer to the PostgreSQL documentation for details about migrating to another password type.
+```
+
+**Step 3.** As a superuser, find the roles that still have MD5-hashed passwords:
+
+```sql
+SELECT rolname FROM pg_authid WHERE rolpassword LIKE 'md5%';
+```
+
+```text
+   rolname
+-------------
+ legacy_user
+(1 row)
+```
+
+**Step 4.** Set the password of each of those roles again. An MD5 hash can't be converted to SCRAM, so the password has to be entered again, but it can be the same password. `psql`'s `\password` command prompts for the password and hashes it with SCRAM before sending it to the server:
+
+```sql
+\password legacy_user
+```
+
+Because an `md5` line also accepts SCRAM-hashed passwords, clients can keep connecting while you do this. Repeat the query from the previous step until it returns no rows.
+
+**Step 5.** Change the `md5` lines in `pg_hba.conf` to `scram-sha-256`, for example:
+
+```text
+# TYPE    DATABASE    USER        ADDRESS         METHOD  OPTIONS
+host      app_db      app_user    192.0.2.0/24    scram-sha-256
+```
+
+Then reload the configuration with `SELECT pg_reload_conf();` and check the `pg_hba_file_rules` view for errors.
 
 ## Conclusion
 
