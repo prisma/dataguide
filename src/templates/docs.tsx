@@ -12,9 +12,11 @@ import AuthorDetails from '../components/authorDetails'
 import EndCta from '../components/cta/EndCta'
 import MobileStickyCta from '../components/cta/MobileStickyCta'
 import { isIndexSlug } from '../utils/navigation'
+import { urlGenerator } from '../utils/urlGenerator'
 import { getParentTitle } from '../utils/parentTitle'
 import { useAllArticlesQuery } from '../hooks/useAllArticlesQuery'
 import authorsJSON from '../../authors.json'
+import dataguideConfig from '../../config'
 
 type ArticleLayoutProps = ArticleQueryData &
   Pick<PageProps, 'location'> &
@@ -79,8 +81,12 @@ export const Head = ({
   const { allMdx } = useAllArticlesQuery()
   const {
     fields: { slug, modSlug },
-    frontmatter: { title, authors, lastUpdated },
+    frontmatter: { title, authors, lastUpdated, hidePage },
   } = data.mdx
+  // Hidden and moved pages have no Markdown version
+  const hasMarkdown =
+    !hidePage &&
+    !dataguideConfig.redirects.some((redirect) => redirect.fromPath === urlGenerator(modSlug))
   const article =
     slug === '/'
       ? undefined
@@ -102,6 +108,7 @@ export const Head = ({
       title={seoTitle}
       description={seoDescription}
       image={metaImage || undefined}
+      hasMarkdown={hasMarkdown}
       article={article}
     />
   )
@@ -133,6 +140,7 @@ export const query = graphql`
         toc
         hnPostId
         authors
+        hidePage
         lastUpdated
         lastUpdatedLabel: lastUpdated(formatString: "MMMM D, YYYY")
       }

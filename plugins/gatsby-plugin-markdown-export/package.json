@@ -1,0 +1,7 @@
+{
+  "name": "gatsby-plugin-markdown-export",
+  "version": "1.0.0",
+  "description": "Publishes a Markdown version of every article and an llms.txt index",
+  "main": "index.js",
+  "license": "Apache-2.0"
+}

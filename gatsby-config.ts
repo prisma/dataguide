@@ -134,6 +134,14 @@ let plugins: any = [
   },
   'gatsby-plugin-meta-redirect',
   'gatsby-plugin-page-list',
+  {
+    resolve: 'gatsby-plugin-markdown-export',
+    options: {
+      // Moved elsewhere: production redirects these pages
+      exclude: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
+      repository: 'https://github.com/prisma/dataguide/blob/main',
+    },
+  },
 ]
 
 if (process.env.INDEX_ALGOLIA === 'true') {

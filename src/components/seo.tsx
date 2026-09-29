@@ -14,6 +14,8 @@ type SEOProps = {
   title?: string
   description?: string
   image?: string
+  // Whether a Markdown version of the page is published (see gatsby-plugin-markdown-export)
+  hasMarkdown?: boolean
   // Structured data: the site for the homepage, an article for everything else
   article?: {
     type?: 'TechArticle' | 'CollectionPage'
@@ -40,7 +42,7 @@ const buildMetaImageURL = (siteUrl: string, pathPrefix: string, img: string): st
   return `${siteUrl}${pathPrefix}/${cleaned}`
 }
 
-const SEO = ({ location, title, description, image, article }: SEOProps) => {
+const SEO = ({ location, title, description, image, hasMarkdown, article }: SEOProps) => {
   const { site } = useStaticQuery(query)
   const {
     siteMetadata: {
@@ -64,6 +66,7 @@ const SEO = ({ location, title, description, image, article }: SEOProps) => {
   )
 
   const siteRoot = `${siteUrl}${pathPrefix}`
+  const markdownUrl = canonicalUrl === siteRoot ? `${siteRoot}/index.md` : `${canonicalUrl}.md`
   const structuredData = article
     ? articleStructuredData({
         type: article.type,
@@ -109,6 +112,7 @@ const SEO = ({ location, title, description, image, article }: SEOProps) => {
       <meta property="og:image:width" content={oImgWidth} />
       <meta property="og:image:height" content={oImgHeight} />
       <link rel="canonical" href={canonicalUrl} />
+      {hasMarkdown && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
       <link rel="icon" href={faviconSvg} type="image/svg+xml" />
       <link rel="icon" href={favicon} type="image/png" sizes="32x32" />
       <meta name="theme-color" content="#f9faf5" />

@@ -41,7 +41,11 @@
     "react-feather": "2.0.10",
     "react-instantsearch": "7.50.0",
     "remark-gfm": "3.0.1",
+    "remark-mdx": "2.3.0",
+    "remark-parse": "10.0.2",
+    "remark-stringify": "10.0.3",
     "styled-components": "6.5.3",
+    "unified": "10.1.2",
     "unist-util-visit": "5.1.0"
   },
   "keywords": [
