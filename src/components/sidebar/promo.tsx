@@ -7,39 +7,57 @@ import { resolveCta, buildCtaUrl, CONSOLE_URL } from '../../cta'
 // shared CTA config (src/cta). Replaces the legacy randomized Pulse-era promos.
 
 const PromoCard = styled.div`
-  margin: 1.5rem 15px 15px 15px;
-  border: 1px solid #16a394;
-  border-radius: 5px;
-  padding: 14px;
-  font-size: 0.8rem;
+  position: relative;
+  margin: 24px 8px 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 16px;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--prisma-cyan),
+      var(--prisma-yellow) 50%,
+      var(--prisma-coral)
+    );
+  }
 `
 
 const PromoText = styled.p`
   margin: 0 0 12px;
-  color: #187367;
-  font-size: 14px;
-  line-height: 1.5;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 20px;
 `
 
 const PromoButton = styled.a`
-  display: block;
-  text-align: center;
-  background: #16a394;
-  color: #ffffff;
-  border-radius: 4px;
-  padding: 8px 10px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 999px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
   text-decoration: none;
-
+  transition: background 0.15s;
   &:hover,
   &:link,
   &:visited,
   &:active {
-    color: #ffffff;
+    color: var(--surface);
   }
-
   &:hover {
-    background: #187367;
+    background: #333436;
   }
 `
 

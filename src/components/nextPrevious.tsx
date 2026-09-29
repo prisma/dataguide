@@ -7,12 +7,11 @@ import { ArrowRight, ArrowLeft } from 'react-feather'
 import { urlGenerator } from '../utils/urlGenerator'
 import { withPrefix } from 'gatsby'
 
-
 const NextPreviousWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px 40px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border);
   margin-top: -114px;
   margin-bottom: 20px;
   align-items: flex-start;
@@ -26,18 +25,20 @@ const NextPreviousWrapper = styled.div`
     text-decoration: none;
     display: flex;
     .title {
-      color: #3182ce;
-      font-weight: 600;
+      color: var(--text-strong);
+      font-family: var(--font-display);
+      font-weight: 500;
       line-height: 24px;
+      transition: color 0.15s;
     }
 
     &:hover {
       .title {
-        color: #4299e1;
+        color: var(--accent);
       }
 
       .icon {
-        background: #ebf8ff;
+        background: var(--accent-soft);
       }
     }
   }
@@ -47,8 +48,8 @@ const NextPreviousWrapper = styled.div`
     border-radius: 50%;
   }
   span.direction {
-    color: #a0aec0;
-    font-size: 14px;
+    color: var(--text-subtle);
+    font-size: 13px;
     line-height: 24px;
   }
   .next {
@@ -77,12 +78,12 @@ const NextPrevious = ({ slug }: any) => {
     allMdx &&
     allMdx.edges &&
     allMdx.edges
-      .filter(edge => !edge.node.fields.slug.includes('index'))
-      .filter(edge => !edge.node.frontmatter.hidePage)
+      .filter((edge) => !edge.node.fields.slug.includes('index'))
+      .filter((edge) => !edge.node.frontmatter.hidePage)
 
   const nav =
     navWithoutIndex &&
-    navWithoutIndex.map(e => ({ title: e.node.frontmatter.title, url: e.node.fields.modSlug }))
+    navWithoutIndex.map((e) => ({ title: e.node.frontmatter.title, url: e.node.fields.modSlug }))
   let currentIndex
 
   let nextInfo: any = {}
@@ -142,7 +143,7 @@ const NextPrevious = ({ slug }: any) => {
               <span className="direction">Previous</span>
               <a href={withPrefix(urlGenerator(nav[currentIndex - 1].url)).replace(/\/$/, '')}>
                 <span className="icon">
-                  <ArrowLeft color="#3182CE" />
+                  <ArrowLeft color="#5A3FD8" />
                 </span>
                 <div className="title">{nav[currentIndex - 1].title}</div>
               </a>
@@ -156,7 +157,7 @@ const NextPrevious = ({ slug }: any) => {
               <Link to={urlGenerator(nav[currentIndex + 1].url)}>
                 <div className="title">{nav[currentIndex + 1] && nav[currentIndex + 1].title}</div>
                 <span className="icon">
-                  <ArrowRight color="#3182CE" />
+                  <ArrowRight color="#5A3FD8" />
                 </span>
               </Link>
             </div>

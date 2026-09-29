@@ -18,9 +18,9 @@ const Bar = styled.div`
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: #ffffff;
-  border-top: 1px solid #cbd5e0;
-  box-shadow: 0px -2px 8px rgba(47, 55, 71, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 24px -12px rgba(21, 21, 21, 0.18);
 
   @media (min-width: 768px) {
     display: none;
@@ -30,16 +30,16 @@ const Bar = styled.div`
 const Text = styled.span`
   flex: 1;
   font-size: 13px;
-  font-weight: 600;
-  color: #1a202c;
+  font-weight: 500;
+  color: var(--text-strong);
 `
 
 const CreateButton = styled.a`
-  background: #16a394;
+  background: var(--ink);
   color: #ffffff;
-  border-radius: 4px;
-  padding: 8px 14px;
-  font-weight: 600;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 500;
   font-size: 13px;
   text-decoration: none;
   white-space: nowrap;
@@ -55,7 +55,7 @@ const CreateButton = styled.a`
 const Dismiss = styled.button`
   background: none;
   border: none;
-  color: #718096;
+  color: var(--text-muted);
   font-size: 20px;
   line-height: 1;
   padding: 0 4px;

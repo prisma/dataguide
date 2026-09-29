@@ -30,7 +30,8 @@ const StyledOverlay = styled.div<{ $isVisible: boolean; $isTransitioning: boolea
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(8, 35, 51, 0.3);
+  background: rgba(21, 21, 21, 0.28);
+  backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;
   z-index: 10000;

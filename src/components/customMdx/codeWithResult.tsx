@@ -32,33 +32,49 @@ export default CodeWithResult
 const Wrapper = styled.div`
   margin-top: 2rem;
   .cmd .pre-highlight pre {
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 12px 12px 0px 0px;
   }
 
   .result {
     background: var(--code-result-bg-color);
-    border-radius: 0px 0px 8px 8px;
-    margin-top: -13px;
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0px 0px 12px 12px;
+    margin-top: -16px;
 
     pre {
       background: var(--code-result-bg-color) !important;
-      border-radius: 0px 0px 8px 8px;
+      border: 0;
+      border-top: 1px dashed var(--border-strong);
+      border-radius: 0px 0px 12px 12px;
       margin-top: 0;
     }
 
     .show-btn {
-      font-family: Open Sans;
+      font-family: var(--font-sans);
       font-style: normal;
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: 500;
+      font-size: 13px;
       line-height: 100%;
-      letter-spacing: 0.01em;
-      color: var(--code-inner-color);
-      height: 24px;
+      color: var(--accent);
+      height: 36px;
       display: flex;
       padding-left: 1rem;
       align-items: center;
       cursor: pointer;
+      &:hover {
+        color: var(--accent-strong);
+      }
+    }
+  }
+
+  @media (min-width: 0px) and (max-width: 767px) {
+    .result {
+      margin-left: -24px;
+      margin-right: -24px;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
     }
   }
 `

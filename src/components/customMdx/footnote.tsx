@@ -37,14 +37,16 @@ export default Footnote
 
 const FootnoteWrapper = styled.span`
   position: relative;
-  border-bottom: 1px dashed black;
+  border-bottom: 1px dashed var(--accent);
+  cursor: help;
 
   .note {
     width: 250px;
     background-color: var(--tooltip-bg-color);
     color: white;
     text-align: left;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-pop);
     left: 0;
     position: absolute;
     z-index: 1;
@@ -56,7 +58,7 @@ const FootnoteWrapper = styled.span`
     p {
       margin: 0;
       font-size: inherit;
-      font-style: italic;
+      line-height: 20px;
     }
 
     a {

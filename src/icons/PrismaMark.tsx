@@ -1,0 +1,38 @@
+import * as React from 'react'
+
+// The Prisma logo mark (without the wordmark)
+const PrismaMark = ({ size = 20, ...props }: { size?: number } & React.SVGProps<SVGSVGElement>) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 67 67"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    {...props}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M14.5772 23.4756L0 38.0528V38.076L14.5772 23.4756Z"
+      fill="#04D5E7"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M66.8662 28.8965V28.9405L39.7771 56.0295L66.8662 28.8965Z"
+      fill="#FEBE29"
+    />
+    <path
+      d="M14.5772 23.4755L0 38.0527V13.5776L13.5284 0.0264573V0H38.0154L14.5772 23.4755Z"
+      fill="#04D5E7"
+    />
+    <path d="M66.866 23.2838L23.1498 67H0V43.7095L43.7095 0H66.866V23.2838Z" fill="#FE4352" />
+    <path
+      d="M53.3113 67H28.8244L39.7771 56.0295L66.8662 28.9404V53.4224L53.3113 67Z"
+      fill="#FEBE29"
+    />
+  </svg>
+)
+
+export default PrismaMark

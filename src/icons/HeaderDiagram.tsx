@@ -105,7 +105,7 @@ export default (props: any) => (
       ></path>
     </g>
     <g filter="url(#filter10_ddddddi)">
-      <rect width="239" height="31" x="294" y="158" fill="#81E6D9" rx="15.5"></rect>
+      <rect width="239" height="31" x="294" y="158" fill="#04D5E7" rx="15.5"></rect>
     </g>
     <g fill="#3C366B" opacity="0.1">
       <rect width="61" height="2" x="96" y="138" rx="1"></rect>
@@ -123,7 +123,7 @@ export default (props: any) => (
       <rect width="61" height="2" x="217" y="108" rx="1"></rect>
     </g>
     <g filter="url(#filter11_dddddd)">
-      <rect width="58" height="20" x="102" y="132" fill="#F6E05E" rx="10"></rect>
+      <rect width="58" height="20" x="102" y="132" fill="#FEBE29" rx="10"></rect>
     </g>
     <path
       fill="#fff"
@@ -132,19 +132,19 @@ export default (props: any) => (
       clipRule="evenodd"
     ></path>
     <g filter="url(#filter12_dddddd)">
-      <rect width="58" height="20" x="215" y="91" fill="#F6E05E" rx="10"></rect>
+      <rect width="58" height="20" x="215" y="91" fill="#FEBE29" rx="10"></rect>
     </g>
     <path
-      fill="#FEFCBF"
+      fill="#FFE6A3"
       fillRule="evenodd"
       d="M112 132c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38zM225 91c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38z"
       clipRule="evenodd"
     ></path>
     <g filter="url(#filter13_dddddd)">
-      <rect width="58" height="20" x="208" y="223" fill="#F6E05E" rx="10"></rect>
+      <rect width="58" height="20" x="208" y="223" fill="#FEBE29" rx="10"></rect>
     </g>
     <path
-      fill="#FEFCBF"
+      fill="#FFE6A3"
       fillRule="evenodd"
       d="M218 223c-5.523 0-10 4.477-10 10v1c0-5.523 4.477-10 10-10h38c5.523 0 10 4.477 10 10v-1c0-5.523-4.477-10-10-10h-38z"
       clipRule="evenodd"
@@ -265,7 +265,7 @@ export default (props: any) => (
     ></path>
     <path fill="#FDB797" d="M309.837 296.056a4.87 4.87 0 110-9.74 4.87 4.87 0 010 9.74z"></path>
     <path
-      fill="#81E6D9"
+      fill="#04D5E7"
       d="M302.761 298.871s6.087-2.739 14.609 0c0 0 3.728.989 4.184 2.207.457 1.217-5.097 15.141-4.489 17.576.366 1.492.469 3.037.305 4.565 0 0-13.392-1.826-16.587-.457 0 0 1.217-3.956.913-6.695-.304-2.739-2.891-15.522-2.891-15.522s1.369-1.369 3.956-1.674z"
     ></path>
     <path
@@ -273,7 +273,7 @@ export default (props: any) => (
       d="M297.435 335.088s2.283 7-.152 7.152c-2.435.153-1.369-5.326-1.369-5.326l.304-1.826h1.217z"
     ></path>
     <path
-      fill="#81E6D9"
+      fill="#04D5E7"
       d="M302 301.458l-3.195-.913s-1.827 1.37-1.827 3.196.305 13.543.305 13.543l-2.283 17.5 3.5 1.217 4.109-18.869-.609-15.674z"
     ></path>
     <path
@@ -281,7 +281,7 @@ export default (props: any) => (
       d="M322.392 335.088s-2.283 7 .152 7.152c2.435.153 1.37-5.326 1.37-5.326l-.305-1.826h-1.217z"
     ></path>
     <path
-      fill="#81E6D9"
+      fill="#04D5E7"
       d="M317.826 301.458l3.196-.913s1.826 1.37 1.826 3.196-.304 13.543-.304 13.543l2.282 17.5-3.5 1.217-4.108-18.869.608-15.674z"
     ></path>
     <path

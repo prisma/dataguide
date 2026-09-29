@@ -28,7 +28,7 @@ const PageBottomWrapper = styled.div`
   }
   .edit-git,
   .message {
-    color: var(--code-inner-color) !important;
+    color: var(--text-muted) !important;
   }
 
   button {
@@ -42,33 +42,38 @@ const PageBottomWrapper = styled.div`
   }
   .edit-git {
     font-style: normal;
-    font-weight: 800;
+    font-weight: 500;
     font-size: 14px;
     line-height: 17px;
-    color: #5d6571;
     text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+    text-underline-offset: 3px;
+    &:hover {
+      color: var(--text-strong) !important;
+      text-decoration-color: var(--accent);
+    }
   }
   .return-home {
     font-style: normal;
-    font-weight: 800;
+    font-weight: 500;
     font-size: 14px;
     line-height: 17px;
-    color: #5d6571;
+    color: var(--text-muted);
     position: relative;
     &:after {
       content: '';
       position: absolute;
       width: 8px;
-      background: #5d6571;
+      background: var(--text-muted);
       height: 2px;
       left: -12px;
       top: 8.5px;
     }
     &:before {
-      border-top: 2px solid #5d6571;
+      border-top: 2px solid var(--text-muted);
       width: 5px;
       height: 5px;
-      border-right: 2px solid #5d6571;
+      border-right: 2px solid var(--text-muted);
       content: '';
       position: absolute;
       left: -13px;

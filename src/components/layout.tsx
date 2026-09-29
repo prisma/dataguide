@@ -6,6 +6,9 @@ import Footer from './footer'
 import { MDXProvider } from '@mdx-js/react'
 import customMdx from '../components/customMdx'
 import HomePageHeader from '../components/homePageHeader'
+import '@fontsource-variable/inter'
+import '@fontsource-variable/sora'
+import '@fontsource-variable/geist-mono'
 import '../styles/layout.css'
 import Sidebar from './sidebar'
 import Banner from './banner'
@@ -31,7 +34,10 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
-  padding: 0 10px;
+  padding: 0 16px;
+  @media (min-width: 0px) and (max-width: 767px) {
+    padding: 0 10px;
+  }
 `
 
 const Content = styled.article<{ $moveUp?: boolean }>`
@@ -48,21 +54,21 @@ const Content = styled.article<{ $moveUp?: boolean }>`
 
 const MaxWidth = styled.div<{ $noIndex: boolean }>`
   > section {
-    background: var(--white-color);
-    box-shadow:
-      0px 4px 8px rgba(47, 55, 71, 0.05),
-      0px 1px 3px rgba(47, 55, 71, 0.1);
-    border-radius: 5px;
-    margin-top: 1rem;
-    padding: 2rem 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg);
+    margin-top: 16px;
+    padding: 32px 40px;
     &.top-section {
-      padding-top: 40px;
+      padding-top: 36px;
     }
     @media (min-width: 0px) and (max-width: 1024px) {
-      margin-top: 0.5rem;
+      margin-top: 12px;
     }
     @media (min-width: 0px) and (max-width: 767px) {
       padding: 24px;
+      border-radius: 16px;
       &.top-section {
         padding-top: 24px;
       }

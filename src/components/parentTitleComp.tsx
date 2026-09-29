@@ -6,19 +6,26 @@ import { AllArticles } from '../interfaces/AllArticles.interface'
 import Link from './link'
 
 const BreadcrumbTitle = styled.h2`
-  color: var(--muted-font-color) !important;
-  font-family: 'Rubik';
+  color: var(--accent) !important;
+  font-family: var(--font-sans);
+  font-size: 14px;
   font-weight: 500;
-  line-height: 100%;
+  line-height: 20px;
+  letter-spacing: 0;
   margin: 0;
+  .separator {
+    color: var(--text-subtle);
+    margin: 0 6px;
+  }
   a {
-    color: var(--muted-font-color) !important;
+    color: var(--accent) !important;
     text-decoration: none;
 
     &:hover,
     &:focus {
-      color: var(--muted-font-color) !important;
+      color: var(--accent-strong) !important;
       text-decoration: underline;
+      text-underline-offset: 3px;
       cursor: pointer;
     }
   }
@@ -37,8 +44,8 @@ const ParentTitle = ({ slug, nonLink }: ParentTitleProps) => {
       {parentTitle.length > 0
         ? parentTitle.map((part: any, index: number) => (
             <span key={index}>
-              {part.link && !nonLink ? <Link to={part.link}>{part.title} </Link> : part.title}
-              {parentTitle.length !== index + 1 ? ' / ' : ''}
+              {part.link && !nonLink ? <Link to={part.link}>{part.title}</Link> : part.title}
+              {parentTitle.length !== index + 1 ? <span className="separator">/</span> : ''}
             </span>
           ))
         : ''}

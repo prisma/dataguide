@@ -19,30 +19,47 @@ const icons = {
   code: <Code />,
 }
 const DocLinkWrapper = styled(Link)`
-  color: var(--main-font-color) !important;
+  position: relative;
+  color: var(--text-strong) !important;
   cursor: pointer;
-  align-items: center;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
   width: 100%;
-  padding: 16px;
+  padding: 14px 44px 14px 18px;
   font-style: normal;
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 18px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
-  color: #1a202c;
   text-decoration: none;
-  svg {
-    margin-right: 8px;
-    width: 20px;
-    height: 24px;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
 
-    path {
-      stroke-width: 1;
-      stroke: var(--list-bullet-color);
+  &::after {
+    content: '→';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-subtle);
+    transition:
+      color 0.15s,
+      right 0.15s;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--accent-strong) !important;
+    &::after {
+      color: var(--accent);
+      right: 14px;
     }
   }
 `

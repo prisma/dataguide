@@ -43,22 +43,22 @@ const Tabs = styled.div`
   display: flex;
   .tabHeading {
     margin-right: 10px;
-    font-weight: 600;
-    color: var(--code-inner-color);
+    font-weight: 500;
+    color: var(--text-muted);
     cursor: pointer;
     font-size: 14px;
     display: flex;
     align-items: center;
-    padding: 3px 5px;
+    padding: 4px 12px;
     svg {
       margin-right: 8px;
     }
   }
 
   .tabHeading.active {
-    color: var(--main-font-color);
-    background: var(--code-bgd-color);
-    border-radius: 5px;
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-radius: 999px;
   }
 `
 const Wrapper = styled.div`
