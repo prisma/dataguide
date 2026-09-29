@@ -37,30 +37,35 @@ const backgroundColorMap: any = {
   dark: '--dark-color',
 }
 
-export const ButtonWrapper = styled.a<ButtonProps>`
+type ButtonStyleProps = { $block?: boolean; $color?: ButtonColor; $disabled?: boolean }
+
+export const ButtonWrapper = styled.a<ButtonStyleProps>`
   padding: 11px 14px;
   margin-right: 10px;
   display: inline-flex;
   align-items: center;
-  ${(p) => (p.block ? 'width: 100%;' : '')}
+  ${(p) => (p.$block ? 'width: 100%;' : '')}
   border: none;
   text-decoration: none;
   height: 40px;
   font-size: 1rem;
   box-sizing: border-box;
   outline: none;
-  opacity: ${(p) => (p.disabled ? '0.2' : 1)};
+  opacity: ${(p) => (p.$disabled ? '0.2' : 1)};
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  background: var(${(p) => backgroundColorMap[p.color || 'green']});
-  color: var(${(p) => colorMap[p.color || 'green']}) !important;
+  background: var(${(p) => backgroundColorMap[p.$color || 'green']});
+  color: var(${(p) => colorMap[p.$color || 'green']}) !important;
   line-height: 1;
   font-size: 14px;
   font-weight: 700;
-  cursor: ${(p) => (p.disabled ? 'default' : 'pointer')};
-  pointer-events: ${(p) => (p.disabled ? 'none' : 'all')};
+  cursor: ${(p) => (p.$disabled ? 'default' : 'pointer')};
+  pointer-events: ${(p) => (p.$disabled ? 'none' : 'all')};
   border-radius: 6px;
-  transition: color 150ms ease 0s, background 150ms ease 0s, transform 100ms ease 0s;
+  transition:
+    color 150ms ease 0s,
+    background 150ms ease 0s,
+    transform 100ms ease 0s;
   white-space: nowrap;
   word-break: keep-all;
   max-width: 100%;
@@ -68,10 +73,10 @@ export const ButtonWrapper = styled.a<ButtonProps>`
   margin-bottom: 0.5rem;
 `
 //     &:hover {
-//       background: ${p => darken(0.04, backgroundColorMap[p.color || 'green'])};
+//       background: ${p => darken(0.04, backgroundColorMap[p.$color || 'green'])};
 //     }
 //     &:focus {
-//       background: ${p => darken(0.07, backgroundColorMap[p.color || 'green'])};
+//       background: ${p => darken(0.07, backgroundColorMap[p.$color || 'green'])};
 //     }
 
 const getAbsPath = (href: any, location: any) => {
@@ -91,14 +96,23 @@ const getAbsPath = (href: any, location: any) => {
       .replace(/\/$/, '')
   )
 }
-const ButtonLink = ({ href, ...props }: ButtonProps) => {
+const ButtonLink = ({
+  href,
+  block,
+  color,
+  disabled,
+  arrow,
+  arrowLeft,
+  children,
+  ...props
+}: ButtonProps) => {
   const location = useLocation()
   const newHref = isAbsoluteUrl(href || '') ? href : getAbsPath(href, location)
   return (
-    <ButtonWrapper href={newHref} {...props}>
-      {props.arrowLeft && <StyledArrowLeft />}
-      {props.children}
-      {props.arrow && <StyledArrow />}
+    <ButtonWrapper href={newHref} $block={block} $color={color} $disabled={disabled} {...props}>
+      {arrowLeft && <StyledArrowLeft />}
+      {children}
+      {arrow && <StyledArrow />}
     </ButtonWrapper>
   )
 }

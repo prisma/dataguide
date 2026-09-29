@@ -5,8 +5,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "algoliasearch": "4.11.0",
-    "remark": "^14.0.2",
-    "remark-mdx": "^2.3.0"
+    "remark": "^14.0.3",
+    "remark-gfm": "^3.0.1",
+    "remark-mdx": "^2.3.0",
+    "unist-util-visit": "^5.1.0"
   }
 }

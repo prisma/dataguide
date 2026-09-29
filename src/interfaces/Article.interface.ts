@@ -21,7 +21,6 @@ export interface ArticleData {
   mdx: {
     fields: ArticleFields
     tableOfContents: TableOfContents
-    body: string
     parent: any
     frontmatter: ArticleFrontmatter
   }

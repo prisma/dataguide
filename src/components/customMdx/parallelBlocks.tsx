@@ -4,8 +4,9 @@ import styled from 'styled-components'
 type CodeBlockProps = React.ReactNode
 
 const ParallelBlocks = ({ children }: CodeBlockProps) => {
-  const blockContent =
-    children && children.filter((child: any) => child.props && child.props.originalType === 'block')
+  const blockContent = React.Children.toArray(children).filter(
+    (child: any) => child.type === 'block'
+  )
   return (
     <Wrapper>
       {blockContent.map((block: any, i: number) => (

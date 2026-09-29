@@ -1,4 +1,3 @@
-var visit = require('unist-util-visit')
 const path = require('path')
 
 function withPathPrefix(url, pathPrefix) {
@@ -8,13 +7,13 @@ function withPathPrefix(url, pathPrefix) {
 
 const pathSep = '/'
 
-module.exports = function plugin(
+module.exports = async function plugin(
   { markdownAST, markdownNode, pathPrefix, getNode },
   { redirects = [] } = {}
 ) {
   function visitor(node) {
     node.originalUrl = node.url
-    
+
     if (
       markdownNode.fields &&
       markdownNode.fields.slug &&
@@ -67,6 +66,7 @@ module.exports = function plugin(
     }
   }
 
+  const { visit } = await import('unist-util-visit')
   visit(markdownAST, 'link', visitor)
 
   return markdownAST

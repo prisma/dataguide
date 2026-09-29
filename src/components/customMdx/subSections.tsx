@@ -22,15 +22,13 @@ const Subsections = ({ depth }: SubsecProps) => {
   let subSecs: any[] = []
 
   const getSubSecs = (currentPath: string, treeItems: any[]): any => {
-    for (let i = 0; i < treeItems.length - 1; i++) {
+    for (let i = 0; i < treeItems.length; i++) {
       const tree = treeItems[i]
-      if (
-        !(
-          withPrefix(tree.url) ===
-            `${currentPath.substr(-1) === '/' ? currentPath.slice(0, -1) : currentPath}` &&
-          tree.label !== 'index'
-        )
-      ) {
+      if (!(
+        withPrefix(tree.url) ===
+          `${currentPath.substr(-1) === '/' ? currentPath.slice(0, -1) : currentPath}` &&
+        tree.label !== 'index'
+      )) {
         getSubSecs(currentPath, tree.items)
       } else {
         subSecs = tree.items

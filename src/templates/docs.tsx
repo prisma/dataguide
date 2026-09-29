@@ -5,9 +5,7 @@ import Layout from '../components/layout'
 import TopSection from '../components/topSection'
 import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
-import { graphql, useStaticQuery } from 'gatsby'
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
-import { navigate } from '@reach/router'
+import { graphql } from 'gatsby'
 import { CreatePageContext } from '../interfaces/Layout.interface'
 import SocialShareSection from '../components/socialShareSection'
 import NextPrevious from '../components/nextPrevious'
@@ -15,9 +13,11 @@ import AuthorDetails from '../components/authorDetails'
 import EndCta from '../components/cta/EndCta'
 import MobileStickyCta from '../components/cta/MobileStickyCta'
 
-type ArticleLayoutProps = ArticleQueryData & RouterProps & CreatePageContext
+type ArticleLayoutProps = ArticleQueryData &
+  RouterProps &
+  CreatePageContext & { children?: React.ReactNode }
 
-const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
+const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   if (!data) {
     return null
   }
@@ -25,7 +25,6 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
     mdx: {
       fields: { slug, modSlug },
       frontmatter: { title, toc, hnPostId, authors },
-      body,
       parent,
       tableOfContents,
     },
@@ -48,7 +47,7 @@ const ArticleLayout = ({ data, ...props }: ArticleLayoutProps) => {
           <SocialShareSection hnPostId={hnPostId} slug={modSlug} />
         </section>
       )}
-      <MDXRenderer>{body}</MDXRenderer>
+      {children}
       {!isHomePage && <EndCta slug={modSlug} />}
       {authors && (
         <section>
@@ -82,7 +81,6 @@ export const query = graphql`
         slug
         modSlug
       }
-      body
       parent {
         ... on File {
           relativePath

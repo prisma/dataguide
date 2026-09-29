@@ -1,7 +1,6 @@
-const visit = require('unist-util-visit')
 const textTypes = ['text', 'emphasis', 'strong', 'inlineCode', 'code']
 
-const flattenNode = (node) => {
+const flattenNode = (visit, node) => {
   const p = []
   visit(node, (node) => {
     if (!textTypes.includes(node.type)) return
@@ -10,21 +9,23 @@ const flattenNode = (node) => {
   return p.join(``)
 }
 
-module.exports = () => (tree, file) => {
-  file.data = []
-  let heading = null
-  visit(
-    tree,
-    ({ type }) => {
-      return ['heading', 'paragraph', 'code', 'table'].includes(type)
-    },
-    (node) => {
-      if (node.type === 'heading') return (heading = flattenNode(node))
+module.exports =
+  ({ visit }) =>
+  (tree, file) => {
+    file.data = []
+    let heading = null
+    visit(
+      tree,
+      ({ type }) => {
+        return ['heading', 'paragraph', 'code', 'table'].includes(type)
+      },
+      (node) => {
+        if (node.type === 'heading') return (heading = flattenNode(visit, node))
 
-      file.data.push({
-        heading,
-        text: flattenNode(node),
-      })
-    }
-  )
-}
+        file.data.push({
+          heading,
+          text: flattenNode(visit, node),
+        })
+      }
+    )
+  }

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { connectSearchBox } from 'react-instantsearch-dom'
+import { useSearchBox } from 'react-instantsearch'
 import styled from 'styled-components'
 import SearchPic from '../../icons/Search'
 import Clear from '../../icons/Clear'
@@ -8,8 +8,8 @@ import useWindowDimensions from '../hooks/useWindowDimensions'
 const SearchBoxDiv = styled.div`
   display: flex;
   height: 40px;
-  background: #F7FAFC;
-  border: 1px solid #CBD5E0;
+  background: #f7fafc;
+  border: 1px solid #cbd5e0;
   box-shadow: -4px -4px 32px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
   padding: 10px 26px;
@@ -80,12 +80,12 @@ const SearchBoxDiv = styled.div`
 
     form {
       input {
-        color: #4A5568;
+        color: #4a5568;
       }
     }
 
     .clear {
-      background: #E2E8F0;
+      background: #e2e8f0;
       border-radius: 6px;
       position: absolute;
       top: 50%;
@@ -98,7 +98,7 @@ const SearchBoxDiv = styled.div`
       align-items: center;
       justify-content: center;
       svg path {
-        stroke: #4A5568;
+        stroke: #4a5568;
       }
     }
   }
@@ -139,7 +139,7 @@ const SearchBoxDiv = styled.div`
       border-width: 0;
       &::placeholder {
         content: 'Search Data Guide...';
-        color: #A0AEC0;
+        color: #a0aec0;
         opacity: 1; /* Firefox */
       }
     }
@@ -153,9 +153,9 @@ const SearchBoxDiv = styled.div`
   }
 
   .slash {
-    border: 1px solid #CBD5E0;
+    border: 1px solid #cbd5e0;
     border-radius: 4px;
-    color: #CBD5E0;
+    color: #cbd5e0;
     min-width: 18px;
     display: flex;
     justify-content: center;
@@ -175,7 +175,7 @@ const SearchIcon = styled(SearchPic)`
   top: 50%;
   transform: translateY(-50%);
   position: absolute;
-  stroke: #4A5568;
+  stroke: #4a5568;
 `
 
 const ClearIcon = styled(Clear)`
@@ -282,7 +282,7 @@ const SearchBox = ({
       clearInput()
     }
   }, [clear])
-  
+
   React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
     if (width > 640) {
@@ -294,7 +294,9 @@ const SearchBox = ({
   }, [])
 
   return (
-    <SearchBoxDiv className={`${isOpened ? 'opened' : ''} ${header ? 'header' : ''} ${mobile ? 'mobile' : ''}`} t>
+    <SearchBoxDiv
+      className={`${isOpened ? 'opened' : ''} ${header ? 'header' : ''} ${mobile ? 'mobile' : ''}`}
+    >
       <form onSubmit={onSubmit}>
         <SearchIcon />
         <input
@@ -318,5 +320,9 @@ const SearchBox = ({
   )
 }
 
-const CustomSearchBox = connectSearchBox(SearchBox)
+const CustomSearchBox = (props: any) => {
+  const { query, refine } = useSearchBox()
+  return <SearchBox {...props} currentRefinement={query} refine={refine} />
+}
+
 export default CustomSearchBox

@@ -1,5 +1,8 @@
-import Prism from 'prism-react-renderer/prism'
+const { Prism } = require('prism-react-renderer')
 ;(typeof global !== 'undefined' ? global : window).Prism = Prism
+
+// prism-react-renderer v2 no longer bundles these languages
+require('prismjs/components/prism-bash')
 Prism.languages.prisma = Prism.languages.extend('clike', {
   keyword: /\b(?:datasource|enum|generator|model|type)\b/,
   'type-class-name': /(\s+)[A-Z]\w+/, ///(\b)(\s+)[A-Z]\w+/

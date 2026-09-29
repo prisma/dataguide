@@ -1,6 +1,26 @@
 import type { GatsbyConfig } from 'gatsby'
 import dataguideConfig from './config'
 
+// MDX 2 no longer parses GitHub Flavored Markdown (tables, strikethrough, ...)
+// by default. remark-gfm is ESM-only, which Node >= 20.19 can `require`.
+const remarkGfm = require('remark-gfm').default
+
+// MDX 1 turned code fence meta (```js copy line-number) into props on the
+// `code` element. MDX 2 drops it, so copy it over to keep the Code component
+// options working.
+const rehypeCodeMeta = () => (tree: any) => {
+  const visit = (node: any) => {
+    if (node.type === 'element' && node.tagName === 'code' && node.data?.meta) {
+      for (const token of node.data.meta.trim().split(/\s+/)) {
+        const [key, ...value] = token.split('=')
+        if (key) node.properties[key] = value.length ? value.join('=') : true
+      }
+    }
+    node.children?.forEach(visit)
+  }
+  visit(tree)
+}
+
 let plugins: any = [
   'gatsby-plugin-image',
   'gatsby-plugin-sharp',
@@ -12,6 +32,10 @@ let plugins: any = [
     resolve: `gatsby-plugin-mdx`,
     options: {
       extensions: ['.mdx', '.md'],
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [rehypeCodeMeta],
+      },
       gatsbyRemarkPlugins: [
         'gatsby-remark-sectionize',
         'gatsby-remark-normalize-paths',
@@ -19,10 +43,10 @@ let plugins: any = [
           resolve: `gatsby-remark-autolink-headers`,
           options: {
             icon: `<svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1.5 6.33337H15.5" stroke="#CBD5E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M1.5 11.6666H15.5" stroke="#CBD5E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M6.75 1L5 17" stroke="#CBD5E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M12 1L10.25 17" stroke="#CBD5E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1.5 6.33337H15.5" stroke="#CBD5E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M1.5 11.6666H15.5" stroke="#CBD5E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.75 1L5 17" stroke="#CBD5E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 1L10.25 17" stroke="#CBD5E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>`,
             className: `title-link`,
             enableCustomId: true,
@@ -81,6 +105,8 @@ let plugins: any = [
   {
     resolve: `gatsby-plugin-sitemap`,
     options: {
+      // Keep the sitemap at /sitemap/sitemap-index.xml (the default before v6)
+      output: '/sitemap',
       entryLimit: 5000,
       excludes: [
         // Remove these from sitemap for SEO purposes as they're redirected
@@ -95,6 +121,7 @@ let plugins: any = [
   {
     resolve: 'gatsby-plugin-robots-txt',
     options: {
+      sitemap: '/sitemap/sitemap-index.xml',
       policy: [
         {
           userAgent: '*',
@@ -152,7 +179,10 @@ if (process.env.INDEX_ALGOLIA === 'true') {
 
 const config: GatsbyConfig = {
   pathPrefix: process.env.ADD_PREFIX === 'true' ? dataguideConfig.gatsby.pathPrefix : '/',
-  // trailingSlash: 'never',
+  // Keep page paths exactly as created (Gatsby 5 defaults to `always` adding a trailing slash)
+  trailingSlash: 'ignore',
+  // React 19 warns about the classic `React.createElement` JSX transform
+  jsxRuntime: 'automatic',
   siteMetadata: {
     pathPrefix: dataguideConfig.gatsby.pathPrefix,
     title: dataguideConfig.siteMetadata.title,

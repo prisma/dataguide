@@ -1,6 +1,5 @@
 import React from 'react'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import theme from 'prism-react-renderer/themes/github'
+import { Highlight, themes } from 'prism-react-renderer'
 import CopyButton from './copy'
 import Copy from '../../icons/Copy'
 import { stringify } from '../../utils/stringify'
@@ -47,7 +46,7 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
   return (
     <>
       <div className="gatsby-highlight pre-highlight">
-        <Highlight {...defaultProps} code={code} language={language} theme={theme}>
+        <Highlight code={code} language={language || 'text'} theme={themes.github}>
           {({ className: blockClassName, style, tokens, getLineProps, getTokenProps }) => (
             <Pre className={blockClassName} style={style}>
               {(props['copy'] || language === 'copy') && (
@@ -109,7 +108,7 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
                   //   isHidden = true
                   // }
 
-                  const lineProps = getLineProps({ line, key: i })
+                  const lineProps = getLineProps({ line })
 
                   lineProps.style = { ...lineClass }
 
@@ -135,15 +134,15 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
                             ) {
                               return (
                                 <span
+                                  key={key}
                                   {...getTokenProps({
                                     token: { ...token, content: token.content.slice(1) },
-                                    key,
                                   })}
                                 />
                               )
                             }
                           }
-                          return <span {...getTokenProps({ token, key })} />
+                          return <span key={key} {...getTokenProps({ token })} />
                         })}
                       </LineContent>
                     </Line>

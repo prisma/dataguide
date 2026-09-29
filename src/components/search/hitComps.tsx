@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Snippet } from 'react-instantsearch-dom'
+import { Snippet } from 'react-instantsearch'
 import Link from '../link'
 import styled from 'styled-components'
 import ParentTitle from '../parentTitleComp'
@@ -10,13 +10,13 @@ const HitComp = styled.div`
   font-weight: normal;
   font-size: 16px;
   line-height: 24px;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid #e2e8f0;
   // max-height: 150px;
   &:last-item {
     border: 0;
   }
   a {
-    color: #2D3748 !important;
+    color: #2d3748 !important;
     display: block;
   }
   h4 {
@@ -30,7 +30,7 @@ const HitComp = styled.div`
   }
   &:hover,
   &:focus {
-    background: #F7FAFC;
+    background: #f7fafc;
   }
   mark {
     color: #718096 !important;
@@ -58,12 +58,12 @@ const DocHit = ({ hit, selected }: any) =>
       <Link style={{ boxShadow: `none`, textDecoration: 'none' }} to={hit.dataguidePath}>
         <ParentTitle slug={hit.slug} nonLink={true} />
         <h3>
-          <Snippet hit={hit} attribute="title" tagName="mark" /> /{' '}
+          <Snippet hit={hit} attribute="title" highlightedTagName="mark" /> /{' '}
           <span style={{ color: 'var(--code-inner-color)' }}>
-            <Snippet hit={hit} attribute="heading" tagName="mark" />
+            <Snippet hit={hit} attribute="heading" highlightedTagName="mark" />
           </span>
         </h3>
-        <Snippet hit={hit} attribute="content" tagName="mark" />
+        <Snippet hit={hit} attribute="content" highlightedTagName="mark" />
         {hit.moreCount > 1 && <p className="more">... More results on this page</p>}
       </Link>
     </HitComp>

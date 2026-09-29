@@ -1,7 +1,13 @@
 import * as React from 'react'
 import { useState, useRef } from 'react'
-import { InstantSearch, Index, connectStateResults, connectHits } from 'react-instantsearch-dom'
-import algoliasearch from 'algoliasearch/lite'
+import {
+  Configure,
+  InstantSearch,
+  InstantSearchSSRProvider,
+  useHits,
+  useInstantSearch,
+} from 'react-instantsearch'
+import { liteClient as algoliasearch } from 'algoliasearch/lite'
 import config from '../../../config'
 import DocHit from './hitComps'
 import styled from 'styled-components'
@@ -30,7 +36,9 @@ const HitsWrapper = styled.div`
   transform: translateX(-50%);
   max-width: 1200px;
   background: #fff;
-  box-shadow: 0px 4px 8px rgba(47, 55, 71, 0.05), 0px 1px 3px rgba(47, 55, 71, 0.1);
+  box-shadow:
+    0px 4px 8px rgba(47, 55, 71, 0.05),
+    0px 1px 3px rgba(47, 55, 71, 0.1);
   border-radius: 5px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -86,75 +94,69 @@ const HitsWrapper = styled.div`
       transform: rotate(360deg);
     }
   }
-    // left: 0;
-    top: 160px;
-    // max-width: 100%;
-    border-top: 1px solid #E2E8F0;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
+  // left: 0;
+  top: 160px;
+  // max-width: 100%;
+  border-top: 1px solid #e2e8f0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
   &.header {
     top: 125px;
   }
 `
 
-const indexName = config.header.search.indexName
+const indexName = config.header.search.indexName as string
 const DEBOUNCE_TIME = 400
-const algoliaClient = algoliasearch(
-  config.header.search.algoliaAppId,
-  config.header.search.algoliaSearchKey
-)
 
-const searchClient = {
+const emptyResults = (requests: any[]) =>
+  Promise.resolve({
+    results: requests.map(() => ({
+      hits: [],
+      nbHits: 0,
+      nbPages: 0,
+      page: 0,
+      processingTimeMS: 0,
+      hitsPerPage: 0,
+      exhaustiveNbHits: false,
+      query: '',
+      params: '',
+    })),
+  })
+
+// algoliasearch v5 throws when the credentials are missing (e.g. in local
+// development without a .env file), so only create the client when configured.
+const { algoliaAppId, algoliaSearchKey } = config.header.search
+const algoliaClient =
+  algoliaAppId && algoliaSearchKey ? algoliasearch(algoliaAppId, algoliaSearchKey) : null
+
+const searchClient: any = {
   ...algoliaClient,
-  search(requests: any) {
-    if (requests.every(({ params }: any) => !params.query)) {
-      return Promise.resolve({
-        results: requests.map(() => ({
-          hits: [],
-          nbHits: 0,
-          nbPages: 0,
-          page: 0,
-          processingTimeMS: 0,
-          hitsPerPage: 0,
-          exhaustiveNbHits: false,
-          query: '',
-          params: '',
-        })),
-      })
+  search(requests: any[]) {
+    if (!algoliaClient || requests.every(({ params }: any) => !params.query)) {
+      return emptyResults(requests)
     }
 
     return algoliaClient.search(requests)
   },
 }
 
-const getHits = (children: any, res: any) => {
-  const allHits = res.hits
-  const newHits = allHits
-    .filter((h: any) => h._distinctSeqID == 0)
-    .map((x: any) => ({
-      ...x,
-      moreCount: 0,
-    }))
-  allHits.map((h: any) => {
-    const first = newHits.find((firstG: any) => firstG.slug == h.slug)
-    if (first) {
-      first.moreCount++
-    }
-  })
-  res.hits = newHits
-  return children
+const Results = ({ children }: { children: React.ReactNode }) => {
+  const { results, status, indexUiState } = useInstantSearch()
+
+  if (status === 'stalled' || results?.query === '') {
+    return <div className="loader">Searching...</div>
+  }
+
+  if (results && results.nbHits > 0) {
+    return <>{children}</>
+  }
+
+  return (
+    <div className="no-results">
+      No results for '<i>{indexUiState.query}</i>'
+    </div>
+  )
 }
-const Results = connectStateResults(
-  ({ isSearchStalled, searchState: state, searchResults: res, children }: any) =>
-    (isSearchStalled || res?.query === '' ? <div className="loader">Searching...</div> : null) ||
-    (res && res.nbHits > 0 ? (
-      getHits(children, res)
-    ) : (
-      <div className="no-results">
-        No results for '<i>{state.query}</i>'
-      </div>
-    ))
-)
 
 const createURL = (state: any) => `?${qs.stringify(state)}`
 
@@ -163,19 +165,43 @@ const searchStateToUrl = (location: any, searchState: any) =>
 
 const urlToSearchState = (location: any) => qs.parse(location.search.slice(1))
 
+const urlQuery = (location: any) => {
+  const { query } = urlToSearchState(location)
+  return typeof query === 'string' ? query : ''
+}
+
+// Keep the search query in sync when the URL changes (e.g. browser navigation)
+const SyncQueryWithUrl = ({ location }: any) => {
+  const { indexUiState, setIndexUiState, refresh } = useInstantSearch()
+
+  // The instance starts with empty initial results (see below), so search for a
+  // query that is already in the URL on page load
+  React.useEffect(() => {
+    if (indexUiState.query) refresh()
+  }, [])
+
+  React.useEffect(() => {
+    const query = urlQuery(location)
+    if ((indexUiState.query || '') !== query) {
+      setIndexUiState((state) => ({ ...state, query }))
+    }
+  }, [location])
+
+  return null
+}
+
 export default function Search({ hitsStatus, location, header, mobile = false }: any) {
-  const [searchState, setSearchState] = useState(urlToSearchState(location))
-  const [query, setQuery] = useState(``)
+  const [query, setQuery] = useState(urlQuery(location))
   const [showHits, setShowHits] = React.useState(false)
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const debouncedSetStateRef = useRef<any>(null)
-  const [cleared, clearInput] = useState<boolean>(false);
-
+  const currentQueryRef = useRef(urlQuery(location))
+  const [cleared, clearInput] = useState<boolean>(false)
 
   const hideSearch = () => {
     setShowHits(false)
     setQuery(``)
-    if (searchState.query === '' && debouncedSetStateRef.current) {
+    if (currentQueryRef.current === '' && debouncedSetStateRef.current) {
       clearTimeout(debouncedSetStateRef.current)
       debouncedSetStateRef.current = setTimeout(() => {
         navigate(location.href.split('?')[0])
@@ -185,26 +211,25 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
 
   const showSearch = () => setShowHits(true)
 
+  const onStateChange = ({ uiState, setUiState }: any) => {
+    const indexState = uiState[indexName] || {}
+    const newQuery = indexState.query || ''
+    currentQueryRef.current = newQuery
+    setQuery(newQuery)
 
-  const onSearchStateChange = (updatedSearchState: any) => {
-    setQuery(updatedSearchState.query)
-    clearTimeout(debouncedSetStateRef.current)
+    if (newQuery !== urlQuery(location)) {
+      clearTimeout(debouncedSetStateRef.current)
+      debouncedSetStateRef.current = setTimeout(() => {
+        navigate(searchStateToUrl(location, { query: newQuery }))
+      }, DEBOUNCE_TIME)
+    }
 
-    debouncedSetStateRef.current = setTimeout(() => {
-      navigate(searchStateToUrl(location, updatedSearchState))
-    }, DEBOUNCE_TIME)
-
-    setSearchState(updatedSearchState)
+    setUiState(uiState)
   }
 
   React.useEffect(() => {
     hitsStatus(showHits)
   }, [showHits, query])
-
-  React.useEffect(() => {
-    setSearchState(urlToSearchState(location))
-    setQuery(searchState.query)
-  }, [location])
 
   const incrementIndex = () => {
     setSelectedIndex((prevCount: number) => {
@@ -226,51 +251,66 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
       }
     })
   }
-  
+
   return (
-    <InstantSearch
-      searchClient={searchClient}
-      indexName={indexName}
-      onSearchStateChange={onSearchStateChange}
-      searchState={searchState}
-      createURL={createURL}
-    >
-      <Overlay visible={showHits} hideSearch={hideSearch} clearInput={clearInput}/>
-      <CustomSearchBox
-        onFocus={showSearch}
-        isOpened={showHits}
-        header={header}
-        mobile={mobile}
-        clear={cleared}
-        closeSearch={hideSearch}
-        upClicked={decrementIndex}
-        downClicked={incrementIndex}
-      />
-      {query && query !== '' && showHits && (
-        <HitsWrapper className={`${showHits ? 'show' : ''} ${header ? 'header' : ''}`} onClick={hideSearch}>
-          <Index key={indexName} indexName={indexName}>
+    // <InstantSearch> renders nothing until it has started, which would leave the
+    // search box out of the static HTML. Starting it with empty initial results
+    // renders it right away, on the server and on the client.
+    <InstantSearchSSRProvider initialResults={{}}>
+      <InstantSearch
+        searchClient={searchClient}
+        indexName={indexName}
+        initialUiState={{ [indexName]: { query: urlQuery(location) } }}
+        onStateChange={onStateChange}
+        future={{ preserveSharedStateOnUnmount: true }}
+      >
+        {/* The highlight tags the hits widget uses, so that mounting it doesn't send another request */}
+        <Configure highlightPreTag="__ais-highlight__" highlightPostTag="__/ais-highlight__" />
+        <SyncQueryWithUrl location={location} />
+        <Overlay visible={showHits} hideSearch={hideSearch} clearInput={clearInput} />
+        <CustomSearchBox
+          onFocus={showSearch}
+          isOpened={showHits}
+          header={header}
+          mobile={mobile}
+          clear={cleared}
+          closeSearch={hideSearch}
+          upClicked={decrementIndex}
+          downClicked={incrementIndex}
+        />
+        {query && query !== '' && showHits && (
+          <HitsWrapper
+            className={`${showHits ? 'show' : ''} ${header ? 'header' : ''}`}
+            onClick={hideSearch}
+          >
             <Results>
               <Hits hitComponent={DocHit} selectedIndex={selectedIndex} />
             </Results>
-          </Index>
-        </HitsWrapper>
-      )}
-    </InstantSearch>
+          </HitsWrapper>
+        )}
+      </InstantSearch>
+    </InstantSearchSSRProvider>
   )
 }
 
-const Hits = connectHits(
-  ({ hits, hitComponent, onMouseHoverHit, selectedIndex, onMouseLeaverHits }: any) => (
-    <ul className="ais-Hits-list" onMouseLeave={onMouseLeaverHits}>
-      {hits.map((hit: any, index: number) => (
+// Only show the first hit per page (the index uses `distinct`), and count how
+// many more hits the same page has.
+const Hits = ({ hitComponent: HitComponent, selectedIndex }: any) => {
+  const { items } = useHits<any>()
+  const hits = items
+    .filter((hit) => hit._distinctSeqID == 0)
+    .map((hit) => ({
+      ...hit,
+      moreCount: items.filter((other) => other.slug == hit.slug).length,
+    }))
+
+  return (
+    <ul className="ais-Hits-list">
+      {hits.map((hit, index) => (
         <li key={hit.objectID} className="ais-Hits-item">
-          {React.createElement(hitComponent, {
-            hit,
-            selected: index === selectedIndex,
-            onMouseHover: () => onMouseHoverHit(index),
-          })}
+          <HitComponent hit={hit} selected={index === selectedIndex} />
         </li>
       ))}
     </ul>
   )
-)
+}

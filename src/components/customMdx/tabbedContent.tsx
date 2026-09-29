@@ -9,9 +9,9 @@ type CodeBlockProps = CodeProps & React.ReactNode
 
 const TabbedContent = ({ tabs, children }: CodeBlockProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0)
-  const tabContent =
-    children &&
-    children.filter((child: any) => child.props && child.props.originalType === 'tab')[activeIndex]
+  const tabContent = React.Children.toArray(children).filter((child: any) => child.type === 'tab')[
+    activeIndex
+  ]
 
   return (
     <Wrapper>

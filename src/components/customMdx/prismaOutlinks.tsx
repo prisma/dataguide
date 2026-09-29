@@ -12,7 +12,7 @@ type PrismaOutlinkProps = React.ReactNode & OutlinkProps
 
 const PrismaOutlinks = ({ children, inner }: PrismaOutlinkProps) => {
   return (
-    <PrismaOutlinksWrapper inner={inner}>
+    <PrismaOutlinksWrapper $inner={inner}>
       {!inner && 'RELATED ON PRISMA.IO'}
 
       {children}
@@ -29,12 +29,12 @@ const PrismaOutlinks = ({ children, inner }: PrismaOutlinkProps) => {
 
 export default PrismaOutlinks
 
-const PrismaOutlinksWrapper = styled.div<{ inner?: boolean }>`
+const PrismaOutlinksWrapper = styled.div<{ $inner?: boolean }>`
   background: #ebf8ff;
   color: #63b3ed;
-  ${(p) => (!p.inner ? 'padding: 20px 40px;' : 'padding: 24px;')}
-  ${(p) => (!p.inner ? 'margin: 0 -40px;' : 'margin: 16px 0;')}
-  ${(p) => (p.inner ? 'border-radius: 4px;' : '')}
+  ${(p) => (!p.$inner ? 'padding: 20px 40px;' : 'padding: 24px;')}
+  ${(p) => (!p.$inner ? 'margin: 0 -40px;' : 'margin: 16px 0;')}
+  ${(p) => (p.$inner ? 'border-radius: 4px;' : '')}
   font-size: 14px;
 
   .list {

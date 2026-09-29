@@ -24,7 +24,60 @@ interface PathProps {
 //   colorPrimary: '#663399',
 // }
 
-type LayoutProps = React.ReactNode & RouterProps & PathProps
+type LayoutProps = React.PropsWithChildren<RouterProps & PathProps>
+
+const Wrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 0 10px;
+`
+
+const Content = styled.article<{ $moveUp?: boolean }>`
+  max-width: 880px;
+  width: 880px;
+  margin: ${(p) => (p.$moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
+  position: relative;
+  z-index: 100;
+  @media (min-width: 0px) and (max-width: 1024px) {
+    width: 100%;
+    max-width: 100%;
+  }
+`
+
+const MaxWidth = styled.div<{ $noIndex: boolean }>`
+  > section {
+    background: var(--white-color);
+    box-shadow:
+      0px 4px 8px rgba(47, 55, 71, 0.05),
+      0px 1px 3px rgba(47, 55, 71, 0.1);
+    border-radius: 5px;
+    margin-top: 1rem;
+    padding: 2rem 40px;
+    &.top-section {
+      padding-top: 40px;
+    }
+    @media (min-width: 0px) and (max-width: 1024px) {
+      margin-top: 0.5rem;
+    }
+    @media (min-width: 0px) and (max-width: 767px) {
+      padding: 24px;
+      &.top-section {
+        padding-top: 24px;
+      }
+    }
+    &:last-of-type {
+      padding-bottom: ${(p) => p.$noIndex && '164px'};
+    }
+  }
+`
+
+const NotMobile = styled.section`
+  display: flex;
+  @media (min-width: 0px) and (max-width: 1024px) {
+    display: none;
+  }
+`
 
 const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug }) => {
   const { site } = useLayoutQuery()
@@ -32,57 +85,6 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
   const isIndexPage = slug && slug.includes('index')
 
   // const isHomePage = useLocation().pathname === '/'
-
-  const Wrapper = styled.div`
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    padding: 0 10px;
-  `
-
-  const Content = styled.article<{ fullWidth?: boolean }>`
-    max-width: 880px;
-    width: 880px;
-    margin: ${(p) => (p.moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
-    position: relative;
-    z-index: 100;
-    @media (min-width: 0px) and (max-width: 1024px) {
-      width: 100%;
-      max-width: 100%;
-    }
-  `
-
-  const MaxWidth = styled.div<{ noIndex: boolean }>`
-    > section {
-      background: var(--white-color);
-      box-shadow: 0px 4px 8px rgba(47, 55, 71, 0.05), 0px 1px 3px rgba(47, 55, 71, 0.1);
-      border-radius: 5px;
-      margin-top: 1rem;
-      padding: 2rem 40px;
-      &.top-section {
-        padding-top: 40px;
-      }
-      @media (min-width: 0px) and (max-width: 1024px) {
-        margin-top: 0.5rem;
-      }
-      @media (min-width: 0px) and (max-width: 767px) {
-        padding: 24px;
-        &.top-section {
-          padding-top: 24px;
-        }
-      }
-      &:last-of-type {
-        padding-bottom: ${(p) => p.noIndex && '164px'};
-      }
-    }
-  `
-
-  const NotMobile = styled.section`
-    display: flex;
-    @media (min-width: 0px) and (max-width: 1024px) {
-      display: none;
-    }
-  `
 
   return (
     // <ThemeProvider theme={theme}>
@@ -95,8 +97,8 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
             <Sidebar isMobile={false} slug={slug} />
           </NotMobile>
         )}
-        <Content moveUp={isHomePage}>
-          <MaxWidth noIndex={!isIndexPage}>{children}</MaxWidth>
+        <Content $moveUp={isHomePage}>
+          <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
         </Content>
       </Wrapper>
       <Footer footerProps={footer} isHomePage={isHomePage} />

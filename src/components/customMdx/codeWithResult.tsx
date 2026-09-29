@@ -1,14 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type CodeWithResultProps = React.ReactNode
+type CodeWithResultProps = { children?: React.ReactNode }
+
+export const Cmd = ({ children }: CodeWithResultProps) => <div>{children}</div>
+export const CmdResult = ({ children }: CodeWithResultProps) => <div>{children}</div>
 
 const CodeWithResult = ({ children }: CodeWithResultProps) => {
   const [showResult, setShowResult] = React.useState(false)
-  const cmd =
-    children && children.filter((child: any) => child.props && child.props.mdxType === 'Cmd')
-  const result =
-    children && children.filter((child: any) => child.props && child.props.mdxType === 'CmdResult')
+  const childArray = React.Children.toArray(children) as React.ReactElement[]
+  const cmd = childArray.filter((child) => child.type === Cmd)
+  const result = childArray.filter((child) => child.type === CmdResult)
 
   const toggleResult = () => setShowResult(!showResult)
 

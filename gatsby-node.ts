@@ -1,6 +1,20 @@
-import siteConfig from "./config"
+import siteConfig from './config'
 
 const path = require('path')
+
+// Some articles use a relative path to an image file as `metaImage`. Without an
+// explicit type, Gatsby may infer the field as `File` (depending on which article
+// it looks at first) and break the queries that expect a string.
+exports.createSchemaCustomization = ({ actions }: any) => {
+  actions.createTypes(`
+    type Mdx implements Node {
+      frontmatter: MdxFrontmatter
+    }
+    type MdxFrontmatter {
+      metaImage: String
+    }
+  `)
+}
 
 exports.onCreateNode = ({ node, getNode, actions }: any) => {
   const { createNodeField } = actions
@@ -34,9 +48,9 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
 
   const redirects = siteConfig.redirects
 
-  redirects.forEach(redirect => {
+  redirects.forEach((redirect) => {
     createRedirect(redirect)
-  });
+  })
   const result = await graphql(`
     query {
       allMdx {
@@ -73,7 +87,7 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
   posts.forEach((node: any) => {
     createPage({
       path: node.fields.modSlug ? node.fields.modSlug.replace(/\d{2,}-/g, '') : '/',
-      component: path.resolve('./src/templates/docs.tsx'),
+      component: `${path.resolve('./src/templates/docs.tsx')}?__contentFilePath=${node.internal.contentFilePath}`,
       context: {
         id: node.fields.id,
         seoTitle: node.frontmatter.metaTitle || node.frontmatter.title,
@@ -90,7 +104,6 @@ exports.onCreateWebpackConfig = ({ actions }: any) => {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: {
         $components: path.resolve(__dirname, 'src/components'),
-        buble: '@philpl/buble', // to reduce bundle size
       },
     },
   })
