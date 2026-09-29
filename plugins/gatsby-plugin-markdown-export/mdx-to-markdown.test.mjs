@@ -148,3 +148,13 @@ test('inline spacing expressions are kept', () => {
     'A [link](https://example.com) here\n'
   )
 })
+
+test('status notices become a blockquote that leads with their title', () => {
+  const markdown = convert(
+    '<StatusNotice>\n\nWritten for MongoDB 4.4. Follow [the current guide](https://www.mongodb.com/docs/manual/installation/).\n\nThe concepts still apply.\n\n</StatusNotice>'
+  )
+  assert.equal(
+    markdown,
+    '> **This article is out of date.** Written for MongoDB 4.4. Follow [the current guide](https://www.mongodb.com/docs/manual/installation/).\n>\n> The concepts still apply.\n'
+  )
+})

@@ -15,6 +15,7 @@ import Sidenote from './sideNote'
 import PrismaOutlinks from './prismaOutlinks'
 import PostgresCallout from '../cta/PostgresCallout'
 import AnchorItem from './anchor-item'
+import StatusNotice from './statusNotice'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
@@ -47,6 +48,7 @@ export default {
   Footnote,
   Sidenote,
   AnchorItem,
+  StatusNotice,
   img: ({ src, ...props }: any) => {
     const newSrc = src.replace(/(\..\/)/g, '')
     return (

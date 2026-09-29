@@ -5,6 +5,12 @@ metaDescription: 'This article assesses the type safety of popular TypeScript OR
 metaImage: '/social/typescript-orms-2022.png'
 ---
 
+<StatusNotice title="This evaluation is from February 2022">
+
+The libraries were evaluated with the versions that were current in February 2022, and their TypeScript support has changed since. Check each library's current documentation before relying on these results. This article was first published on October 2, 2020.
+
+</StatusNotice>
+
 ## Introduction
 
 Evaluating the level of type safety a TypeScript ORM provides out-of-the-box can be time consuming. This article briefly assesses the type safety of libraries considered in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries).
@@ -18,8 +24,6 @@ This article will look at the following:
 - **Record Fetching**: When fetching data, are objects type-safe, even for partial models and relations?
 
 This article will assume some familiarity with TypeScript and type safety. To learn more, please consult the official [TypeScript documentation](https://www.typescriptlang.org/docs). It will also assume some familiarity with ORMs and query builders. To learn more about these database tools, please see [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms), also from Prisma's [Data Guide](https://www.prisma.io/dataguide).
-
-**Note:** This article was originally published on October 2, 2020. It was most recently updated on February 15, 2022.
 
 ## Prisma
 

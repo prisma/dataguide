@@ -133,6 +133,25 @@ export const mdxToMarkdown = (source, context) => {
           ...(note ? [{ type: 'footnoteReference', identifier, label: identifier }] : []),
         ]
       }
+      case 'StatusNotice': {
+        const title = String(attribute(node, 'title') ?? 'This article is out of date')
+        const [first, ...rest] = unwrap(node)
+        const lead = first?.type === 'paragraph' ? first : paragraph([])
+        lead.children = [
+          { type: 'strong', children: [text(`${title}.`)] },
+          text(' '),
+          ...lead.children,
+        ]
+        return [
+          {
+            type: 'blockquote',
+            children: [
+              lead,
+              ...(first?.type === 'paragraph' ? rest : [first, ...rest].filter(Boolean)),
+            ],
+          },
+        ]
+      }
       case 'CmdResult':
         return [paragraph([text('Output:')]), ...unwrap(node)]
       case 'FileWithIcon':
