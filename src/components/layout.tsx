@@ -13,6 +13,7 @@ import '../styles/layout.css'
 import Sidebar from './sidebar'
 import Banner from './banner'
 import { LocationProvider, PageLocation } from '../hooks/useLocation'
+import { isIndexSlug } from '../utils/navigation'
 
 interface PathProps {
   isHomePage?: boolean
@@ -89,7 +90,7 @@ const NotMobile = styled.section`
 const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug, location }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
-  const isIndexPage = slug && slug.includes('index')
+  const isIndexPage = isIndexSlug(slug)
 
   // const isHomePage = useLocation().pathname === '/'
 

@@ -53,6 +53,7 @@
     "dev": "gatsby develop",
     "serve": "npm run build && gatsby serve --prefix-paths -o",
     "prettify": "prettier . --write --check",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test 'src/**/*.test.ts' 'plugins/**/*.test.mjs'",
     "postinstall": "husky",
     "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install"
   },
