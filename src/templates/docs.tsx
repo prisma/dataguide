@@ -1,11 +1,10 @@
-import { RouterProps } from '@reach/router'
 import * as React from 'react'
 import { ArticleQueryData } from '../interfaces/Article.interface'
 import Layout from '../components/layout'
 import TopSection from '../components/topSection'
 import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
-import { graphql } from 'gatsby'
+import { graphql, PageProps } from 'gatsby'
 import { CreatePageContext } from '../interfaces/Layout.interface'
 import SocialShareSection from '../components/socialShareSection'
 import NextPrevious from '../components/nextPrevious'
@@ -14,7 +13,7 @@ import EndCta from '../components/cta/EndCta'
 import MobileStickyCta from '../components/cta/MobileStickyCta'
 
 type ArticleLayoutProps = ArticleQueryData &
-  RouterProps &
+  Pick<PageProps, 'location'> &
   CreatePageContext & { children?: React.ReactNode }
 
 const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
@@ -64,9 +63,17 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
 export default ArticleLayout
 
 export const Head = ({
+  location,
   pageContext: { seoTitle, seoDescription, metaImage },
 }: ArticleLayoutProps) => {
-  return <SEO title={seoTitle} description={seoDescription} image={metaImage || undefined} />
+  return (
+    <SEO
+      location={location}
+      title={seoTitle}
+      description={seoDescription}
+      image={metaImage || undefined}
+    />
+  )
 }
 
 export const query = graphql`

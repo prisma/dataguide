@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import ArrowRight from '../../icons/ArrowRight'
 // import { darken } from 'polished'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../../hooks/useLocation'
 import { withPrefix } from 'gatsby'
 import isAbsoluteUrl from 'is-absolute-url'
 

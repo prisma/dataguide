@@ -1,4 +1,3 @@
-import { RouterProps } from '@reach/router'
 import * as React from 'react'
 import styled from 'styled-components'
 import { useLayoutQuery } from '../hooks/useLayoutQuery'
@@ -10,10 +9,12 @@ import HomePageHeader from '../components/homePageHeader'
 import '../styles/layout.css'
 import Sidebar from './sidebar'
 import Banner from './banner'
+import { LocationProvider, PageLocation } from '../hooks/useLocation'
 
 interface PathProps {
   isHomePage?: boolean
   slug?: string
+  location: PageLocation
 }
 
 // interface ThemeProps {
@@ -24,7 +25,7 @@ interface PathProps {
 //   colorPrimary: '#663399',
 // }
 
-type LayoutProps = React.PropsWithChildren<RouterProps & PathProps>
+type LayoutProps = React.PropsWithChildren<PathProps>
 
 const Wrapper = styled.div`
   display: flex;
@@ -79,7 +80,7 @@ const NotMobile = styled.section`
   }
 `
 
-const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug, location }) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
   const isIndexPage = slug && slug.includes('index')
@@ -88,21 +89,23 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
 
   return (
     // <ThemeProvider theme={theme}>
-    <MDXProvider components={customMdx}>
-      {!isHomePage && <Header headerProps={header} />}
-      {isHomePage && <HomePageHeader />}
-      <Wrapper>
-        {!isHomePage && (
-          <NotMobile>
-            <Sidebar isMobile={false} slug={slug} />
-          </NotMobile>
-        )}
-        <Content $moveUp={isHomePage}>
-          <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
-        </Content>
-      </Wrapper>
-      <Footer footerProps={footer} isHomePage={isHomePage} />
-    </MDXProvider>
+    <LocationProvider value={location}>
+      <MDXProvider components={customMdx}>
+        {!isHomePage && <Header headerProps={header} />}
+        {isHomePage && <HomePageHeader />}
+        <Wrapper>
+          {!isHomePage && (
+            <NotMobile>
+              <Sidebar isMobile={false} slug={slug} />
+            </NotMobile>
+          )}
+          <Content $moveUp={isHomePage}>
+            <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
+          </Content>
+        </Wrapper>
+        <Footer footerProps={footer} isHomePage={isHomePage} />
+      </MDXProvider>
+    </LocationProvider>
     // </ThemeProvider>
   )
 }

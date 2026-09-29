@@ -6,7 +6,7 @@ import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
 import { withPrefix } from 'gatsby'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../hooks/useLocation'
 import { headerCtaUrl } from '../cta'
 
 type HeaderViewProps = {

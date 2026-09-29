@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type { PageProps } from 'gatsby'
 import Layout from '../components/layout'
 import styled from 'styled-components'
 
@@ -15,8 +16,8 @@ const NotFoundWrapper = styled.div`
   }
 `
 
-const NotFoundPage = () => (
-  <Layout>
+const NotFoundPage = ({ location }: PageProps) => (
+  <Layout location={location}>
     <NotFoundWrapper>
       <h1>404 | NOT FOUND</h1>
       You just hit a route that doesn&#39;t exist!

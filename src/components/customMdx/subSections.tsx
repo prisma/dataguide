@@ -3,7 +3,7 @@ import * as React from 'react'
 import { calculateTreeData } from '../../utils/treeData'
 import { AllArticles } from '../../interfaces/AllArticles.interface'
 import { useAllArticlesQuery } from '../../hooks/useAllArticlesQuery'
-import { useLocation } from '@reach/router'
+import { useLocation } from '../../hooks/useLocation'
 import styled from 'styled-components'
 import { withPrefix } from 'gatsby'
 
