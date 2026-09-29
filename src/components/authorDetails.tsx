@@ -4,7 +4,7 @@ import authorsJSON from '../../authors.json'
 import { withPrefix } from 'gatsby'
 
 const SingleAuthor = ({ authInfo }: any) => {
-  const author = authorsJSON[authInfo]
+  const author = authorsJSON[authInfo as keyof typeof authorsJSON]
   return (
     <div className="author-item">
       {author.avatar && <img alt={author.name} src={withPrefix(author.avatar)} />}

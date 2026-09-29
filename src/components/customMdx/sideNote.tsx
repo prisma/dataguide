@@ -5,7 +5,7 @@ interface SidenoteProps {
   title?: string
 }
 
-type SidenoteInfoProps = React.ReactNode & SidenoteProps
+type SidenoteInfoProps = React.PropsWithChildren<SidenoteProps>
 
 const Sidenote = ({ children, ...props }: SidenoteInfoProps) => {
   return (

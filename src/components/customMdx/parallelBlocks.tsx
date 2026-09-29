@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type CodeBlockProps = React.ReactNode
+type CodeBlockProps = { children?: React.ReactNode }
 
 const ParallelBlocks = ({ children }: CodeBlockProps) => {
   const blockContent = React.Children.toArray(children).filter(

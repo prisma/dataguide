@@ -1,12 +1,19 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
-const HTML = (props: any) => {
+interface HTMLProps {
+  htmlAttributes: React.HtmlHTMLAttributes<HTMLHtmlElement>
+  headComponents: React.ReactNode
+  bodyAttributes: React.HTMLAttributes<HTMLBodyElement>
+  preBodyComponents: React.ReactNode
+  body: string
+  postBodyComponents: React.ReactNode
+}
+
+const HTML = (props: HTMLProps) => {
   return (
     <html {...props.htmlAttributes}>
       <head>
         <meta charSet="utf-8" />
-        
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         {props.headComponents}
       </head>
@@ -17,15 +24,6 @@ const HTML = (props: any) => {
       </body>
     </html>
   )
-}
-
-HTML.propTypes = {
-  htmlAttributes: PropTypes.object,
-  headComponents: PropTypes.array,
-  bodyAttributes: PropTypes.object,
-  preBodyComponents: PropTypes.array,
-  body: PropTypes.string,
-  postBodyComponents: PropTypes.array,
 }
 
 export default HTML

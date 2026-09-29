@@ -11,7 +11,6 @@ import '@fontsource-variable/sora'
 import '@fontsource-variable/geist-mono'
 import '../styles/layout.css'
 import Sidebar from './sidebar'
-import Banner from './banner'
 import { LocationProvider, PageLocation } from '../hooks/useLocation'
 import { isIndexSlug } from '../utils/navigation'
 

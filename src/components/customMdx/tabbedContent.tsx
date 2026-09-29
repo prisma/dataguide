@@ -5,7 +5,7 @@ interface CodeProps {
   tabs?: any[]
 }
 
-type CodeBlockProps = CodeProps & React.ReactNode
+type CodeBlockProps = React.PropsWithChildren<CodeProps>
 
 const TabbedContent = ({ tabs, children }: CodeBlockProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0)

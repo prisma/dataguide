@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type FootnoteProps = React.ReactNode
+type FootnoteProps = { children?: React.ReactNode }
 
 const Footnote = ({ children }: FootnoteProps) => {
   const [tooltipOpen, setTooltipOpen] = React.useState(false)
-  const ref = React.useRef(null)
+  const ref = React.useRef<HTMLElement>(null)
   const openTooltip = () => setTooltipOpen(true)
 
   React.useEffect(() => {

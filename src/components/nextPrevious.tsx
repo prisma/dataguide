@@ -74,7 +74,7 @@ const NextPreviousWrapper = styled.div`
 
 const NextPrevious = ({ slug }: { slug: string }) => {
   const { allMdx }: AllArticles = useAllArticlesQuery()
-  const nav = allMdx.edges
+  const nav = (allMdx.edges ?? [])
     .filter((edge) => !isIndexSlug(edge.node.fields.slug) && !edge.node.frontmatter.hidePage)
     .map((edge) => ({ title: edge.node.frontmatter.title, url: edge.node.fields.modSlug }))
   const { previous, next } = getNavNeighbours(nav, slug)
