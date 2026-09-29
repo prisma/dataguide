@@ -25,7 +25,7 @@ WHERE
 		id = 1;
 ```
 
-The basic structure involves three seperate clauses:
+The basic structure involves three separate clauses:
 
 - specifying a table to act on
 - providing the columns you wish to update as well as their new values
@@ -197,16 +197,16 @@ WHERE
         color = 'blue';
 ```
 
-This syntax allows you to update in bulk depending on the `WHERE` critera. In this case the columns are updated for any record where the `color` column is `'blue'`.
+This syntax allows you to update in bulk depending on the `WHERE` criteria. In this case the columns are updated for any record where the `color` column is `'blue'`.
 
 </details>
 
 <details>
 <summary>How do you return records modified by the `UPDATE` command in SQLite?</summary>
 
-By default, SQLite does not show the nummber of rows impacted by an `UPDATE` statement.
+By default, SQLite does not show the number of rows impacted by an `UPDATE` statement.
 
-However, SQLite does have the `RETURNING` clause to return all or part of the records that were modifed.
+However, SQLite does have the `RETURNING` clause to return all or part of the records that were modified.
 
 The basic syntax looks like this with `*` specifying to return all column names:
 
