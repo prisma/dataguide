@@ -1,0 +1,7 @@
+{
+  "name": "gatsby-plugin-check-links",
+  "version": "1.0.0",
+  "description": "Checks that every internal link and anchor in the built site resolves",
+  "main": "index.js",
+  "license": "Apache-2.0"
+}

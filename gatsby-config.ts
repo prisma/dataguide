@@ -65,7 +65,6 @@ let plugins: any = [
             redirects: dataguideConfig.redirects,
           },
         },
-        'gatsby-remark-check-links-numberless',
         {
           resolve: 'gatsby-remark-copy-linked-files',
           options: {
@@ -139,6 +138,13 @@ let plugins: any = [
       // Moved elsewhere: production redirects these pages
       exclude: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
       repository: 'https://github.com/prisma/dataguide/blob/main',
+    },
+  },
+  {
+    // Fails the build on broken internal links and anchors, checked in the rendered pages
+    resolve: 'gatsby-plugin-check-links',
+    options: {
+      redirects: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
     },
   },
 ]
