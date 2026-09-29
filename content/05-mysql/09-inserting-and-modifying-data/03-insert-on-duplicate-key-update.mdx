@@ -4,6 +4,7 @@ metaTitle: 'ON DUPLICATE KEY UPDATE to upsert and modify data in MySQL'
 metaDescription: "The `INSERT...ON DUPLICATE KEY UPDATE` clause lets you handle scenarios where a record should be modified if it exists and added if it does not exist."
 metaImage: '/social/generic-mysql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -83,6 +84,8 @@ Query OK, 2 rows affected (0.00 sec)
 
 MySQL considers an `ON DUPLICATE KEY UPDATE` where an update occurs to the existing row as two rows affected.  If no conflict had occurred and the new record had been added, it would instead show one row affected.  If an existing record was found but the columns already had the correct value, no rows would be reported as affected.
 
+The clause isn't limited to the primary key: a conflict with any `UNIQUE` index on the table triggers the update as well.  If a new row conflicts with different existing rows on more than one unique index, MySQL only updates one of them, so be careful using `ON DUPLICATE KEY UPDATE` on tables with several unique indexes.
+
 You can confirm the row has been updated with the new information by typing:
 
 ```sql
@@ -103,7 +106,7 @@ SELECT * FROM director;
 
 If you are attempting to insert or update multiple records at the same time, the value to set each column likely depends on which record or records conflicted.  For instance if you are trying to insert four new rows, but the third row has an `id` column that conflicts with an existing record, you most likely want to update the existing row based on the data you had in mind for the third row.
 
-MySQL allows you to reference that proposed data using the [`VALUES()` function](https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_values).  The function takes a column name as an argument and provides the value given in the `INSERT` portion of the statement.
+MySQL allows you to reference that proposed data by giving the new rows an [alias](https://dev.mysql.com/doc/refman/8.4/en/insert-on-duplicate.html).  Add `AS <alias>` after the rows in the `VALUES` clause, and then refer to the proposed value for a column as `<alias>.<column>` in the `ON DUPLICATE KEY UPDATE` clause.
 
 The basic syntax looks like this:
 
@@ -114,12 +117,15 @@ VALUES
     (value3, value4),
     (value5, value6),
     (value7, value8)
+AS new
 ON DUPLICATE KEY UPDATE
-    <column1> = VALUES(<column1>),
-    <column2> = VALUES(<column2>);
+    <column1> = new.<column1>,
+    <column2> = new.<column2>;
 ```
 
 This tells MySQL to use the data that is associated with the conflicting row to update the values.
+
+Older code often uses the [`VALUES()` function](https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_values) for this instead, as in `<column1> = VALUES(<column1>)`.  Row aliases were added in MySQL 8.0.19, and the `VALUES()` form has been deprecated since MySQL 8.0.20.  It still works, but every statement that uses it produces a deprecation warning, so use a row alias in new code.
 
 To see how this works, let's go back to the `director` table from before:
 
@@ -157,15 +163,16 @@ VALUES
     (4, 'meg'),
     (2, 'robert'),
     (5, 'tamara')
+AS new
 ON DUPLICATE KEY UPDATE
-    name = VALUES(name)
+    name = new.name;
 ```
 
 MySQL would accept the statement, inserting two new rows and updating one where it conflicted with an existing record (there is already a record with an `id` of "2"):
 
-```
-Query OK, 4 rows affected, 1 warning (0.01 sec)
-Records: 3  Duplicates: 1  Warnings: 1
+```text
+Query OK, 4 rows affected (0.01 sec)
+Records: 3  Duplicates: 1  Warnings: 0
 ```
 
 If you view the table's data, you can see that the two new rows appear as expected and the values of the conflicting row have been updated with the appropriate new information:
@@ -188,4 +195,4 @@ SELECT * FROM director;
 
 ## Conclusion
 
-MySQL's `INSERT...ON DUPLICATE KEY UPDATE` construct allows you to insert data while avoiding conflicts with existing records.  Combined with the `VALUES()` function, you can use it to make contextual updates to records that already exist without issuing multiple statements.  This powerful feature can help you minimize the amount of checks and conditional logic you have to use outside of your SQL statements.
+MySQL's `INSERT...ON DUPLICATE KEY UPDATE` construct allows you to insert data while avoiding conflicts with existing records.  Combined with a row alias that refers to the values you tried to insert, you can use it to make contextual updates to records that already exist without issuing multiple statements.  This powerful feature can help you minimize the amount of checks and conditional logic you have to use outside of your SQL statements.
