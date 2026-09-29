@@ -212,8 +212,7 @@ SHOW CREATE USER 'useradmin'@'localhost'\G
 
 ```
 *************************** 1. row ***************************
-CREATE USER for useradmin@localhost: CREATE USER 'useradmin'@'localhost' IDENTIFIED WITH 'caching_sha2_password' AS '$A$005$O
-                                              Rl7lM;@Gt{roB4EWchqDdYM142Lq7pfzcCNiK4yUxnRBlrAgr0sE3' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK PASSWORD HISTORY DEFAULT PASSWORD REUSE INTERVAL DEFAULT PASSWORD REQUIRE CURRENT DEFAULT
+CREATE USER for useradmin@localhost: CREATE USER `useradmin`@`localhost` IDENTIFIED WITH 'caching_sha2_password' AS '$A$005$|F3TtVd/OEY67BN!2_LQmHdgOygOo18xuNBi.DP2eMEmp0/nl1wHaeNfoIqs.' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK PASSWORD HISTORY DEFAULT PASSWORD REUSE INTERVAL DEFAULT PASSWORD REQUIRE CURRENT DEFAULT
 1 row in set (0.00 sec)
 ```
 
@@ -255,13 +254,22 @@ You can also change the mechanism or plugin used to authenticate an account.
 
 In an earlier example, we configured an account called `'mary'@'localhost'` to use Unix socket authentication. If we later want to change that account to use conventional password authentication, we can use the `ALTER USER` command again.
 
-First, identify the default authentication plugin for your server. If it's a password-based authentication method, it's probably best to reuse the default selection:
+First, identify the default authentication plugin for your server. If it's a password-based authentication method, it's probably best to reuse the default selection. The default is controlled by the `authentication_policy` variable:
 
 ```sql
-SHOW VARIABLES LIKE 'default_authentication_plugin';
+SHOW VARIABLES LIKE 'authentication_policy';
 ```
 
-In this case, the default authentication plugin is `caching_sha2_password`, so we'll use that when we switch to password authentication.
+```text
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| authentication_policy | *,,   |
++-----------------------+-------+
+1 row in set (0.01 sec)
+```
+
+A `*` without a plugin name in the first position means that new accounts use MySQL's default plugin, `caching_sha2_password`, so we'll use that when we switch to password authentication. (Older guides check the `default_authentication_plugin` variable instead. It was removed in MySQL 8.4, where that query returns an empty set.)
 
 Now, change `'mary'@'localhost'` to use the `caching_sha2_password` plugin with a new password:
 
@@ -270,6 +278,8 @@ ALTER USER 'mary'@'localhost' IDENTIFIED WITH 'caching_sha2_password' BY '<marys
 ```
 
 The `'mary'@'localhost'` user will no longer be able to login using Unix socket authentication, but they can log in using the provided password.
+
+You may see older guides use the `mysql_native_password` plugin instead, usually for compatibility with old client libraries. That plugin is deprecated and disabled by default in MySQL 8.4, where creating or altering an account to use it fails with `ERROR 1524 (HY000): Plugin 'mysql_native_password' is not loaded`, and it is removed in MySQL 9.0. Use `caching_sha2_password` for password authentication instead.
 
 ## How do you login to MySQL?
 
