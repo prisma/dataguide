@@ -7,14 +7,27 @@ import useWindowDimensions from '../hooks/useWindowDimensions'
 
 const SearchBoxDiv = styled.div`
   display: flex;
-  height: 40px;
-  background: #f7fafc;
-  border: 1px solid #cbd5e0;
-  box-shadow: -4px -4px 32px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  padding: 10px 26px;
+  align-items: center;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  border-radius: 999px;
+  padding: 0 16px;
   max-width: 300px;
   width: 100%;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
 
   @media (max-width: 1024px) {
     margin: 0 auto;
@@ -26,14 +39,13 @@ const SearchBoxDiv = styled.div`
   }
 
   &.header {
-    height: 16px;
-    padding: 20px 12px;
-    border-radius: 4px;
+    height: 36px;
+    padding: 0 12px;
     box-shadow: none;
     max-width: 248px;
-    border: none;
-    font-size: 16px;
-    background: transparent;
+    width: 248px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.6);
     svg {
       width: 16px;
       height: 16px;
@@ -49,56 +61,52 @@ const SearchBoxDiv = styled.div`
       top: unset;
       left: unset;
       transform: unset;
-      width: auto;
       .clear {
-        width: 25px;
-        height: 25px;
+        width: 22px;
+        height: 22px;
       }
     }
     &.mobile {
       @media (max-width: 1024px) {
         position: unset;
         top: 0;
-        width: auto;
+        width: 180px;
         z-index: 1000000;
         left: unset;
         transform: unset;
+      }
+      @media (max-width: 420px) {
+        width: 120px;
       }
     }
   }
 
   &.opened {
-    z-index: 100001;
-    background: #fff;
-
+    background: var(--surface);
     position: relative;
-    // top: 100px;
-    width: 100%;
     z-index: 1000000;
-    // left: 50%;
-    // transform: translateX(-50%);
 
     form {
       input {
-        color: #4a5568;
+        color: var(--text-strong);
       }
     }
 
     .clear {
-      background: #e2e8f0;
-      border-radius: 6px;
+      background: var(--surface-muted);
+      border-radius: 999px;
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      height: 24px;
+      height: 22px;
       z-index: 1000001;
       right: 0;
-      width: 24px;
+      width: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
       svg path {
-        stroke: #4a5568;
+        stroke: var(--text);
       }
     }
   }
@@ -107,6 +115,31 @@ const SearchBoxDiv = styled.div`
     flex: 1;
     form {
       width: 100%;
+    }
+  }
+
+  /* On small screens the header search collapses to an icon and expands when focused */
+  @media (max-width: 560px) {
+    &.header.mobile:not(.opened) {
+      width: 36px;
+      flex: 0 0 36px;
+      padding: 0 9px;
+      input {
+        padding: 0;
+        width: 18px;
+        cursor: pointer;
+        &::placeholder {
+          color: transparent;
+        }
+      }
+    }
+    &.header.mobile.opened {
+      position: absolute !important;
+      top: 14px !important;
+      left: 16px !important;
+      right: 16px;
+      width: auto !important;
+      max-width: none;
     }
   }
 
@@ -131,15 +164,16 @@ const SearchBoxDiv = styled.div`
       width: 100%;
       background: transparent;
       outline: none;
-      padding: 0rem 37px;
+      padding: 0 28px;
+      font-family: var(--font-sans);
       font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 100%;
+      color: var(--text);
       border-width: 0;
       &::placeholder {
-        content: 'Search Data Guide...';
-        color: #a0aec0;
+        color: var(--text-muted);
         opacity: 1; /* Firefox */
       }
     }
@@ -153,9 +187,9 @@ const SearchBoxDiv = styled.div`
   }
 
   .slash {
-    border: 1px solid #cbd5e0;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    color: #cbd5e0;
+    color: var(--text-subtle);
     min-width: 18px;
     display: flex;
     justify-content: center;
@@ -175,7 +209,7 @@ const SearchIcon = styled(SearchPic)`
   top: 50%;
   transform: translateY(-50%);
   position: absolute;
-  stroke: #4a5568;
+  stroke: var(--text-muted);
 `
 
 const ClearIcon = styled(Clear)`
@@ -205,7 +239,7 @@ const SearchBox = ({
   const timeoutId = React.useRef<any>(null)
   const inputEl = React.useRef<any>(null)
   const { width } = useWindowDimensions()
-  const [placeholderText, setPlaceholderText] = React.useState('Search Data Guide...')
+  const [placeholderText, setPlaceholderText] = React.useState('Search the Data Guide')
 
   const onChange = (e: any) => {
     const { value: newValue } = e.target
@@ -286,7 +320,7 @@ const SearchBox = ({
   React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
     if (width > 640) {
-      setPlaceholderText('Search Data Guide...')
+      setPlaceholderText('Search the Data Guide')
     }
     if (value) {
       onFocus()
@@ -303,7 +337,7 @@ const SearchBox = ({
           ref={inputEl}
           type="text"
           placeholder={placeholderText}
-          aria-label="Search Data Guide..."
+          aria-label="Search the Data Guide"
           onChange={onChange}
           onFocus={onFocus}
           value={value}

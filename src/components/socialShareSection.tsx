@@ -7,14 +7,19 @@ import { urlGenerator } from '../utils/urlGenerator'
 
 const SocialWrapper = styled.div`
   display: flex;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--list-bullet-color);
-  line-height: 14px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
   .homepage-link {
-    color: var(--list-bullet-color);
+    color: var(--text-muted);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -25,13 +30,30 @@ const SocialWrapper = styled.div`
     }
   }
   .buttons {
+    display: flex;
+    gap: 8px;
     a {
-      margin-left: 10px;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      transition:
+        color 0.15s,
+        border-color 0.15s;
+      svg {
+        width: 14px !important;
+        height: 14px !important;
+      }
+      &:hover {
+        color: var(--text-strong);
+        border-color: var(--border-strong);
+      }
     }
   }
-  padding: 1rem 0;
-  align-items: center;
 `
 
 const twitterShareUrl = `https://twitter.com/intent/tweet?text=I%27ve%20found%20this%20page%20on%20%40prisma%27s%20%23DataGuide%20useful%21%20`
@@ -57,11 +79,19 @@ const SocialShareSection = ({ homePage, hnPostId, slug }: any) => {
           <span>Share on</span>
           <div className="buttons">
             {hnPostId && (
-              <a href={`https://news.ycombinator.com/item?id=${hnPostId}`} target="_blank">
+              <a
+                href={`https://news.ycombinator.com/item?id=${hnPostId}`}
+                target="_blank"
+                aria-label="Discuss on Hacker News"
+              >
                 <HNIcon />
               </a>
             )}
-            <a href={`${twitterShareUrl}${currentDocsPageURL}`} target="_blank">
+            <a
+              href={`${twitterShareUrl}${currentDocsPageURL}`}
+              target="_blank"
+              aria-label="Share on X"
+            >
               <TwitterShareIcon />
             </a>
           </div>

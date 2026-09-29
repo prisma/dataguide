@@ -1,25 +1,47 @@
 import * as React from 'react'
 import styled from 'styled-components'
+import { withPrefix } from 'gatsby'
 import HeaderDiagram from '../icons/HeaderDiagram'
-import PrismaLogo from '../icons/PrismaLogo'
-import SocialShareSection from './socialShareSection'
+import Logo from '../icons/Logo'
 import Search from '../components/search'
 import { useLocation } from '../hooks/useLocation'
+import { Wordmark } from './header'
+import { headerCtaUrl } from '../cta'
 
 const HeaderWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
   background:
-    linear-gradient(137.05deg, #3c366b 23.76%, #4c51bf 79.42%),
-    linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
-  min-height: 510px;
+    radial-gradient(38% 55% at 88% 100%, rgba(254, 67, 82, 0.24), transparent 70%),
+    radial-gradient(30% 45% at 64% 105%, rgba(254, 190, 41, 0.16), transparent 70%),
+    radial-gradient(45% 70% at 6% 105%, rgba(4, 213, 231, 0.18), transparent 70%),
+    radial-gradient(60% 80% at 75% 20%, rgba(90, 63, 216, 0.35), transparent 70%),
+    linear-gradient(135deg, #100d20 0%, #1b1540 55%, #26152f 100%);
+  min-height: 540px;
   display: flex;
   justify-content: center;
+  color: #ffffff;
+
+  /* A faint grid, like the isometric pattern on prisma.io */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%);
+    pointer-events: none;
+  }
 
   .sub-wrapper {
-    max-width: 880px;
-    width: 880px;
-    margin-top: 32px;
+    position: relative;
+    max-width: 1127px;
+    width: 1127px;
+    margin-top: 20px;
 
-    @media (min-width: 0px) and (max-width: 880px) {
+    @media (min-width: 0px) and (max-width: 1159px) {
       padding: 0 16px;
     }
   }
@@ -27,33 +49,34 @@ const HeaderWrapper = styled.div`
   .container {
     display: flex;
     justify-content: space-between;
-    color: white;
-    padding: 60px 0 20px;
+    align-items: center;
+    padding: 56px 0 72px;
+    max-width: 1040px;
+    margin: 0 auto;
     > * {
       flex: 1;
     }
 
     h1 {
+      font-family: var(--font-display);
       font-style: normal;
-      font-weight: bold;
-      font-size: 68px;
-      line-height: 1;
-      font-family: Rubik;
-      letter-spacing: -0.03em;
-      margin: 0 0px 24px;
+      font-weight: 500;
+      font-size: 64px;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      color: #ffffff;
+      margin: 0 0 24px;
     }
 
     h3 {
+      font-family: var(--font-sans);
       font-size: 20px;
-      font-weight: 600;
-      line-height: 28px;
-      width: 410px;
-      color: #c3dafe;
-    }
-
-    p {
-      margin: 16px 0;
-      width: 370px;
+      font-weight: 400;
+      line-height: 32px;
+      letter-spacing: 0;
+      max-width: 430px;
+      color: rgba(255, 255, 255, 0.72);
+      margin: 0;
     }
   }
 
@@ -64,38 +87,54 @@ const HeaderWrapper = styled.div`
     .container {
       flex-direction: column;
       align-items: center;
+      padding-top: 40px;
 
       .content {
         margin: 0;
         text-align: center;
-        padding: 0 10%;
+        padding: 0 8%;
 
         > * {
           width: auto;
+          margin-left: auto;
+          margin-right: auto;
         }
       }
       svg {
-        margin-top: 0;
+        margin-top: 24px;
       }
     }
   }
   @media (min-width: 0px) and (max-width: 500px) {
+    min-height: 0;
     .container h1 {
-      font-size: 48px;
+      font-size: 44px;
+    }
+    .container h3 {
+      font-size: 18px;
+      line-height: 28px;
     }
     .container .content {
-      padding: 0 20px;
+      padding: 0 4px;
     }
     .container .main-image {
-      width: 400px;
-      height: 300px;
+      width: 100%;
+      height: auto;
     }
   }
 `
 
 const Highlight = styled.span`
-  padding: 0 4px;
-  background: #4c51bf;
+  font-weight: 500;
+  background: linear-gradient(
+    90deg,
+    var(--prisma-cyan),
+    var(--prisma-yellow) 55%,
+    var(--prisma-coral)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 `
 
 const SearchComponent = styled(Search)`
@@ -119,8 +158,37 @@ const HeaderNavWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media (min-width: 0) and (max-width: 1024px) {
-    padding: 0 16px;
+  height: 44px;
+
+  ${Wordmark} {
+    color: #ffffff;
+    .separator {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .product:hover {
+      color: #d7ceff;
+    }
+  }
+`
+
+const CtaButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s;
+  &:hover {
+    background: #ebebea;
+  }
+  @media (max-width: 420px) {
+    display: none;
   }
 `
 
@@ -132,12 +200,29 @@ const HomePageHeader = () => {
     <HeaderWrapper>
       <div className="sub-wrapper">
         <HeaderNavWrapper>
-          <a href="https://www.prisma.io" target="_blank">
-            <PrismaLogo />
-          </a>
+          <Wordmark>
+            <a className="prisma-logo" href="https://www.prisma.io" aria-label="Prisma">
+              <Logo />
+            </a>
+            <span className="separator" aria-hidden="true">
+              /
+            </span>
+            <a className="product" href={withPrefix('/').replace(/\/$/, '') || '/'}>
+              dataguide
+            </a>
+          </Wordmark>
           <SearchWrapper>
             <SearchComponent hitsStatus={changeHitsStatus} location={location} />
           </SearchWrapper>
+          <CtaButton
+            href={headerCtaUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cta-cluster="postgres_global"
+            data-cta-placement="header_cta"
+          >
+            Prisma Postgres
+          </CtaButton>
         </HeaderNavWrapper>
         <div className="container">
           <div className="content">
@@ -147,12 +232,6 @@ const HomePageHeader = () => {
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
             </h3>
-            {/* <SocialShareSection homePage={true}/> */}
-            {/* <p>
-            The articles here will walk you through database fundamentals, help you choose the right
-            technologies, and teach you how to unlock the potential of your databases. New material
-            is added regularly, so be sure to check back often!
-          </p> */}
           </div>
           <div>
             <HeaderDiagram className="main-image" />

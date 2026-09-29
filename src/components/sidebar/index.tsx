@@ -6,8 +6,8 @@ import { AllArticles } from '../../interfaces/AllArticles.interface'
 import config from '../../../config'
 import { Promo } from './promo'
 const SidebarContainer = styled.aside`
-  width: 231px;
-  margin: 0px 16px 0 -16px;
+  width: 239px;
+  margin: 0 16px 0 -16px;
 `
 
 const Sidebar = styled.div<{ $sticky?: boolean }>`
@@ -32,7 +32,7 @@ const Sidebar = styled.div<{ $sticky?: boolean }>`
       margin-right: 50px;
 
       &:last-of-type {
-        border-left: 1px solid white;
+        border-left: 1px solid var(--border);
         padding-left: 40px;
       }
     }
@@ -55,7 +55,7 @@ const Sidebar = styled.div<{ $sticky?: boolean }>`
 
 const List = styled.ul`
   list-style: none;
-  padding: 0 7px 0 15px;
+  padding: 0 8px 24px 16px;
   margin: 0;
 `
 

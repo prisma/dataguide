@@ -10,8 +10,8 @@ type SidenoteInfoProps = React.ReactNode & SidenoteProps
 const Sidenote = ({ children, ...props }: SidenoteInfoProps) => {
   return (
     <SidenoteWrapper>
-        <h3>{props.title}</h3>
-        {children}
+      <h3>{props.title}</h3>
+      {children}
     </SidenoteWrapper>
   )
 }
@@ -19,10 +19,12 @@ const Sidenote = ({ children, ...props }: SidenoteInfoProps) => {
 export default Sidenote
 
 const SidenoteWrapper = styled.div`
-  background: #f7fafc;
-  padding: 0px 32px 20px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0px 28px 20px;
   line-height: 22px;
-  color: #4a5568;
+  color: var(--text);
 
   h3 {
     font-size: 18px;

@@ -3,14 +3,46 @@ import styled from 'styled-components'
 import { stringify } from '../utils/stringify'
 
 const ChapterTitle = styled.h2`
-  font-family: 'Open Sans';
+  font-family: var(--font-sans);
   font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--list-bullet-color) !important;
+  color: var(--text-subtle) !important;
+  margin: 0 0 10px;
+`
+
+const TocList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--border);
+
+  li {
+    margin: 0;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  a {
+    display: block;
+    margin-left: -1px;
+    padding: 5px 0 5px 16px;
+    border-left: 2px solid transparent;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text-strong);
+      border-left-color: var(--accent);
+    }
+  }
 `
 
 const TOC = ({ headings }: any) => {
@@ -25,10 +57,10 @@ const TOC = ({ headings }: any) => {
       )
     })
   return navItems && navItems.length ? (
-    <div>
-      <ChapterTitle>CONTENT</ChapterTitle>
-      <ul className="list">{navItems}</ul>
-    </div>
+    <nav aria-label="On this page">
+      <ChapterTitle>On this page</ChapterTitle>
+      <TocList>{navItems}</TocList>
+    </nav>
   ) : null
 }
 

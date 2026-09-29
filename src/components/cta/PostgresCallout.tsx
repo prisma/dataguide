@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useLocation } from '../../hooks/useLocation'
-import PrismaLogo from '../../icons/PrismaLogo'
+import PrismaMark from '../../icons/PrismaMark'
 import { resolveCta, buildCtaUrl, CONSOLE_URL, ClusterId } from '../../cta'
 
 // Inline, contextual Prisma Postgres callout for placing inside article bodies
@@ -10,49 +10,59 @@ import { resolveCta, buildCtaUrl, CONSOLE_URL, ClusterId } from '../../cta'
 // match the surrounding content).
 
 const Callout = styled.div`
-  background: #e1f5ee;
-  border: 1px solid #9fe1cb;
-  border-radius: 8px;
-  padding: 16px 20px;
-  margin: 24px 0;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin: 28px 0;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(21, 21, 21, 0.04);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--prisma-cyan),
+      var(--prisma-yellow) 50%,
+      var(--prisma-coral)
+    );
+  }
 `
 
 const Label = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-
-  .icon {
-    background: #ffffff;
-    border-radius: 4px;
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
+  margin-bottom: 10px;
   span {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    color: #0f6e56;
+    line-height: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
   }
 `
 
 const Title = styled.p`
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #0f6e56;
+  margin: 0 0 6px !important;
+  font-family: var(--font-display);
+  font-size: 18px !important;
+  line-height: 26px !important;
+  font-weight: 500;
+  color: var(--text-strong);
 `
 
 const Body = styled.p`
-  margin: 0 0 14px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #187367;
+  margin: 0 0 16px !important;
+  font-size: 15px !important;
+  line-height: 24px !important;
+  color: var(--text-muted);
 `
 
 const Actions = styled.div`
@@ -63,32 +73,35 @@ const Actions = styled.div`
 `
 
 const PrimaryButton = styled.a`
-  background: #16a394;
-  color: #ffffff;
-  border-radius: 4px;
-  padding: 7px 14px;
-  font-weight: 600;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 999px;
+  padding: 0 16px;
+  font-weight: 500;
+  font-size: 14px;
   text-decoration: none;
-
+  transition: background 0.15s;
   &:hover,
   &:link,
   &:visited,
   &:active {
-    color: #ffffff;
+    color: var(--surface);
   }
   &:hover {
-    background: #187367;
+    background: #333436;
   }
 `
 
 const SecondaryLink = styled.a`
-  color: #16a394;
-  font-weight: 600;
-  font-size: 13px;
+  color: var(--text-strong);
+  font-weight: 500;
+  font-size: 14px;
   text-decoration: none;
   &:hover {
-    color: #187367;
+    color: var(--accent);
   }
 `
 
@@ -112,9 +125,7 @@ const PostgresCallout = ({ cluster }: PostgresCalloutProps) => {
       data-cta-slug={resolved.articleSlug}
     >
       <Label>
-        <span className="icon">
-          <PrismaLogo color="#16a394" />
-        </span>
+        <PrismaMark size={16} />
         <span>Prisma Postgres</span>
       </Label>
       <Title>{resolved.copy.inline.title}</Title>

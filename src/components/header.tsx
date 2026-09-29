@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled, { css } from 'styled-components'
-import HeaderLogo from '../icons/Logo'
+import Logo from '../icons/Logo'
 import Clear from '../icons/Clear'
 import Search from '../components/search'
 import Sidebar from '../components/sidebar'
@@ -13,22 +13,25 @@ type HeaderViewProps = {
   headerProps: HeaderProps
 }
 
-const HeaderWrapper = styled.div`
-  background: var(--white-color);
-  box-shadow: 0px 2px 4px rgba(88, 86, 95, 0.08);
-  height: 4rem;
+const HeaderWrapper = styled.header`
+  background: rgba(249, 250, 245, 0.92);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
   img {
     margin-bottom: 0;
   }
-  padding: 20px 10px;
+  padding: 0 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 200;
 
   .container {
-    width: 1110px;
+    width: 1127px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   @media (min-width: 0px) and (max-width: 1024px) {
@@ -41,10 +44,53 @@ const HeaderWrapper = styled.div`
 const HeaderNav = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  min-width: 0;
+`
 
-  @media (min-width: 0px) and (max-width: 1024px) {
-    padding: 0 16px;
+export const Wordmark = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  color: var(--ink);
+
+  .prisma-logo {
+    display: flex;
+    color: inherit;
+    svg {
+      display: block;
+      height: 26px;
+      width: auto;
+    }
+  }
+
+  .separator {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--text-subtle);
+  }
+
+  .product {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  @media (min-width: 0px) and (max-width: 420px) {
+    gap: 8px;
+    .prisma-logo svg {
+      height: 22px;
+    }
+    .separator,
+    .product {
+      font-size: 16px;
+    }
   }
 `
 
@@ -53,40 +99,26 @@ const SearchComponent = styled(Search)`
   top: 12px;
   left: 12px;
   max-width: 175px;
-  background: pink;
 `
 
-const LogoContainer = styled.div`
-  padding-right: 0.75rem;
-  display: flex;
-  align-items: center;
-  span {
-    font-family: 'Rubik';
-    font-size: 18px;
-    font-weight: 500;
-    ine-height: 18px;
-    color: #2f3747;
-    margin-left: 10px;
-  }
-`
-
-const DocsMobileButton = styled.div`
+const DocsMobileButton = styled.button`
   cursor: pointer;
-  background: var(--main-theme-color);
-  box-shadow:
-    0px 4px 8px rgba(60, 45, 111, 0.1),
-    0px 1px 3px rgba(60, 45, 111, 0.15);
-  border-radius: 5px;
-  color: white;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-strong);
+  font: 500 14px var(--font-sans);
   display: none;
-  padding: 0 14px;
-  height: 42px;
+  padding: 0 16px;
+  height: 36px;
   margin-left: 8px;
-  font-weight: 600;
   position: relative;
   z-index: 300;
   svg path {
-    stroke: white;
+    stroke: var(--text-strong);
+  }
+  &:hover {
+    border-color: var(--border-strong);
   }
   @media (min-width: 0px) and (max-width: 1024px) {
     display: flex;
@@ -98,51 +130,53 @@ const MobileOnlyNav = styled.div`
   display: none;
   position: absolute;
   z-index: 210;
-  top: 0px;
-  transition: top 0.35s;
-  background: var(--main-theme-color);
-  box-shadow:
-    0px 4px 8px rgba(60, 45, 111, 0.1),
-    0px 1px 3px rgba(60, 45, 111, 0.15);
-  color: black;
+  top: 64px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-pop);
   width: 100%;
   left: 0;
   padding: 0 2rem;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
   @media (min-width: 0px) and (max-width: 1024px) {
-    top: 65px;
     display: block;
   }
   @media (min-width: 0px) and (max-width: 767px) {
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
 `
 const PrismaLink = styled.div`
-  color: var(--muted-font-color);
   font-size: 14px;
   display: flex;
   align-items: center;
+  gap: 10px;
   @media (min-width: 0px) and (max-width: 1024px) {
     display: none;
   }
 `
 const PrismaButton = styled.a`
-  color: var(--secondary-font-color);
-  background: var(--border-color);
-  border-radius: 4px;
+  color: var(--surface);
+  background: var(--ink);
+  border-radius: 999px;
   white-space: nowrap;
-  display: inline-block;
-  padding: 6px 10px;
-  margin-left: 10px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  font-weight: 500;
   text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: background 0.15s;
   &:hover {
-    opacity: 0.7;
+    background: #333436;
   }
 `
 
 const SearchContainer = styled.div<{ $isSticky?: boolean }>`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   @media only screen and (min-width: 1024px) {
     display: none;
   }
@@ -154,9 +188,7 @@ const SearchContainer = styled.div<{ $isSticky?: boolean }>`
       margin-top: 0;
       margin-left: -8px;
       width: 100% !important;
-      background:
-        linear-gradient(180deg, rgba(13, 15, 20, 0.18) 0%, rgba(27, 32, 43, 0) 100%),
-        var(--header-gradient-color);
+      background: var(--page-bg);
     `};
 `
 
@@ -172,28 +204,28 @@ const Header = ({ headerProps }: HeaderViewProps) => {
     <HeaderWrapper>
       <div className={'container'}>
         <HeaderNav>
-          <div style={{ display: 'flex' }}>
-            <a
-              href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}
-              style={{
-                color: 'white',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <LogoContainer>
-                <HeaderLogo />
-                <span>Prisma's Data Guide</span>
-              </LogoContainer>
+          <Wordmark>
+            <a className="prisma-logo" href="https://www.prisma.io" aria-label="Prisma">
+              <Logo />
             </a>
-          </div>
+            <span className="separator" aria-hidden="true">
+              /
+            </span>
+            <a className="product" href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}>
+              dataguide
+            </a>
+          </Wordmark>
         </HeaderNav>
         <SearchContainer>
           {!showMobileNav && (
             <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile />
           )}
-          <DocsMobileButton onClick={toggleMobileNav}>
+          <DocsMobileButton
+            type="button"
+            onClick={toggleMobileNav}
+            aria-expanded={showMobileNav}
+            aria-label={showMobileNav ? 'Close menu' : 'Open menu'}
+          >
             {showMobileNav ? <Clear /> : 'Menu'}
           </DocsMobileButton>
         </SearchContainer>

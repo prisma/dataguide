@@ -25,7 +25,7 @@ const HitsWrapper = styled.div`
   width: calc(100% - 32px);
   max-height: 80vh;
   overflow-y: scroll;
-  color: black;
+  color: var(--text);
   overflow-x: hidden;
   z-index: 100002;
   -webkit-overflow-scrolling: touch;
@@ -35,13 +35,10 @@ const HitsWrapper = styled.div`
 
   transform: translateX(-50%);
   max-width: 1200px;
-  background: #fff;
-  box-shadow:
-    0px 4px 8px rgba(47, 55, 71, 0.05),
-    0px 1px 3px rgba(47, 55, 71, 0.1);
-  border-radius: 5px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-pop);
+  border-radius: 16px;
   * {
     margin-top: 0;
     padding: 0;
@@ -67,7 +64,7 @@ const HitsWrapper = styled.div`
     border-top: 0.5em solid rgba(215, 215, 215, 0.2);
     border-right: 0.5em solid rgba(215, 215, 215, 0.2);
     border-bottom: 0.5em solid rgba(215, 215, 215, 0.2);
-    border-left: 0.5em solid #d7d7d7;
+    border-left: 0.5em solid var(--accent);
     -webkit-transform: translateZ(0);
     -ms-transform: translateZ(0);
     transform: translateZ(0);
@@ -97,7 +94,7 @@ const HitsWrapper = styled.div`
   // left: 0;
   top: 160px;
   // max-width: 100%;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border);
   border-top-right-radius: 0;
   border-top-left-radius: 0;
   &.header {

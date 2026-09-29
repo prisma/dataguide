@@ -10,37 +10,39 @@ const HitComp = styled.div`
   font-weight: normal;
   font-size: 16px;
   line-height: 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
   // max-height: 150px;
   &:last-item {
     border: 0;
   }
   a {
-    color: #2d3748 !important;
+    color: var(--text) !important;
     display: block;
   }
   h4 {
     font-weight: normal;
   }
   h3 {
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-weight: 500;
     line-height: 28px;
     letter-spacing: -0.01em;
     margin: 10px 0;
   }
   &:hover,
   &:focus {
-    background: #f7fafc;
+    background: var(--surface-subtle);
   }
   mark {
-    color: #718096 !important;
-    background: #ebf8ff;
-    padding: 2px;
-    font-weight: bold;
+    color: var(--accent-strong) !important;
+    background: var(--accent-soft);
+    border-radius: 3px;
+    padding: 0 2px;
+    font-weight: 600;
   }
 
   .more {
-    color: #718096;
+    color: var(--text-muted);
     font-size: 14px;
     width: fit-content;
     margin: 10px 0 0;
@@ -54,12 +56,12 @@ const HitComp = styled.div`
 
 const DocHit = ({ hit, selected }: any) =>
   hit._distinctSeqID == 0 ? (
-    <HitComp style={{ background: selected ? '#F7FAFC' : 'white' }}>
+    <HitComp style={{ background: selected ? 'var(--surface-subtle)' : 'var(--surface)' }}>
       <Link style={{ boxShadow: `none`, textDecoration: 'none' }} to={hit.dataguidePath}>
         <ParentTitle slug={hit.slug} nonLink={true} />
         <h3>
           <Snippet hit={hit} attribute="title" highlightedTagName="mark" /> /{' '}
-          <span style={{ color: 'var(--code-inner-color)' }}>
+          <span style={{ color: 'var(--text-muted)' }}>
             <Snippet hit={hit} attribute="heading" highlightedTagName="mark" />
           </span>
         </h3>

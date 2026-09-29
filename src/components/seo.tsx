@@ -1,5 +1,6 @@
 import * as React from 'react'
 import favicon from '../images/favicon-32x32.png'
+import faviconSvg from '../images/favicon.svg'
 import { useStaticQuery, graphql } from 'gatsby'
 import { PageLocation } from '../hooks/useLocation'
 
@@ -74,7 +75,9 @@ const SEO = ({ location, title, description, image }: SEOProps) => {
       <meta property="og:image:width" content={oImgWidth} />
       <meta property="og:image:height" content={oImgHeight} />
       <link rel="canonical" href={canonicalUrl} />
-      <link rel="icon" href={favicon} />
+      <link rel="icon" href={faviconSvg} type="image/svg+xml" />
+      <link rel="icon" href={favicon} type="image/png" sizes="32x32" />
+      <meta name="theme-color" content="#f9faf5" />
     </>
   )
 }

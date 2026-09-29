@@ -31,7 +31,7 @@ const colorMap = {
 
 const backgroundColorMap: any = {
   red: '--red-color',
-  green: '--red-color',
+  green: '--dark-color',
   grey: '--white-color',
   'grey-bg': '--grey-bg-color',
   dark: '--dark-color',
@@ -40,7 +40,7 @@ const backgroundColorMap: any = {
 type ButtonStyleProps = { $block?: boolean; $color?: ButtonColor; $disabled?: boolean }
 
 export const ButtonWrapper = styled.a<ButtonStyleProps>`
-  padding: 11px 14px;
+  padding: 0 18px;
   margin-right: 10px;
   display: inline-flex;
   align-items: center;
@@ -52,16 +52,14 @@ export const ButtonWrapper = styled.a<ButtonStyleProps>`
   box-sizing: border-box;
   outline: none;
   opacity: ${(p) => (p.$disabled ? '0.2' : 1)};
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
   background: var(${(p) => backgroundColorMap[p.$color || 'green']});
   color: var(${(p) => colorMap[p.$color || 'green']}) !important;
   line-height: 1;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: ${(p) => (p.$disabled ? 'default' : 'pointer')};
   pointer-events: ${(p) => (p.$disabled ? 'none' : 'all')};
-  border-radius: 6px;
+  border-radius: 999px;
   transition:
     color 150ms ease 0s,
     background 150ms ease 0s,

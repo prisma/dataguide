@@ -10,82 +10,71 @@ import { withPrefix } from 'gatsby'
 const List = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 16px 0;
+  margin: 4px 0;
   &.has-border {
-    border-left: 2px solid var(--border-color);
-    margin-left: -12px;
+    border-left: 1px solid var(--border);
+    margin: 2px 0 6px 12px;
+    padding-left: 4px;
   }
 `
 
 const ListItem = styled.li`
-  font-size: 0.875rem;
-  line-height: 1.25;
-  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 1px 0;
   position: relative;
   a {
-    transition: color 150ms ease 0s;
-    color: var(--sidebar-font-color) !important;
+    display: block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition:
+      color 150ms ease,
+      background 150ms ease;
+    color: var(--text-muted) !important;
     text-decoration: none;
-    vertical-align: middle;
     &:hover {
-      color: var(--main-font-color) !important;
+      color: var(--text-strong) !important;
+      background: rgba(21, 21, 21, 0.04);
     }
-
-    @media (min-width: 0px) and (max-width: 1024px) {
-      color: var(--border-color) !important;
-      &:hover {
-        color: white !important;
-      }
-    }
-
     .tag {
       position: absolute;
-      right: 0;
-      color: var(--list-bullet-color);
-      font-size: 14px;
+      right: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
       font-style: normal;
-      font-weight: 600;
-      background: var(--code-bgd-color);
-      border-radius: 5px;
-      padding: 2px 5px;
+      font-weight: 500;
+      background: var(--surface-muted);
+      border-radius: 999px;
+      padding: 1px 8px;
       &.small {
-        font-size: 13px;
-      }
-      @media (min-width: 0px) and (max-width: 1024px) {
-        background: var(--tag-media-color);
-        color: var(--list-bullet-color);
+        font-size: 11px;
       }
     }
-
     .item-collapser {
       background: transparent;
       position: absolute;
-      left: -15px;
-      top: 7px;
+      left: -12px;
+      top: 12px;
       padding: 0;
       border: 0;
-
+      cursor: pointer;
       .right,
       .down {
         transition: opacity 0.5s linear;
       }
-
       .right.open,
       .down.close {
         display: none;
         opacity: 0;
       }
-
       .right.close,
       .down.open {
         display: block;
         opacity: 1;
       }
-
       .down.open {
         margin-top: 2px;
       }
-
       &:hover,
       &:focus,
       &:active {
@@ -94,31 +83,32 @@ const ListItem = styled.li`
     }
   }
   .active-item {
-    color: var(--main-font-color) !important;
-    font-weight: 700;
-    @media (min-width: 0px) and (max-width: 1024px) {
-      color: var(--border-color) !important;
+    color: var(--accent-strong) !important;
+    background: var(--accent-soft);
+    font-weight: 500;
+    &:hover {
+      color: var(--accent-strong) !important;
+      background: var(--accent-soft);
     }
   }
   &.top-level {
-    margin-top: 2rem;
+    margin-top: 22px;
     > a {
-      font-family: 'Rubik';
-      font-size: 18px;
-      color: var(--section-main-color) !important;
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: var(--text-strong) !important;
       font-weight: 500;
       line-height: 20px;
-      &:hover,
-      &.active-item {
-        text-decoration: underline;
+      letter-spacing: -0.01em;
+      &:hover {
+        color: var(--accent) !important;
+        background: transparent;
       }
-      @media (min-width: 0px) and (max-width: 1024px) {
-        color: var(--main-bgd-color) !important;
+      &.active-item {
+        color: var(--accent-strong) !important;
+        background: var(--accent-soft);
       }
     }
-    // > ul {
-    //   margin-top: 24px;
-    // }
   }
   &.bottom-level {
     margin-left: 20px;
@@ -127,18 +117,19 @@ const ListItem = styled.li`
     margin-top: 24px;
   }
   &.static-link > a {
-    color: var(--list-bullet-color) !important;
+    color: var(--text-subtle) !important;
     text-transform: uppercase;
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 12px;
     line-height: 14px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
     &:hover {
-      color: var(--list-bullet-color) !important;
+      color: var(--text-subtle) !important;
+      background: transparent;
     }
   }
   &.last-level {
-    padding-left: 24px;
+    padding-left: 0;
   }
   .collapse-title {
     cursor: pointer;

@@ -18,9 +18,9 @@ const SingleAuthor = ({ authInfo }: any) => {
 
 const AuthorDetails = ({ authors }: any) => (
   <AuthorInfoWrapper>
-    <span className="about">About the Author(s)</span>
+    <span className="about">About the author{authors.length > 1 ? 's' : ''}</span>
     {authors.map((author: any) => (
-      <SingleAuthor authInfo={author} />
+      <SingleAuthor key={author} authInfo={author} />
     ))}
   </AuthorInfoWrapper>
 )
@@ -30,29 +30,45 @@ export default AuthorDetails
 const AuthorInfoWrapper = styled.div`
   .author-item {
     margin: 0 -40px;
-    padding: 32px 40px 0;
+    padding: 24px 40px 0;
     line-height: 24px;
     display: flex;
+    align-items: flex-start;
+    color: var(--text-muted);
+    font-size: 15px;
+    @media (min-width: 0px) and (max-width: 767px) {
+      margin: 0 -24px;
+      padding: 24px 24px 0;
+    }
   }
 
   img {
-    height: 90px;
-    width: 90px;
-    border-radius: 2px;
-    margin-right: 28px;
+    flex-shrink: 0;
+    height: 64px;
+    width: 64px;
+    border-radius: 999px;
+    margin: 0 20px 0 0;
+    object-fit: cover;
+    border: 1px solid var(--border);
   }
 
   .name {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 500;
     padding: 0;
     margin: 0;
     border: 0;
     line-height: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .about {
-    color: var(--list-bullet-color);
-    font-size: 14px;
-    margin-bottom: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
   }
 `

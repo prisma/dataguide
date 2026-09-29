@@ -11,7 +11,7 @@ export default (props: any) => (
   >
     <path
       d="M11.0002 1L1 11.0002M1 1L11.0002 11.0002"
-      stroke="#A0AEC0"
+      stroke="#8A8B8D"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

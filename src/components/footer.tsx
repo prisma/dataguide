@@ -1,133 +1,126 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import NewsLetter from '../components/newsletter'
+import { withPrefix } from 'gatsby'
 import { FooterProps } from '../interfaces/Layout.interface'
 import FooterLogo from '../icons/FooterLogo'
+import Logo from '../icons/Logo'
+import { Wordmark } from './header'
 
 type FooterViewProps = {
   footerProps: FooterProps
   isHomePage?: boolean
 }
 
-const FooterWrapper = styled.div`
+const FooterWrapper = styled.footer`
   display: flex;
   justify-content: center;
-  color: var(--secondary-font-color);
-  .push-right {
-    margin-left: 230px;
-  }
-  a {
-    color: inherit !important;
-  }
+  margin-top: 48px;
+  padding: 0 16px;
+  color: var(--text-muted);
 
   .container-wrapper {
     display: flex;
     align-items: center;
-    width: 100%;
-    padding: 0 2rem;
-    gap: 2rem;
-    max-width: 944px;
-    @media (max-width: 500px) {
-      flex-direction: column-reverse;
-      margin-top: 124px;
-    }
-  }
-
-  h3 {
-    font-size: 1rem;
-    line-height: 3rem;
-    font-weight: bold;
-    letter-spacing: 0.1em;
-    margin: 0;
-  }
-
-  .container {
-    width: 800px;
-    display: flex;
     justify-content: space-between;
-    margin-bottom: 80px;
-    padding: 45px 0;
+    width: 100%;
+    max-width: 880px;
+    gap: 2rem;
+    padding: 40px 0 72px;
+    border-top: 1px solid var(--border);
+  }
 
-    .love {
-      color: inherit !important;
-      margin-top: 35px;
+  &.push-right .container-wrapper {
+    margin-left: 255px;
+  }
+
+  .info {
+    max-width: 440px;
+  }
+
+  p {
+    margin: 16px 0 0;
+    font-size: 15px;
+    line-height: 24px;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 20px;
+    a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text) !important;
+      text-decoration: none;
+      &:hover {
+        color: var(--accent) !important;
+      }
     }
+  }
 
-    &.info {
-      color: var(--secondary-font-color);
-      align-items: center;
-      flex: 1;
-      display: block;
-      width: auto;
-
-      h4 {
-        margin: 16px 0;
-        font-weight: bold;
-        font-size: 16px;
-        line-height: 16px;
-
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      p {
-        margin: 0;
-        color: var(--code-inner-color);
-      }
-      @media (max-width: 500px) {
-        text-align: center;
-        margin-bottom: 80px;
-        .content {
-          text-align: center;
-        }
-        p {
-          font-weight: normal;
-        }
-        .love {
-          margin-top: 35px;
-          font-weight: normal;
-        }
-      }
-
+  .love {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text-subtle);
+    a {
+      color: var(--text-muted) !important;
     }
+  }
+
+  svg.illustration {
+    flex-shrink: 0;
   }
 
   @media (min-width: 0px) and (max-width: 1024px) {
-    padding: 16px;
-    .push-right {
+    &.push-right .container-wrapper {
       margin-left: 0;
-    }
-    .container {
-      width: auto;
-      flex-direction: column;
-      align-items: center;
-
-      .content {
-        > * {
-          width: auto;
-        }
-      }
     }
   }
 
+  @media (max-width: 640px) {
+    .container-wrapper {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      padding-bottom: 96px;
+    }
+    svg.illustration {
+      width: 160px;
+      height: auto;
+    }
+  }
 `
 
-const Footer = ({ footerProps, isHomePage }: FooterViewProps) => {
-  const { newsletter } = footerProps
-  return (
-    <FooterWrapper>
-      <div className={`container-wrapper ${!isHomePage && 'push-right'}`}>
-        <div className="container info">
-          <div className="content">
-            <h4>Prisma's Data Guide</h4>
-            <p>A growing library of articles focused on making databases more approachable.</p>
-          </div>
-          <div className="love">Made with ❤️ by <a href="https://www.prisma.io" target="_blank">Prisma</a></div>
+const Footer = ({ isHomePage }: FooterViewProps) => (
+  <FooterWrapper className={isHomePage ? '' : 'push-right'}>
+    <div className="container-wrapper">
+      <div className="info">
+        <Wordmark>
+          <a className="prisma-logo" href="https://www.prisma.io" aria-label="Prisma">
+            <Logo />
+          </a>
+          <span className="separator" aria-hidden="true">
+            /
+          </span>
+          <a className="product" href={withPrefix('/').replace(/\/$/, '') || '/'}>
+            dataguide
+          </a>
+        </Wordmark>
+        <p>A growing library of articles focused on making databases more approachable.</p>
+        <nav aria-label="Prisma">
+          <a href="https://www.prisma.io/orm">Prisma ORM</a>
+          <a href="https://www.prisma.io/postgres">Prisma Postgres</a>
+          <a href="https://www.prisma.io/docs">Docs</a>
+          <a href="https://www.prisma.io/blog">Blog</a>
+          <a href="https://github.com/prisma/dataguide">GitHub</a>
+        </nav>
+        <div className="love">
+          Made with ❤️ by <a href="https://www.prisma.io">Prisma</a>
         </div>
-        <FooterLogo />
       </div>
-    </FooterWrapper>
-  )
-}
+      <FooterLogo className="illustration" />
+    </div>
+  </FooterWrapper>
+)
 
 export default Footer

@@ -11,28 +11,28 @@ export default (props: any) => (
   >
     <path
       d="M1.5 6.33337H15.5"
-      stroke="#CBD5E0"
+      stroke="#D6D6D3"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M1.5 11.6666H15.5"
-      stroke="#CBD5E0"
+      stroke="#D6D6D3"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M6.75 1L5 17"
-      stroke="#CBD5E0"
+      stroke="#D6D6D3"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M12 1L10.25 17"
-      stroke="#CBD5E0"
+      stroke="#D6D6D3"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

@@ -8,15 +8,23 @@ import { resolveCta, buildCtaUrl, CONSOLE_URL } from '../../cta'
 // on index pages.
 
 const Panel = styled.div`
-  background: #e1f5ee;
-  border-radius: 8px;
-  padding: 24px;
-  margin: 1rem 0;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 120% at 100% 100%, rgba(254, 67, 82, 0.28), transparent 60%),
+    radial-gradient(50% 120% at 70% 110%, rgba(254, 190, 41, 0.18), transparent 60%),
+    radial-gradient(60% 140% at 0% 100%, rgba(4, 213, 231, 0.2), transparent 60%), var(--hero-bg);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin: 16px 0 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 20px 32px;
   flex-wrap: wrap;
+  @media (min-width: 0px) and (max-width: 767px) {
+    padding: 24px;
+  }
 `
 
 const PanelText = styled.div`
@@ -26,70 +34,76 @@ const PanelText = styled.div`
 
 const Title = styled.p`
   margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f6e56;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  color: #ffffff;
 `
 
 const Body = styled.p`
   margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #187367;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.72);
 `
 
 const Actions = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   flex-wrap: wrap;
 `
 
 const PrimaryButton = styled.a`
-  background: #16a394;
-  color: #ffffff;
-  border-radius: 4px;
-  padding: 10px 18px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  background: #ffffff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0 18px;
+  font-weight: 500;
   font-size: 14px;
   text-decoration: none;
   white-space: nowrap;
-
+  transition: background 0.15s;
   &:hover,
   &:link,
   &:visited,
   &:active {
-    color: #ffffff;
+    color: var(--ink);
   }
   &:hover {
-    background: #187367;
+    background: #ebebea;
   }
 `
 
 const SecondaryLink = styled.a`
-  color: #16a394;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
   font-size: 14px;
   text-decoration: none;
   white-space: nowrap;
   &:hover {
-    color: #187367;
+    color: #ffffff;
   }
 `
 
 const SoftCta = styled.p`
   margin: 1rem 0;
   padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
-  font-size: 14px;
-  color: #4a5568;
-
+  border-top: 1px solid var(--border);
+  font-size: 15px;
+  color: var(--text-muted);
   a {
-    color: #16a394;
-    font-weight: 600;
-    text-decoration: none;
+    color: var(--text-strong);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: var(--accent-underline);
+    text-underline-offset: 3.5px;
     &:hover {
-      color: #187367;
+      color: var(--accent);
     }
   }
 `
