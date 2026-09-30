@@ -39,7 +39,7 @@ In MySQL, the privilege system determines whether a user can execute a given com
 
 Each time a client attempts to perform an action, MySQL consults its information on the user's privileges to determine whether it should be allowed or not. If the user has been granted all of the privileges required to perform the action, MySQL executes the statements. If the user is missing any of the required privileges, an error will occur.
 
-MySQL stores the information about which users have what privileges in a number of different tables in the `mysql` system database. Here is a review the where MySQL keeps different types of privilege information as was covered in the [introduction to MySQL authentication and authorization article](/mysql/authentication-and-authorization/intro-to-authn-and-authz):
+MySQL stores the information about which users have what privileges in a number of different tables in the `mysql` system database. Here is a review of where MySQL keeps different types of privilege information as was covered in the [introduction to MySQL authentication and authorization article](/mysql/authentication-and-authorization/intro-to-authn-and-authz):
 
 - `user`: The `user` table defines each user's static global privileges. These privileges apply to the whole MySQL server and are not affected by the availability of any plugins or components.
 - `global_grants`: The `global_grants` table defines each user's dynamic global privileges. Any privileges defined by a plugin or component are registered in this table.
@@ -145,7 +145,7 @@ GRANT UPDATE (due_by) ON library.loans TO 'autorenew'@'localhost';
 
 An additional clause, called `WITH GRANT OPTION`, can be appended to grant statements to allow the user account to manage grants for other users at a particular scope. Instead of just granting the privilege to the user, you are also granting the ability for that user to pass on any privileges they have at the same scope to other users.
 
-For instance, here, we can give the `'librarymanager'@'localhost'` account `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges, as well as the ability to pass on its privileges at in the `library` database to other users:
+For instance, here, we can give the `'librarymanager'@'localhost'` account `SELECT`, `INSERT`, `UPDATE`, and `DELETE` privileges, as well as the ability to pass on its privileges in the `library` database to other users:
 
 ```sql
 GRANT SELECT,INSERT,UPDATE,DELETE ON library.* TO 'librarymanager'@'localhost' WITH GRANT OPTION;
@@ -200,7 +200,7 @@ GRANT ALL PRIVILEGES ON sales.* TO 'salesadmin'@'localhost' WITH GRANT OPTION;
 
 The account will then not only have full access to the `sales` database, it will also be able to dictate what other users are able to do on the database.
 
-This same logic can be applied globally using the `*.*` context. In this cases, it'll make the given account a full administrative user:
+This same logic can be applied globally using the `*.*` context. In this case, it'll make the given account a full administrative user:
 
 ```sql
 GRANT ALL PRIVILEGES ON *.* TO 'fulladmin'@'localhost' WITH GRANT OPTION;
@@ -351,6 +351,6 @@ If you are not already using the `SUPER` privilege, MySQL recommends that you us
 
 In this guide, we talked about how MySQL's privilege system allows you to control what level of access your user accounts have to various resources at different scopes. Privileges can be assigned to user accounts globally, at the database level, or more granularly at the database object level.
 
-We introduced the `GRANT` command to add new privileges to user accounts to improve their level of access. We discussed how the `GRANT OPTION` allows users to pass on their privileges so that administrators can distribute their privilege management responsibilities and then talked about how to assign common privileges to user accounts. We demonstrated how the `REVOKE` command can be used to remove privileges assigned to accounts and how partially revocation can allow you to codify exceptions to broad allowances.
+We introduced the `GRANT` command to add new privileges to user accounts to improve their level of access. We discussed how the `GRANT OPTION` allows users to pass on their privileges so that administrators can distribute their privilege management responsibilities and then talked about how to assign common privileges to user accounts. We demonstrated how the `REVOKE` command can be used to remove privileges assigned to accounts and how partial revocation can allow you to codify exceptions to broad allowances.
 
 Understanding how to distribute privileges to your user accounts allows you to set up your access management system using [the principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege). By granting accounts only the specific privileges they need to do their jobs you can prevent unauthorized behavior, minimize the impact of security problems, and implement isolation strategies to keep different parts of your system from impacting each other.
