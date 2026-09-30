@@ -184,7 +184,7 @@ withoutPosts.posts
 
 A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
 
-For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project when you run `prisma generate --sql`, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project during its generation step, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
 
 ```typescript
 const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))

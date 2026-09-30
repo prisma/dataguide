@@ -503,6 +503,8 @@ aws rds modify-db-instance --db-instance-identifier app-prod-db \
   --apply-immediately
 ```
 
+The password is still visible in the process list while the `aws` command runs, so run it interactively rather than from a script that records its arguments, and rotate the password afterwards if that matters in your environment.
+
 When a new major version is available on RDS, create a parameter group for its family as shown earlier, set `TARGET_VERSION` to the engine version you want (for example, from `describe-db-engine-versions`) and `TARGET_PARAMETER_GROUP` to the new group's name. Then create the deployment, test the green instance, and switch over:
 
 ```bash
