@@ -1,7 +1,7 @@
 ---
 title: 'Node.js ORMs, query builders and database libraries in 2026'
 metaTitle: 'Node.js ORMs, Query Builders & Database Libraries Compared (2026)'
-metaDescription: 'A dated comparison of Node.js and TypeScript ORMs and query builders (Drizzle, MikroORM, Prisma ORM, Sequelize, TypeORM, Mongoose, Knex.js and Kysely) with data from September 2026.'
+metaDescription: 'A September 2026 comparison of Node.js and TypeScript ORMs and query builders (Drizzle, MikroORM, Prisma ORM, Sequelize, TypeORM, Mongoose, Knex.js and Kysely), with figures you can check.'
 metaImage: '/social/docs-social.png'
 lastUpdated: 2026-09-30
 ---
@@ -48,12 +48,10 @@ This article doesn't measure how precisely each library types query results. Tha
 - **npm downloads** count every install, including CI runs and installs as a dependency of another package. For example, `kysely` is a dependency of `better-auth` and of MikroORM 7's `@mikro-orm/sql`, and `drizzle-orm` is a dependency of Payload's PostgreSQL adapter, `@payloadcms/db-postgres`. Downloads measure how widely a package is installed, not how many projects chose it.
 - **Download growth** was high across the whole npm registry: between the same 30 days in 2025 and 2026, downloads of `express` grew by 169% and `react` by 273%. Compare growth figures between libraries rather than reading them as adoption on their own.
 - **Stars** accumulate over a project's lifetime and say little about current use.
-- **Commits** depend on workflow: some projects squash each pull request into one commit, others commit in many small steps. The counts exclude bots such as Dependabot, Renovate and release bots, and so do the contributor counts. The share of the most active account shows how much a project depends on one person; an account can be a person or an automation working on their behalf.
+- **Commits** depend on workflow: some projects squash each pull request into one commit, others commit in many small steps. One rule applies to every project: a commit isn't counted if its GitHub account ends in `[bot]` or its commit author name ends in "bot". That excludes Dependabot, Renovate, GitHub Actions, release bots and coding agents that commit under a bot name. Contributors are the distinct accounts behind the remaining commits. The share of the most active account shows how much a project depends on one person; an account can be a person or an automation working on their behalf.
 - **Open issues** reflect how a project triages as much as the quality of the code.
 
-Downloads are for the 30 days from August 30 to September 28, 2026 ([npm's "last month" window](https://github.com/npm/registry/blob/main/docs/download-counts.md)), compared with August 30 to September 28, 2025. Commits and contributors are for the default branch between September 30, 2025 and September 30, 2026.
-
-<PostgresCallout />
+Downloads are for the 30 days from August 30 to September 28, 2026 ([npm's "last month" window](https://github.com/npm/registry/blob/main/docs/download-counts.md)), compared with August 30 to September 28, 2025. Commits and contributors are for the default branch between September 30, 2025 and September 30, 2026, except for Drizzle ORM (see the note under the activity table).
 
 ## SQL, query builders and ORMs
 
@@ -71,14 +69,14 @@ Many libraries blur these lines. Drizzle ORM, for example, has both an SQL-like 
 
 | Library     | Type          | Models defined with                               | Latest stable release | Databases                                                                                       | License    |
 | ----------- | ------------- | ------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------- | ---------- |
-| Drizzle ORM | ORM           | TypeScript table definitions                      | 0.45.3 (1.0 in RC)    | PostgreSQL, MySQL, SQLite, SingleStore, Gel; SQL Server and CockroachDB in 1.0 RC               | Apache-2.0 |
+| Drizzle ORM | ORM           | TypeScript table definitions                      | 0.45.3 (1.0 in RC)    | PostgreSQL, MySQL, SQLite, SingleStore, Gel (0.45 only); SQL Server and CockroachDB in 1.0 RC   | Apache-2.0 |
 | MikroORM    | ORM           | `defineEntity`, decorators or `EntitySchema`      | 7.2.2                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, MongoDB                                 | MIT        |
 | Prisma ORM  | ORM           | Prisma schema file                                | 7.10.0 (8.0 in RC)    | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite, CockroachDB (Prisma ORM 7)                      | Apache-2.0 |
 | Sequelize   | ORM           | `Model.init()` or `sequelize.define()`            | 6.37.8 (7.0 in alpha) | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, Db2, Snowflake                          | MIT        |
 | TypeORM     | ORM           | Decorated classes or `EntitySchema`               | 1.1.1                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, SAP HANA, CockroachDB, Spanner, MongoDB | MIT        |
 | Mongoose    | ODM           | `Schema` objects                                  | 9.10.3                | MongoDB                                                                                         | MIT        |
 | Knex.js     | Query builder | No models                                         | 3.3.0                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, CockroachDB, Amazon Redshift            | MIT        |
-| Kysely      | Query builder | A TypeScript interface that describes your tables | 0.29.6                | PostgreSQL, MySQL, SQL Server, SQLite, PGlite, plus community dialects                          | MIT        |
+| Kysely      | Query builder | A TypeScript interface that describes your tables | 0.29.6 (0.30 in beta) | PostgreSQL, MySQL, SQL Server, SQLite, PGlite, plus community dialects                          | MIT        |
 
 ### Popularity
 
@@ -99,25 +97,25 @@ Many libraries blur these lines. Drizzle ORM, for example, has both an SQL-like 
 
 | Library     | Latest stable release | Stable versions (12 months) | Commits (12 months) | Contributors (12 months) | Most active account's share | Open issues |
 | ----------- | --------------------- | --------------------------- | ------------------- | ------------------------ | --------------------------- | ----------- |
-| Drizzle ORM | 0.45.3, Sept 21, 2026 | 6                           | 1,063               | 15                       | 31%                         | 1,383       |
+| Drizzle ORM | 0.45.3, Sept 21, 2026 | 6                           | 1,321               | 20                       | 35%                         | 1,383       |
 | MikroORM    | 7.2.2, Sept 28, 2026  | 57                          | 1,026               | 56                       | 86%                         | 16          |
-| Prisma ORM  | 7.10.0, Aug 25, 2026  | 23                          | 8,271               | 31                       | 79%                         | 2,574       |
+| Prisma ORM  | 7.10.0, Aug 25, 2026  | 23                          | 7,926               | 31                       | 82%                         | 2,574       |
 | Sequelize   | 6.37.8, Mar 7, 2026   | 1                           | 93                  | 21                       | 44%                         | 934         |
 | TypeORM     | 1.1.1, Sept 1, 2026   | 7                           | 460                 | 83                       | 41%                         | 453         |
-| Mongoose    | 9.10.3, Sept 29, 2026 | 72                          | 1,943               | 102                      | 68%                         | 160         |
+| Mongoose    | 9.10.3, Sept 29, 2026 | 72                          | 1,938               | 101                      | 68%                         | 160         |
 | Knex.js     | 3.3.0, June 26, 2026  | 12                          | 127                 | 47                       | 28%                         | 578         |
 | Kysely      | 0.29.6, Sept 16, 2026 | 17                          | 249                 | 29                       | 87%                         | 140         |
 
 - "Stable versions" counts versions published to npm without a prerelease tag, on every release line a project maintains. The counts for MikroORM (6.x), Prisma ORM (6.x), TypeORM (0.3.x) and Mongoose (6.x to 8.x) include releases for older major versions.
-- Drizzle ORM's commits are counted on its `beta` branch, where version 1.0 is developed; its default branch had 65 commits in the same period. Prisma ORM's default branch holds Prisma ORM 8, and Sequelize's holds Sequelize 7.
+- Drizzle ORM develops 1.0 on working branches that are merged into its `beta` branch when a prerelease is published (for example, the `rc4` branch for 1.0.0-rc.4). Its commits are counted on `rc5`, the branch for the next release candidate, which contains all of `beta` plus 258 newer commits. Its default branch, which holds 0.45.x, had 65 commits in the same period. Prisma ORM's default branch holds Prisma ORM 8, and Sequelize's holds Sequelize 7.
 
 ## Drizzle ORM
 
 ### At a glance
 
 - **Type:** ORM with an SQL-like query builder and a relational query API
-- **Latest release:** 0.45.3 (September 21, 2026). Version 1.0 is a release candidate, and the [Drizzle documentation](https://orm.drizzle.team/docs/overview) already installs it (`drizzle-orm@rc`).
-- **Databases:** PostgreSQL, MySQL, SQLite, SingleStore and Gel, including serverless services such as Neon, Supabase, Turso, PlanetScale and Cloudflare D1. The 1.0 release candidate adds SQL Server and CockroachDB.
+- **Latest release:** 0.45.3 (September 21, 2026). Version 1.0 is a release candidate: the latest one, 1.0.0-rc.4, was published on June 27, 2026, and only builds of the next one, tagged with a commit hash, have been published since. The [Drizzle documentation](https://orm.drizzle.team/docs/overview) already installs the release candidate (`drizzle-orm@rc`).
+- **Databases:** PostgreSQL, MySQL, SQLite, SingleStore and Gel, including serverless services such as Neon, Supabase, Turso, PlanetScale and Cloudflare D1. The 1.0 release candidate adds SQL Server and CockroachDB; its package doesn't include the Gel driver (`drizzle-orm/gel`), although the docs still describe it.
 - **Runtimes:** according to the README, Node.js, Bun, Deno, Cloudflare Workers, Supabase functions, other edge runtimes and browsers
 - **TypeScript:** you define tables in TypeScript, and query types are inferred from those definitions without a code generation step
 - **Schema and migrations:** Drizzle Kit, a separate CLI, generates SQL migration files from changes to your schema, or pushes changes directly to the database
@@ -140,11 +138,11 @@ const rows = await db
 
 ### Project health
 
-Drizzle ORM had the most npm downloads of the ORMs and query builders compared here: 90.2 million in 30 days, about ten times as many as a year earlier. These downloads include installs as a dependency of other packages, such as Payload's PostgreSQL adapter. It's developed by the Drizzle Team. According to the project's [sustainability page](https://orm.drizzle.team/docs/sustainability), PlanetScale hired the entire core team in March 2026 so they can work on Drizzle full time. Development of 1.0 happens on the `beta` branch, which had 1,063 commits from 15 people in the past year, spread across several core team members. Support is through [Discord](https://driz.link/discord) and GitHub, where 1,383 issues were open.
+Drizzle ORM had the most npm downloads of the ORMs and query builders compared here: 90.2 million in 30 days, about ten times as many as a year earlier. These downloads include installs as a dependency of other packages, such as Payload's PostgreSQL adapter. It's developed by the Drizzle Team. According to the project's [sustainability page](https://orm.drizzle.team/docs/sustainability), PlanetScale hired the entire core team in March 2026 so they can work on Drizzle full time. Version 1.0 is developed on working branches that are merged into the `beta` branch when a prerelease is published. The branch for the next release candidate, `rc5`, holds 1,321 commits from 20 people made in the past year, spread across several core team members; no release candidate has been published since June 27, 2026. Support is through [Discord](https://driz.link/discord) and GitHub, where 1,383 issues were open.
 
 ### Trade-offs
 
-Drizzle suits you if you like writing queries that look like SQL and want types without a code generation step, and it's one of the libraries whose documentation explicitly covers edge runtimes. On the other hand, it hasn't reached 1.0: the stable release is 0.45.3 while the documentation targets the release candidate, and the [upgrade guide](https://orm.drizzle.team/docs/upgrade-v1) describes breaking changes to the relational query API and to Drizzle Kit's migration folders. The team is small (15 commit authors in the past year), and the number of open issues is high.
+Drizzle suits you if you like writing queries that look like SQL and want types without a code generation step, and it's one of the libraries whose documentation explicitly covers edge runtimes. On the other hand, it hasn't reached 1.0: the stable release is 0.45.3 while the documentation targets the release candidate, and the [upgrade guide](https://orm.drizzle.team/docs/upgrade-v1) describes breaking changes to the relational query API and to Drizzle Kit's migration folders. The team is small (20 commit authors in the past year), and the number of open issues is high.
 
 ## MikroORM
 
@@ -192,7 +190,7 @@ MikroORM suits applications with complex domain models, where change tracking an
 - **TypeScript:** types are generated from the schema by the Prisma CLI
 - **Schema and migrations:** models are written in the Prisma schema language (Prisma ORM 8 also accepts a TypeScript builder). Migrations are planned from schema changes: SQL files in Prisma ORM 7, TypeScript files in Prisma ORM 8.
 - **License:** Apache-2.0
-- **Links:** [Website](https://www.prisma.io/orm), [GitHub](https://github.com/prisma/orm), [npm: prisma](https://www.npmjs.com/package/prisma), [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
+- **Links:** [Website](https://www.prisma.io/docs/orm), [GitHub](https://github.com/prisma/orm), [npm: prisma](https://www.npmjs.com/package/prisma), [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
 
 ### How it works
 
@@ -219,17 +217,11 @@ const user = await db.orm.public.User.where({ email: 'alice@example.com' })
 
 ### Project health
 
-Prisma ORM is developed by the company Prisma, which employs its maintainers. Its default branch, which holds Prisma ORM 8, had 8,271 commits from 31 people in the past year; 79% of them came from one maintainer's account. `@prisma/client` had 65.2 million downloads in 30 days. With 2,574 open issues, Prisma ORM has the largest issue backlog in this comparison. Support is through [Discord](https://pris.ly/discord) and GitHub.
+Prisma ORM is developed by the company Prisma, which employs its maintainers. Its default branch, which holds Prisma ORM 8, had 7,926 commits from 31 people in the past year; 82% of them came from one maintainer's account. `@prisma/client` had 65.2 million downloads in 30 days. With 2,574 open issues, Prisma ORM has the largest issue backlog in this comparison. Support is through [Discord](https://pris.ly/discord) and GitHub.
 
 ### Trade-offs
 
-Prisma ORM suits teams that want one schema as the source of truth for types and migrations, and a query API that doesn't require writing joins. Right now, though, it's in a transition. Prisma ORM 8 is the version the docs recommend for new projects, but it's a release candidate: it supports fewer databases than Prisma ORM 7, and features such as `$extends`, filtering inside JSON columns and most nested writes aren't available yet (see [Coming from Prisma ORM 7](https://www.prisma.io/docs/orm/coming-from-prisma-orm-7)). Moving from 7 to 8 means learning a new query API. Prisma ORM 7 gets bug fixes and security updates for 18 months after 8 is final, but the `prisma` package's `latest` tag already points to the Prisma ORM 8 release candidate, so Prisma ORM 7 projects need to pin version 7. Both versions need a generation step after every schema change, which Drizzle doesn't.
-
-<PrismaOutlinks>
-
-To try Prisma ORM, start with the [Prisma ORM documentation](https://www.prisma.io/docs/orm). If you have a Prisma ORM 7 project, read [Release status](https://www.prisma.io/docs/orm/release-status) to see how to stay on version 7 or upgrade.
-
-</PrismaOutlinks>
+Prisma ORM suits teams that want one schema as the source of truth for types and migrations, and a query API that doesn't require writing joins. Right now, though, it's in a transition. Prisma ORM 8 is the version the docs recommend for new projects, but it's a release candidate: it supports fewer databases than Prisma ORM 7, features such as filtering inside JSON columns, most nested writes and transaction isolation levels aren't available yet, and `$extends` won't be added because middleware replaces it (see [Coming from Prisma ORM 7](https://www.prisma.io/docs/orm/coming-from-prisma-orm-7)). Moving from 7 to 8 means learning a new query API. Prisma ORM 7 gets bug fixes and security updates for 18 months after 8 is final, but the `prisma` package's `latest` tag already points to the Prisma ORM 8 release candidate, so Prisma ORM 7 projects need to pin version 7. Both versions need a generation step after every schema change, which Drizzle doesn't.
 
 ## Sequelize
 
@@ -272,7 +264,7 @@ Sequelize supports more databases than most libraries here and has a long track 
 - **Type:** ORM that supports both the Active Record and Data Mapper patterns
 - **Latest release:** 1.1.1 (September 1, 2026). TypeORM 1.0 was released on May 19, 2026; the 0.3.x line still gets releases (0.3.31 on July 13, 2026).
 - **Databases:** PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, SAP HANA, CockroachDB, Google Spanner, MongoDB and sql.js
-- **Runtimes:** TypeORM 1.x requires Node.js 20 or later. The [supported platforms page](https://typeorm.io/docs/help/supported-platforms) also covers browsers (with sql.js), Capacitor, Cordova and Ionic, Expo, NativeScript and React Native.
+- **Runtimes:** TypeORM 1.1 requires Node.js 20.19+, 22.13+ or 24.11+. The [supported platforms page](https://typeorm.io/docs/help/supported-platforms) also covers browsers (with sql.js), Capacitor, Cordova and Ionic, Expo, NativeScript and React Native.
 - **TypeScript:** written in TypeScript; entities are usually classes with decorators, which need the `experimentalDecorators` and `emitDecoratorMetadata` compiler options and the `reflect-metadata` package
 - **Schema and migrations:** can generate migrations from changes to your entities
 - **License:** MIT
@@ -328,7 +320,7 @@ const user = await User.findOne({
 
 ### Project health
 
-Mongoose has been developed since 2010 and lives in Automattic's GitHub organization. It had the most contributors in this comparison: 1,943 commits from 102 people in the past year (68% of them from its most active maintainer) and 72 stable releases, with 160 open issues. `mongoose` had 26.5 million downloads in 30 days. Support is through Slack, Stack Overflow and GitHub.
+Mongoose has been developed since 2010 and lives in Automattic's GitHub organization. It had the most contributors in this comparison: 1,938 commits from 101 people in the past year (68% of them from its most active maintainer) and 72 stable releases, with 160 open issues. `mongoose` had 26.5 million downloads in 30 days. Support is through Slack, Stack Overflow and GitHub.
 
 ### Trade-offs
 
@@ -341,7 +333,7 @@ If you use MongoDB from Node.js and want schemas, validation and middleware, Mon
 - **Type:** SQL query builder
 - **Latest release:** 3.3.0 (June 26, 2026)
 - **Databases:** PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, CockroachDB and Amazon Redshift
-- **Runtimes:** Node.js 16 or later; the docs also describe a browser build for generating SQL
+- **Runtimes:** Node.js 16 or later. The docs also describe a browser build, but warn that composing SQL in the browser for execution on the server is "highly discouraged" because it can cause serious security vulnerabilities.
 - **TypeScript:** written in JavaScript, with official type definitions that the [docs](https://knexjs.org/guide/#typescript) call "best-effort". You pass row and result types as generic parameters, or declare your tables once by augmenting Knex's `Tables` interface.
 - **Schema and migrations:** a schema builder and a CLI for migrations and seed files, which you write by hand
 - **License:** MIT
@@ -458,14 +450,16 @@ All four work only with PostgreSQL. PgTyped and Zapatos have had no commits to t
 
 There's no single best library, but the data above suggests some starting points:
 
-- **You want one model definition to drive types and migrations:** Prisma ORM (schema file), Drizzle ORM (TypeScript), MikroORM and TypeORM (entities) all generate migrations from your models. Sequelize, Knex.js and Kysely migrations are written by hand.
+- **You want one model definition to drive types and migrations:** Drizzle ORM (TypeScript), MikroORM (entities), Prisma ORM (schema file) and TypeORM (entities) all generate migrations from your models. Sequelize, Knex.js and Kysely migrations are written by hand.
 - **You prefer SQL-shaped queries with inferred result types:** Kysely and Drizzle ORM. If you want SQL itself, look at the drivers and SQL-first libraries.
 - **You want change tracking and a unit of work:** MikroORM.
-- **You use MongoDB:** Mongoose is the established ODM. MikroORM, TypeORM and Prisma ORM also support MongoDB, and the MongoDB driver works on its own.
+- **You use MongoDB:** Mongoose is the established ODM. MikroORM and TypeORM also support MongoDB, and so does Prisma ORM, in version 6.19 or as early access in Prisma ORM 8. The MongoDB driver works on its own.
 - **You deploy to edge runtimes:** check each library's docs for your platform. Drizzle ORM, Kysely and Prisma ORM document Cloudflare Workers, and MikroORM explains what edge runtimes need.
 - **You need a database beyond PostgreSQL, MySQL and SQLite:** TypeORM, Sequelize, MikroORM and Knex.js support SQL Server and Oracle; Prisma ORM 7, Kysely and the Drizzle ORM 1.0 release candidate support SQL Server.
 - **You value stability over new features:** check the maturity notes. Drizzle ORM and Kysely haven't reached 1.0, Prisma ORM 8 and Drizzle ORM 1.0 are release candidates, TypeORM just released 1.0, and Sequelize 7 is in alpha.
 
 Whichever you choose, try it on a small part of your application first, and read its issue tracker for the problems others run into.
+
+<PostgresCallout />
 
 To learn more about the different levels of abstraction, read [Comparing SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).
