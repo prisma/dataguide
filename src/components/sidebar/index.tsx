@@ -18,7 +18,8 @@ const Sidebar = styled.div<{ $sticky?: boolean }>`
     $sticky &&
     `
       position: sticky;
-      top: 0;
+      top: 64px;
+      height: calc(100vh - 64px);
     `};
 
   .tablet-only {

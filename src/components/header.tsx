@@ -13,8 +13,11 @@ type HeaderViewProps = {
   headerProps: HeaderProps
 }
 
+// Stays at the top while scrolling, so search and navigation are always at hand
 const HeaderWrapper = styled.header`
-  background: rgba(249, 250, 245, 0.92);
+  background: rgba(249, 250, 245, 0.8);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
   height: 64px;
   img {
@@ -24,7 +27,8 @@ const HeaderWrapper = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 200;
 
   .container {
@@ -177,7 +181,7 @@ const SearchContainer = styled.div<{ $isSticky?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media only screen and (min-width: 1024px) {
+  @media only screen and (min-width: 1025px) {
     display: none;
   }
   ${({ $isSticky }) =>
