@@ -1,0 +1,42 @@
+{
+  "collectedAt": "2026-09-30T17:49:59.837747+00:00",
+  "runtime": "v22.18.0",
+  "checks": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "logSha256": "fdfe59b41c5725659634b77275651a1eef9a35dbca12d2864ed7753bd59ff0cb"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "logSha256": "9cb0f08873d0dcdd6fe6c2c0552640cc10f1f6758defb3fa4f58fc3bfe4b579c"
+    },
+    {
+      "command": "npm run clean",
+      "exitCode": 0,
+      "logSha256": "f030910f7373d077041da6b6ef5b85f02402ca1a412b05856bb30a3ea5ea55ef"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "logSha256": "538dc6269f11ddb4b8be1e427b84143953e6d30737d09486b852a3e5d28f5940"
+    }
+  ],
+  "status": "passed",
+  "buildStartedAt": "2026-09-30T17:55:45.123152+00:00",
+  "build": {
+    "sourceRevision": "525a9e87ea5daf307cd25c8214f78cc0c453d925",
+    "dirty": true,
+    "contentRevision": "2fe800e5828e6a7efb062ac4a2147afc3ac9bacc07aaa95b2d13e3cac1effc83",
+    "builtAt": "2026-09-30T17:57:10.810Z",
+    "search": {
+      "requested": false,
+      "verification": "Query the deployed index separately; a site build is not a search smoke test."
+    },
+    "artifacts": {
+      "count": 435,
+      "scope": "Hashes are served in content-manifest.json"
+    }
+  }
+}

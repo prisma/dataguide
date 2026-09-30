@@ -1,2 +1,13 @@
 #!/usr/bin/env bash
-find ./ -type f -name 'production-app.js' -exec sed -i 's#pagePath &&#& pagePath != "/" \&\&#g' {} \; && gatsby build --prefix-paths
+set -euo pipefail
+# Patch only Gatsby's generated app template; use Node for portable file editing.
+node - <<'NODE'
+const fs = require('node:fs')
+const file = require.resolve('gatsby/cache-dir/production-app')
+let source = fs.readFileSync(file, 'utf8')
+if (!source.includes('pagePath != "/"')) {
+  source = source.replaceAll('pagePath &&', 'pagePath && pagePath != "/" &&')
+  fs.writeFileSync(file, source)
+}
+NODE
+gatsby build --prefix-paths

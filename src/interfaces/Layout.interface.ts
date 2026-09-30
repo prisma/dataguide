@@ -26,5 +26,20 @@ export interface CreatePageContext {
     seoDescription: string
     metaImage: string
     socialImage?: SocialImage
+    publication?: {
+      published: boolean
+      indexed: boolean
+      searchable: boolean
+      navigable: boolean
+      exported: boolean
+    }
+    verification?: {
+      level: string
+      scope: string
+      versions?: string[]
+      reviewDate?: string
+      fixture?: string
+      evidence?: string
+    }
   }
 }

@@ -1,0 +1,33 @@
+[
+  {
+    "query": "Working with dates in PostgreSQL",
+    "path": "/postgresql/date-types",
+    "snippetTerms": ["date"]
+  },
+  {
+    "query": "PostgreSQL date subtraction",
+    "path": "/postgresql/date-types",
+    "anchor": "get-the-interval-between-two-dates",
+    "snippetTerms": ["days"]
+  },
+  {
+    "query": "psql certificate host name does not match",
+    "path": "/postgresql/connecting-to-postgresql-databases",
+    "snippetTerms": ["certificate", "host"]
+  },
+  {
+    "query": "PostgreSQL restore backup",
+    "path": "/postgresql/inserting-and-modifying-data/importing-and-exporting-data-in-postgresql",
+    "snippetTerms": ["restore"]
+  },
+  {
+    "query": "connection poolng",
+    "path": "/database-tools/connection-pooling",
+    "snippetTerms": ["pool"]
+  },
+  {
+    "query": "database migration isolated developers",
+    "path": "/managing-databases/syncing-development-databases-between-team-members",
+    "snippetTerms": ["isolated", "migration"]
+  }
+]

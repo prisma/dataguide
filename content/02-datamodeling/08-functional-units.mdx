@@ -11,11 +11,11 @@ There are two schools of thought about performing computations in your database:
 
 But databases are, by definition, very good at processing and manipulating information, and most of them make that same control and power available to their users (SQLite and MS Access to a lesser degree). External data processing programs start on the back foot having to pull information out of the database, often across a network, before they can do anything. And where database programs can take full advantage of native set operations, indexing, temporary tables, and other fruits of half a century of database evolution, external programs of any complexity tend to involve some level of wheel-reinvention. So why not put the database to work?
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 Find out [how to use functions in default values with Prisma](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#default-values) in the Prisma documentation.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Here's why you might _not_ want to program your database!
 
@@ -92,11 +92,11 @@ CREATE TABLE lots (
 
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you're using Prisma, our documentation covers the equivalent method of [defining default values for your fields](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#default-values). Prisma ORM also supports [aggregation](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#aggregate), which allows you to perform count, average, and similar operations on data without separate storage.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Referencing data in functions
 
@@ -178,11 +178,11 @@ Triggers and functions can run at the access level of their definer (in PostgreS
 
 The trigger-action-trigger-action call stack can become arbitrarily long, although true recursion in the form of modifying the same tables or records multiple times in any such flow is illegal on some platforms and more generally a bad idea in almost all circumstances. Trigger nesting rapidly outstrips our ability to comprehend its extent and effects. Databases making heavy use of nested triggers begin to drift from the realm of the complicated toward that of the complex, becoming difficult or impossible to analyze, debug, and predict.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 In Prisma ORM, you can achieve similar results with TypeScript at the client level instead of SQL by using [middleware](https://www.prisma.io/docs/orm/middleware/how-middleware-works). Middleware runs your code before and after every query (e.g., to block a `DELETE` that has no `WHERE` clause before it reaches the database).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Practical programmability
 
@@ -190,13 +190,13 @@ Computations in the database aren't just faster and more concisely expressed: th
 
 Programmability is an unjustly overlooked feature of relational databases. There exist reasons to avoid it and more to limit its use, but functions, procedures, and triggers are all powerful tools for limiting the complexity your data model imposes on the systems in which it's embedded.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you want to learn more about what data modeling means in the context of Prisma, visit the [data modeling overview](https://www.prisma.io/docs/orm/data-modeling?db=postgresql) in the Prisma documentation.
 
 You can also learn how to describe models in a Prisma contract (the file that Prisma ORM 7 called the schema) in the [models and fields](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) section of the Prisma documentation.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## FAQ
 

@@ -6,6 +6,12 @@ metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice title="Verification scope">
+
+Connection defaults and certificate/hostname verification were exercised with PostgreSQL 18.6 in disposable containers. The native Linux, macOS and Windows installation paths and provider-issued certificates were not re-tested. Check your installation's authentication policy and your provider's maintained CA instructions before using the templates below.
+
+</StatusNotice>
+
 ## Introduction
 
 One of the first things you'll need to think about when working with a [PostgreSQL](/intro/database-glossary#postgresql) database is how to connect and interact with the database instance. This requires coordination between the database client — the component you use to interact with the database, and the database server — the actual PostgreSQL instance that stores, organizes, and provides access to your data.
@@ -31,9 +37,9 @@ Let's start with connecting to a database from the same computer.
 
 ## Connecting to a local database with `psql`
 
-Without any arguments, the `psql` command attempts to connect to a [Unix socket file](https://en.wikipedia.org/wiki/Unix_file_types) to access a local database. It uses your operating system username as the PostgreSQL username and database name that you are trying to connect to.
+On Unix systems, `psql` without connection options normally uses a local Unix-domain socket. The default PostgreSQL user is your operating-system username, unless `PGUSER` or a connection option overrides it. The default database name is the **selected PostgreSQL user**, unless `PGDATABASE` or `-d` supplies another name. For example, `psql -U app_user` normally selects the database `app_user`, while `psql -U app_user -d applicationdb` selects `applicationdb`. `PGHOST` and `PGPORT` also override connection defaults; [libpq environment variables](https://www.postgresql.org/docs/18/libpq-envars.html) list the full set.
 
-By default, modern versions of PostgreSQL are configured for something called [peer authentication](https://www.postgresql.org/docs/current/auth-peer.html). **Peer authentication** authenticates users automatically if a valid PostgreSQL user exists that matches the user's operating system username.
+Many Linux packages configure local sockets for [peer authentication](https://www.postgresql.org/docs/18/auth-peer.html). This is an installation choice, not a universal PostgreSQL default. **Peer authentication** authenticates users automatically if a valid PostgreSQL user exists that matches the user's operating system username.
 
 So if your current user is a valid PostgreSQL user on your local database, you can connect by typing:
 
@@ -41,11 +47,11 @@ So if your current user is a valid PostgreSQL user on your local database, you c
 psql
 ```
 
-However, it's unlikely that your normal operating system username already has an associated PostgreSQL username. So usually, you'll need to log into PostgreSQL using an operating system username that already has an associated PostgreSQL role.
+Check your installation before assuming which account to use. Some macOS tools initialize a role matching your own account; containers have their own configured role, database and socket inside the container; managed services provide a hostname and credentials and do not give you the database server's operating-system account.
 
-By default, the super user, or administrative account, for PostgreSQL is called `postgres`. Upon installation, a user called `postgres` is also created on the operating system. So, to log into PostgreSQL as the `postgres` user, you need to connect as the `postgres` operating system user. There are a number of ways to do this.
+On Linux installations that create both a `postgres` operating-system account and a PostgreSQL administrator role and use peer authentication, you can connect as that operating-system account. The following `sudo` examples apply to those installations; they are not the application login path.
 
-The easiest way to get a shell as the `postgres` user on most systems is to use the `sudo` command. To open a shell session for the `postgres` user and then log into the database, you can type:
+To get a shell as the `postgres` user on such a Linux installation is to use the `sudo` command. To open a shell session for the `postgres` user and then log into the database, you can type:
 
 ```bash
 sudo --login --user=postgres
@@ -66,61 +72,41 @@ For security reasons and because of the reliance on a local socket file, peer au
 
 The available authentication methods vary based on the PostgreSQL instance's configuration. Most commonly, though, you will be able to authenticate by providing the following pieces of information:
 
-| **Option**              | **Description**                                                                                                                                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **hostname**            | The network host name or the IP address of the PostgreSQL server. The `-h` option is used to specify the hostname.                                                                                    |
-| **network port**        | The network port that the PostgreSQL server is running on. By default, this is port 5432. This can be omitted if the default is used. To specify a different port, you can use the `-p` option.       |
-| **PostgreSQL username** | The database username you wish to connect as. If not specified, your operating system username will be used. The `-U` option is used to override the default and define the username to connect with. |
-| **PostgreSQL password** | The PostgreSQL password associated with the specified username. Since `psql` will prompt you for a password if it isn't provided, this can often be omitted.                                          |
-| **PostgreSQL database** | The PostgreSQL database name that you want to access. If not specified, your operating system username will be used as the database name. To specify a different database, use the `-d` option.       |
+| **Option**              | **Description**                                                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **hostname**            | The network host name or the IP address of the PostgreSQL server. The `-h` option is used to specify the hostname.                                                                                                          |
+| **network port**        | The network port that the PostgreSQL server is running on. By default, this is port 5432. This can be omitted if the default is used. To specify a different port, you can use the `-p` option.                             |
+| **PostgreSQL username** | The database username you wish to connect as. If not specified, your operating system username will be used. The `-U` option is used to override the default and define the username to connect with.                       |
+| **PostgreSQL password** | The PostgreSQL password associated with the specified username. Since `psql` will prompt you for a password if it isn't provided, this can often be omitted.                                                                |
+| **PostgreSQL database** | The PostgreSQL database name that you want to access. If not specified and `PGDATABASE` is unset, the selected PostgreSQL username will be used as the database name. To specify a different database, use the `-d` option. |
 
 There are multiple ways of providing your connection information to `psql`. Here, we'll cover the two of the most common: by passing options and with a connection string.
 
 ### Passing connection information to `psql` with options
 
-So the basic format for connecting to a remote database typically looks something like this:
+For remote connections, require TLS and verify the server's identity. Obtain the CA certificate from your provider's maintained instructions (for example, [RDS certificates](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html)), or from your own trusted certificate authority. Use the hostname covered by the server certificate. Do not download a certificate from an unverified server and treat it as trusted.
 
-```bash
-psql -h <hostname> -p <port> -U <username> -d <database>
+The following template uses libpq environment options alongside the familiar `psql` flags. Replace the hostname, database, user and CA path. `-W` prompts for the password, keeping it out of the command and shell history:
+
+```bash pseudocode
+PGSSLMODE=verify-full PGSSLROOTCERT=/path/to/provider-ca.pem psql -h db.example.test -p 5432 -U app_user -d applicationdb -W
 ```
 
-The remote server will indicate that it requires a password for most accounts, at which point `psql` will prompt you for the password. If you authenticate successfully, a new interactive PostgreSQL session will be started.
+[`verify-full`](https://www.postgresql.org/docs/18/libpq-ssl.html) checks both the certificate chain and hostname. A wrong-host certificate must fail. For unattended scripts, use a protected [password file](https://www.postgresql.org/docs/18/libpq-pgpass.html) with mode `0600` on Unix rather than a password in a command-line argument. Use a role with only the privileges your application needs.
 
-As an example, we can imagine wanting to connect to a database with the following requirements:
-
-- hostname: `myhost`
-- port: 1234
-- database: `applicationdb`
-- username: `myapplicationuser`
-- password: `mypass`
-
-Calling `psql` with the following options would allow you to authenticate:
-
-```bash
-psql -h myhost -p 1234 -U myapplicationuser -d applicationdb
-```
-
-Upon pressing enter, you'd be prompted a password where you can authenticate with `mypass`.
+If `psql` reports that a `server certificate` `does not match host name`, check that the connection hostname matches a name in the certificate and that you have the intended server address. The disposable test rejected `wrong.example.test` when the certificate covered `db.example.test`. Correct the hostname or server certificate while retaining `verify-full`; disabling verification hides the identity failure.
 
 ### Passing connection information to `psql` with a connection string
 
-This same information can also be encoded into a [PostgreSQL _connection string_](/postgresql/short-guides/connection-uris). A connection string provides the same information in a single URI string that uses certain characters as delimiters between the different fields.
+A [PostgreSQL connection URI](/postgresql/short-guides/connection-uris) can carry the same settings. Quote the whole URI so shell metacharacters such as `&` are not interpreted. This template deliberately omits the password and prompts for it:
 
-Connection strings have the following general format:
-
-```
-postgresql://<username>:<password>@<hostname>:<port>/<database>
+```bash pseudocode
+psql 'postgresql://app_user@db.example.test:5432/applicationdb?sslmode=verify-full&sslrootcert=/path/to/provider-ca.pem' -W
 ```
 
-Each of the fields can be omitted if they are unneeded or if the default values are valid.
+URI components containing reserved characters must be [percent-encoded](https://www.postgresql.org/docs/18/libpq-connect.html#LIBPQ-CONNSTRING-URIS); for example, `@` within a component becomes `%40`. If a library requires a password-bearing URI, load it from protected configuration and avoid logging it.
 
-We can optionally use a connection string to connect with `psql` instead of the using the options that we used in our previous example:
-
-```bash
-psql postgresql://myapplicationuser:mypass@myhost:1234/applicationdb
-```
-
-The `psql` tool can use either of these formats, so use whichever you prefer. Other tools or libraries that you encounter might nudge you into relying on one more than the other.
+Local Unix sockets do not use TLS. Loopback TCP in a disposable development environment can have a separately scoped policy, but an unqualified connection's default `sslmode=prefer` does not verify a remote server's identity. The companion [authentication guide](/postgresql/authentication-and-authorization/configuring-user-authentication#allow-remote-connections-using-ssl-and-passwords) explains the server-side rules.
 
 ## Adjusting a PostgreSQL server's authentication configuration
 

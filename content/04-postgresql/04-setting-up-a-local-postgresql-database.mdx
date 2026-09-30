@@ -7,6 +7,12 @@ lastUpdated: 2026-09-30
 toc: false
 ---
 
+<StatusNotice title="Installation verification scope">
+
+The disposable tutorial tests exercise PostgreSQL 18 containers. The native Linux, macOS and Windows installation branches below were not re-executed by this verification pass; use the linked platform/provider instructions to check current installer and package behavior.
+
+</StatusNotice>
+
 ## Introduction
 
 A working PostgreSQL setup has two parts: the [PostgreSQL server](https://www.postgresql.org/docs/18/app-postgres.html) (`postgres`), which stores your data and accepts connections, and a client that talks to it. This guide uses [`psql`](https://www.postgresql.org/docs/18/app-psql.html), PostgreSQL's command-line client, which every installation method below includes.
@@ -28,11 +34,11 @@ After the installation, the guide shows how to lock the server down, create a da
 - [Managing the server and finding its files](#managing-the-server-and-finding-its-files)
 - [Removing PostgreSQL](#removing-postgresql)
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you just need a database for development and tests, [local Prisma Postgres](https://www.prisma.io/docs/local-development/postgres) runs one on your machine with Node.js, without Docker or a PostgreSQL installation. It's built on [PGlite](https://pglite.dev), PostgreSQL compiled to WebAssembly, and Prisma ORM, other ORMs, drivers such as `pg`, and database GUIs can connect to it. It accepts one connection at a time, which is enough for most local development.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Choosing a PostgreSQL version
 

@@ -9,6 +9,8 @@ import { getThemedTopic } from './src/utils/topicThemes'
 import type { SocialImage } from './src/utils/socialMetadata'
 
 const path = require('path')
+const publicationPolicy = require('./plugins/publication-policy.cjs')
+const verificationManifest = require('./content-verification.json')
 
 // Some articles use a relative path to an image file as `metaImage`. Without an
 // explicit type, Gatsby may infer the field as `File` (depending on which article
@@ -22,6 +24,12 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       metaImage: String
       # Set when an article's content changes substantively (YYYY-MM-DD), never automatically
       lastUpdated: Date @dateformat
+      publish: Boolean
+      skipBuild: Boolean
+      hidePage: Boolean
+      index: Boolean
+      search: Boolean
+      export: Boolean
     }
   `)
 }
@@ -29,6 +37,9 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 exports.onCreateNode = ({ node, getNode, actions }: any) => {
   const { createNodeField } = actions
   if (node.internal.type === `Mdx`) {
+    for (const [name, value] of Object.entries(publicationPolicy(node.frontmatter))) {
+      createNodeField({ node, name, value })
+    }
     const parent = getNode(node.parent)
     let value = parent.relativePath.replace(parent.ext, '')
     if (value === 'index') {
@@ -54,6 +65,9 @@ exports.onCreateNode = ({ node, getNode, actions }: any) => {
 }
 
 exports.createPages = async ({ graphql, actions, reporter }: any) => {
+  const { validateVerification } = await import('./scripts/verification.mjs')
+  const verificationErrors = validateVerification(verificationManifest)
+  if (verificationErrors.length) reporter.panicOnBuild(verificationErrors.join('\n'))
   const { createPage, createRedirect } = actions
 
   const redirects = siteConfig.redirects
@@ -77,6 +91,11 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
             metaImage
             metaDescription
             skipBuild
+            publish
+            hidePage
+            index
+            search
+            export
           }
           internal {
             contentFilePath
@@ -91,7 +110,9 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
   }
 
   // Create blog post pages.
-  const posts = result.data.allMdx.nodes
+  const posts = result.data.allMdx.nodes.filter(
+    (node: any) => publicationPolicy(node.frontmatter).published
+  )
 
   const root = process.cwd()
   const cardThemes = await loadCardThemes(root)
@@ -131,6 +152,9 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
 
   // you'll call `createPage` for each result
   posts.forEach((node: any) => {
+    const file = path.relative(root, node.internal.contentFilePath).split(path.sep).join('/')
+    const verification = verificationManifest.articles.find((entry: any) => entry.file === file)
+    if (!verification) reporter.panicOnBuild(`Missing article verification disposition: ${file}`)
     createPage({
       path: pagePath(node),
       component: `${path.resolve('./src/templates/docs.tsx')}?__contentFilePath=${node.internal.contentFilePath}`,
@@ -140,6 +164,8 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
         seoDescription: node.frontmatter.metaDescription || node.frontmatter.title,
         metaImage: node.frontmatter.metaImage || '',
         socialImage: socialImages.get(node.id),
+        publication: publicationPolicy(node.frontmatter),
+        verification,
       },
     })
   })

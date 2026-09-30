@@ -1,0 +1,79 @@
+[
+  {
+    "id": "postgresql",
+    "url": "https://www.postgresql.org/support/versioning/",
+    "owner": "PostgreSQL section maintainer",
+    "paths": ["content/04-postgresql/", "examples/library-app/"],
+    "lane": "stable; check beta separately"
+  },
+  {
+    "id": "postgresql-preview",
+    "url": "https://www.postgresql.org/developer/beta/",
+    "owner": "PostgreSQL section maintainer",
+    "paths": ["content/04-postgresql/04-setting-up-a-local-postgresql-database.mdx"],
+    "lane": "preview"
+  },
+  {
+    "id": "mysql",
+    "url": "https://www.mysql.com/support/eol-notice.html",
+    "owner": "MySQL section maintainer",
+    "paths": ["content/05-mysql/"],
+    "lane": "stable"
+  },
+  {
+    "id": "mongodb",
+    "url": "https://www.mongodb.com/legal/support-policy/lifecycles",
+    "owner": "MongoDB section maintainer",
+    "paths": ["content/08-mongodb/"],
+    "lane": "stable"
+  },
+  {
+    "id": "node",
+    "url": "https://nodejs.org/en/about/previous-releases",
+    "owner": "Web platform maintainer",
+    "paths": ["package.json", "README.md", "CONTRIBUTING.md", "examples/library-app/"],
+    "lane": "stable"
+  },
+  {
+    "id": "prisma-orm",
+    "url": "https://www.prisma.io/docs/orm",
+    "owner": "Prisma integration editor",
+    "paths": ["content/"],
+    "lane": "check stable and preview labels before changing guidance"
+  },
+  {
+    "id": "pg-driver",
+    "url": "https://raw.githubusercontent.com/brianc/node-postgres/master/CHANGELOG.md",
+    "owner": "Application lab maintainer",
+    "paths": ["examples/library-app/", "content/09-database-tools/03-connection-pooling.mdx"],
+    "lane": "stable; changelog omits patch releases, check the npm registry during review"
+  },
+  {
+    "id": "pgbouncer",
+    "url": "https://www.pgbouncer.org/changelog.html",
+    "owner": "Database operations maintainer",
+    "paths": ["examples/library-app/", "content/09-database-tools/03-connection-pooling.mdx"],
+    "lane": "stable"
+  },
+  {
+    "id": "lambda",
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html",
+    "owner": "Provider comparison editor",
+    "paths": ["content/11-serverless/02-serverless-comparison.mdx"],
+    "lane": "runtime-specific stable or preview"
+  },
+  {
+    "id": "atlas",
+    "url": "https://www.mongodb.com/docs/atlas/flex-migration/",
+    "owner": "Provider comparison editor",
+    "paths": ["content/11-serverless/02-serverless-comparison.mdx"],
+    "lane": "provider lifecycle"
+  },
+  {
+    "id": "deno-deploy",
+    "url": "https://docs.deno.com/deploy/changelog/",
+    "owner": "Provider comparison editor",
+    "paths": ["content/11-serverless/02-serverless-comparison.mdx"],
+    "lane": "provider lifecycle"
+  }
+]

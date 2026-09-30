@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Copy from '../../icons/Copy'
 
 // Copies a code block to the clipboard
-const CopyButton = ({ text }: { text: string }) => {
+const CopyButton = ({ text, label = 'Copy code' }: { text: string; label?: string }) => {
   const [copied, setCopied] = React.useState(false)
   const timer = React.useRef<number>(undefined)
 
@@ -30,7 +30,7 @@ const CopyButton = ({ text }: { text: string }) => {
   }
 
   return (
-    <CopyComponent type="button" onClick={copy} aria-label="Copy code" title="Copy code">
+    <CopyComponent type="button" onClick={copy} aria-label={label} title={label}>
       <Copy aria-hidden="true" />
       <span className="indicator" role="status" aria-live="polite">
         {copied ? 'Copied' : ''}

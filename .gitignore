@@ -87,3 +87,8 @@ content/00-example.mdx
 
 # gatsby typegen
 src/gatsby-types.d.ts
+
+# Disposable tutorial execution reports
+.verification-runs/
+.playwright-cli/
+output/playwright/

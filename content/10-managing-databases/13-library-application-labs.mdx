@@ -1,0 +1,93 @@
+---
+title: 'A library application: isolation, retries and recovery'
+metaTitle: 'Runnable PostgreSQL application labs for isolation, retries and outbox delivery'
+metaDescription: 'Use one TypeScript library application to test tenant isolation, concurrency, idempotency, pooling, authorized retrieval and transactional outbox recovery.'
+---
+
+## Start with one application
+
+This lab follows one small library application through modeling, migration, access, isolation and failure recovery. Its tables track tenants, books, idempotency requests, outbox events and retrieved documents. The source, schema and dependency lockfile are in `examples/library-app` in [the Data Guide repository](https://github.com/prisma/dataguide). It uses PostgreSQL 18.6, Node.js 22.18.0 or later, `pg` 8.23.1 and PgBouncer 1.26.0. Database and pooler images are pinned by digest. There is no preview dependency path in the exercise.
+
+From a Data Guide checkout with Docker available:
+
+```bash
+npm ci --prefix examples/library-app
+npm run typecheck --prefix examples/library-app
+npm run lab --prefix examples/library-app
+```
+
+The runner provisions fresh containers on a private Docker network and publishes ports only on `127.0.0.1`. It loads synthetic data, starts a TypeScript HTTP application on loopback, exercises authenticated reads and borrowing requests, then removes its containers and network. Its report at `examples/library-app/.verification-runs/library.json` records actual versions, schema hash, checks, timings and cleanup. Any failed assertion fails the run. CI repeats the exercise and retains its report.
+
+The bearer tokens in this local application are synthetic test principals, not a production authentication system. The database has a separate non-login schema owner and restricted application role. The lab credentials have no meaning outside its disposable container.
+
+## Model and migrate before serving requests
+
+Each book's key is `(tenant_id, id)`, its copy count cannot be negative, and an update increments its version. An idempotency request is unique within its tenant. A migration creates this schema and a matching seed-version record. A fresh checkout must satisfy both version checks before the application smoke test runs.
+
+Production migrations need a separate owner credential, reviewed compatibility steps and an application rollout plan. An additive change can be deployed before code starts using it; dropping or reinterpreting a column may require a later phase after old processes stop. A successful schema migration does not prove that old application binaries can roll back. The lab's initial and additive migrations do not simulate a managed production upgrade.
+
+## Isolate tenants at the database boundary
+
+The shared-table exercise enables PostgreSQL row-level security and `FORCE ROW LEVEL SECURITY`. The application obtains the tenant from its authenticated principal, starts a transaction, and sets the tenant context **locally for that transaction**. Every path uses the restricted role; no public endpoint accepts arbitrary SQL.
+
+The adversarial tests try to read and update another tenant, insert a row with a different tenant ID, change to the owner role, and reuse a pooled connection for alternating tenants. A request header naming another tenant does not override the authenticated principal. Queries without tenant context see no rows. The table owner is subject to the forced policy in the test, while the superuser control bypasses it, as [PostgreSQL's row-security documentation](https://www.postgresql.org/docs/18/ddl-rowsecurity.html) specifies.
+
+This trust boundary matters: an application role that can issue arbitrary SQL can set its own tenant context. Row-level security with a custom setting protects against omitted predicates in trusted application queries; it does not safely expose that role to an untrusted SQL client. Table owners can change policies, and privileged roles can bypass them. Keep those identities away from request code.
+
+| Isolation model                      | Operational tradeoff                                                                                                                                                                                                                      |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shared tables with enforced policies | One schema migration and efficient shared resources; policy, role and request-context tests are essential.                                                                                                                                |
+| Schema per tenant                    | Separate names and schema-specific roles. The runner uses trusted provisioned schema names and transaction-local `search_path`, with no create permission for request roles. A schema name alone is not authorization.                    |
+| Database per tenant                  | Separate connection/permission boundaries and easier per-tenant restore; more pools, provisioning and migration coordination. The runner revokes public connection access and routes authenticated tenants to their own restricted pools. |
+
+The same HTTP application reads and borrows books under each model. A trusted map selects the provisioned schema or database from the authenticated principal. Each strategy gets the same synthetic model, idempotency behavior and seed. Tests alternate tenants, reject cross-schema reads and cross-database connections, and apply one additive migration across all tenant targets. The schema/database paths retain row policies as defense in depth. None of these models protects against a compromised cluster administrator. Provisioning roles are never exposed to the HTTP client.
+
+## Reproduce concurrency failures
+
+The two-client lost-update test reads the same count in both transactions and writes each stale derived value back. Two borrows decrement only once. The positive control uses an atomic decrement, and both operations affect the count. An optimistic update checks the version and lets only one competing writer succeed; callers must handle the rejected attempt.
+
+The serializable test deliberately produces SQLSTATE `40001`, rolls back the aborted transaction and retries the whole transaction from a fresh read. The deadlock test locks two rows in opposite order and requires exactly one `40P01` failure. A production retry loop should retry only classified transient failures, bound attempts and elapsed time, and avoid external effects inside a transaction that may run again. See [PostgreSQL's isolation rules](https://www.postgresql.org/docs/18/transaction-iso.html).
+
+## Resolve an unknown outcome with idempotency
+
+The borrowing transaction records the key, request parameters, result, inventory change and outbox event together. A repeat of the same key returns the stored result; reuse for a different book fails. Concurrent requests for the same key are serialized with a transaction advisory lock.
+
+The HTTP failure control destroys the connection after the borrowing transaction commits and before sending the result. The client receives a transport failure, reconnects and retries the same key. The runner verifies one recorded request and one inventory decrement. A second control discards a committed result and retries concurrently. These checks exercise a lost application response after commit; they do not interrupt PostgreSQL's commit exchange. The application cannot infer a rollback just because it did not receive a response. Keep request records long enough for your retry policy and define what happens after their retention window.
+
+## Deliver an outbox event after a crash
+
+The direct-write failure control commits a business update and then fails the simulated external publish, leaving no corresponding event. A database write and an external service call are not one atomic transaction. The application instead inserts its outbox event in the same transaction as the borrow. The failure control throws before commit and proves that the rolled-back event is absent.
+
+The delivery test applies an event to a durable consumer table, simulates a crash before acknowledgement, then delivers it again. The consumer's unique `(tenant_id, event_id)` key prevents a duplicate effect. Acknowledgement is the checkpoint after the durable effect. This is at-least-once delivery with a deduplicated database effect; it does not establish exactly-once external email or payment delivery.
+
+Events carry a schema version. The runner refuses an unsupported event version without acknowledging it, removes acknowledged outbox rows and proves that the retained consumer key still suppresses a replay. A real consumer must retain deduplication keys for at least the replay window and preserve the ordering scope its application requires. Identity allocation is not commit order, so a concurrent dispatcher cannot infer global transaction order from an outbox ID. Partition or serialize related business events when ordering is required.
+
+The second delivery path uses PostgreSQL's built-in `test_decoding` output plugin with a logical replication slot. Peeking returns the same changes twice; consuming advances the slot checkpoint. Two concurrent transactions allocate event IDs in one order and commit in the reverse order, proving that IDs are not commit order. The report retains actual decoded changes, slot positions and retained WAL bytes. The runner drops the slot and checks its removal. A slot that is not advanced can retain WAL and exhaust storage; monitor and bound its lag and retention. See [PostgreSQL's logical decoding example](https://www.postgresql.org/docs/18/logicaldecoding-example.html).
+
+This is a local decoding/checkpoint exercise, not a deployment of a production connector. Connector restart, schema history and downstream transaction handling require connector-specific tests. Keep business event versions distinct from connector schema metadata.
+
+## Retrieve only authorized documents
+
+The lexical, vector and hybrid paths all read the documents permitted by the same database policy before ranking. The tiny labeled corpus uses hand-authored normalized two-dimensional vectors, avoiding a model service or token bill. The four-query labeled evaluation records the relevant document, first result, precision and recall at one, elapsed time and zero external model calls for each path. The report deliberately includes unsuccessful rankings. Provider cost is unmeasured (`null`), since the exercise uses no model provider. The authorization control ensures that the other tenant's matching document never appears.
+
+This controlled corpus illustrates the authorization boundary, not general retrieval quality. A synonym without lexical overlap is a useful failure case, and a zero or unrelated vector has no semantic signal. Production evaluation needs a larger labeled corpus, relevance metrics, denied-document cases, model/embedding version, tail latency and observed provider cost. Apply authorization before result presentation, including caches, rerankers and citations.
+
+The generated-query exercise accepts a validated operation and a bounded row limit, then chooses a fixed parameterized read template. It rejects destructive operation names, arbitrary SQL strings and excessive limits. The transaction is read-only with a statement deadline, and row security remains active. This allows the application to control schema exposure and query work; a SQL string regex alone would not provide the same boundary.
+
+## Connection saturation
+
+The burst test sends ten clients into a two-connection application pool, with a short acquisition deadline and a deliberately slow query. It records actual acquisition time, completion/error counts, peak pool connections and throughput. Some requests must time out. It measures this fixture's saturation, not a production throughput limit. Bound the inbound queue separately from the driver pool.
+
+The second path runs an actual PgBouncer transaction pool. It verifies named protocol prepared statements with `max_prepared_statements=100`, alternates tenant transactions and confirms that context is absent after commit. [The pooling guide](/database-tools/connection-pooling#transaction-pooling-and-session-features) provides the documented compatibility matrix and a rollout budget example. Use direct or session connections for operations that require session affinity.
+
+## Isolate developer and agent environments
+
+The runner provisions distinct databases and roles for two developers and a coding agent. Each writes a different value and sees only its own environment; a connection from one developer's role to another's database fails. It deliberately changes a seed version and detects the mismatch. The runner then removes all environments with the container.
+
+Use synthetic or approved sanitized seeds, record the migration revision and seed version, and reconcile divergent migration branches in a clean environment before merging. For pull-request environments, set an expiry, resource budget, owner and cleanup policy for closed branches and failed jobs. An agent should receive only its environment's credentials, without production secrets or permission to create unbounded resources. The [team development guide](/managing-databases/syncing-development-databases-between-team-members) discusses how these environments fit into collaboration.
+
+## Deployment and verification boundaries
+
+The application is served and exercised locally over HTTP, with the same database invariants used throughout the checkpoints. It is not a hosted deployment template. Before deploying, replace the synthetic authentication, configure verified remote TLS, choose process/worker and rollout pool budgets, separate migration credentials, and run application-specific migration and recovery checks. The [restore drill](/managing-databases/restore-drill) supplies the logical recovery checkpoint.
+
+All three tenant architectures, controlled concurrency, application transport loss after commit, a polling outbox, local logical decoding and the tiny retrieval corpus are executed. PostgreSQL transport interruption during commit, a production CDC connector, external model quality/cost and cloud deployment remain separate acceptance exercises. The run report records the scope actually tested.

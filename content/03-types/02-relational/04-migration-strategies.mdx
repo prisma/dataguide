@@ -20,11 +20,11 @@ When changing the actual structure of the database, existing data frequently nee
 
 In other cases, like splitting or combining [columns](/intro/database-glossary#column), you must define custom data transformations to specify how the existing data should be altered to populate the new context. For structures that handle very large amounts of data, this migration process may take a significant amount of time.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 To perform migrations with [Prisma](https://github.com/prisma/prisma), you can use [Prisma ORM's migrations](https://www.prisma.io/docs/orm/migrations/how-migrations-work). [Generating a migration](https://www.prisma.io/docs/orm/migrations/generating-a-migration) plans migration files from changes to your [Prisma contract](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql), and `prisma db migrate` applies them to your database.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Making changes reversible
 
@@ -197,8 +197,8 @@ You can now safely delete the original `names` table and remove the feature flag
 
 While there are many deployment and migration strategies you can use to implement schema changes, the simplest approaches often suffer from some notable drawbacks. By understanding the effects of different migration strategies and being aware of your own organizational requirements and expertise, you can develop a migration process that will minimize downtime and allow you to safely test changes.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 To perform migrations with [Prisma ORM](https://www.prisma.io/docs/orm), use its [migration commands](https://www.prisma.io/docs/orm/migrations/how-migrations-work). Prisma ORM plans migration files from changes to your contract and applies them to target databases.
 
-</PrismaOutlinks>
+</TechnicalNote>

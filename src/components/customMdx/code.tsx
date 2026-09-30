@@ -2,7 +2,7 @@ import React from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import CopyButton from './copy'
 import { stringify } from '../../utils/stringify'
-import { copyableText, DIFF_MARKERS } from '../../utils/codeBlock'
+import { copyableText, copyLabel, DIFF_MARKERS } from '../../utils/codeBlock'
 import styled from 'styled-components'
 import './prism/index.css'
 require('./prism/prism-prisma')
@@ -54,7 +54,10 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
             <Pre className={blockClassName} style={style} tabIndex={0}>
               {hasCopy && (
                 <AbsoluteCopyButton className="copy-button">
-                  <CopyButton text={copyableText(code, hasDiff)} />
+                  <CopyButton
+                    text={copyableText(code, hasDiff && !props.patch)}
+                    label={copyLabel(language, props)}
+                  />
                 </AbsoluteCopyButton>
               )}
               <code>

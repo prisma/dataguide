@@ -4,7 +4,7 @@ The Data Guide teaches how databases work. Readers copy its commands into their 
 
 ## Setup
 
-You need Node.js 22 or later (CI uses Node.js 24).
+You need Node.js 22.18.0 or later (CI uses Node.js 24).
 
 ```bash
 npm install
@@ -67,16 +67,20 @@ Articles are MDX files in [`content`](./content). The numeric prefixes (`03-`) s
 
 Frontmatter:
 
-| Field             | Required | Purpose                                                                                                             |
-| ----------------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| `title`           | yes      | Page heading and sidebar entry                                                                                      |
-| `metaTitle`       | yes      | `<title>` and social title                                                                                          |
-| `metaDescription` | yes      | Meta description and the summary in `llms.txt`                                                                      |
-| `metaImage`       | no       | Legacy fallback only; see [sharing cards](docs/topic-artwork.md#social-sharing-cards).                              |
-| `authors`         | no       | Keys from [`authors.json`](./authors.json)                                                                          |
-| `lastUpdated`     | no       | See [`lastUpdated`](#lastupdated)                                                                                   |
-| `toc`             | no       | `false` hides the table of contents                                                                                 |
-| `hidePage`        | no       | `true` keeps the page out of navigation and `llms.txt`; also add it to the sitemap `excludes` in `gatsby-config.ts` |
+| Field             | Required | Purpose                                                                                              |
+| ----------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `title`           | yes      | Page heading and sidebar entry                                                                       |
+| `metaTitle`       | yes      | `<title>` and social title                                                                           |
+| `metaDescription` | yes      | Meta description and the summary in `llms.txt`                                                       |
+| `metaImage`       | no       | Legacy fallback only; see [sharing cards](docs/topic-artwork.md#social-sharing-cards).               |
+| `authors`         | no       | Keys from [`authors.json`](./authors.json)                                                           |
+| `lastUpdated`     | no       | See [`lastUpdated`](#lastupdated)                                                                    |
+| `toc`             | no       | `false` hides the table of contents                                                                  |
+| `hidePage`        | no       | `true` hides navigation and discovery in `llms.txt`; the public URL can still be used directly       |
+| `publish`         | no       | `false` omits HTML, Markdown, navigation, sitemap and search; `skipBuild: true` has the same meaning |
+| `index`           | no       | `false` adds HTML `noindex` and excludes sitemap, search and `llms.txt` discovery                    |
+| `search`          | no       | `false` excludes the article from the search index                                                   |
+| `export`          | no       | `false` omits the Markdown representation and its advertised alternate link                          |
 
 Generated topic cards override `metaImage` on the homepage, topic hubs, and articles.
 All current content sections are themed, so setting this legacy field on those pages
@@ -85,13 +89,25 @@ has no effect. It remains a fallback for future pages without a generated topic 
 Formatting:
 
 - Start sections at `##` and don't skip heading levels.
-- Give every code block a language: ` ```sql `, ` ```bash `, ` ```text ` for output. Every block gets a copy button; add `no-copy` to remove it. Add `diff` to highlight lines that start with `+` or `-`; without it, those characters are shown as they are, which is what you want for query output. `line-number` numbers the lines.
+- Give every code block a language. Keep runnable `sql` and `bash` separate from `text output`; do not put prompts, result tables or comments showing expected output into copied commands. Use `pseudocode` for templates requiring substitution, and `expected-failure sqlstate=23505` (with the actual state) for deliberate SQL failures. Copy buttons name their role. Add `no-copy` to remove one. `diff` highlights changes and copies the resulting code with removed lines omitted. Add `patch` when the copy should retain patch markers. Unmarked blocks preserve literal operators and output. `line-number` numbers the lines.
 - Link to other articles with root-relative paths without the `/dataguide` prefix, such as `/postgresql/date-types#time-zones`. The build checks that every internal link and anchor exists.
 - Put images in `content/dataguide-images` and describe them in the alt text.
 - Give every table a header row.
 - The components you can use (`StatusNotice`, `Footnote`, `AnchorItem`, `DocLink`, `Subsections`, `CodeWithResult`, and others) are demonstrated on the hidden [example page](./content/01-intro/99-example.mdx), at `http://localhost:8000/intro/example` when running locally.
 
-Every article is also published as Markdown (append `.md` to its URL) and listed in `/llms.txt`. Both are generated at build time by [`plugins/gatsby-plugin-markdown-export`](./plugins/gatsby-plugin-markdown-export); if you add a component, teach the exporter what it should become in Markdown.
+Published articles normally have a Markdown representation (append `.md` to the URL) and discoverable articles appear in `/llms.txt`, according to the flags above. Both are generated at build time by [`plugins/gatsby-plugin-markdown-export`](./plugins/gatsby-plugin-markdown-export). Put technical prerequisites, version caveats and mappings in `TechnicalNote`, which the exporter preserves. `PrismaOutlinks` is for removable promotional material. If you add a component, teach the exporter what it should become in Markdown.
+
+## Verification and release evidence
+
+Maintain [`content-verification.json`](./content-verification.json). Every article has an owner role, scope, release channel and disposition; a named human reviewer remains separate from automated execution. `executed` requires the fixture, immutable successful run evidence, exact versions and actual review date. The build rejects missing evidence and changed article or fixture hashes. A date alone establishes no test claim. `source-reviewed`, `partial`, `external-needed` and `unreviewed` express different scopes. Only advertise the scope actually exercised.
+
+The PostgreSQL tutorial runner and [`examples/library-app`](./examples/library-app) use pinned disposable images and synthetic data. The Database tutorials workflow repeats them for relevant changes and weekly, retaining reports even on failure. It receives no production secrets. Checked-in evidence is a record of a specific run, not a substitute for rerunning changed examples. Regenerate evidence after a substantive fixture or tested-source change and inspect negative controls and cleanup before copying the successful report into `tests/tutorials/evidence`.
+
+The build validates local assets, social images, canonical URLs, Markdown links and sitemap destinations in addition to HTML anchors. `/content-manifest.json` records the content hash, source revision, dirty-tree status and generated artifact hashes. HTML, Markdown and search records carry the same content revision. A dirty-tree build is a local check; release evidence should identify a committed revision.
+
+When publishing search, set `INDEX_ALGOLIA=true` and supply all configured credentials. Missing credentials and indexer failures fail a required publication. The normal credential-free build checks source and generated artifacts; it cannot prove freshness of a hosted search index. After deployment, use `scripts/deployment-smoke.mjs` and `scripts/search-smoke.mjs` against the actual preview/production URL and expected content revision. Preserve reports separately for each deployment. The latter needs a read-only search key. Network failures remain inconclusive. Do not reuse production database credentials to obtain provider or application evidence.
+
+[`lifecycle-sources.json`](./lifecycle-sources.json) maps primary upstream sources to affected paths, owner roles and stable/preview lanes. The scheduled lifecycle workflow emits scoped review tasks when fingerprints change or retrieval fails; it does not automatically change versions or dates. `scripts/lifecycle-review.mjs --simulate=postgresql` exercises the mapping without a network call. A changed document is a review trigger, not proof of a behavioral change. Update the baseline only after reviewing the source and rerunning affected fixtures where needed. Assign the owner roles to people before treating the maintenance programme as staffed.
 
 ## Pull requests
 

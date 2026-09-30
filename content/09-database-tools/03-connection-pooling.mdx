@@ -13,11 +13,11 @@ Connection management policies and tooling are required to address this resource
 
 In this guide, we'll talk about what connection pooling is, what specific conditions it seeks to address, and how it works. We'll introduce a few popular implementations to act as representative examples, and we'll discuss how they alter the way that clients behave when client requests outstrip the database's available connections.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 [Prisma Postgres](https://www.prisma.io/docs/postgres) includes [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling): it routes your application's connections through a PgBouncer instance of its own, in transaction pooling mode. For serverless and edge runtimes that can't use a TCP connection, it also offers a [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) that connects over HTTP and WebSockets.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## What is involved in opening a database connection?
 
@@ -112,14 +112,38 @@ Besides connection pooling, `pgpool` supports load balancing queries between a n
 
 Despite these advanced features, `pgpool` is usually considered a bit more limited when it comes to actually managing connection pooling. While `pgbouncer` allows three pooling modes, `pgpool` can only operate with the equivalent of session mode, meaning that connections are only reassigned when the client disconnects. This decreases the number of clients that `pgpool` can handle in comparison.
 
+## Budgeting connections across processes
+
+A pool limit applies to one process. As a worked planning example, suppose PostgreSQL permits 100 connections and you reserve 20 for administration and maintenance. Three application replicas with two workers each and a pool maximum of 10 can use `3 × 2 × 10 = 60` backend connections. Ten background-job connections bring the planned total to 70, within the 80-connection application budget. During a rollout, three old and three new replicas could overlap: `6 × 2 × 10 + 10 = 130`, exceeding that budget. Reduce the per-worker maximum, rollout overlap or other consumers before deploying. These are illustrative inputs, not measured capacity recommendations.
+
+With a transaction pooler, application client connections and PostgreSQL backend connections are different budgets. Bound both; PgBouncer's server pool is normally per database/user pair, so adding pairs can multiply backend consumption. An acquisition deadline bounds how long a request waits, but does not bound the number of queued requests. Add request admission limits and a bounded queue at the application layer, and monitor errors as well as throughput.
+
+The [library application lab](/managing-databases/library-application-labs#connection-saturation) runs a ten-client burst with a two-connection pool and a short acquisition deadline. Its report contains actual acquisition times, client and backend counts, errors and throughput. It intentionally reaches saturation. Repeat with your own workload and include the rollout and background-job consumers in your budget.
+
+## Transaction pooling and session features
+
+The following matrix follows [PgBouncer's feature contract](https://www.pgbouncer.org/features.html). The library lab uses PgBouncer 1.26.0, transaction mode, a one-backend pool, and `max_prepared_statements=100`. The lab separately verifies named protocol statements and transaction-scoped tenant state. The remaining rows are documented compatibility constraints, not measured provider behavior.
+
+| Feature                            | Transaction-mode requirement                                                                                                                                                                                               |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session `SET` / `RESET`            | Do not rely on arbitrary session state surviving backend reassignment. PgBouncer tracks some reported parameters, with version/configuration-specific exceptions. Use transaction-scoped settings for per-request context. |
+| `LISTEN`                           | Requires a stable session; use a dedicated session connection.                                                                                                                                                             |
+| Temporary tables                   | Use `ON COMMIT DROP` inside one transaction; don't keep temporary objects across transactions.                                                                                                                             |
+| Session advisory locks             | Require session affinity. Prefer transaction advisory locks for transaction-scoped work.                                                                                                                                   |
+| SQL `PREPARE` / `EXECUTE`          | SQL-level prepared statements are not supported as persistent client state in transaction mode.                                                                                                                            |
+| Named protocol prepared statements | Supported when `max_prepared_statements` is nonzero on a supporting PgBouncer version; this is different from SQL `PREPARE`.                                                                                               |
+| Migrations and administration      | Use a dedicated direct or session-mode connection when tooling needs session state; keep its privileged credentials separate from the application.                                                                         |
+
+See [PgBouncer's parameter tracking and prepared-statement configuration](https://www.pgbouncer.org/config.html). Never set tenant identity once when a pooled connection opens and assume the next request has the same identity. The lab sets it locally inside each transaction and tests alternating tenants and the state after commit.
+
 ## Conclusion
 
 In this guide, we took a look at the idea of connection pooling and how it can be used to help reduce database load and resource consumption. We outlined some of the reasons that connections can be expensive to establish between clients and databases and described how reusing connections can reduce that cost on subsequent queries. Afterwards, we discussed how connection poolers actually work and took a look at some representative examples of poolers from the PostgreSQL ecosystem.
 
 Database connection limits can quickly cause problems as your application scales and the querying load becomes more complex. While it's impossible to completely remove the overhead associated with connection management, connection poolers are an invaluable tool for maintaining performance and increasing the number of clients a database can serve.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 [Prisma Postgres](https://www.prisma.io/docs/postgres) includes [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling): it routes your application's connections through a PgBouncer instance of its own, in transaction pooling mode. For serverless and edge runtimes that can't use a TCP connection, it also offers a [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) that connects over HTTP and WebSockets.
 
-</PrismaOutlinks>
+</TechnicalNote>

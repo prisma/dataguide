@@ -94,11 +94,11 @@ SELECT * FROM employee;
 1 row in set (0.00 sec)
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 You can also use the Prisma Client to add data to your tables by issuing a [create query in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/queries/crud?db=mysql#create).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Using `INSERT` to add multiple rows at once
 
@@ -154,11 +154,11 @@ Query OK, 1 row affected (0.01 sec)
 
 The return value here indicates that the `DELETE` command was processed with a single row being removed.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 To remove data from your tables using Prisma Client, use a [delete query in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/queries/crud?db=mysql#delete).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Using `DELETE` to remove multiple rows at once
 
@@ -187,11 +187,11 @@ Query OK, 2 rows affected (0.00 sec)
 
 Be aware, however, that using `DELETE` to empty a table of data [may not be as efficient as the `TRUNCATE` command](https://dev.mysql.com/doc/refman/8.0/en/truncate-table.html), which can remove data without scanning the table, with some caveats.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 Prisma Client uses a separate query called [deleteMany in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/queries/crud?db=mysql#delete-multiple-records) to delete multiple rows of data at one time.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Conclusion
 

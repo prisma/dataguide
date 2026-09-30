@@ -14,18 +14,19 @@ module.exports =
   (tree, file) => {
     file.data = []
     let heading = null
-    visit(
-      tree,
-      ({ type }) => {
-        return ['heading', 'paragraph', 'code', 'table'].includes(type)
-      },
-      (node) => {
-        if (node.type === 'heading') return (heading = flattenNode(visit, node))
+    visit(tree, (node) => {
+      if (['PrismaOutlinks', 'PostgresCallout'].includes(node.name)) return 'skip'
+      if (!['heading', 'paragraph', 'code', 'table'].includes(node.type)) return
+      if (node.type === 'heading') return (heading = flattenNode(visit, node))
+      if (
+        node.type === 'code' &&
+        (node.lang === 'text' || /(?:^|\s)(?:output|pseudocode)(?:\s|$)/.test(node.meta || ''))
+      )
+        return
 
-        file.data.push({
-          heading,
-          text: flattenNode(visit, node),
-        })
-      }
-    )
+      file.data.push({
+        heading,
+        text: flattenNode(visit, node),
+      })
+    })
   }

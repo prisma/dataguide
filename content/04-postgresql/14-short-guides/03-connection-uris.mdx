@@ -6,6 +6,12 @@ metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice title="Connection URI examples and remote security">
+
+The strings below explain URI syntax and include illustrative credentials. Do not paste passwords into command-line arguments or logs. For a remote connection, use a trusted CA and `sslmode=verify-full`; `require` alone does not verify the hostname. Follow the [tested connection templates](/postgresql/connecting-to-postgresql-databases#passing-connection-information-to-psql-with-a-connection-string). This URI catalogue has not been re-executed in full.
+
+</StatusNotice>
+
 ## Introduction
 
 Connecting to your database server is usually one of the first tasks you need to accomplish when designing and configuring database-backed applications. While there are many methods of providing the address, listening port, credentials, and other details to applications, connection URIs, sometimes called connection strings or connection URLs, are one of the most powerful and flexible ways of specifying complex configuration in a compact format.
@@ -40,7 +46,7 @@ pe@ce&lo\/3
 ...you'll want to specify it within the connection URI as:
 
 ```
-pe%40ce%26lo\%2F3
+pe%40ce%26lo%5C%2F3
 ```
 
 If you are unsure about whether a character should be percent-encoded, it's usually best to encode it anyways. For example, if you are unsure if the `\` character is reserved, you can use it's percent-encoded equivalent, `%5C`, to be safe:
@@ -197,8 +203,8 @@ The PostgreSQL documentation has a [full list of parameters](https://www.postgre
 
 In this guide, we discussed what a PostgreSQL connection URI is, how to interpret the various components, and how to construct your own URIs given a set of connection information. Connection URIs encode all of the information required to connect to a given database within a single string. Because of this flexibility and due to their wide adoption, understanding how to parse and construct those strings can be pretty helpful.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you are using [Prisma to manage your PostgreSQL database](https://www.prisma.io/docs/orm), you give Prisma ORM 8 the connection URI in your configuration, not in the [contract](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql) (the file that Prisma ORM 7 called the schema). [Set up Prisma ORM from scratch](https://www.prisma.io/docs/prisma-orm/from-scratch#2-create-the-config-file-and-env) shows where to set it so that Prisma can connect to your database.
 
-</PrismaOutlinks>
+</TechnicalNote>

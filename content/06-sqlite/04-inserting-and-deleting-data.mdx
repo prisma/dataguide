@@ -81,11 +81,11 @@ SELECT * FROM student;
 +-------------+------------+-----------+---------------------+
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 You can also use Prisma ORM to add data to your tables by issuing a [create query](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#create-one-record). Prisma ORM 8's SQLite support is [experimental](https://www.prisma.io/docs/orm/supported-databases).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Using `INSERT` to add multiple rows at once
 
@@ -131,11 +131,11 @@ DELETE FROM student
 WHERE last_name = 'Wayne';
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 To remove data from your tables using Prisma ORM, use a [delete query](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#delete-one-record).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Using `DELETE` to remove multiple rows at once
 
@@ -154,11 +154,11 @@ You are also able to remove all rows from a given table by omitting the `WHERE` 
 DELETE FROM student;
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 Prisma ORM uses a separate method called [`deleteAll()`](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#write-many-records) to delete multiple rows of data at one time.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Conclusion
 

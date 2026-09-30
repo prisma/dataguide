@@ -106,11 +106,11 @@ SELECT * FROM employee;
 (1 row)
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 You can also use Prisma ORM to add data to your tables by issuing a [create query](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#create-one-record).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Returning data from `INSERT` statements
 
@@ -237,11 +237,11 @@ DELETE 1
 
 The return value here indicates that the `DELETE` command was processed with a single row being removed.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 To remove data from your tables using Prisma ORM, use a [delete query](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#delete-one-record).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Returning data from `DELETE` statements
 
@@ -313,11 +313,11 @@ DELETE 4
 
 Be aware, however, that using `DELETE` to empty a table of data is [not as efficient as the `TRUNCATE` command](https://www.postgresql.org/docs/current/sql-truncate.html), which can remove data without scanning the table.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 Prisma ORM uses a separate method called [`deleteAll()`](https://www.prisma.io/docs/orm/fundamentals/writing-data?db=postgresql#write-many-records) to delete multiple rows of data at one time.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Conclusion
 

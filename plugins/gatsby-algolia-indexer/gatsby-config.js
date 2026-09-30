@@ -1,5 +1,7 @@
 const mdxToSearchable = require('./mdx-to-searchable')
 const withDefaults = require('./options')
+const publicationPolicy = require('../publication-policy.cjs')
+const revision = require('../content-revision.cjs')
 
 const settings = {
   searchableAttributes: ['apiReference', 'title', 'heading', 'content'],
@@ -8,7 +10,9 @@ const settings = {
   hitsPerPage: 20,
   attributeForDistinct: 'slug',
   distinct: 2,
-  customRanking: ['asc(content)', 'asc(title)', 'asc(heading)'],
+  // Use textual relevance; alphabetic content is not a relevance signal.
+  customRanking: [],
+  ignorePlurals: true,
   separatorsToIndex: '!#()[]{}*+-_一,:;<>?@/^|%&~£¥$§€†‡',
 }
 
@@ -67,10 +71,11 @@ const handleBody = async (node) => {
     const record = {
       id: rest.id + index,
       title: rest.title,
+      contentRevision: revision().contentRevision,
       slug: rest.modSlug,
       apiReference: isApiTerm(item.text) ? getApiVal(item.text) : null,
       heading: item.heading ? removeInlineCode(item.heading) : null,
-      content: item.text.includes('\n') ? item.text.split(' ').slice(0, 20).join(' ') : item.text,
+      content: item.text.replace(/\s+/g, ' ').trim(),
       dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
       internal: {
         contentDigest: rest.internal.contentDigest,
@@ -84,6 +89,8 @@ const handleBody = async (node) => {
 
 module.exports = (options) => {
   const { appId, adminKey, indexName } = withDefaults(options)
+  if (!appId || !adminKey || !indexName)
+    throw new Error('Search publication requires appId, adminKey and indexName')
   const queries = [
     {
       query: `{
@@ -101,6 +108,12 @@ module.exports = (options) => {
               }
               frontmatter {
                 title
+                search
+                publish
+                skipBuild
+                hidePage
+                index
+                export
               }
               tableOfContents
             }
@@ -111,7 +124,7 @@ module.exports = (options) => {
       settings,
       transformer: async ({ data }) => {
         const noSearchFlag = Array.from(data.allMdx.edges).filter(
-          (e) => e.node.frontmatter.search !== false
+          (e) => publicationPolicy(e.node.frontmatter).searchable
         )
         const records = []
         for (const node of noSearchFlag.map((edge) => edge.node).map(unnestFrontmatter)) {
@@ -129,7 +142,7 @@ module.exports = (options) => {
           appId,
           apiKey: adminKey,
           queries,
-          continueOnFailure: true,
+          continueOnFailure: false,
         },
       },
     ],

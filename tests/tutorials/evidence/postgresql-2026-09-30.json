@@ -1,0 +1,76 @@
+{
+  "startedAt": "2026-09-30T17:46:31.926Z",
+  "image": "postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722",
+  "fixtureSha256": "fe5b397bed3c8a3f342a816d4bb1371195294d944338ba7e20e3e4ecead57a83",
+  "articles": [
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sourceSha256": "664c45b1a46a50fa396f0cdb0fefb0ab021407580e043000e651694768c4f4c0",
+      "executableBlocks": 16,
+      "database": "dates"
+    },
+    {
+      "file": "content/02-datamodeling/05-correctness-constraints.mdx",
+      "sourceSha256": "b4e98e006a165a6346eac3e943077a7b2556da1a25679df1a377dc308b474977",
+      "executableBlocks": 24,
+      "database": "constraints"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT TO_CHAR(DATE '2021-09-27', 'dd/mm/yyyy');\n",
+      "stdout": "  to_char   \n------------\n 27/09/2021\n(1 row)\n\n"
+    },
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT TO_CHAR(DATE '2021-09-27', 'Mon dd, yyyy');\n",
+      "stdout": "   to_char    \n--------------\n Sep 27, 2021\n(1 row)\n\n"
+    },
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT\n\t\t\t\tauthor_name,\n\t\t\t\tbook_title,\n\t\t\t\tDATE '2021-09-27' - published_date AS diff\nFROM\n\t\t\t\tcheckouts;\n",
+      "stdout": " author_name | book_title | diff  \n-------------+------------+-------\n James Joyce | Ulysses    | 36397\n(1 row)\n\n"
+    },
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT\n\t\t\t\tauthor_name,\n\t\t\t\tbook_title,\n\t\t\t\tAGE(DATE '2021-09-27', published_date)\nFROM\n\t\t\t\tcheckouts;\n",
+      "stdout": " author_name | book_title |           age           \n-------------+------------+-------------------------\n James Joyce | Ulysses    | 99 years 7 mons 25 days\n(1 row)\n\n"
+    },
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT\n\t\t\t\tauthor_name,\n\t\t\t\tbook_title,\n\t\t\t\tAGE(DATE '2000-01-01', published_date)\nFROM\n\t\t\t\tcheckouts;\n",
+      "stdout": " author_name | book_title |           age            \n-------------+------------+--------------------------\n James Joyce | Ulysses    | 77 years 10 mons 27 days\n(1 row)\n\n"
+    },
+    {
+      "file": "content/04-postgresql/11-date-types.mdx",
+      "sql": "SELECT\n\t\t\tauthor_name,\n\t\t\tbook_title,\n\t\t\tEXTRACT(YEAR FROM published_date) AS YEAR,\n\t\t\tEXTRACT(MONTH FROM published_date) AS MONTH,\n\t\t\tEXTRACT(DAY FROM published_date) AS DAY\nFROM\n\t\t\tcheckouts;\n",
+      "stdout": " author_name | book_title | year | month | day \n-------------+------------+------+-------+-----\n James Joyce | Ulysses    | 1922 |     2 |   2\n(1 row)\n\n"
+    }
+  ],
+  "checks": [
+    "every executable dates example and recorded result",
+    "date subtraction, age and truncation values and types",
+    "constraints including precise rejected writes",
+    "constraint positive controls",
+    "OID column, constraints, rows and sequences survive plain and archive restore",
+    "malformed restore exits nonzero and stops subsequent SQL",
+    "supported physical base backup restores into a separate server",
+    "verified TLS accepts the correct host and rejects wrong-host certificates",
+    "physical replication HBA rules do not authorize logical database connections"
+  ],
+  "status": "passed",
+  "version": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "recovery": {
+    "restoreAndValidationMs": 1333.001083,
+    "recoveryPoint": "dump snapshot",
+    "postSnapshotRowsRecovered": 0
+  },
+  "connections": {
+    "wrongHostFailure": "psql: error: connection to server at \"127.0.0.1\", port 5432 failed: server certificate for \"db.example.test\" does not match host name \"wrong.example.test\"",
+    "templates": "Remote flags and quoted URI with a temporary protected passfile; local -U/-d/PGDATABASE defaults",
+    "certificate": "Disposable self-signed test CA, never provider verification"
+  },
+  "completedAt": "2026-09-30T17:46:49.150Z",
+  "cleanedUp": true
+}

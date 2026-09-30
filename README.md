@@ -14,7 +14,7 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the content standards every change
 
 ## Run locally
 
-You need Node.js 22 or later. Download the code and get started by running the following commands:
+You need Node.js 22.18.0 or later. Download the code and get started by running the following commands:
 
 ```
 git clone git@github.com:prisma/dataguide.git

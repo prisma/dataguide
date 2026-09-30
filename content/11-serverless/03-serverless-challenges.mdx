@@ -12,11 +12,11 @@ The [serverless](https://www.prisma.io/dataguide/serverless/what-is-serverless) 
 
 While [serverless computing has many benefits](https://www.prisma.io/dataguide/serverless/what-is-serverless#when-is-serverless-a-good-choice), it also has some challenges that must be acknowledged or addressed before you can be successful. In this guide, we'll talk about some of the main pain points of the current generation of solutions and discuss what they mean and how you might work around them. You should come away with a better understanding of what requirements you may have to fulfill and what roadblocks you may run into.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you use [Prisma Postgres](https://www.prisma.io/docs/postgres), its [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) connects from serverless and edge functions over HTTP and WebSockets instead of TCP, and its built-in [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling) shares a smaller number of database connections between many short-lived function instances.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Cold start problems
 
@@ -100,8 +100,8 @@ Serverless environments offer a lot of value in terms of developer productivity,
 
 By gaining familiarity with the different obstacles that you might face, you can make a better informed decision as to what applications might benefit most from the trade-offs present. You will also be better prepared to approach these problems with a better understanding of how to mitigate them or avoid them through additional tooling or design considerations.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you use [Prisma Postgres](https://www.prisma.io/docs/postgres), its [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) connects from serverless and edge functions over HTTP and WebSockets instead of TCP, and its built-in [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling) shares a smaller number of database connections between many short-lived function instances.
 
-</PrismaOutlinks>
+</TechnicalNote>

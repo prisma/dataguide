@@ -5,6 +5,7 @@ import { rehypeTopicSections } from './src/utils/rehypeTopicSections'
 // MDX 2 no longer parses GitHub Flavored Markdown (tables, strikethrough, ...)
 // by default. remark-gfm is ESM-only, which Node >= 20.19 can `require`.
 const remarkGfm = require('remark-gfm').default
+const contentRevision = require('./plugins/content-revision.cjs')()
 
 // MDX 1 turned code fence meta (```js copy line-number) into props on the
 // `code` element. MDX 2 drops it, so copy it over to keep the Code component
@@ -91,6 +92,9 @@ let plugins: any = [
       // Keep the sitemap at /sitemap/sitemap-index.xml (the default before v6)
       output: '/sitemap',
       entryLimit: 5000,
+      resolvePages: ({ allSitePage }: any) =>
+        allSitePage.nodes.filter((page: any) => page.pageContext?.publication?.indexed !== false),
+      query: `{ site { siteMetadata { siteUrl } } allSitePage { nodes { path pageContext } } }`,
       excludes: [
         // Pages that aren't meant to be found
         `/intro/example`,
@@ -150,6 +154,7 @@ let plugins: any = [
       redirects: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
     },
   },
+  'gatsby-plugin-content-manifest',
 ]
 
 if (process.env.INDEX_ALGOLIA === 'true') {
@@ -173,7 +178,7 @@ if (process.env.INDEX_ALGOLIA === 'true') {
       'INDEX_ALGOLIA is `true`, and GATSBY_ALGOLIA_APP_ID is set, so pushing algoliaPlugin to list of plugins to trigger search indexing.'
     )
   } else {
-    console.warn('INDEX_ALGOLIA === true, but GATSBY_ALGOLIA_APP_ID is undefined.')
+    throw new Error('INDEX_ALGOLIA=true requires GATSBY_ALGOLIA_APP_ID and indexing credentials')
   }
 } else {
   console.log('INDEX_ALGOLIA not `true`, not pushing algoliaPlugin to skip any search indexing.')
@@ -186,6 +191,7 @@ const config: GatsbyConfig = {
   // React 19 warns about the classic `React.createElement` JSX transform
   jsxRuntime: 'automatic',
   siteMetadata: {
+    contentRevision: contentRevision.contentRevision,
     pathPrefix: dataguideConfig.gatsby.pathPrefix,
     title: dataguideConfig.siteMetadata.title,
     description: dataguideConfig.siteMetadata.description,

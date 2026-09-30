@@ -1,10 +1,16 @@
 ---
 title: 'Evaluating type safety in TypeScript ORMs and query builders (2026)'
-metaTitle: 'TypeScript ORM Type Safety, Tested: Prisma, Drizzle, Kysely & More'
-metaDescription: 'We ran the same seven type safety checks against Prisma ORM, Drizzle, Kysely, TypeORM, Sequelize, MikroORM, Mongoose and Knex with strict TypeScript and recorded which mistakes each library catches at compile time.'
+metaTitle: 'TypeScript ORM Type Safety Comparison: Prisma, Drizzle, Kysely & More'
+metaDescription: 'Compare the reported type safety results for eight TypeScript database libraries, with an explicit notice about the experiment artifacts still needed for independent reproduction.'
 metaImage: '/social/docs-social.png'
 lastUpdated: 2026-09-30
 ---
+
+<StatusNotice title="Comparison evidence needs an independent reproduction">
+
+The results below were recorded by the earlier refresh. The eight complete source projects, dependency lockfiles, compiler diagnostics and runtime logs are not present in this checkout, so this review has not independently reproduced the comparison, its preview results or its compiler cross-checks. The version table identifies the reported inputs; it is not a downloadable experiment. Treat the grades as provisional until those artifacts are published and rerun. The separately maintained [library application lab](/managing-databases/library-application-labs) tests different operational questions and does not substantiate these grades.
+
+</StatusNotice>
 
 ## Introduction
 
@@ -33,7 +39,7 @@ Each library was tested at its latest stable release on npm at the end of Septem
 | Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                                                                                                                                                                   |
 | Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                                                                                                                                                        |
 
-Prisma's documentation now defaults to Prisma ORM 8, and the `latest` tag of the `prisma` package resolves to the release candidate, so pin `prisma@7` and `@prisma/client@7` to reproduce the 7.10.0 results.
+The recorded Prisma ORM 7 package versions are `prisma@7.10.0` and `@prisma/client@7.10.0`. A major tag such as `@7` or a moving `latest` tag does not reproduce that dependency graph. Exact top-level pins alone are also insufficient: reproduction requires the experiment's lockfile, compiler, adapters and database image versions.
 
 The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the results were identical. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24 against PostgreSQL 18.6 and MongoDB 8.0.32 in local Docker containers.
 
@@ -193,11 +199,11 @@ const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
 
 Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For [raw SQL](https://www.prisma.io/docs/orm/reference/raw-queries), a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql) in the Prisma ORM 8 documentation.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Model and result types in Prisma ORM 8](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#model-and-result-types).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ## Drizzle ORM
 

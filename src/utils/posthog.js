@@ -30,7 +30,12 @@ module.exports = {
     // Registered synchronously so the first manual $pageview already carries these props.
     posthog.register({
       site_name: 'dataguide',
-      environment: 'production',
+      environment:
+        window.location.hostname === 'www.prisma.io'
+          ? 'production'
+          : ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname)
+            ? 'local'
+            : 'preview',
     })
 
     initialized = true
@@ -41,5 +46,8 @@ module.exports = {
       return
     }
     posthog.capture('$pageview')
+  },
+  trackEvent(event, properties) {
+    if (initialized) posthog.capture(event, properties)
   },
 }

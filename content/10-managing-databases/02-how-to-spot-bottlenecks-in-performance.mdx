@@ -139,8 +139,8 @@ Poor application performance can often be traced back to issues at the database.
 
 There's no silver bullet for optimizing queries. However, diligent efforts to analyze and inspect where and why certain queries aren't performing well can be helpful to hone in on the the specific queries that should be adjusted. Once identified, adjustments to the queries such as adding indexes, scoping with a `WHERE` clause, and selecting on the required fields can yield much better performance.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you are using Prisma with PostgreSQL, its built-in [budgets middleware](https://www.prisma.io/docs/orm/middleware/built-in-budgets) reports queries that took too long, and its [lints middleware](https://www.prisma.io/docs/orm/middleware/built-in-lints) blocks or warns about risky query shapes before they run.
 
-</PrismaOutlinks>
+</TechnicalNote>

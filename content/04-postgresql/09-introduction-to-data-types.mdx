@@ -6,6 +6,12 @@ metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice title="Verification scope">
+
+This reference's complete catalogue of type examples has not been re-executed in this refresh. For supported PostgreSQL 18 behavior, consult [the maintained data-type reference](https://www.postgresql.org/docs/18/datatype.html). The companion [dates tutorial](/postgresql/date-types) has a disposable SQL fixture.
+
+</StatusNotice>
+
 ## Introduction
 
 One of the primary features of relational databases in general is the ability to define [schemas](/intro/database-glossary#schema) or [table structures](/intro/database-glossary#table) that exactly specify the format of the data they will contain. This is done by prescribing the columns that these structures contain along with their [_data type_](/intro/database-glossary#data-type) and any constraints.
@@ -85,7 +91,7 @@ The types above are limited by their valid range. Any value outside of the range
 
 In addition to the standard integer types mentioned above, PostgreSQL includes a set of special integer types called _serial_ types. These types are primarily used to create unique identifiers, or [_primary keys_](/intro/database-glossary#primary-key), for records.
 
-By default, serial types will automatically use the next integer in an internally tracked sequence when new records are added. So if the last integer used in a serial column was 8559, by default, the next record will automatically use 8560. To guarantee that each value is unique, you can further add a `UNIQUE` constraint on the column.
+By default, serial types will automatically use the next integer in an internally tracked sequence when new records are added. The sequence supplies its next value, independently of the largest value stored in the column. Rollbacks and deleted rows can leave gaps, and manually inserted identifiers do not automatically advance the sequence. To guarantee that each value is unique, you can further add a `UNIQUE` constraint on the column.
 
 There is a serial type for each of the integer sizes mentioned earlier, which dictates the type of integer used in the sequence:
 
@@ -504,8 +510,8 @@ Understanding data types is essential when [designing schemas and tables](/postg
 
 If you are using [Prisma ORM](https://www.prisma.io/docs/orm) to work with your PostgreSQL databases, you can find the types a field can have in the [scalar fields section](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#scalar-fields) of Prisma's data modeling docs.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 In a Prisma contract, data types are represented by [field types](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields). In Prisma ORM 8, a field that needs a specific PostgreSQL type, such as `VarChar(255)`, uses that type as its field type instead of a `@db.` attribute.
 
-</PrismaOutlinks>
+</TechnicalNote>

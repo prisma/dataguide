@@ -220,7 +220,7 @@ const DEBOUNCE_DELAY = 500
 const ESCAPE_KEY = 27
 const focusShortcuts = ['s', 191]
 
-const SearchBox = ({
+export const SearchBox = ({
   refine,
   onFocus = () => {},
   currentRefinement,
@@ -255,8 +255,6 @@ const SearchBox = ({
     window.clearTimeout(timeoutId.current)
     timeoutId.current = window.setTimeout(() => refine(newValue), DEBOUNCE_DELAY)
     setValue(newValue)
-    inputEl.current.blur()
-    inputEl.current.focus()
   }
 
   const clearInput = () => {
@@ -268,11 +266,13 @@ const SearchBox = ({
 
   // Focus shortcuts on keydown
   const onKeyDown = (e: any) => {
-    if (e && e.keyCode == ESCAPE_KEY) {
+    if (document.activeElement === inputEl.current && e.keyCode == ESCAPE_KEY) {
       clearInput()
-    } else if (e && e.keyCode === 40) {
+    } else if (document.activeElement === inputEl.current && e.keyCode === 40) {
+      e.preventDefault()
       downClicked()
-    } else if (e && e.keyCode === 38) {
+    } else if (document.activeElement === inputEl.current && e.keyCode === 38) {
+      e.preventDefault()
       upClicked()
     }
 
@@ -298,6 +298,7 @@ const SearchBox = ({
       return
     }
 
+    if (!inputEl.current?.getClientRects().length) return
     inputEl.current.focus()
     e.stopPropagation()
     e.preventDefault()
@@ -306,7 +307,7 @@ const SearchBox = ({
   const onSubmit = (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    inputEl.current.blur()
+    rest.selectHit?.()
 
     return false
   }
@@ -319,11 +320,18 @@ const SearchBox = ({
 
   React.useEffect(() => {
     document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onKeyDown])
+
+  React.useEffect(() => {
     if (width > 640) {
       setPlaceholderText('Search the Data Guide')
     }
     if (value) {
       onFocus()
+    }
+    return () => {
+      window.clearTimeout(timeoutId.current)
     }
   }, [])
 
@@ -341,13 +349,12 @@ const SearchBox = ({
           onChange={onChange}
           onFocus={onFocus}
           value={value}
-          {...rest}
         />
 
         {value !== '' && isOpened && (
-          <span className="clear">
-            <ClearIcon onClick={clearInput} />
-          </span>
+          <button type="button" className="clear" aria-label="Clear search" onClick={clearInput}>
+            <ClearIcon aria-hidden="true" />
+          </button>
         )}
       </form>
     </SearchBoxDiv>

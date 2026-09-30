@@ -244,11 +244,11 @@ CREATE TABLE national_capitals (
 );
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 When working with Prisma ORM, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Unique constraints
 
@@ -363,11 +363,11 @@ ERROR:  duplicate key value violates unique constraint "national_capitals_countr
 DETAIL:  Key (country, capital)=(Bolivia, Sucre) already exists.
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) in your Prisma contract.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Primary key constraints
 
@@ -423,11 +423,11 @@ CREATE TABLE national_capitals (
 );
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#primary-keys).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Foreign key constraints
 
@@ -435,11 +435,11 @@ When using Prisma, a primary key is synonymous with an [id field](https://www.pr
 
 For example, you may have an `orders` table to track individual orders and a `customers` table to track contact info and information about your customers. It makes sense to put this information separately since customers may have many orders. However, it also makes sense to be able to easily link the records in these two tables to allow more complex operations.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
-When using Prisma, you can define foreign keys by creating [relations]() between different models.
+When using Prisma, you can define foreign keys by creating [relations](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#relations) between different models.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 #### How to create foreign key constraints in PostgreSQL
 
@@ -522,11 +522,11 @@ CREATE TABLE example (
 );
 ```
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 We cover how to define [relations](https://www.prisma.io/docs/orm/data-modeling/relational-databases) in the Prisma contract in our documentation.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 #### Deciding what to do with foreign keys when deleting or updating
 

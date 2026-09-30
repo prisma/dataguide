@@ -1,0 +1,68 @@
+[
+  {
+    "id": "postgresql",
+    "url": "https://www.postgresql.org/support/versioning/",
+    "sha256": "398734d69a0d96f44d4235d04ac75c79b61e6069461eaea83e432b73aad9053d",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "postgresql-preview",
+    "url": "https://www.postgresql.org/developer/beta/",
+    "sha256": "037a493548fe2f03e2aeab3b0fdc825a4970f3849759a07087c350574dd9eb80",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "mysql",
+    "url": "https://www.mysql.com/support/eol-notice.html",
+    "sha256": "6d2e4315ab4d80a97e6baf6c5e82fddbb8e20fd5bfb9fd8bd7f5c416d68acc87",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "mongodb",
+    "url": "https://www.mongodb.com/legal/support-policy/lifecycles",
+    "sha256": "b86f2727295c22f08ca87602bca3f4d708593a79a1391adf44ad25778e54326e",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "node",
+    "url": "https://nodejs.org/en/about/previous-releases",
+    "sha256": "e105ddf603fe0a25508f437e34993e031f04dc50065616d5855ae89c1d2bc45f",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "prisma-orm",
+    "url": "https://www.prisma.io/docs/orm",
+    "sha256": "5da5abba41b8b9f4dc573c9c696cd63a93abae0346c282a735c71158ea4a2fed",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "pg-driver",
+    "url": "https://raw.githubusercontent.com/brianc/node-postgres/master/CHANGELOG.md",
+    "sha256": "713d8643d1fbf02fa2e42875bf0d46dbca2fff761dd34a4d2601595699fab9ed",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "pgbouncer",
+    "url": "https://www.pgbouncer.org/changelog.html",
+    "sha256": "4d9ea85b4f3297750f2f5668cde7dd5e61d4f6f12b1fa54c8a477da543dc656f",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "lambda",
+    "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html",
+    "sha256": "5e84198bbd1494e8ce937fe8de3e5a295dd80c0f0d9ce5c1ddba132bbd0faaa6",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "atlas",
+    "url": "https://www.mongodb.com/docs/atlas/flex-migration/",
+    "sha256": "af3a404e16cb439aefd9b60692a6d2038f1ae5b1a725e267eb8938c77aa534e5",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  },
+  {
+    "id": "deno-deploy",
+    "url": "https://docs.deno.com/deploy/changelog/",
+    "sha256": "da8f28f794c7ea90ba376aed003c3b69dfb3e35b5f997db29f68d26f4b94c1a3",
+    "checkedAt": "2026-09-30T16:39:12.360Z"
+  }
+]

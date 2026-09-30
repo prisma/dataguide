@@ -34,11 +34,11 @@ Seeding a local database is beneficial because it alleviates the need to have a 
 
 If this approach is taken, it requires extra effort to keep seeding data and logic up-to-date with the current schema. If changes occur frequently, this can pose a challenge and may cause problems getting developers onboarded smoothly.
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 If you are using [Prisma ORM](https://www.prisma.io/docs/orm), you can populate a database with a seed script of your own that imports your client and calls `.create(...)`. Prisma ORM 8 has [no seed command](https://www.prisma.io/docs/orm/coming-from-prisma-orm-7#commands).
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Connecting to a shared remote database
 
@@ -74,11 +74,11 @@ Specific database migration strategies differ between languages and frameworks. 
 2. Generate a set of migration files
 3. Run the migrations to execute the statements and have the changes take effect
 
-<PrismaOutlinks>
+<TechnicalNote>
 
 [Prisma ORM's migrations](https://www.prisma.io/docs/orm/migrations/how-migrations-work) make it easy to describe your database models and produce migrations from them. Its guide to [schema management in teams](https://www.prisma.io/docs/guides/database/schema-changes) shows how to keep them in sync between team members.
 
-</PrismaOutlinks>
+</TechnicalNote>
 
 ### Notifying team members of changes
 
@@ -97,6 +97,14 @@ This behavior can be scripted and applied to your team's specific scenario using
 When a database schema changes, it's likely that the whole team will need to re-seed the database such that the data within abides by the new schema. It can be tedious to maintain a seed script, distribute it, and have everyone on the team apply it in an ongoing fashion.
 
 One option for automating this process is to use a service that provides bi-directional data syncing between databases. While such a service is more often meant to sync remote production databases for various purposes, it could also be used to sync development data across teams. Doing so allows for teams to use their own local or remote development databases that are continually updated. One example of such a service is [SQL Data Sync for Azure](https://docs.microsoft.com/en-us/azure/azure-sql/database/sql-data-sync-data-sql-server-sql-database).
+
+## Isolated developer, pull-request and agent databases
+
+Shared write state makes migration experiments interfere with one another. Prefer a separate environment for each developer, pull request or coding agent when changes can diverge. The [library application lab](/managing-databases/library-application-labs#isolate-developer-and-agent-environments) creates three databases with separate roles, checks divergent data and a schema/seed mismatch, and removes them automatically. It uses only synthetic data.
+
+Record the migration revision and seed version when creating an environment. Check both before running the application; a seed for a different schema should fail setup. Reconcile divergent migrations in a fresh environment against the merged migration history, rather than assuming that databases changed independently will synchronize themselves. Treat migration ordering and already-applied migrations as part of code review.
+
+A hosted branch or preview database also needs an owner, expiry, resource limits and cleanup after a failed job or closed pull request. Use sanitized or synthetic data and credentials scoped to that environment. A coding agent should not receive shared or production credentials. Test teardown on failure and periodically check for abandoned environments; a successful create request alone does not establish a complete lifecycle.
 
 ## Conclusion
 
