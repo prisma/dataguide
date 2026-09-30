@@ -18,6 +18,7 @@ import { getParentTitle } from '../utils/parentTitle'
 import { useAllArticlesQuery } from '../hooks/useAllArticlesQuery'
 import authorsJSON from '../../authors.json'
 import dataguideConfig from '../../config'
+import { getThemedTopic } from '../utils/topicThemes'
 
 type ArticleLayoutProps = ArticleQueryData &
   Pick<PageProps, 'location'> &
@@ -40,6 +41,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
+  const themedTopic = getThemedTopic(urlGenerator(modSlug))
   const tocItems = toc || toc == null ? tableOfContents?.items : undefined
 
   return (
@@ -50,7 +52,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
       {...props}
     >
       {!isHomePage && (
-        <section className="top-section">
+        <section className="top-section" data-topic={themedTopic}>
           <TopSection
             title={title}
             slug={modSlug}
@@ -83,7 +85,7 @@ export default ArticleLayout
 export const Head = ({
   data,
   location,
-  pageContext: { seoTitle, seoDescription, metaImage },
+  pageContext: { seoTitle, seoDescription, metaImage, socialImage },
 }: ArticleLayoutProps) => {
   const { allMdx } = useAllArticlesQuery()
   const {
@@ -115,6 +117,7 @@ export const Head = ({
       title={seoTitle}
       description={seoDescription}
       image={metaImage || undefined}
+      socialImage={socialImage}
       hasMarkdown={hasMarkdown}
       article={article}
     />

@@ -2,7 +2,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { withPrefix } from 'gatsby'
 import { FooterProps } from '../interfaces/Layout.interface'
-import FooterLogo from '../icons/FooterLogo'
+import footerScene from '../images/home/database-stacks-scene.webp'
 import Logo from '../icons/Logo'
 import { Wordmark } from './header'
 
@@ -68,8 +68,11 @@ const FooterWrapper = styled.footer`
     }
   }
 
-  svg.illustration {
+  .illustration {
     flex-shrink: 0;
+    width: 280px;
+    height: auto;
+    margin: 0;
   }
 
   @media (min-width: 0px) and (max-width: 1024px) {
@@ -84,8 +87,8 @@ const FooterWrapper = styled.footer`
       align-items: flex-start;
       padding-bottom: 96px;
     }
-    svg.illustration {
-      width: 160px;
+    .illustration {
+      width: 200px;
       height: auto;
     }
   }
@@ -118,7 +121,15 @@ const Footer = ({ isHomePage }: FooterViewProps) => (
           Made with ❤️ by <a href="https://www.prisma.io">Prisma</a>
         </div>
       </div>
-      <FooterLogo className="illustration" />
+      <img
+        className="illustration"
+        src={footerScene}
+        alt=""
+        width={720}
+        height={540}
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   </FooterWrapper>
 )

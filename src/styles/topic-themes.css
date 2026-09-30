@@ -1,0 +1,165 @@
+/* Topic artwork is decorative and stays in the header area, away from reading content. */
+.topic-home > section[data-topic='intro'],
+.top-section[data-topic='intro'] {
+  --topic-wash: #effbfd;
+  --topic-border: #d0e9ed;
+  --topic-scene: url('../images/topic-themes/prismo-database-scene.webp');
+}
+
+.topic-home > section[data-topic='datamodeling'],
+.top-section[data-topic='datamodeling'] {
+  --topic-wash: #fff5f5;
+  --topic-border: #efdddd;
+  --topic-scene: url('../images/topic-themes/prismo-tuple-scene.webp');
+}
+
+.topic-home > section[data-topic='types'],
+.top-section[data-topic='types'] {
+  --topic-wash: #f6f3ff;
+  --topic-border: #e2dcef;
+  --topic-scene: url('../images/topic-themes/prismo-types-scene.webp');
+}
+
+.topic-home > section[data-topic='postgresql'],
+.top-section[data-topic='postgresql'] {
+  --topic-wash: #eff7ff;
+  --topic-border: #d8e6f3;
+  --topic-scene: url('../images/topic-themes/prismo-postgresql-scene.webp');
+}
+
+.topic-home > section[data-topic='mysql'],
+.top-section[data-topic='mysql'] {
+  --topic-wash: #fff9ed;
+  --topic-border: #eee3ce;
+  --topic-scene: url('../images/topic-themes/prismo-mysql-scene.webp');
+}
+
+.topic-home > section[data-topic='sqlite'],
+.top-section[data-topic='sqlite'] {
+  --topic-wash: #f3f7fa;
+  --topic-border: #dce5ec;
+  --topic-scene: url('../images/topic-themes/prismo-sqlite-scene.webp');
+}
+
+.topic-home > section[data-topic='mssql'],
+.top-section[data-topic='mssql'] {
+  --topic-wash: #fff3f4;
+  --topic-border: #eedbdf;
+  --topic-scene: url('../images/topic-themes/prismo-mssql-scene.webp');
+}
+
+.topic-home > section[data-topic='mongodb'],
+.top-section[data-topic='mongodb'] {
+  --topic-wash: #f0fbf4;
+  --topic-border: #d7eadf;
+  --topic-scene: url('../images/topic-themes/prismo-mongodb-scene.webp');
+}
+
+.topic-home > section[data-topic='database-tools'],
+.top-section[data-topic='database-tools'] {
+  --topic-wash: #f6f3ff;
+  --topic-border: #e4ddf0;
+  --topic-scene: url('../images/topic-themes/prismo-tools-scene.webp');
+}
+
+.topic-home > section[data-topic='managing-databases'],
+.top-section[data-topic='managing-databases'] {
+  --topic-wash: #effaf8;
+  --topic-border: #d4e9e4;
+  --topic-scene: url('../images/topic-themes/prismo-management-scene.webp');
+}
+
+.topic-home > section[data-topic='serverless'],
+.top-section[data-topic='serverless'] {
+  --topic-wash: #effbff;
+  --topic-border: #d6eaf3;
+  --topic-scene: url('../images/topic-themes/prismo-serverless-scene.webp');
+}
+
+.topic-home > section[data-topic='just-for-fun'],
+.top-section[data-topic='just-for-fun'] {
+  --topic-wash: #fffbed;
+  --topic-border: #efe7cd;
+  --topic-scene: url('../images/topic-themes/prismo-fun-scene.webp');
+}
+
+.topic-home > section[data-topic],
+article > section.top-section[data-topic] {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(115deg, #ffffff 25%, var(--topic-wash));
+  border-color: var(--topic-border);
+}
+
+.topic-home > section[data-topic]::before,
+article > section.top-section[data-topic]::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 12px;
+  right: 16px;
+  width: 300px;
+  height: 208px;
+  background: var(--topic-scene) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.topic-home > section[data-topic] > h2,
+.topic-home > section[data-topic] > p,
+article > section.top-section[data-topic] > div:first-child {
+  padding-right: 300px;
+}
+
+.topic-home > section[data-topic] > p {
+  min-height: 130px;
+}
+
+article > section.top-section[data-topic] > div:first-child {
+  min-height: 112px;
+}
+
+article > section.top-section[data-topic] > div:last-child {
+  border-top: 0;
+}
+
+/* Subpage scenes extend into the share-row area without reserving a full image-height row. */
+@media (min-width: 768px) {
+  article > section.top-section[data-topic]::before {
+    top: 4px;
+    width: 340px;
+    height: 255px;
+  }
+
+  article > section.top-section[data-topic] > div:last-child {
+    padding-right: 300px;
+  }
+}
+
+@media (min-width: 1280px) {
+  article > section.top-section[data-topic]::before {
+    top: auto;
+    bottom: 8px;
+  }
+}
+
+@media (max-width: 767px) {
+  .topic-home > section[data-topic],
+  article > section.top-section[data-topic] {
+    padding-top: 180px;
+  }
+
+  .topic-home > section[data-topic]::before,
+  article > section.top-section[data-topic]::before {
+    top: 8px;
+    right: 16px;
+    width: 240px;
+    height: 160px;
+  }
+
+  .topic-home > section[data-topic] > h2,
+  .topic-home > section[data-topic] > p,
+  article > section.top-section[data-topic] > div:first-child {
+    padding-right: 0;
+    min-height: 0;
+  }
+}

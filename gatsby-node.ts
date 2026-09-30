@@ -1,4 +1,12 @@
 import siteConfig from './config'
+import {
+  loadCardThemes,
+  loadCardPalette,
+  writeSocialCard,
+  pruneSocialCards,
+} from './src/utils/socialCards'
+import { getThemedTopic } from './src/utils/topicThemes'
+import type { SocialImage } from './src/utils/socialMetadata'
 
 const path = require('path')
 
@@ -85,16 +93,53 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
   // Create blog post pages.
   const posts = result.data.allMdx.nodes
 
+  const root = process.cwd()
+  const cardThemes = await loadCardThemes(root)
+  const cardPalette = await loadCardPalette(root)
+  const pagePath = (node: any) => node.fields.modSlug.replace(/\d{2,}-/g, '') || '/'
+  const topicTitles = new Map<string, string>(
+    posts.map((node: any) => [pagePath(node), node.frontmatter.title])
+  )
+
+  // Generate before HTML rendering, so sharing crawlers need neither JavaScript nor a live image service.
+  const socialImages = new Map<string, SocialImage>()
+  const socialOutput = path.join(root, 'public/social/generated')
+  for (const node of posts) {
+    const pathname = pagePath(node)
+    const topic = pathname === '/' ? 'intro' : getThemedTopic(pathname)
+    const theme = topic && cardThemes.get(topic)
+    if (!theme) continue
+    const topicTitle =
+      pathname === '/' ? 'Databases, made approachable' : topicTitles.get(`/${topic}`)
+    if (!topicTitle) throw new Error(`Missing social card topic title: ${topic}`)
+    socialImages.set(
+      node.id,
+      await writeSocialCard(
+        {
+          root,
+          theme,
+          palette: cardPalette,
+          title: pathname === '/' ? "Prisma's Data Guide" : node.frontmatter.title,
+          topicTitle,
+        },
+        socialOutput
+      )
+    )
+  }
+  await pruneSocialCards(socialOutput, socialImages.values())
+  reporter.info(`Social cards: generated ${socialImages.size} page previews`)
+
   // you'll call `createPage` for each result
   posts.forEach((node: any) => {
     createPage({
-      path: node.fields.modSlug ? node.fields.modSlug.replace(/\d{2,}-/g, '') : '/',
+      path: pagePath(node),
       component: `${path.resolve('./src/templates/docs.tsx')}?__contentFilePath=${node.internal.contentFilePath}`,
       context: {
         id: node.fields.id,
         seoTitle: node.frontmatter.metaTitle || node.frontmatter.title,
         seoDescription: node.frontmatter.metaDescription || node.frontmatter.title,
         metaImage: node.frontmatter.metaImage || '',
+        socialImage: socialImages.get(node.id),
       },
     })
   })

@@ -3,6 +3,8 @@ import favicon from '../images/favicon-32x32.png'
 import faviconSvg from '../images/favicon.svg'
 import { useStaticQuery, graphql } from 'gatsby'
 import { PageLocation } from '../hooks/useLocation'
+import { buildMetaImageURL, canonicalPageURL } from '../utils/socialMetadata'
+import type { SocialImage } from '../utils/socialMetadata'
 import {
   articleStructuredData,
   serializeJsonLd,
@@ -14,6 +16,7 @@ type SEOProps = {
   title?: string
   description?: string
   image?: string
+  socialImage?: SocialImage
   // Whether a Markdown version of the page is published (see gatsby-plugin-markdown-export)
   hasMarkdown?: boolean
   // Structured data: the site for the homepage, an article for everything else
@@ -27,29 +30,22 @@ type SEOProps = {
   }
 }
 
-// Build a well-formed absolute OG/Twitter image URL.
-// Frontmatter `metaImage` is sometimes a content-relative path
-// (e.g. ../dataguide-images/...); left raw it concatenates into malformed
-// "dataguide.." URLs. Normalize by dropping relative path segments ('.', '..')
-// entirely — splitting on '/' avoids the reconstruction pitfall of a single
-// regex replace — then join cleanly to siteUrl + pathPrefix.
-const buildMetaImageURL = (siteUrl: string, pathPrefix: string, img: string): string => {
-  if (/^https?:\/\//.test(img)) return img
-  const cleaned = img
-    .split('/')
-    .filter((segment) => segment !== '' && segment !== '.' && segment !== '..')
-    .join('/')
-  return `${siteUrl}${pathPrefix}/${cleaned}`
-}
-
-const SEO = ({ location, title, description, image, hasMarkdown, article }: SEOProps) => {
+const SEO = ({
+  location,
+  title,
+  description,
+  image,
+  socialImage,
+  hasMarkdown,
+  article,
+}: SEOProps) => {
   const { site } = useStaticQuery(query)
   const {
     siteMetadata: {
       pathPrefix,
       siteUrl,
       keywords,
-      twitter: { site: tSite, creator: tCreator, image: tUrl },
+      twitter: { site: tSite, creator: tCreator },
       og: {
         site_name: oSite,
         type: oType,
@@ -58,12 +54,13 @@ const SEO = ({ location, title, description, image, hasMarkdown, article }: SEOP
     },
   } = site
 
-  const metaImageURL = buildMetaImageURL(siteUrl, pathPrefix, image || oUrl)
+  const metaImageURL = buildMetaImageURL(siteUrl, pathPrefix, socialImage?.url || image || oUrl)
+  const imageAlt = socialImage?.alt || (image ? title : oImgAlt)
+  const imageType = socialImage?.type || (image ? undefined : oImgType)
+  const imageWidth = socialImage?.width || (image ? undefined : oImgWidth)
+  const imageHeight = socialImage?.height || (image ? undefined : oImgHeight)
 
-  let canonicalUrl = `${siteUrl}${location.pathname === '/' ? '' : location.pathname}`.replace(
-    /\/$/,
-    ''
-  )
+  const canonicalUrl = canonicalPageURL(siteUrl, pathPrefix, location.pathname)
 
   const siteRoot = `${siteUrl}${pathPrefix}`
   const markdownUrl = canonicalUrl === siteRoot ? `${siteRoot}/index.md` : `${canonicalUrl}.md`
@@ -100,17 +97,21 @@ const SEO = ({ location, title, description, image, hasMarkdown, article }: SEOP
       <meta name="twitter:description" content={description} />
       <meta name="twitter:creator" content={tCreator} />
       <meta name="twitter:image" content={metaImageURL} />
+      <meta name="twitter:image:alt" content={imageAlt} />
       {/* Open Graph */}
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:site_name" content={oSite} />
-      <meta property="og:type" content={oType} />
+      <meta property="og:type" content={article?.type === 'TechArticle' ? 'article' : oType} />
       <meta property="og:image" content={metaImageURL} />
-      <meta property="og:image:alt" content={oImgAlt} />
-      <meta property="og:image:type" content={oImgType} />
-      <meta property="og:image:width" content={oImgWidth} />
-      <meta property="og:image:height" content={oImgHeight} />
+      {metaImageURL.startsWith('https://') && (
+        <meta property="og:image:secure_url" content={metaImageURL} />
+      )}
+      <meta property="og:image:alt" content={imageAlt} />
+      {imageType && <meta property="og:image:type" content={imageType} />}
+      {imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+      {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
       <link rel="canonical" href={canonicalUrl} />
       {hasMarkdown && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
       <link rel="icon" href={faviconSvg} type="image/svg+xml" />
@@ -138,7 +139,6 @@ const query = graphql`
         twitter {
           site
           creator
-          image
         }
         og {
           site_name
