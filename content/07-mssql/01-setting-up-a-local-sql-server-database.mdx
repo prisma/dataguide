@@ -4,7 +4,6 @@ metaTitle: 'Set Up a Local SQL Server Database with Docker, Windows or Linux'
 metaDescription: 'Run SQL Server 2025 or 2022 locally in Docker on any OS, or install it on Windows or Linux, then connect with sqlcmd and create a least-privilege login for your app.'
 metaImage: '/social/generic-sql-server.png'
 lastUpdated: 2026-09-30
-toc: false
 ---
 
 ## Overview
@@ -13,7 +12,7 @@ In this guide, you'll set up a SQL Server instance on your own machine for devel
 
 There are three ways to get a local instance:
 
-- [Docker](#running-sql-server-in-docker) works the same way on Windows, macOS and Linux, and a container is quick to create and to throw away. It's the only option on macOS.
+- [Docker](#running-sql-server-in-docker) works the same way on Windows, macOS and Linux, and a container is quick to create and to throw away. It's the only option on macOS. This guide shows the commands for Bash and other Unix shells, and for PowerShell where they differ.
 - [A native Windows installation](#installing-sql-server-on-windows) runs SQL Server as a Windows service, next to tools such as SQL Server Management Studio.
 - [A native Linux installation](#installing-sql-server-on-linux) uses Microsoft's package repositories for Ubuntu and Red Hat Enterprise Linux.
 
@@ -45,7 +44,9 @@ You need [Docker Engine](https://docs.docker.com/engine/install/) on Linux, or D
 
 The images exist only for x86-64 (`linux/amd64`). Microsoft's [Docker quickstart](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/quickstart-install-docker) states that running them under emulation or translation, such as Rosetta 2 or QEMU, isn't tested or supported.
 
-In practice, the image does run under Rosetta 2: the Docker steps in this guide were tested with SQL Server 2025 CU9 on an Apple Silicon Mac with OrbStack, which uses Rosetta for x86-64 containers. Docker Desktop can use Rosetta too, when you turn on **Use Rosetta for x86_64/amd64 emulation on Apple Silicon** in its [settings](https://docs.docker.com/desktop/settings-and-maintenance/settings/), but this guide wasn't tested with it. Either way, treat emulation as a development convenience that Microsoft doesn't support. If you hit behavior you can't explain, reproduce it on an x86-64 machine before you debug your own code.
+In practice, the image does run under Rosetta 2: the Docker steps in this guide were tested with SQL Server 2025 CU9 on an Apple Silicon Mac with OrbStack, which uses Rosetta for x86-64 containers. Docker Desktop can use Rosetta too, but only with the Apple Virtualization framework as its virtual machine manager. With Docker VMM, which [doesn't support Rosetta](https://docs.docker.com/desktop/features/vmm/), x86-64 emulation is slow. So in Docker Desktop, first choose **Apple Virtualization framework** under **Settings** > **General** > **Virtual Machine Manager**, then turn on **Use Rosetta for x86_64/amd64 emulation on Apple Silicon** in the [settings](https://docs.docker.com/desktop/settings-and-maintenance/settings/). This guide wasn't tested with Docker Desktop.
+
+Either way, treat emulation as a development convenience that Microsoft doesn't support. If you hit behavior you can't explain, reproduce it on an x86-64 machine before you debug your own code.
 
 You may find older tutorials that recommend Azure SQL Edge as an ARM-native alternative. Microsoft [retired Azure SQL Edge](https://learn.microsoft.com/en-us/lifecycle/products/azure-sql-edge) on September 30, 2025, so it's no longer an option.
 
@@ -53,28 +54,47 @@ You may find older tutorials that recommend Azure SQL Edge as an ARM-native alte
 
 Choose a password for the `sa` administrator account. It must follow SQL Server's [password policy](https://learn.microsoft.com/en-us/sql/relational-databases/security/password-policy): at least eight characters, with characters from three of these four groups: uppercase letters, lowercase letters, digits and symbols. If the password doesn't meet the policy, SQL Server can't finish its setup and the container stops.
 
-Then start the container, replacing `<sa-password>` with your password. The single quotes stop your shell from interpreting characters such as `$` or `!` in the password:
+If you typed the password into the `docker run` command itself, it would end up in your shell's history. Instead, read it into an environment variable without echoing it, and let Docker pass that variable on. In Bash:
 
 ```bash
+read -rs -p 'sa password: ' MSSQL_SA_PASSWORD && echo
+export MSSQL_SA_PASSWORD
 docker run --detach \
   --name mssql \
   --hostname mssql \
   --platform linux/amd64 \
-  --env 'ACCEPT_EULA=Y' \
-  --env 'MSSQL_SA_PASSWORD=<sa-password>' \
+  --env ACCEPT_EULA=Y \
+  --env MSSQL_SA_PASSWORD \
   --publish 127.0.0.1:1433:1433 \
   --volume mssql-data:/var/opt/mssql \
   mcr.microsoft.com/mssql/server:2025-latest
 ```
 
+In PowerShell, lines continue with a backtick instead of a backslash:
+
+```powershell
+$env:MSSQL_SA_PASSWORD = [Net.NetworkCredential]::new('', (Read-Host -AsSecureString 'sa password')).Password
+docker run --detach `
+  --name mssql `
+  --hostname mssql `
+  --platform linux/amd64 `
+  --env ACCEPT_EULA=Y `
+  --env MSSQL_SA_PASSWORD `
+  --publish 127.0.0.1:1433:1433 `
+  --volume mssql-data:/var/opt/mssql `
+  mcr.microsoft.com/mssql/server:2025-latest
+```
+
+Alternatively, write `MSSQL_SA_PASSWORD=<sa-password>` into a file that only you can read, and replace `--env MSSQL_SA_PASSWORD` with `--env-file <file>`.
+
 Here's what the options do:
 
 - `--platform linux/amd64` asks for the x86-64 image explicitly. On an Intel or AMD machine, it changes nothing. On an ARM machine, it states that you want the image to run under emulation, so Docker doesn't warn that the image's platform doesn't match your machine's.
 - `ACCEPT_EULA=Y` accepts the SQL Server license terms, which the image requires.
-- `MSSQL_SA_PASSWORD` sets the `sa` password. Older guides use `SA_PASSWORD`, which is deprecated.
+- `--env MSSQL_SA_PASSWORD`, without a value, copies the variable from your shell into the container, where SQL Server uses it as the `sa` password. Older guides use `SA_PASSWORD`, which is deprecated.
 - `--publish 127.0.0.1:1433:1433` makes SQL Server reachable on port 1433 of your machine, but only from the machine itself. With `--publish 1433:1433`, Docker would listen on every network interface, and anyone on the same network, say, a café's Wi-Fi, could try passwords against `sa`.
 - `--volume mssql-data:/var/opt/mssql` stores the databases in a named Docker volume. The data survives when you remove and re-create the container, for example to update to a newer image.
-- `--name` and `--hostname` give the container a name that you can use in other `docker` commands.
+- `--name` gives the container the name that you use in other `docker` commands. `--hostname` sets the host name inside the container, which SQL Server reports as its server name, for example in `@@SERVERNAME`.
 
 The image contains the Enterprise Developer edition unless you choose another one. For the Standard Developer edition, add `--env 'MSSQL_PID=StandardDeveloper'`; Microsoft's [environment variables reference](https://learn.microsoft.com/en-us/sql/linux/configure/environment-variables) lists all values.
 
@@ -83,14 +103,22 @@ The `2025-latest` tag always points to the newest cumulative update. If everyone
 SQL Server needs a few seconds to start. It's ready when its log contains this line:
 
 ```bash
-docker logs mssql 2>&1 | grep "ready for client connections"
+docker logs mssql | grep "ready for client connections"
+```
+
+In PowerShell, use `Select-String` instead of `grep`:
+
+```powershell
+docker logs mssql | Select-String "ready for client connections"
 ```
 
 ```text
 2026-09-30 03:37:41.88 spid57s     SQL Server is now ready for client connections. This is an informational message; no user action is required.
 ```
 
-If the container isn't running, `docker logs mssql` shows why, for example that the password doesn't meet the policy.
+Even after this line appears, a login can fail for a few more seconds while SQL Server finishes starting up. If that happens, try again. If the container isn't running at all, `docker logs mssql` shows why, for example that the password doesn't meet the policy.
+
+The other `docker` commands in this guide work the same way in Bash and PowerShell.
 
 ### Connecting with sqlcmd inside the container
 
@@ -116,8 +144,25 @@ Sqlcmd: Error: Microsoft ODBC Driver 18 for SQL Server : Client unable to establ
 You have three ways to deal with this:
 
 - `-C` (trust the server certificate) keeps the connection encrypted but skips the check of who's on the other end. An attacker who can intercept the traffic could pose as the server. On a connection to `localhost`, that would require access to your machine, so for a local development server this is a reasonable trade-off.
-- `-No` makes encryption optional, and the connection then isn't encrypted at all. Microsoft's quickstarts suggest it, but when `-C` works, you gain nothing by dropping encryption.
+- `-No` makes encryption optional. SQL Server [always encrypts the login packet](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-sql-server-encryption), which contains the password, but your queries and their results then travel unencrypted. Microsoft's quickstarts suggest `-No`, but when `-C` works, you gain nothing by dropping encryption.
 - A certificate that your clients trust is the right fix as soon as the connection crosses a network. See Microsoft's guides for [Linux](https://learn.microsoft.com/en-us/sql/linux/security/encrypted-connections) and [Windows](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-sql-server-encryption).
+
+To check whether your current connection is encrypted, run this query as `sa` or another administrator. Logins without the `VIEW SERVER PERFORMANCE STATE` permission, like the application login you'll create later, can't read this view:
+
+```sql
+SELECT encrypt_option FROM sys.dm_exec_connections WHERE session_id = @@SPID;
+GO
+```
+
+```text
+encrypt_option
+----------------------------------------
+TRUE
+
+(1 rows affected)
+```
+
+With `-No`, the same query returns `FALSE`.
 
 Your application's database driver faces the same choice, usually through a `trustServerCertificate` or `TrustServerCertificate` connection string option. Keep that option in your local configuration only.
 
@@ -125,7 +170,7 @@ Your application's database driver faces the same choice, usually through a `tru
 
 To connect from outside the container, for example from your editor's terminal, you can install the newer, Go-based `sqlcmd` ([go-sqlcmd](https://github.com/microsoft/go-sqlcmd)). It's a single program for Windows, macOS and Linux: install it with `winget install sqlcmd` on Windows, `brew install sqlcmd` on macOS, or download a release from GitHub. Microsoft's [installation guide](https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-download-install) describes these options and the ODBC-based alternative.
 
-Its encryption defaults differ from the ODBC-based `sqlcmd`: in version 1.10.0, a connection without options isn't encrypted, and `-C` alone doesn't change that. To get an encrypted connection to the local server, request encryption with `-N true` and trust the self-signed certificate with `-C`:
+Its encryption defaults differ from the ODBC-based `sqlcmd`: in version 1.10.0, a connection without options only encrypts the login, not the queries and results, and `-C` alone doesn't change that. To get a fully encrypted connection to the local server, request encryption with `-N true` and trust the self-signed certificate with `-C`:
 
 ```bash
 sqlcmd -S localhost -U sa -N true -C
@@ -137,7 +182,7 @@ go-sqlcmd can also create a SQL Server container for you with `sqlcmd create mss
 
 These steps follow Microsoft's documentation. They weren't tested for this guide.
 
-SQL Server 2025 runs on Windows 10 and 11 and on Windows Server 2019 and later, on x86-64 processors only. It needs .NET Framework 4.7.2 and at least 6 GB of free disk space. The [requirements page](https://learn.microsoft.com/en-us/sql/sql-server/install/hardware-and-software-requirements-for-installing-sql-server-2025) has the details.
+SQL Server 2025 runs on Windows 11 and on Windows Server 2019 and later, on x86-64 processors only. Microsoft's [requirements page](https://learn.microsoft.com/en-us/sql/sql-server/install/hardware-and-software-requirements-for-installing-sql-server-2025) still lists Windows 10, but Windows 10 Home and Pro [reached the end of support](https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro) on October 14, 2025. SQL Server also needs .NET Framework 4.7.2 and at least 6 GB of free disk space.
 
 1. On Microsoft's [SQL Server downloads page](https://www.microsoft.com/en-us/sql-server/sql-server-downloads), choose **Download Standard Developer edition** or **Download Enterprise Developer edition**, or download Express.
 2. Run the installer as an administrator. Microsoft's [installation guide](https://learn.microsoft.com/en-us/sql/database-engine/install-windows/install-sql-server-from-the-installation-wizard-setup) walks through every page of the wizard.
@@ -147,21 +192,34 @@ SQL Server 2025 runs on Windows 10 and 11 and on Windows Server 2019 and later, 
 
    You can [change the authentication mode](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/change-server-authentication-mode) later.
 
-After the installation, check one setting before you connect an application. [On new Developer and Express installations, TCP/IP is disabled](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/default-sql-server-network-protocol-configuration). Tools on the same machine can still connect through shared memory, but an application that connects to `localhost:1433` needs TCP/IP. [Enable it in SQL Server Configuration Manager](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/enable-or-disable-a-server-network-protocol) and restart the SQL Server service.
+The instance you get determines how you connect to it:
+
+- Unless you name the instance, the Developer editions install the [default instance](https://learn.microsoft.com/en-us/sql/sql-server/install/instance-configuration) (`MSSQLSERVER`). You connect to it as `localhost`, and it listens on TCP port 1433 once TCP/IP is enabled.
+- Express is usually installed as a [named instance called `SQLExpress`](https://learn.microsoft.com/en-us/sql/connect/ado-net/sql/sql-server-express-security). You connect to it as `localhost\SQLEXPRESS`, and it picks a [dynamic TCP port](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-a-server-to-listen-on-a-specific-tcp-port) at every start, not 1433.
+
+Before you connect an application, check the network settings. [On new Developer and Express installations, TCP/IP is disabled](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/default-sql-server-network-protocol-configuration). Tools on the same machine can still connect through shared memory, but an application that connects to `localhost:1433` needs TCP/IP:
+
+1. [Enable TCP/IP in SQL Server Configuration Manager](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/enable-or-disable-a-server-network-protocol).
+2. For a named instance such as Express's, also [give it a fixed port](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-a-server-to-listen-on-a-specific-tcp-port): in the TCP/IP properties, on the **IP Addresses** tab, delete the value of **TCP Dynamic Ports** under **IPAll** and enter `1433` as its **TCP Port**. Alternatively, install Express as the default instance.
+3. Restart the SQL Server service.
 
 For tools, install the Go-based `sqlcmd` with `winget install sqlcmd`. For a graphical client, install [SQL Server Management Studio (SSMS) 22](https://learn.microsoft.com/en-us/ssms/install/install), which installs through the Visual Studio Installer, or the [MSSQL extension for Visual Studio Code](https://learn.microsoft.com/en-us/sql/tools/visual-studio-code-extensions/mssql/mssql-extension-visual-studio-code).
 
-To connect with your Windows account, use `-E` (trusted connection):
+To connect to the default instance with your Windows account, use `-E` (trusted connection):
 
 ```powershell
 sqlcmd -S localhost -E
 ```
 
-For a named instance, use `-S localhost\<instance-name>`.
+For Express, or any other named instance, add the instance name:
+
+```powershell
+sqlcmd -S localhost\SQLEXPRESS -E
+```
 
 ## Installing SQL Server on Linux
 
-These steps follow Microsoft's quickstarts for [Ubuntu](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/quickstart-install-ubuntu) and [Red Hat Enterprise Linux](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/quickstart-install-red-hat). For this guide, the repository files and packages were confirmed to exist on `packages.microsoft.com`, but the installation itself wasn't tested.
+These steps follow Microsoft's quickstarts for [Ubuntu](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/quickstart-install-ubuntu) and [Red Hat Enterprise Linux](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/quickstart-install-red-hat). For this guide, the Ubuntu 22.04 and 24.04 package installations were tested in containers, but not `mssql-conf setup` and the systemd service, which a container doesn't run. The RHEL steps weren't tested; their repository files and packages were confirmed to exist on `packages.microsoft.com`.
 
 SQL Server needs an x86-64 machine with at least 2 GB of memory, and its data must be on an XFS or ext4 file system. The installation runs SQL Server as a systemd service. These distributions are supported:
 
@@ -172,9 +230,9 @@ SQL Server needs an x86-64 machine with at least 2 GB of memory, and its data mu
 
 Ubuntu 24.04 and RHEL 10 are supported starting with SQL Server 2025 CU1, and SQL Server 2025 no longer supports SUSE Linux Enterprise Server. The [release notes](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-release-notes) have the current list.
 
-### Ubuntu 24.04
+### Ubuntu 24.04 and 22.04
 
-Add Microsoft's signing key and the SQL Server 2025 repository, then install the `mssql-server` package:
+Add Microsoft's signing key and the SQL Server 2025 repository, then install the `mssql-server` package. On Ubuntu 24.04:
 
 ```bash
 curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
@@ -183,7 +241,14 @@ sudo apt-get update
 sudo apt-get install -y mssql-server
 ```
 
-On Ubuntu 22.04, the repository file is at `https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2025.list`. Microsoft's quickstart shows how to install the signing key for that release.
+The repository file for Ubuntu 22.04 doesn't name a key file, so `apt-get update` would fail with `NO_PUBKEY` if you only stored the key in `/usr/share/keyrings`. Add the key to APT's trusted keys instead:
+
+```bash
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc > /dev/null
+curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2025.list | sudo tee /etc/apt/sources.list.d/mssql-server-2025.list
+sudo apt-get update
+sudo apt-get install -y mssql-server
+```
 
 ### Red Hat Enterprise Linux 9 and 10
 
@@ -202,6 +267,22 @@ The package installs SQL Server but doesn't configure it. Run `mssql-conf setup`
 sudo /opt/mssql/bin/mssql-conf setup
 ```
 
+It starts with the choice of edition:
+
+```text
+Choose an edition of SQL Server:
+  1) Evaluation (free, no production use rights, 180-day limit)
+  2) Enterprise Developer (free, no production use rights)
+  3) Standard Developer (free, no production use rights)
+  4) Express (free)
+  5) Standard (PAID)
+  6) Enterprise (PAID) - CPU core utilization restricted to 20 physical/40 hyperthreaded
+  7) Enterprise Core (PAID) - CPU core utilization up to Operating System Maximum
+  8) I bought a license through a retail sales channel and have a product key to enter.
+  9) Standard (Billed through Azure) - Use pay-as-you-go billing through Azure.
+  10) Enterprise Core (Billed through Azure) - Use pay-as-you-go billing through Azure.
+```
+
 Choose one of the free editions: a Developer edition for development, or Express. When the setup has finished, check that the service is running:
 
 ```bash
@@ -217,6 +298,14 @@ The server package doesn't include `sqlcmd`. You can install the Go-based `sqlcm
 ```bash
 curl -sSL -O https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get update
+sudo apt-get install mssql-tools18 unixodbc-dev
+```
+
+On Ubuntu 22.04, which already trusts the key from the previous step:
+
+```bash
+curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
 sudo apt-get update
 sudo apt-get install mssql-tools18 unixodbc-dev
 ```
@@ -299,6 +388,8 @@ Changed database context to 'appdb'.
 
 The `db_datareader` and `db_datawriter` roles let `app_user` read and change the data in all tables of `appdb`, but not create, alter or drop tables. `DEFAULT_DATABASE` makes `appdb` the database that `app_user` starts in after connecting. If a schema migration tool connects with this login, it also needs to change tables. Add it to the `db_ddladmin` role, or better, give the migration tool a login of its own. Microsoft's reference describes [all fixed database roles](https://learn.microsoft.com/en-us/sql/relational-databases/security/authentication-access/database-level-roles).
 
+The container images can also create a database and a login on startup, with the `MSSQL_DB`, `MSSQL_USER` and `MSSQL_PASSWORD` [environment variables](https://learn.microsoft.com/en-us/sql/linux/configure/environment-variables). This guide doesn't use them because that user gets more than an application needs: in a test with SQL Server 2025 CU9, it received `CONTROL` permission on the database, which let it create tables and even drop the database, and the login's default database stayed `master`.
+
 To test the new login, create a table while you're still connected as `sa`, and then type `EXIT`:
 
 ```sql
@@ -359,17 +450,45 @@ CREATE DATABASE permission denied in database 'master'.
 
 Type `EXIT` to leave `sqlcmd`. Your application can now connect to server `localhost`, port `1433`, database `appdb`, with the login `app_user`. Keep that login's password in your application's local configuration, not in your code.
 
-A few notes on `sa`:
-
-- Everyone knows the name `sa`, so it's a common target of attacks. Microsoft recommends that you create a separate administrator login and then disable `sa` (`ALTER LOGIN sa DISABLE;`). Before you disable it, make sure you can connect with your new administrator login.
-- In a container, the `MSSQL_SA_PASSWORD` value stays in the container's configuration, where anyone who can run `docker inspect` on your machine can read it. To change the password, use `ALTER LOGIN sa WITH PASSWORD = '<new-password>';`.
-- SQL Server uses `MSSQL_SA_PASSWORD` only when it sets up an empty data volume. If you re-create the container on an existing volume with a different value, the old password stays in effect.
-
 <PrismaOutlinks>
 
-To use SQL Server from a TypeScript or Node.js application, see the [SQL Server page of the Prisma ORM documentation](https://www.prisma.io/docs/orm/core-concepts/supported-databases/sql-server) for the connection string format, including the `trustServerCertificate` option for local servers, or start with the [SQL Server quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/sql-server).
+To use SQL Server from a TypeScript or Node.js application, see the [SQL Server page of the Prisma ORM 7 documentation](https://www.prisma.io/docs/orm/core-concepts/supported-databases/sql-server) for the connection string format, including the `trustServerCertificate` option for local servers, or start with the [SQL Server quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/sql-server).
 
 </PrismaOutlinks>
+
+### Replacing `sa` with your own administrator login
+
+Everyone knows the name `sa`, so it's the first login that attackers try. Microsoft recommends that you create your own administrator login and then disable `sa`. Connect as `sa` again, create the login and add it to the `sysadmin` role, replacing `<admin-password>` with a password that meets the policy:
+
+```sql
+CREATE LOGIN dev_admin WITH PASSWORD = '<admin-password>';
+ALTER SERVER ROLE sysadmin ADD MEMBER dev_admin;
+GO
+```
+
+Type `EXIT`, connect as `dev_admin` to make sure that the new login works, and disable `sa`:
+
+```bash
+docker exec -it mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U dev_admin -C
+```
+
+```sql
+ALTER LOGIN sa DISABLE;
+GO
+```
+
+From now on, logging in as `sa` fails:
+
+```text
+Sqlcmd: Error: Microsoft ODBC Driver 18 for SQL Server : Login failed for user 'sa'. Reason: The account is disabled..
+```
+
+On Windows, if you chose Windows Authentication during setup, `sa` is [already disabled](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/change-server-authentication-mode).
+
+Two more things to know about the `sa` password in a container:
+
+- The `MSSQL_SA_PASSWORD` value stays in the container's configuration, where anyone who can run `docker inspect` on your machine can read it. Disabling `sa` makes that value useless. If you keep `sa`, change its password with `ALTER LOGIN sa WITH PASSWORD = '<new-password>';`.
+- SQL Server uses `MSSQL_SA_PASSWORD` only when it sets up an empty data volume. If you re-create the container on an existing volume with a different value, the old password stays in effect.
 
 ## Starting and stopping, and where the data lives
 
@@ -421,7 +540,7 @@ The Developer editions and Express are free. Download them from [Microsoft's SQL
 <details>
 <summary>What is the SQL Server Developer edition?</summary>
 
-The Developer editions contain all features of the corresponding paid edition, but you may only use them for development and testing, not in production. Starting with SQL Server 2025, there are two of them: Enterprise Developer, with the features of Enterprise edition, and Standard Developer, with the features of Standard edition. SQL Server 2022 and earlier have a single Developer edition with the Enterprise feature set.
+A Developer edition has all the features of a paid edition for free, but it's licensed for development and testing only. See [choosing a version and edition](#choosing-a-version-and-edition) for SQL Server 2025's Enterprise Developer and Standard Developer editions.
 
 </details>
 
