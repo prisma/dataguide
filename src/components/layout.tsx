@@ -18,6 +18,8 @@ interface PathProps {
   isHomePage?: boolean
   slug?: string
   location: PageLocation
+  // Shown in a column to the right of the article on wide screens (the "On this page" list)
+  aside?: React.ReactNode
 }
 
 // interface ThemeProps {
@@ -41,8 +43,9 @@ const Wrapper = styled.div`
 `
 
 const Content = styled.main<{ $moveUp?: boolean }>`
+  flex: 1 1 880px;
+  min-width: 0;
   max-width: 880px;
-  width: 880px;
   margin: ${(p) => (p.$moveUp ? '-3rem 0 1rem 0' : '0.5rem 0 1rem 0')};
   position: relative;
   z-index: 100;
@@ -95,6 +98,16 @@ const SkipLink = styled.a`
   }
 `
 
+// Present on every article page at this width, even when empty, so the layout lines up with the
+// header across pages
+const AsideColumn = styled.div`
+  flex: 0 0 240px;
+  margin: 24px 0 0 32px;
+  @media (max-width: 1279px) {
+    display: none;
+  }
+`
+
 const NotMobile = styled.div`
   display: flex;
   @media (min-width: 0px) and (max-width: 1024px) {
@@ -102,7 +115,13 @@ const NotMobile = styled.div`
   }
 `
 
-const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, slug, location }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({
+  children,
+  isHomePage,
+  slug,
+  location,
+  aside,
+}) => {
   const { site } = useLayoutQuery()
   const { header, footer } = site.siteMetadata
   const isIndexPage = isIndexSlug(slug)
@@ -125,6 +144,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children, isHomePage, sl
           <Content $moveUp={isHomePage} id="main-content" tabIndex={-1}>
             <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
           </Content>
+          {!isHomePage && <AsideColumn>{aside}</AsideColumn>}
         </Wrapper>
         <Footer footerProps={footer} isHomePage={isHomePage} />
       </MDXProvider>

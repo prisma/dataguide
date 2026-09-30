@@ -38,6 +38,14 @@ const HeaderWrapper = styled.header`
     align-items: center;
   }
 
+  /* Matches the article layout's width once the "On this page" column appears */
+  @media (min-width: 1280px) {
+    .container {
+      width: 100%;
+      max-width: 1391px;
+    }
+  }
+
   @media (min-width: 0px) and (max-width: 1024px) {
     .container {
       width: 100%;
