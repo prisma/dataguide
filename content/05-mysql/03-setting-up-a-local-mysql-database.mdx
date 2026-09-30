@@ -1,418 +1,508 @@
 ---
 title: 'Setting up a local MySQL database'
-metaTitle: 'Setting Up Local Database | MySQL | Local Environment Setup'
-metaDescription: 'Learn how to set up a MySQL database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
+metaTitle: 'Set up a local MySQL database with Docker, Linux, macOS or Windows'
+metaDescription: 'Install MySQL 9.7 LTS for local development with Docker, the MySQL APT or Yum repository, Homebrew, or the Windows MSI, then lock it down and create a least-privilege user for your application.'
 metaImage: '/social/generic-mysql.png'
-authors: ['justinellingwood']
+lastUpdated: 2026-09-30
 toc: false
 ---
 
-<StatusNotice>
+## Introduction
 
-This guide was written in 2020 for MySQL 8.0 (with notes on 5.7) and CentOS 8, and hasn't been re-tested since. MySQL 5.7 reached end of life in October 2023, MySQL 8.0 in April 2026, and CentOS 8 in December 2021. The current long-term support releases are MySQL 8.4 and 9.7. To install one of them, follow [MySQL's installation guide](https://dev.mysql.com/doc/refman/8.4/en/installing.html).
+A working MySQL setup has two parts: the [MySQL server](https://dev.mysql.com/doc/refman/9.7/en/mysqld.html) (`mysqld`), which stores your data and accepts connections, and a client that talks to it. This guide uses the [`mysql` command-line client](https://dev.mysql.com/doc/refman/9.7/en/mysql.html), which every installation method below includes.
 
-</StatusNotice>
+There are two broad ways to run the server on your own computer:
 
-## Overview
+- **In a container.** The official `mysql` Docker image is the quickest option on any operating system. The server is isolated from the rest of your system, you can run several versions side by side, and removing it leaves nothing behind. For most development work, this is the option we recommend.
+- **As a native installation.** MySQL's package repositories and installers set MySQL up as a system service that starts with your computer. Choose this if you can't or don't want to use Docker.
 
-This page explains how to install and configure the [MySQL database server](https://dev.mysql.com/doc/refman/8.0/en/mysqld.html), and the [`mysql` command line client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html). This guide will cover how to install and set up these components on your computer for local access.
+After the installation, the guide shows how to lock the server down, create a database and an account for your application, manage the service, and remove MySQL again. Jump to the part you need:
 
-This guide will cover the following platforms:
+- [Choosing a MySQL version](#choosing-a-mysql-version)
+- [Running MySQL in Docker](#running-mysql-in-docker)
+- [Installing MySQL on Linux](#installing-mysql-on-linux)
+- [Installing MySQL on macOS](#installing-mysql-on-macos)
+- [Installing MySQL on Windows](#installing-mysql-on-windows)
+- [Securing the installation](#securing-the-installation)
+- [Creating a database and a user for your application](#creating-a-database-and-a-user-for-your-application)
+- [Managing the server and finding its files](#managing-the-server-and-finding-its-files)
+- [Removing MySQL](#removing-mysql)
 
-- [Setting up MySQL on Windows](#setting-up-mysql-on-windows)
-- [Setting up MySQL on macOS](#setting-up-mysql-on-macos)
-- [Setting up MySQL on Linux](#setting-up-mysql-on-linux)
-  - [Debian and Ubuntu](#debian-and-ubuntu)
-  - [CentOS and Fedora](#centos-and-fedora)
+## Choosing a MySQL version
 
-Navigate to the sections that match the platforms you will be working with.
+Since MySQL 8.1, MySQL has had [two release tracks](https://dev.mysql.com/doc/refman/9.7/en/mysql-releases.html):
 
-## Setting up MySQL on Windows
+- **Long-term support (LTS) releases** change as little as possible within a series. Updates contain bug and security fixes, and nothing is removed. An LTS series is supported for eight years (five years of premier support and three of extended support). The current LTS series are **MySQL 8.4** and **MySQL 9.7**.
+- **Innovation releases** add features every quarter and may change behavior or remove features from one release to the next. Each is supported only until the next one comes out. Starting in July 2026, Innovation releases use calendar version numbers: the current one, MySQL 26.7, is the July 2026 release.
 
-The MySQL project provides a native Windows installer to install and configure your database.
+MySQL 8.0 reached the end of its support in April 2026, and MySQL 5.7 in October 2023 (see MySQL's [end-of-life notices](https://www.mysql.com/support/eol-notice.html)).
 
-Visit the [MySQL download page](https://dev.mysql.com/downloads/) to find a link to the installer:
+This guide installs **MySQL 9.7**, the newest LTS series, which gives a new project the longest support window. If you are matching an existing server, install the series it runs instead; the sections below point out where you choose the version. One difference that can decide the question: MySQL 9.7 no longer includes the `mysql_native_password` authentication plugin. MySQL 8.4 still ships it, disabled by default, for old clients that can't use the default `caching_sha2_password`.
 
-![MySQL list of installers](../dataguide-images/mysql/setting-up-a-local-database/windows/list_of_installers.png)
+Be careful with unversioned names. The Docker tag `mysql:latest` and the Homebrew formula `mysql` both install the Innovation release (26.7 at the time of writing), so a routine update can move you to a new release with different behavior. Always name the series, as in `mysql:9.7` or `mysql@9.7`.
 
-Click **MySQL Installer for Windows**.
+At the time of writing, the current releases are 9.7.2 and 8.4.11.
 
-On the next page, you'll have a choice of installers to download:
+## Running MySQL in Docker
 
-- **web installer**: The web installer is a smaller initial download. It will download components as-needed during the installation process. This option works when you have an internet connection during installation.
-- **conventional (offline) installer**: The conventional installer is the larger download. It comes bundled with all of the components and files you will need to install. This makes offline installation possible.
+You need Docker installed: [Docker Desktop](https://docs.docker.com/desktop/) on macOS and Windows, or Docker Engine on Linux. The commands below are for a Unix shell such as bash or zsh (on Windows, use WSL).
 
-![MySQL download windows installer](../dataguide-images/mysql/setting-up-a-local-database/windows/download_installer.png)
+First, generate a random password for MySQL's administrative `root` account and store it in a file that only you can read:
 
-Choose the installer that suits your requirements and click **Download**.
-
-Next, you will be given the option to create an Oracle Web Account. Feel free to skip this by clicking **No thanks, just start my download** towards the bottom of the page:
-
-![MySQL skip account creation](../dataguide-images/mysql/setting-up-a-local-database/windows/skip_account_creation.png)
-
-Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer).
-
-The installer begins by asking what components you would like to install:
-
-![MySQL choose setup type](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_1.png)
-
-For a minimal install, the **Server only** option contains all of the components you need. Despite its name, this option also includes the `mysql` command line client. Click **Next** after making your selection.
-
-The following page confirms your selection:
-
-![MySQL installation confirmation](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_2.png)
-
-If the selection looks correct, click **Execute** to begin the installation.
-
-Once the installation is complete, the installer prompts you to configure the new MySQL server:
-
-![MySQL begin configuration](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_3.png)
-
-Click **Next** to begin the configuration process.
-
-The first configuration option is to select the level of [availability](/intro/database-glossary#availability) for the installation. Since this is a local installation, select **Standalone MySQL Server / Classic MySQL Replication**.
-
-![MySQL choose availability](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_4.png)
-
-Click **Next** to continue.
-
-The page that follows allows you to configure your machine type (which influences resource allocation for the server) and the network connectivity.
-
-**Development Computer** option is usually the best choice if you are using the computer for daily tasks. The default networking options are also usually adequate.
-
-![MySQL machine type](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_5.png)
-
-Click **Next** to move on.
-
-The next page allows you to choose between two [authentication](/intro/database-glossary#authentication) encryption methods:
-
-- **Strong Password Encryption**: Configures more secure authentication for new installations.
-- **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
-
-![MySQL auth method](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_6.png)
-
-Unless you have a strong reason not to, choose **Strong Password Encryption** and click **Next** to continue.
-
-Next, you are prompted to set a password for the MySQL `root` account, which has administrative privileges for the MySQL installation:
-
-![MySQL set password](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_7.png)
-
-Choose and confirm a strong password. If you want to use this opportunity to add additional user accounts, you can click **Add User** and follow the prompts. Click **Next** when you are ready to move on.
-
-Finally, you'll be asked to configure the MySQL Windows Service:
-
-![MySQL configure service](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_8.png)
-
-The default selections work well unless you have specific requirements. Click **Next** to continue.
-
-The configuration is now complete.
-
-![MySQL apply configuration](../dataguide-images/mysql/setting-up-a-local-database/windows/installer_9.png)
-
-If you're happy with your selections, click **Execute** to configure your installation.
-
-With MySQL configured, you can now test your access using the `mysql` command line client. In the Windows start menu, search for "mysql" and click the MySQL Command Line Client.
-
-A MySQL window will appear, prompting for a password:
-
-![MySQL command line client](../dataguide-images/mysql/setting-up-a-local-database/windows/mysql_cli.png)
-
-Enter the administrative `root` password that you selected during configuration. Upon successfully authenticating, you will be given a MySQL prompt where you can interact with your database. Type `quit` to exit.
-
-## Setting up MySQL on macOS
-
-The MySQL project provides a macOS DMG archive to install and configure MySQL.
-
-Visit the [MySQL download page](https://dev.mysql.com/downloads/mysql) and select **macOS** from the operating system drop down. A few different installation options are available:
-
-![MySQL list of installers](../dataguide-images/mysql/setting-up-a-local-database/macos/list_of_installers.png)
-
-Click **Download** next to the macOS DMG Archive.
-
-Next, you will be given the option to create an Oracle Web Account. Feel free to skip this by clicking **No thanks, just start my download** towards the bottom of the page:
-
-![MySQL skip account creation](../dataguide-images/mysql/setting-up-a-local-database/macos/skip_account_creation.png)
-
-Once the download completes, double click on the file to mount the DMG file:
-
-![MySQL downloaded DMG](../dataguide-images/mysql/setting-up-a-local-database/macos/downloaded_dmg.png)
-
-Click on the installer package inside the mounted DMG. You may have to confirm that you wish to allow the program to make changes to your computer:
-
-![MySQL installer package](../dataguide-images/mysql/setting-up-a-local-database/macos/installer_package.png)
-
-The MySQL installer will launch, displaying the welcome screen:
-
-![MySQL installer welcome](../dataguide-images/mysql/setting-up-a-local-database/macos/welcome_screen.png)
-
-Click **Continue** to begin the installation procedure.
-
-Next, you will be asked to select the installation type:
-
-![MySQL installer installation type](../dataguide-images/mysql/setting-up-a-local-database/macos/installation_type.png)
-
-The standard installation is a good choice for most people, but if you wish to modify things, you can click **Customize**. When you are happy with your choices, click **Install**. The installation will then begin.
-
-When the installation is complete, you will be asked to configure MySQL.
-
-The first configuration page allows you to choose between two [authentication](/intro/database-glossary#authentication) methods:
-
-- **Strong Password Encryption**: Configures more secure authentication for new installations.
-- **Legacy Authentication**: Configures less secure authentication necessary for compatibility with legacy applications.
-
-![MySQL installer encryption type](../dataguide-images/mysql/setting-up-a-local-database/macos/encryption_type.png)
-
-Unless you have a strong reason not to, choose **Strong Password Encryption** and click **Next** to continue.
-
-Next, you are prompted to set a password for the MySQL `root` account, which has administrative privileges for the MySQL installation:
-
-![MySQL installer set password](../dataguide-images/mysql/setting-up-a-local-database/macos/set_password.png)
-
-Choose a strong password and click **Finish** when you are done.
-
-The installer will confirm that the operation was successful:
-
-![MySQL installer complete](../dataguide-images/mysql/setting-up-a-local-database/macos/complete.png)
-
-Click **Close** to close the window.
-
-The MySQL server should be up and running. To access the `mysql` command line program, you have to modify your system's `PATH` environment variable.
-
-To do so, open a terminal window. Edit the `/etc/path` file with the following command:
-
-```shell
-sudo nano /etc/paths
+```bash
+openssl rand -base64 24 > mysql-root-password.txt
+chmod 600 mysql-root-password.txt
 ```
 
-You will be prompted for your computer's administrative password:
+Keep this file out of version control. Then start the server:
 
-![MySQL open path file](../dataguide-images/mysql/setting-up-a-local-database/macos/open_path.png)
-
-At the bottom of the file, add the `/usr/local/mysql/bin` directory:
-
-![Add MySQL path](../dataguide-images/mysql/setting-up-a-local-database/macos/add_path.png)
-
-When you are done, save and close the editor by typing <kbd>CTL-X</kbd>, <kbd>Y</kbd>, and hitting <kbd>ENTER</kbd>.
-
-To read the new `PATH` settings, open a _new_ terminal window. Login to the MySQL database using the `root` administrative account:
-
-```shell
-mysql -u root -p
+```bash
+docker run --name mysql -d \
+  -p 127.0.0.1:3306:3306 \
+  -v mysql-data:/var/lib/mysql \
+  -v "$PWD/mysql-root-password.txt:/run/secrets/mysql-root-password:ro" \
+  -e MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-root-password \
+  mysql:9.7
 ```
 
-You will be prompted for the password you set up during the MySQL configuration process. After successfully authenticating, you will be given a MySQL prompt:
+Each option has a job:
 
-![MySQL prompt](../dataguide-images/mysql/setting-up-a-local-database/macos/prompt.png)
+- `-p 127.0.0.1:3306:3306` makes the server reachable on port 3306 of your computer, but only from your computer. Without the `127.0.0.1` part, [Docker publishes the port on all of the host's addresses](https://docs.docker.com/engine/network/port-publishing/), which makes your database reachable from the network. If port 3306 is already in use, pick another host port, such as `127.0.0.1:3307:3306`, and connect to that port.
+- `-v mysql-data:/var/lib/mysql` keeps the data directory in a named volume, so your databases survive when you remove or recreate the container.
+- `MYSQL_ROOT_PASSWORD_FILE` tells the image to read the root password from the mounted file. Unlike `-e MYSQL_ROOT_PASSWORD=...`, this keeps the password out of your shell history and out of the output of `docker inspect`. The image only uses it to initialize an empty data directory; after that, the password is stored in the database.
+- `mysql:9.7` follows the 9.7 LTS series: pulling it again gets you the latest 9.7 patch release, never a new series. Use `mysql:8.4` for MySQL 8.4.
 
-Type `quit` to exit when you are finished.
+On the first start, the container initializes the data directory, runs a temporary server to set the root password, and then starts the real server. Wait until `docker logs mysql` shows `ready for connections` with `port: 3306`:
 
-## Setting up MySQL on Linux
-
-You can install MySQL on Linux with a number of different methods depending on your Linux distribution and preferences. Choose the link below that best fits your needs:
-
-- [Debian and Ubuntu](#debian-and-ubuntu)
-  - [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-  - [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
-- [CentOS and Fedora](#centos-and-fedora)
-  - [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-  - [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
-
-### Debian and Ubuntu
-
-You can either choose to use the version of MySQL available in your distribution's default repositories or use repositories provided by the MySQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the MySQL project will be more up-to-date but may require extra configuration.
-
-- [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-- [Install using the MySQL project's Debian and Ubuntu repositories](#install-using-the-mysql-projects-debian-and-ubuntu-repositories)
-
-#### Install using Debian or Ubuntu's default repositories
-
-Both Ubuntu and Debian provide versions of MySQL server as packages within their default repositories. The MySQL version may be older than those found on the MySQL website, but this is the simplest way to install on these distributions.
-
-To install MySQL server, update your computer's local package cache with the latest set of packages. Afterwards, install the `mysql-server` package:
-
-```shell
-sudo apt update
-sudo apt install mysql-server
+```bash
+docker logs mysql
 ```
 
-Depending on your version of Ubuntu or Debian, you may be asked to provide and confirm an administrative password for the MySQL server.
-
-After the installation completes, run the `mysql_secure_installation` script to lock down some of the insecure defaults that may be present. The script will also give you the opportunity to set an administrative password, which you can ignore if you chose one during installation:
-
-```shell
-sudo mysql_secure_installation
+```text
+...
+2026-09-30 03:42:24+00:00 [Note] [Entrypoint]: MySQL init process done. Ready for start up.
+...
+2026-09-30T03:42:25.577070Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '9.7.2'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
 ```
 
-Read the prompts carefully to decide which actions you wish to take. If you are not sure, answering <kbd>Y</kbd> for "yes" is usually a safe option.
+Now connect with the `mysql` client inside the container, and enter the password from `mysql-root-password.txt` when you're asked for it:
 
-#### Install using the MySQL project's Debian and Ubuntu repositories
-
-If you need a more up-to-date version of MySQL, you can use the repositories maintained by the MySQL project instead of those provided by your Linux distribution.
-
-To configure the MySQL project's repository, visit the [download page for the Ubuntu / Debian repository setup package](https://dev.mysql.com/downloads/repo/apt/). Click **download** and save the file to your computer.
-
-Navigate to the location you downloaded the repository setup package to in your terminal. Install the `.deb` package with the `dpkg` command:
-
-```shell
-sudo dpkg --install mysql-apt-config*.deb
+```bash
+docker exec -it mysql mysql -u root -p
 ```
 
-During the package configuration, you'll be asked to choose the version of MySQL you wish to target. If you need to change the version of MySQL that the repository is configured for later, you can type `sudo dpkg-reconfigure mysql-apt-config` to change your selection.
-
-Once you have selected the version of MySQL to target, you can update the local package list and install MySQL by typing:
-
-```shell
-sudo apt update
-sudo apt install mysql-server
+```text
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 9.7.2 MySQL Community Server - GPL
+...
+mysql>
 ```
 
-Depending on your version of Ubuntu or Debian, you may be asked to provide and confirm an administrative password for the MySQL server.
+If you have a `mysql` client installed on your computer, you can also connect through the published port:
 
-After the installation completes, run the `mysql_secure_installation` script to lock down some of the insecure defaults that may be present. The script will also give you the opportunity to set an administrative password, which you can ignore if you chose one during installation:
-
-```shell
-sudo mysql_secure_installation
+```bash
+mysql -h 127.0.0.1 -P 3306 -u root -p
 ```
 
-Read the prompts carefully to decide which actions you wish to take. If you are not sure, answering <kbd>Y</kbd> for "yes" is usually a safe option.
+Use `127.0.0.1` rather than `localhost` here. The client treats `localhost` as a request to connect through a Unix socket file instead of TCP, and that socket only exists inside the container, so the connection fails with `ERROR 2002 (HY000): Can't connect to local MySQL server through socket`.
 
-### CentOS and Fedora
+The image creates `root` accounts for both `localhost` and `%` (any host), so anyone who can reach the port can try to log in as `root`. Binding the port to `127.0.0.1` is what keeps them out.
 
-You can either choose to use the version of MySQL available in your distribution's default repositories or use repositories provided by the MySQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the MySQL project will be more up-to-date but require extra configuration.
+The image can also create a database and a user on the first start, through the `MYSQL_DATABASE`, `MYSQL_USER` and `MYSQL_PASSWORD` variables (the user gets all privileges on that database). This guide creates them by hand instead, in [Creating a database and a user for your application](#creating-a-database-and-a-user-for-your-application), so that you can see and choose the privileges. The [image's documentation](https://hub.docker.com/_/mysql) lists all of its options.
 
-- [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-- [Install using the MySQL project's CentOS and Fedora repositories](#install-using-the-mysql-projects-centos-and-fedora-repositories)
+## Installing MySQL on Linux
 
-#### Install using CentOS or Fedora's default repositories
+MySQL publishes its own package repositories for Debian and Ubuntu (APT) and for Red Hat Enterprise Linux, its rebuilds and Fedora (Yum). Distributions also ship their own packages, but these may be a different release series than you want, or not MySQL at all. Here is what `mysql-server` gets you from some current distributions' own repositories:
 
-Both CentOS and Fedora provide versions of MySQL server as packages within their default repositories. The MySQL version may be older than those found on the MySQL website, but this is the simplest way to install on these distributions.
+| Distribution                       | Distribution package                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| Ubuntu 26.04 LTS                   | MySQL 8.4 (`mysql-server`, 8.4.11 at the time of writing)                 |
+| Ubuntu 24.04 LTS                   | MySQL 8.0 (`mysql-server`, 8.0.46), which is no longer supported by MySQL |
+| Debian 13                          | No `mysql-server`; `default-mysql-server` installs MariaDB 11.8           |
+| Oracle Linux 9 (RHEL 9 compatible) | MySQL 8.0 (`mysql-server`, 8.0.46), plus a `mysql:8.4` module stream      |
 
-To install MySQL server, use your distribution's package manager to install the `mysql-server` package:
+MariaDB started as a fork of MySQL but is now a separate database with its own versions and features. This guide doesn't cover it.
 
-For **CentOS** use the `yum` package manager:
+### Ubuntu and Debian: the MySQL APT repository
 
-```shell
-sudo yum install mysql-server
+MySQL's APT repository has packages for the current Debian and Ubuntu releases, but only for the `amd64` (x86-64) architecture. On an ARM machine, the repository has no server packages, and on Ubuntu, `apt-get install mysql-server` then quietly installs Ubuntu's own package instead. On ARM, use [Docker](#running-mysql-in-docker) or, on Ubuntu 26.04, the [distribution package](#ubuntu-and-debian-the-distributions-own-packages).
+
+The repository is set up by a small configuration package. Download it from MySQL's [APT repository page](https://dev.mysql.com/downloads/repo/apt/) (the version below is the current one at the time of writing) and install it:
+
+```bash
+curl -fsSLO https://dev.mysql.com/get/mysql-apt-config_0.8.40-1_all.deb
+sudo apt-get install ./mysql-apt-config_0.8.40-1_all.deb
 ```
 
-For **Fedora** use the `dnf` package manager:
+The package asks which MySQL products you want. On a system without MySQL, it preselects `mysql-8.4-lts`. To get MySQL 9.7, select **MySQL Server & Cluster**, choose `mysql-9.7-lts`, and then select **Ok**. You can change the series later with `sudo dpkg-reconfigure mysql-apt-config`.
 
-```shell
-sudo dnf install mysql-server
+To make the same choice without the dialog, for example in a script, set the answer before installing the package:
+
+```bash
+echo "mysql-apt-config mysql-apt-config/select-server select mysql-9.7-lts" | sudo debconf-set-selections
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ./mysql-apt-config_0.8.40-1_all.deb
 ```
 
-Once the MySQL package is installed, start up the service by typing:
+Either way, the package writes the repository to `/etc/apt/sources.list.d/mysql.list`. On Ubuntu 24.04 with MySQL 9.7 selected, it contains:
 
-```shell
-sudo systemctl start mysqld.service
+```text
+### THIS FILE IS AUTOMATICALLY CONFIGURED ###
+# You may comment out entries below, but any other modifications may be lost.
+# Use command 'dpkg-reconfigure mysql-apt-config' as root for modifications.
+deb [signed-by=/usr/share/keyrings/mysql-apt-config.gpg] http://repo.mysql.com/apt/ubuntu/ noble mysql-apt-config
+deb [signed-by=/usr/share/keyrings/mysql-apt-config.gpg] http://repo.mysql.com/apt/ubuntu/ noble mysql-9.7-lts
+deb [signed-by=/usr/share/keyrings/mysql-apt-config.gpg] http://repo.mysql.com/apt/ubuntu/ noble mysql-tools
+deb-src [signed-by=/usr/share/keyrings/mysql-apt-config.gpg] http://repo.mysql.com/apt/ubuntu/ noble mysql-9.7-lts
 ```
 
-Optionally, you can automatically start MySQL on boot by typing:
+Now update the package lists and install the server:
 
-```shell
-sudo systemctl enable mysqld.service
+```bash
+sudo apt-get update
+sudo apt-get install mysql-server
 ```
 
-Next, run the `mysql_secure_installation` script to lock down some of the insecure defaults that may be present. The script will let you set an administrative password and other items:
+During the installation, you're asked for a password for MySQL's `root` account. If you leave it blank, `root` is set up to use Unix socket authentication instead of a password: only the operating system's `root` user (for example, through `sudo mysql`) can log in as MySQL's `root`. On a development machine, that is a good choice, because there is no administrative password to leak. [Securing the installation](#securing-the-installation) explains how it works.
 
-```shell
-sudo mysql_secure_installation
+The server starts right after the installation. Check it with `systemctl status mysql`. The packages from MySQL's repository don't limit which network addresses the server listens on, so continue with [Listening only on your own machine](#listening-only-on-your-own-machine).
+
+MySQL's [APT repository guide](https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/) covers upgrades and replacing a distribution's MySQL.
+
+### Ubuntu and Debian: the distribution's own packages
+
+On Ubuntu 26.04, the distribution's own package is MySQL 8.4 LTS, and it's the simplest way to get a supported MySQL:
+
+```bash
+sudo apt-get update
+sudo apt-get install mysql-server
 ```
 
-Read the prompts carefully to decide which actions you wish to take. If you are not sure, answering <kbd>Y</kbd> for "yes" is usually a safe option.
+The server starts right after the installation. Ubuntu's package configures `root` to use Unix socket authentication, so you log in as the administrator with `sudo mysql`, and it only listens on `127.0.0.1`.
 
-#### Install using the MySQL project's CentOS and Fedora repositories
+On Ubuntu 24.04, the same commands install MySQL 8.0, which no longer receives updates from MySQL. Use [MySQL's APT repository](#ubuntu-and-debian-the-mysql-apt-repository) or [Docker](#running-mysql-in-docker) instead. On Debian, the distribution's packages are MariaDB.
 
-If you need a more up-to-date version of MySQL, you can use the repositories maintained by the MySQL project instead of those provided by your Linux distribution.
+### RHEL, Oracle Linux, Rocky Linux and AlmaLinux: the MySQL Yum repository
 
-To configure the MySQL project's repository, visit the [download page for the CentOS / Fedora repository setup package](https://dev.mysql.com/downloads/repo/yum/). Click **download** on the link that matches your distribution (CentOS versions mirror the Red Hat Enterprise version numbers).
+MySQL's Yum repository serves Red Hat Enterprise Linux and compatible distributions, as well as Fedora. It is set up by a release package; the commands below use the one for version 9 of these distributions. For version 8 or 10, or for Fedora, pick the matching package on MySQL's [Yum repository page](https://dev.mysql.com/downloads/repo/yum/).
 
-Navigate to the location you downloaded the repository setup package to in your terminal. Install the `.rpm` package with your distribution's package manager.
-
-For **CentOS** use the `yum` package manager:
-
-```shell
-sudo yum localinstall mysql*.rpm
+```bash
+sudo dnf install https://dev.mysql.com/get/mysql97-community-release-el9-1.noarch.rpm
 ```
 
-For **Fedora** use the `dnf` package manager:
+The `mysql97` release package enables the MySQL 9.7 LTS repositories. To install MySQL 8.4 instead, switch the enabled repositories before you install the server:
 
-```shell
-sudo dnf localinstall mysql*.rpm
+```bash
+sudo dnf config-manager --disable mysql-9.7-lts-community mysql-tools-9.7-lts-community
+sudo dnf config-manager --enable mysql-8.4-lts-community mysql-tools-8.4-lts-community
 ```
 
-If you are using **CentOS 8**, you must also disable the system's MySQL module to prevent it from interfering with the repository's MySQL version. To do so, type:
+On version 8 of these distributions, the system's own `mysql` module hides the packages from MySQL's repository until you disable it with `sudo dnf module disable mysql`. Version 9 doesn't need this step.
 
-```shell
-sudo yum module disable mysql
-```
+Install the server, and start it now and on every boot:
 
-Next, choose the version of MySQL that you wish to target.
-
-For **CentOS**, check which versions of MySQL are available by typing:
-
-```shell
-yum repolist all | grep mysql
-```
-
-For **Fedora** use the `dnf` package manager:
-
-```shell
-dnf repolist all | grep mysql
-```
-
-After deciding which version to use, disable the current version and enable the desired version.
-
-For **CentOS**, use the `yum-config-manager` command. For example, this is how you would disable MySQL version 5.7 and enable version 8.0:
-
-```shell
-sudo yum-config-manager --disable mysql57-community
-sudo yum-config-manager --enable mysql80-community
-```
-
-For **Fedora** use the `dnf config-manager` command. For example, this is how you would disable MySQL version 5.7 and enable version 8.0:
-
-```shell
-sudo dnf config-manager --disable mysql57-community
-sudo dnf config-manager --enable mysql80-community
-```
-
-Once you set the version of MySQL you want, you can install it using your package manager.
-
-For **CentOS** use the `yum` package manager:
-
-```shell
-sudo yum install mysql-community-server
-```
-
-For **Fedora** use the `dnf` package manager:
-
-```shell
+```bash
 sudo dnf install mysql-community-server
+sudo systemctl enable --now mysqld
 ```
 
-Once the MySQL package is installed, start up the service by typing:
+On its first start, the server initializes its data directory and creates a `root` account with a random temporary password, which it writes to its log:
 
-```shell
-sudo systemctl start mysqld.service
-```
-
-Optionally, you can automatically start MySQL on boot by typing:
-
-```shell
-sudo systemctl enable mysqld.service
-```
-
-When the MySQL server is run for the first time, an administrative password is automatically generated and set. Find the password in the log files by typing:
-
-```shell
+```bash
 sudo grep 'temporary password' /var/log/mysqld.log
 ```
 
-Next, run the `mysql_secure_installation` script to lock down some of the insecure defaults that may be present. The script will let you change the administrative password and other items:
-
-```shell
-sudo mysql_secure_installation
+```text
+2026-09-30T03:47:57.408630Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: s5*C?ya6e<qt
 ```
 
-Read the prompts carefully to decide which actions you wish to take. If you are not sure, answering <kbd>Y</kbd> for "yes" is usually a safe option.
+Log in with that password (`mysql -u root -p`). The temporary password is already expired, so MySQL refuses to do anything until you choose a new one with `ALTER USER`. These packages also enable MySQL's [password validation component](https://dev.mysql.com/doc/refman/9.7/en/validate-password.html), whose default policy requires at least eight characters, including an uppercase letter, a lowercase letter, a digit and a special character:
+
+```text
+mysql> SELECT VERSION();
+ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'weakpass';
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-password';
+Query OK, 0 rows affected (0.007 sec)
+```
+
+Like the APT packages, the server listens on all network addresses, so continue with [Listening only on your own machine](#listening-only-on-your-own-machine). MySQL's [Yum repository guide](https://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/) has more details.
+
+## Installing MySQL on macOS
+
+You can install MySQL with the [Homebrew](https://brew.sh/) package manager or with MySQL's own installer package. Pick one: both run a server on port 3306, and MySQL's installer doesn't know about a Homebrew installation.
+
+### Homebrew
+
+Install the formula for the 9.7 series and start it as a background service (use `mysql@8.4` for MySQL 8.4; plain `mysql` is the Innovation release):
+
+```bash
+brew install mysql@9.7
+brew services start mysql@9.7
+```
+
+Versioned formulas like `mysql@9.7` aren't linked into Homebrew's `bin` directory, so add their programs to your `PATH`. For zsh, the default shell on macOS, run the following and then open a new terminal:
+
+```bash
+echo 'export PATH="$(brew --prefix mysql@9.7)/bin:$PATH"' >> ~/.zshrc
+```
+
+According to the [formula's notes](https://formulae.brew.sh/formula/mysql@9.7), Homebrew initializes MySQL with a `root` account that has no password, and configures the server to accept connections only from your own machine. Anyone with an account on your Mac can therefore log in as `root` with `mysql -u root`, so set a password right away with `mysql_secure_installation` (see [Securing the installation](#securing-the-installation)).
+
+### MySQL's installer package
+
+1. On MySQL's [download page for MySQL 9.7](https://dev.mysql.com/downloads/mysql/9.7.html), select **macOS** and download the **DMG Archive** for your Mac: ARM for Apple silicon, x86 for Intel.
+2. Open the disk image and run the installer package inside it. The default installation includes the server, a preference pane for starting and stopping it, and a launch daemon that starts it at boot.
+3. At the end of the installation, set a password for the `root` account and choose whether to start the server.
+
+MySQL is installed in a versioned directory under `/usr/local`, with a `/usr/local/mysql` symbolic link pointing to it. Add its programs to your `PATH`, then open a new terminal and log in with the password you chose:
+
+```bash
+echo 'export PATH="/usr/local/mysql/bin:$PATH"' >> ~/.zshrc
+```
+
+```bash
+mysql -u root -p
+```
+
+The installer doesn't create a configuration file, so the server listens on all network addresses. See [Listening only on your own machine](#listening-only-on-your-own-machine). MySQL's documentation describes the [installer package](https://dev.mysql.com/doc/refman/9.7/en/macos-installation-pkg.html) and the [launch daemon](https://dev.mysql.com/doc/refman/9.7/en/macos-installation-launchd.html) in more detail.
+
+## Installing MySQL on Windows
+
+MySQL Installer, the tool that older guides use, isn't available for current releases: MySQL's download page says that MySQL 8.0 is the final series with MySQL Installer. MySQL 8.4 and 9.7 come as an MSI package that installs the server together with **MySQL Configurator**, a separate tool that sets it up.
+
+1. On MySQL's [download page for MySQL 9.7](https://dev.mysql.com/downloads/mysql/9.7.html), select **Microsoft Windows** and download **Windows (x86, 64-bit), MSI Installer**. (The general download page starts with the newest release, which is an Innovation release, so make sure you have the LTS series you want.)
+2. Run the MSI as an administrator. When it finishes, let it start MySQL Configurator: the server can't run until it has been configured.
+3. In MySQL Configurator, the choices that matter for a local database are:
+   - **Type and Networking**: choose the **Development** configuration type, which uses the least memory. Keep TCP/IP on port 3306, but clear **Open Windows Firewall port for network access** unless other computers need to reach your database.
+   - **Accounts and Roles**: set the `root` password. You can create accounts for your applications here too, but the [SQL steps below](#creating-a-database-and-a-user-for-your-application) let you choose their privileges precisely.
+   - **Windows Service**: MySQL runs as a Windows service. Its default name follows the version, so it's `MySQL97` for MySQL 9.7. Clear **Start the MySQL Server at System Startup** if you'd rather start it only when you need it.
+   - **Sample Databases**: optionally install the `sakila` and `world` sample databases.
+   - **Apply Configuration**: select **Execute** to apply your choices.
+
+To connect, call the client by its full path in PowerShell, or [add MySQL's `bin` directory to your `PATH`](https://dev.mysql.com/doc/refman/9.7/en/mysql-installation-windows-path.html) so that `mysql` works on its own:
+
+```powershell
+& "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe" -u root -p
+```
+
+MySQL Configurator's [documentation](https://dev.mysql.com/doc/refman/9.7/en/mysql-configurator-workflow-server.html) describes every step.
+
+## Securing the installation
+
+A local database often ends up holding copies of real data, so it's worth a few minutes to make sure only you can get into it.
+
+### How `root` logs in
+
+The `root` account can do anything on the server, and each installation method sets it up differently:
+
+| Installation method                        | How `root` authenticates                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------------------- |
+| Docker image                               | Password from `MYSQL_ROOT_PASSWORD_FILE`, from any host that can reach the port |
+| MySQL APT repository (Debian and Ubuntu)   | The password you entered, or Unix socket authentication if you left it blank    |
+| Ubuntu's own packages                      | Unix socket authentication                                                      |
+| MySQL Yum repository (RHEL and compatible) | The password you set to replace the temporary one                               |
+| Homebrew                                   | No password until you set one                                                   |
+| macOS installer package and Windows MSI    | The password you set in the installer                                           |
+
+With Unix socket authentication (the [`auth_socket` plugin](https://dev.mysql.com/doc/refman/9.7/en/socket-pluggable-authentication.html)), MySQL doesn't check a password. Instead, it asks the operating system which user opened the connection through the local socket file, and only lets that user log in to the MySQL account with the same name. That's why the administrator logs in with `sudo mysql`, while a regular user can't log in as `root` at all, with or without a password:
+
+```bash
+mysql -u root
+```
+
+```text
+ERROR 1698 (28000): Access denied for user 'root'@'localhost'
+```
+
+```bash
+sudo mysql
+```
+
+```text
+mysql> SELECT user, host, plugin FROM mysql.user;
++------------------+-----------+-----------------------+
+| user             | host      | plugin                |
++------------------+-----------+-----------------------+
+| debian-sys-maint | localhost | auth_socket           |
+| mysql.infoschema | localhost | caching_sha2_password |
+| mysql.session    | localhost | caching_sha2_password |
+| mysql.sys        | localhost | caching_sha2_password |
+| root             | localhost | auth_socket           |
++------------------+-----------+-----------------------+
+5 rows in set (0.00 sec)
+```
+
+This output is from Ubuntu 26.04's MySQL 8.4 package. The `mysql.*` accounts are locked accounts that MySQL uses internally, and `debian-sys-maint` is used by the package's maintenance scripts.
+
+### Running `mysql_secure_installation`
+
+[`mysql_secure_installation`](https://dev.mysql.com/doc/refman/9.7/en/mysql-secure-installation.html) is an interactive script that sets or changes the `root` password, removes anonymous accounts, removes `root` accounts that can log in from other hosts, and drops the `test` database. Run it with `sudo mysql_secure_installation` on Linux, or `mysql_secure_installation` with Homebrew.
+
+A fresh MySQL 8.4 or 9.7 data directory has no anonymous accounts or `test` database, so on current versions the script matters mainly for the `root` password:
+
+- **Homebrew**: run it to give `root` a password.
+- **Debian and Ubuntu with socket authentication**: the script detects it and skips the password step with the message `Skipping password set for root as authentication with auth_socket is used by default.`
+- **MySQL Yum repository**: replace the temporary password with `ALTER USER` first, as shown [above](#rhel-oracle-linux-rocky-linux-and-almalinux-the-mysql-yum-repository), and run the script afterward if you like.
+- **Docker**: you don't need it. The root password is already set, and the port binding protects the `root@%` account.
+
+### Listening only on your own machine
+
+By default, the MySQL server accepts TCP connections on all of your computer's network addresses: the [`bind_address`](https://dev.mysql.com/doc/refman/9.7/en/server-system-variables.html#sysvar_bind_address) setting defaults to `*`. On a laptop that joins other networks, that invites anyone on the same network to try your passwords. Some installation methods already restrict this:
+
+- Docker: the `-p 127.0.0.1:3306:3306` option only publishes the port on your own machine.
+- Ubuntu's own packages and Homebrew: their configuration sets the server's addresses to `127.0.0.1`.
+- Windows: MySQL Configurator doesn't ask about listening addresses, but if you cleared its firewall option, Windows Firewall keeps other computers out.
+
+For the packages from MySQL's APT and Yum repositories and for the macOS installer package, add these two lines to the `[mysqld]` section of the server's configuration file (`/etc/mysql/mysql.conf.d/mysqld.cnf` with the APT repository, `/etc/my.cnf` with the Yum repository; with the macOS installer package, create `/etc/my.cnf` containing a `[mysqld]` line followed by these two lines):
+
+```ini
+bind-address = 127.0.0.1
+mysqlx-bind-address = 127.0.0.1
+```
+
+The second line applies to the X Protocol port (33060), which MySQL Shell and the X DevAPI connectors use. Restart the server (`sudo systemctl restart mysql` with the APT repository, `sudo systemctl restart mysqld` with the Yum repository, the preference pane on macOS), and check the result as `root`:
+
+```sql
+SHOW VARIABLES LIKE '%bind_address';
+```
+
+```text
++---------------------+-----------+
+| Variable_name       | Value     |
++---------------------+-----------+
+| bind_address        | 127.0.0.1 |
+| mysqlx_bind_address | 127.0.0.1 |
++---------------------+-----------+
+2 rows in set (0.002 sec)
+```
+
+## Creating a database and a user for your application
+
+Your applications shouldn't connect as `root`. Instead, give each application its own database and an account that can only work with that database. If the application's credentials leak, or a bug runs the wrong statement, the damage stays inside that one database.
+
+Log in as `root` with the method from your installation (`docker exec -it mysql mysql -u root -p`, `sudo mysql`, or `mysql -u root -p`), then create the database, the account and its privileges:
+
+```sql
+CREATE DATABASE app;
+CREATE USER 'app'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-password';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES
+  ON app.* TO 'app'@'localhost';
+```
+
+Replace the password with one of your own. The statements do the following:
+
+- `CREATE DATABASE app` creates an empty database named `app`.
+- `CREATE USER 'app'@'localhost'` creates an account named `app` that can only connect from the same machine. The account uses MySQL's default authentication plugin, `caching_sha2_password`.
+- The `GRANT` statement lets the account read and change data (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) and manage tables and indexes (`CREATE`, `ALTER`, `DROP`, `INDEX`, `REFERENCES`), but only in the `app` database (`app.*`). If a separate account runs your schema migrations, leave out everything after `DELETE`.
+
+**With Docker, use `'app'@'%'` instead of `'app'@'localhost'` in both statements.** Connections through the published port don't come from `localhost` as far as the server inside the container is concerned, but from the address of Docker's network gateway. The `%` host lets the account connect from anywhere that can reach the server, which with the `127.0.0.1` port binding means your own machine.
+
+You can check the result with `SHOW GRANTS`:
+
+```sql
+SHOW GRANTS FOR 'app'@'localhost';
+```
+
+```text
++--------------------------------------------------------------------------------------------------------------+
+| Grants for app@localhost                                                                                     |
++--------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `app`@`localhost`                                                                      |
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER ON `app`.* TO `app`@`localhost` |
++--------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
+```
+
+`USAGE` means "no privileges": the account can log in, but can't do anything outside `app`.
+
+Now log in as the new user, selecting the `app` database (with Docker, use `mysql -h 127.0.0.1 -P 3306 -u app -p app` from your computer or `docker exec -it mysql mysql -u app -p app`):
+
+```bash
+mysql -u app -p app
+```
+
+Create a table, and check that the account can use it but can't look at other databases or create new ones:
+
+```sql
+CREATE TABLE notes (id INT AUTO_INCREMENT PRIMARY KEY, body TEXT NOT NULL);
+INSERT INTO notes (body) VALUES ('hello');
+SELECT * FROM notes;
+SELECT user, host FROM mysql.user;
+CREATE DATABASE other;
+```
+
+```text
+mysql> CREATE TABLE notes (id INT AUTO_INCREMENT PRIMARY KEY, body TEXT NOT NULL);
+Query OK, 0 rows affected (0.023 sec)
+
+mysql> INSERT INTO notes (body) VALUES ('hello');
+Query OK, 1 row affected (0.006 sec)
+
+mysql> SELECT * FROM notes;
++----+-------+
+| id | body  |
++----+-------+
+|  1 | hello |
++----+-------+
+1 row in set (0.000 sec)
+
+mysql> SELECT user, host FROM mysql.user;
+ERROR 1142 (42000): SELECT command denied to user 'app'@'localhost' for table 'user'
+mysql> CREATE DATABASE other;
+ERROR 1044 (42000): Access denied for user 'app'@'localhost' to database 'other'
+```
+
+The last two errors are what you want to see. To learn more about accounts and privileges, read [how to manage users and authentication in MySQL](/mysql/authentication-and-authorization/user-management-and-authentication) and [how to manage privileges with `GRANT` and `REVOKE`](/mysql/authentication-and-authorization/privilege-management). To connect from other tools, see [connecting to MySQL databases](/mysql/connecting-to-mysql-databases).
+
+## Managing the server and finding its files
+
+Where MySQL keeps its configuration, data and log depends on how you installed it:
+
+| Installation method     | Start and stop                                                                     | Configuration file                                | Data directory                               | Error log                                |
+| ----------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------- | ---------------------------------------- |
+| Docker                  | `docker start mysql`, `docker stop mysql`                                          | Mount extra `.cnf` files into `/etc/mysql/conf.d` | The `mysql-data` volume                      | `docker logs mysql`                      |
+| MySQL APT repository    | `sudo systemctl start mysql`, `sudo systemctl stop mysql`                          | `/etc/mysql/mysql.conf.d/mysqld.cnf`              | `/var/lib/mysql`                             | `/var/log/mysql/error.log`               |
+| Ubuntu's own packages   | `sudo systemctl start mysql`, `sudo systemctl stop mysql`                          | `/etc/mysql/mysql.conf.d/mysqld.cnf`              | `/var/lib/mysql`                             | `/var/log/mysql/error.log`               |
+| MySQL Yum repository    | `sudo systemctl start mysqld`, `sudo systemctl stop mysqld`                        | `/etc/my.cnf`                                     | `/var/lib/mysql`                             | `/var/log/mysqld.log`                    |
+| Homebrew                | `brew services start mysql@9.7`, `brew services stop mysql@9.7`                    | `$(brew --prefix)/etc/my.cnf`                     | `$(brew --prefix)/var/mysql`                 | A `.err` file in the data directory      |
+| macOS installer package | The MySQL preference pane                                                          | None; create `/etc/my.cnf` if you need one        | `/usr/local/mysql/data`                      | `/usr/local/mysql/data/mysqld.local.err` |
+| Windows MSI             | The `MySQL97` service, for example `net stop MySQL97` in an administrator terminal | Rerun MySQL Configurator to change settings       | `C:\ProgramData\MySQL\MySQL Server 9.7\Data` | A `.err` file in the data directory      |
+
+On Linux, `sudo systemctl disable mysql` (or `mysqld`) stops the server from starting at boot, if you'd rather start it only when you need it.
+
+## Removing MySQL
+
+Removing MySQL's programs generally leaves your data in place, so you can reinstall without losing it. Delete the data directory yourself once you're sure you don't need it; if you might, [export it](/mysql/inserting-and-modifying-data/importing-and-exporting-data-in-mysql) first.
+
+- **Docker**: remove the container, then the volume. Removing the volume deletes all of your databases.
+
+  ```bash
+  docker rm -f mysql
+  docker volume rm mysql-data
+  ```
+
+- **Debian and Ubuntu**: remove the server and the packages that were installed with it. `/var/lib/mysql` stays. With the MySQL APT repository, `sudo apt-get purge mysql-community-server` also offers to delete the data directory (it doesn't by default).
+
+  ```bash
+  sudo apt-get remove mysql-server
+  sudo apt-get autoremove
+  ```
+
+- **RHEL and compatible**: remove the server and the repository's release package. `dnf` also removes the client and libraries that were installed with the server. `/var/lib/mysql` stays.
+
+  ```bash
+  sudo dnf remove mysql-community-server mysql97-community-release
+  ```
+
+- **Homebrew**: stop the service and uninstall the formula. The data directory in `$(brew --prefix)/var/mysql` isn't part of the formula and stays.
+
+  ```bash
+  brew services stop mysql@9.7
+  brew uninstall mysql@9.7
+  ```
+
+- **macOS installer package**: the MySQL preference pane has an **Uninstall** option that removes the server and, optionally, the preference pane and the launch daemon.
+- **Windows**: uninstall MySQL Server from the list of installed apps in Windows' settings. If `C:\ProgramData\MySQL\MySQL Server 9.7` is still there afterwards, it holds your data.
