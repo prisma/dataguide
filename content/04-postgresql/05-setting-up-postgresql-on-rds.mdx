@@ -57,19 +57,20 @@ aws rds describe-db-major-engine-versions --engine postgres --major-engine-versi
 
 The DB instance class sets the CPU, memory and network bandwidth of the server. AWS lists these families among its [instance class types](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.Types.html):
 
-- **General purpose (`db.m8g`, `db.m7g`)**: balanced CPU and memory on AWS Graviton4 and Graviton3 processors. A good default for production. The newest `db.m9g` classes run on Graviton5, and `db.m7i` is an Intel option.
+- **General purpose (`db.m9g`, `db.m8g`, `db.m7g`)**: balanced CPU and memory on AWS Graviton5, Graviton4 and Graviton3 processors. A good default for production. `db.m7i` (Intel) and `db.m8a` (AMD) are x86 alternatives.
 - **Memory optimized (`db.r8g`, `db.r7g`)**: more memory per vCPU, for databases whose frequently used data and indexes don't fit in the memory of an `m` class.
-- **Burstable (`db.t4g`)**: a low baseline CPU with the ability to burst. RDS runs `db.t4g` instances in Unlimited mode, so sustained bursting is billed as extra. They suit development, staging and small, spiky workloads, not steady production load.
+- **Optimized Reads (`db.m8gd`, `db.r8gd`)**: Graviton4 classes with local NVMe SSD storage in addition to the EBS volumes.
+- **Burstable (`db.t4g`)**: a low baseline CPU with the ability to burst. RDS runs `db.t4g` instances in Unlimited mode, so sustained bursting is billed as extra. They suit development, staging and small, spiky workloads, not steady production load. For PostgreSQL 18, check their availability first, as explained below.
 
 Graviton classes use Arm processors, which makes no difference to your application: clients talk to PostgreSQL over the network either way. Memory usually matters more than CPU for a relational database, because data that PostgreSQL finds in memory doesn't have to be read from storage. Start with the smallest size of a general-purpose class that fits your data, watch the metrics described in [Monitoring](#monitoring), and change the class when the numbers tell you to. Changing it is a single `modify-db-instance` call, but the database is unavailable while the change is applied, so schedule it.
 
-Not every class is available for every engine version and Region, so check before you create the instance (shown in [Creating the database](#creating-the-database-with-the-aws-cli)).
+Not every class is available for every engine version and Region, and PostgreSQL 18 narrows the choice for now. At the time of writing, AWS's [table of supported engine versions per class](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.Support.html) lists PostgreSQL 18 only for `db.m9g`, `db.m8gd` and `db.r8gd`. For `db.m8g`, `db.r8g`, `db.m7g`, `db.r7g`, `db.m7i` and `db.t4g`, it lists PostgreSQL 17 and older. The table may lag behind what RDS offers, but don't assume: if you want PostgreSQL 18 on one of those classes, run the availability check shown in [Creating the database](#creating-the-database-with-the-aws-cli) first. This guide's example uses `db.m9g.large`.
 
 ### Storage
 
 RDS for PostgreSQL stores data on Amazon EBS volumes. For most databases, the [storage type](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html) decision is simple:
 
-- **General Purpose SSD (`gp3`)** is the default and the right starting point. Below 400 GiB, a `gp3` volume delivers a baseline of 3,000 IOPS and 125 MiB/s. From 400 GiB, RDS stripes the data across four volumes, the baseline rises to 12,000 IOPS and 500 MiB/s, and you can pay for more IOPS and throughput independently of the size.
+- **General Purpose SSD (`gp3`)** is the default and a sensible starting point. AWS describes General Purpose storage as best suited for development and testing and recommends Provisioned IOPS for production workloads that need fast, consistent I/O, but many production databases run well on `gp3` until their latency metrics say otherwise. Below 400 GiB, a `gp3` volume delivers a baseline of 3,000 IOPS and 125 MiB/s. From 400 GiB, RDS stripes the data across four volumes, the baseline rises to 12,000 IOPS and 500 MiB/s, and you can pay for more IOPS and throughput independently of the size.
 - **Provisioned IOPS SSD (`io2` Block Express)** is for I/O-heavy, latency-sensitive workloads that need consistent sub-millisecond latency. You pay for the IOPS you provision whether you use them or not, so choose it when your metrics show that `gp3` isn't enough. `io1` is the previous generation; AWS recommends `io2` where it's available.
 - Magnetic storage is deprecated and can no longer be used for new instances.
 
@@ -85,7 +86,7 @@ An Availability Zone (AZ) is one or more data centers in an AWS Region. RDS offe
 | [Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html) | One, in another AZ, synchronously replicated | No                   | Typically 60–120 seconds                             |
 | [Multi-AZ DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-clusters-concepts.html)  | Two, in two other AZs, semisynchronous       | Yes                  | Typically under 35 seconds                           |
 
-A **Multi-AZ DB instance** is the usual choice for production: you pay for a second instance that you can't query, and in return a failed instance or AZ costs you a minute or two instead of a restore. It also shortens maintenance, because RDS patches the operating system on the standby first and then fails over.
+A **Multi-AZ DB instance** is the usual choice for production: you pay for a second instance that you can't query, and in return a failed instance or AZ costs you a minute or two instead of a restore. It also shortens maintenance, because RDS patches the operating system on the standby first and then fails over. A failover keeps the endpoint's name but points its DNS record at the standby's IP address, so clients have to reconnect and must not cache DNS lookups for long: AWS recommends a DNS TTL of no more than 60 seconds for the Java virtual machine (`networkaddress.cache.ttl`), because some JVM configurations never refresh cached DNS entries until the JVM restarts. See [failing over a Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.Failover.html).
 
 A **Multi-AZ DB cluster** fails over faster and lets you send read-only queries to the standbys, but it's a different resource type (created with `create-db-cluster`), it runs only on classes with local NVMe storage such as `db.m6gd`, `db.m8gd` and `db.r8gd`, and it doesn't support the Blue/Green deployments described later for major version upgrades.
 
@@ -105,7 +106,7 @@ Without public access, only resources inside the VPC (or networks connected to i
 
 RDS creates one administrative login, the master user. It isn't a PostgreSQL superuser: it's a member of the [`rds_superuser`](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.PostgreSQL.CommonDBATasks.Roles.rds_superuser.html) role, which can create databases, roles and extensions, while AWS keeps the real superuser to itself. Use the master user for administration only, and give applications their own roles (see [First steps](#first-steps-roles-for-your-application)).
 
-For the master password, let RDS [manage it in AWS Secrets Manager](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-secrets-manager.html). RDS generates the password, stores it in a secret that you control access to with IAM, and rotates it every seven days by default, so the password never has to appear in a script, a chat message or your shell history. The secret is billed at Secrets Manager's rates and is deleted with the instance. At the time of writing, AWS lists two features that don't work with a managed master password: creating read replicas and Blue/Green deployments. You can switch the integration off and on later with `modify-db-instance`.
+For the master password, let RDS [manage it in AWS Secrets Manager](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-secrets-manager.html). RDS generates the password, stores it in a secret that you control access to with IAM, and rotates it every seven days by default, so the password never has to appear in a script, a chat message or your shell history. The secret is billed at Secrets Manager's rates and is deleted with the instance. Of the features that AWS lists as not working with a managed master password, two apply to RDS for PostgreSQL: creating read replicas and Blue/Green deployments. You can switch the integration off and on later with `modify-db-instance`.
 
 RDS can also accept [IAM database authentication](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html): instead of a password, a database role logs in with a token that is signed with AWS credentials and valid for 15 minutes. This is useful for people and tools that already have IAM identities, and is covered [later](#optional-iam-database-authentication).
 
@@ -123,7 +124,7 @@ PostgreSQL's configuration (the settings you'd put in `postgresql.conf` on your 
 
 With automated backups turned on, RDS takes a daily snapshot of the instance's storage during a backup window and also keeps its transaction logs, so you can [restore the instance to any point in time](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIT.html) within the retention period, not only to the moment a snapshot was taken. Backups are stored in Amazon S3 (managed by RDS, not in a bucket you can browse), and backup storage is billed as described on the [RDS pricing page](https://aws.amazon.com/rds/postgresql/pricing/).
 
-The retention period can be 1 to 35 days, and the CLI's default is 1 day, which is too short to notice most mistakes. A 14-day retention gives you two weeks to discover a bad deployment or an accidental `DELETE`; longer periods cost more storage. Copy the instance's tags to its snapshots so that they are easier to find and attribute costs to, and consider [replicating backups to another Region](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReplicateBackups.html) if you need to recover from the loss of a whole Region.
+The retention period can be 0 to 35 days (0 turns automated backups off), and the CLI's default is 1 day, which is too short to notice most mistakes. A 14-day retention gives you two weeks to discover a bad deployment or an accidental `DELETE`; longer periods cost more storage. Copy the instance's tags to its snapshots so that they are easier to find and attribute costs to, and consider [replicating backups to another Region](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReplicateBackups.html) if you need to recover from the loss of a whole Region.
 
 ### Cost
 
@@ -140,14 +141,14 @@ Check the [RDS for PostgreSQL pricing page](https://aws.amazon.com/rds/postgresq
 
 ## Creating the database with the AWS CLI
 
-You need [AWS CLI version 2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html), credentials for an IAM identity that may create RDS, EC2 security group and Secrets Manager resources, and a VPC with private subnets in at least two AZs. The commands use Bash syntax. Start by setting the values that are specific to your account:
+You need [AWS CLI version 2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html), credentials for an IAM identity that may create RDS, EC2 security group and Secrets Manager resources, and a VPC with private subnets in at least two AZs. The commands work in Bash and zsh. Start by setting the values that are specific to your account: the Region, the VPC, its private subnets, and the security groups of your application servers (`APP_SG`) and of your bastion or Session Manager host (`BASTION_SG`):
 
 ```bash
 export AWS_REGION=eu-central-1
 VPC_ID=vpc-0123456789abcdef0
-SUBNET_IDS="subnet-0aaaaaaaaaaaaaaaa subnet-0bbbbbbbbbbbbbbbb subnet-0cccccccccccccccc"
-APP_SG=sg-0aaaaaaaaaaaaaaaa      # security group of your application servers
-BASTION_SG=sg-0bbbbbbbbbbbbbbbb  # security group of your bastion or Session Manager host
+SUBNET_IDS=(subnet-0aaaaaaaaaaaaaaaa subnet-0bbbbbbbbbbbbbbbb subnet-0cccccccccccccccc)
+APP_SG=sg-0aaaaaaaaaaaaaaaa
+BASTION_SG=sg-0bbbbbbbbbbbbbbbb
 ```
 
 ### Create the security group and subnet group
@@ -173,10 +174,8 @@ Then tell RDS which private subnets it may use:
 aws rds create-db-subnet-group \
   --db-subnet-group-name app-prod-db \
   --db-subnet-group-description "Private subnets for app-prod-db" \
-  --subnet-ids $SUBNET_IDS
+  --subnet-ids "${SUBNET_IDS[@]}"
 ```
-
-`$SUBNET_IDS` is deliberately unquoted so that the shell passes each subnet ID as a separate argument.
 
 ### Create a parameter group
 
@@ -207,12 +206,12 @@ aws rds describe-db-engine-versions --engine postgres \
 
 ### Check that the instance class is available
 
-Instance classes vary by Region and engine version. This command prints the storage types you can use with `db.m8g.large` and PostgreSQL 18.6; if it prints nothing, pick another class:
+Instance classes vary by Region and engine version. This command prints the storage types you can use with `db.m9g.large` and PostgreSQL 18.6, and whether Multi-AZ is available. If it prints nothing, the class isn't offered for that version in your Region, so pick another one:
 
 ```bash
 aws rds describe-orderable-db-instance-options \
   --engine postgres --engine-version 18.6 \
-  --db-instance-class db.m8g.large \
+  --db-instance-class db.m9g.large \
   --query "OrderableDBInstanceOptions[].[StorageType,MultiAZCapable]" \
   --output text
 ```
@@ -226,7 +225,7 @@ aws rds create-db-instance \
   --db-instance-identifier app-prod-db \
   --engine postgres \
   --engine-version 18.6 \
-  --db-instance-class db.m8g.large \
+  --db-instance-class db.m9g.large \
   --multi-az \
   --storage-type gp3 \
   --allocated-storage 100 \
@@ -317,13 +316,12 @@ Either way, port 15432 on your computer now leads to port 5432 on the database. 
 
 ### Connect with certificate verification
 
-Read the master password from Secrets Manager (this uses [`jq`](https://jqlang.org/) to pick the `password` field out of the secret's JSON) and connect:
+Read the master password from Secrets Manager (this uses [`jq`](https://jqlang.org/) to pick the `password` field out of the secret's JSON) and pass it to `psql` in the same command, so it isn't left behind in your shell's environment:
 
 ```bash
-export PGPASSWORD=$(aws secretsmanager get-secret-value --secret-id "$SECRET_ARN" \
-  --query SecretString --output text | jq -r .password)
-
-psql "host=$DB_HOST hostaddr=127.0.0.1 port=15432 dbname=appdb user=dbadmin sslmode=verify-full sslrootcert=global-bundle.pem"
+PGPASSWORD="$(aws secretsmanager get-secret-value --secret-id "$SECRET_ARN" \
+  --query SecretString --output text | jq -r .password)" \
+  psql "host=$DB_HOST hostaddr=127.0.0.1 port=15432 dbname=appdb user=dbadmin sslmode=verify-full sslrootcert=global-bundle.pem"
 ```
 
 Two parameters do the security work. `sslmode=verify-full` makes `psql` check that the server's certificate was signed by a CA in `sslrootcert` and that it was issued for the host name in `host`. Weaker modes such as `require` encrypt the connection but normally don't check the certificate, so they would also accept one presented by an attacker in the middle. And the host name is the reason for `hostaddr`: through a tunnel, the network connection goes to `127.0.0.1`, but the certificate is issued for the RDS endpoint. [`hostaddr`](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-HOSTADDR) tells `psql` where to connect, while `host` stays the name that the certificate must match.
@@ -340,7 +338,7 @@ With `hostaddr`, the connection succeeds, and `psql`'s banner confirms the encry
 SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off, ALPN: postgresql)
 ```
 
-`PGPASSWORD` is convenient for a one-off session, but it stays set in that terminal: close the terminal or run `unset PGPASSWORD` when you're done. Keep in mind that RDS rotates the master password every seven days, so read it from the secret each time instead of copying it somewhere.
+RDS rotates the master password every seven days, so read it from the secret each time instead of copying it somewhere.
 
 ## First steps: roles for your application
 
@@ -387,7 +385,7 @@ LINE 1: CREATE TABLE app.scratch (id int);
                      ^
 ```
 
-Point your migrations at `app_migrator` and your application at `app_user`, both with `sslmode=verify-full`. The Data Guide's articles on [role management](/postgresql/authentication-and-authorization/role-management) and [managing privileges](/postgresql/authentication-and-authorization/managing-privileges) explain the underlying concepts.
+Point your migrations at `app_migrator` and your application at `app_user`, both with `sslmode=verify-full`. If your application opens many short-lived connections, for example from serverless functions, consider [Amazon RDS Proxy](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html): it pools and reuses database connections, protects the database from connection surges, and reconnects to the standby after a failover while preserving application connections. It presents its own certificate from AWS Certificate Manager, so clients that connect through a proxy don't need the RDS certificate bundle. The Data Guide's articles on [role management](/postgresql/authentication-and-authorization/role-management) and [managing privileges](/postgresql/authentication-and-authorization/managing-privileges) explain the underlying concepts.
 
 ### Optional: IAM database authentication
 
@@ -411,10 +409,9 @@ GRANT SELECT ON ALL TABLES IN SCHEMA app TO ops_reader;
 Don't grant `rds_iam` to `app_user` or the master user: a role with `rds_iam` can only log in with IAM, not with its password. An IAM user or role may connect as `ops_reader` if one of its policies allows the `rds-db:connect` action on a resource of the form `arn:aws:rds-db:REGION:ACCOUNT_ID:dbuser:DBI_RESOURCE_ID/ops_reader`, as described in AWS's [policy guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.IAMPolicy.html). From inside the VPC, a connection then looks like this:
 
 ```bash
-export PGPASSWORD=$(aws rds generate-db-auth-token \
-  --hostname "$DB_HOST" --port 5432 --region "$AWS_REGION" --username ops_reader)
-
-psql "host=$DB_HOST port=5432 dbname=appdb user=ops_reader sslmode=verify-full sslrootcert=global-bundle.pem"
+PGPASSWORD="$(aws rds generate-db-auth-token \
+  --hostname "$DB_HOST" --port 5432 --region "$AWS_REGION" --username ops_reader)" \
+  psql "host=$DB_HOST port=5432 dbname=appdb user=ops_reader sslmode=verify-full sslrootcert=global-bundle.pem"
 ```
 
 The token is valid for 15 minutes and is only checked when the connection is opened. AWS notes that IAM authentication uses between 300 and 1,000 MiB of extra memory on the instance, which matters on small instance classes.
@@ -492,8 +489,19 @@ For a major version upgrade, RDS keeps the green instance in sync with PostgreSQ
 - The blue instance needs a custom parameter group with `rds.logical_replication` set to `1`, and a reboot for the change to take effect.
 - Every table needs a primary key, because logical replication can't replicate `UPDATE` and `DELETE` otherwise.
 - Schema changes (DDL) and large objects aren't replicated. Freeze migrations while the deployment exists.
-- Blue/Green deployments don't support master passwords managed in Secrets Manager. Before you create one, switch to a password you manage with `modify-db-instance --no-manage-master-user-password --master-user-password ...` (RDS then deletes the secret), and turn the integration back on after the switchover.
+- Blue/Green deployments don't support master passwords managed in Secrets Manager, so you have to switch to a password you manage for the duration (shown below).
 - After switchover, point-in-time recovery for the new production instance starts from when the green instance was created. Keep the old instance until your recovery window has passed.
+
+Before you create the deployment, replace the managed master password with one of your own. `read -rs` reads it without echoing it or recording it in your shell history. Use a long, generated password and store it in a secret of your own until you turn the integration back on, because RDS deletes its managed secret when you turn management off:
+
+```bash
+read -rs NEW_MASTER_PASSWORD
+
+aws rds modify-db-instance --db-instance-identifier app-prod-db \
+  --no-manage-master-user-password \
+  --master-user-password "$NEW_MASTER_PASSWORD" \
+  --apply-immediately
+```
 
 When a new major version is available on RDS, create a parameter group for its family as shown earlier, set `TARGET_VERSION` to the engine version you want (for example, from `describe-db-engine-versions`) and `TARGET_PARAMETER_GROUP` to the new group's name. Then create the deployment, test the green instance, and switch over:
 
@@ -513,7 +521,16 @@ aws rds switchover-blue-green-deployment \
   --switchover-timeout 300
 ```
 
-If the switchover doesn't finish within the timeout (300 seconds is also the default), RDS rolls it back and leaves both environments unchanged. During the switchover, RDS renames the instances so that the green one takes over the endpoint `app-prod-db`, and the old one becomes `app-prod-db-old1`. Your application reconnects to the same host name without configuration changes.
+If the switchover doesn't finish within the timeout (300 seconds is also the default), RDS rolls it back and leaves both environments unchanged. During the switchover, RDS renames the instances so that the green one takes over the endpoint `app-prod-db`, and the old one becomes `app-prod-db-old1`. Your application reconnects to the same host name without configuration changes, but the name now resolves to a different IP address. AWS recommends that your network and client configuration don't cache DNS for longer than five seconds, the TTL of RDS's DNS records, or applications keep sending writes to the old instance; see AWS's [switchover best practices](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/blue-green-deployments-switching.html#blue-green-deployments-switching-best-practices). [RDS Proxy](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html) avoids the DNS dependency: AWS notes that it shortens switchover downtime by redirecting connections without waiting for DNS propagation.
+
+Once the switchover is done, delete the deployment object (RDS keeps both the new and the old instance) and turn the Secrets Manager integration back on for the new production instance, which has taken over the name `app-prod-db`:
+
+```bash
+aws rds delete-blue-green-deployment --blue-green-deployment-identifier "$BGD_ID"
+
+aws rds modify-db-instance --db-instance-identifier app-prod-db \
+  --manage-master-user-password --apply-immediately
+```
 
 ## Deleting the database
 
@@ -537,6 +554,6 @@ A production-ready RDS for PostgreSQL instance comes down to a handful of decisi
 
 <PrismaOutlinks>
 
-Once your RDS database is running, you can use it from TypeScript and Node.js with Prisma ORM. The [PostgreSQL guide for Prisma ORM 7](https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql) explains how to configure the connection. Use the `app_user` role in your application's connection string and `app_migrator` for migrations, not the master user.
+Once your RDS database is running, you can use it from TypeScript and Node.js with Prisma ORM. The [PostgreSQL guide for Prisma ORM 7](https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql) explains how to configure the connection. Use the `app_user` role in your application's connection string and `app_migrator` for migrations, not the master user. Prisma ORM doesn't rely on the role's `search_path`; it uses the schema you configure: the connection string's `schema` argument, which defaults to `public` (so add `?schema=app`), and, with the `@prisma/adapter-pg` driver adapter, the adapter's `schema` option.
 
 </PrismaOutlinks>
