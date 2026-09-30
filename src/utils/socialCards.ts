@@ -38,7 +38,8 @@ const textImage = (text: string, size: number, color: string, width: number, fon
   sharp({
     text: {
       text: `<span foreground="${color}">${escapeMarkup(text)}</span>`,
-      font: `Sora Medium ${size}`,
+      // Pango's unqualified sizes are points and depend on the host's logical DPI.
+      font: `Sora Medium ${size}px`,
       fontfile,
       width,
       rgba: true,

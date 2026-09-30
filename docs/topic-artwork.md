@@ -289,7 +289,9 @@ The renderer reads `src/styles/topic-themes.css` and checks it against `THEMED_T
 so future sections added through the workflow above also get matching sharing cards.
 There is no second artwork/color registry to maintain. A missing theme or a title
 that cannot fit fails the build instead of publishing a broken or truncated card.
-Long titles wrap and reduce in size, down to 32px.
+Long titles wrap and reduce in size, down to 32px. Pango font descriptions use explicit
+`px` sizes, [absolute device units](https://docs.gtk.org/Pango/type_func.FontDescription.from_string.html),
+so the build host's logical DPI does not enlarge the text or change its intended layout.
 
 Text uses the bundled `src/fonts/Sora.ttf`, so generation does not depend on a system
 font or a network font service. This variable font comes from

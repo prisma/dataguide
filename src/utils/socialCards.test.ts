@@ -44,6 +44,32 @@ test('markup is escaped and long article titles render into opaque, full-sized P
   }
 })
 
+test('short headlines stay on one line regardless of the build host font DPI', async () => {
+  const themes = await loadCardThemes(root)
+  const png = await renderSocialCard({
+    root,
+    theme: themes.get('intro')!,
+    title: 'What are databases?',
+    topicTitle: 'Introduction to databases',
+  })
+  const { data, info } = await sharp(png)
+    .extract({ left: 72, top: 186, width: 640, height: 296 })
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const rows: number[] = []
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const offset = (y * info.width + x) * info.channels
+      if (data[offset] < 60 && data[offset + 1] < 60 && data[offset + 2] < 60) {
+        rows.push(y)
+        break
+      }
+    }
+  }
+  assert.ok(rows.length > 25, 'The headline must be present and readable')
+  assert.ok(rows.at(-1)! - rows[0] < 75, 'The short headline should occupy one line')
+})
+
 test('content-addressed files and metadata stay in sync when a title or theme changes', async () => {
   const output = await mkdtemp(path.join(tmpdir(), 'dataguide-social-test-'))
   try {
