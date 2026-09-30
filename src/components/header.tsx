@@ -185,12 +185,14 @@ const PrismaButton = styled.a`
   }
 `
 
+// Shown under exactly the media query that hides PrismaLink, so the mobile and desktop header
+// controls can never both be visible, whatever the (possibly fractional) viewport width
 const SearchContainer = styled.div<{ $isSticky?: boolean }>`
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
-  @media only screen and (min-width: 1025px) {
-    display: none;
+  @media (min-width: 0px) and (max-width: 1024px) {
+    display: flex;
   }
   ${({ $isSticky }) =>
     $isSticky &&
