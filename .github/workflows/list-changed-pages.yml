@@ -26,6 +26,12 @@ jobs:
           # Vercel's branch alias: lowercase, underscores dropped, other symbols (like /) become -
           branch_slug=$(printf '%s' "$HEAD_REF" | tr '[:upper:]' '[:lower:]' | tr -d '_' | sed -E 's/[^a-z0-9]+/-/g')
           preview="https://dataguide-git-$branch_slug-prisma.vercel.app"
+          # Fail instead of reporting "no changed pages" when the file list can't be fetched
+          if ! files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files" --jq '.[] | select(.status != "removed") | .filename'); then
+            echo "::error::Failed to list the pull request's files"
+            exit 1
+          fi
+
           links=""
           while IFS= read -r changed_file; do
             case "$changed_file" in
@@ -38,7 +44,7 @@ jobs:
             echo "- $preview$page"
             links="$links
           - [/dataguide$page]($preview$page) ([currently](https://www.prisma.io/dataguide$page))"
-          done < <(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files" --jq '.[] | select(.status != "removed") | .filename')
+          done <<< "$files"
 
           if [ -z "$links" ]; then
             links="
