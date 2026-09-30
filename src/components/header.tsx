@@ -5,7 +5,7 @@ import Clear from '../icons/Clear'
 import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
-import { withPrefix } from 'gatsby'
+import { Link } from 'gatsby'
 import { useLocation } from '../hooks/useLocation'
 import { headerCtaUrl } from '../cta'
 
@@ -13,8 +13,11 @@ type HeaderViewProps = {
   headerProps: HeaderProps
 }
 
+// Stays at the top while scrolling, so search and navigation are always at hand
 const HeaderWrapper = styled.header`
-  background: rgba(249, 250, 245, 0.92);
+  background: rgba(249, 250, 245, 0.8);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
   height: 64px;
   img {
@@ -24,7 +27,8 @@ const HeaderWrapper = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 200;
 
   .container {
@@ -32,6 +36,14 @@ const HeaderWrapper = styled.header`
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  /* Matches the article layout's width once the "On this page" column appears */
+  @media (min-width: 1280px) {
+    .container {
+      width: 100%;
+      max-width: 1391px;
+    }
   }
 
   @media (min-width: 0px) and (max-width: 1024px) {
@@ -173,12 +185,14 @@ const PrismaButton = styled.a`
   }
 `
 
+// Shown under exactly the media query that hides PrismaLink, so the mobile and desktop header
+// controls can never both be visible, whatever the (possibly fractional) viewport width
 const SearchContainer = styled.div<{ $isSticky?: boolean }>`
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
-  @media only screen and (min-width: 1024px) {
-    display: none;
+  @media (min-width: 0px) and (max-width: 1024px) {
+    display: flex;
   }
   ${({ $isSticky }) =>
     $isSticky &&
@@ -211,9 +225,9 @@ const Header = ({ headerProps }: HeaderViewProps) => {
             <span className="separator" aria-hidden="true">
               /
             </span>
-            <a className="product" href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}>
+            <Link className="product" to={headerProps.logoLink}>
               dataguide
-            </a>
+            </Link>
           </Wordmark>
         </HeaderNav>
         <SearchContainer>

@@ -89,6 +89,8 @@ html {
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;
   overflow-y: scroll;
+  /* Headings that are linked to land below the sticky header (see FloatingToc's HEADER_OFFSET) */
+  scroll-padding-top: 80px;
 }
 
 body {

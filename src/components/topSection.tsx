@@ -14,6 +14,13 @@ const TopSectionWrapper = styled.div`
   }
 `
 
+// Wide screens show the list next to the article instead (see FloatingToc)
+const InlineToc = styled.div`
+  @media (min-width: 1280px) {
+    display: none;
+  }
+`
+
 const MainTitle = styled.h1`
   font-family: var(--font-display);
   font-size: 40px;
@@ -36,7 +43,11 @@ const TopSection = ({ title, slug, toc }: any) => {
     <TopSectionWrapper>
       <ParentTitle slug={slug} />
       <MainTitle>{title}</MainTitle>
-      {toc && toc.items && toc.items.length > 0 && <TOC headings={toc.items} />}
+      {toc && toc.items && toc.items.length > 0 && (
+        <InlineToc>
+          <TOC headings={toc.items} />
+        </InlineToc>
+      )}
     </TopSectionWrapper>
   )
 }

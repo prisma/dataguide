@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ArticleQueryData } from '../interfaces/Article.interface'
 import Layout from '../components/layout'
 import TopSection from '../components/topSection'
+import FloatingToc from '../components/floatingToc'
 import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
 import { graphql, PageProps } from 'gatsby'
@@ -39,9 +40,15 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
+  const tocItems = toc || toc == null ? tableOfContents?.items : undefined
 
   return (
-    <Layout isHomePage={isHomePage} slug={slug} {...props}>
+    <Layout
+      isHomePage={isHomePage}
+      slug={slug}
+      aside={tocItems && <FloatingToc items={tocItems} />}
+      {...props}
+    >
       {!isHomePage && (
         <section className="top-section">
           <TopSection
