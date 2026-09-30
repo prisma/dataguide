@@ -17,6 +17,154 @@ References: the brand kit's [salute](https://www.prisma.io/brand-kit/mascot/salu
 topic diagrams. The generated modeling scene was also a style reference for the introduction
 scene. These are decorative illustrations, not executable examples or precise schema diagrams.
 
+## Repeat the workflow for a future section
+
+This work used Codex's built-in `image_gen.imagegen` tool, with local reference images
+and `transparent_background: true`. No image API script, manually drawn replacement,
+or separately overlaid mascot was used. The tool's model/version and random seed were
+not exposed or recorded. Repeating these inputs can produce the same visual direction,
+but does not reproduce identical pixels. The original generated PNGs are local tool
+outputs, not tracked in this repository; the committed WebP scenes are the durable
+references for future work.
+
+### 1. Choose a topic action
+
+Read the section's overview and article list. Pick one concrete action that represents
+what readers learn: inserting a row, inspecting a relationship, sorting documents, or
+connecting a tool. Describe what each hand does, what Prismo looks at, and the main
+data object. Keep the action recognizable at the homepage's 300px artwork width.
+
+Use a visual metaphor rather than a claim about a vendor's architecture. Avoid vendor
+logos, readable text, and miniature technical diagrams that imply an executable example.
+
+### 2. Supply the approved references
+
+Use these two committed assets, in this order, as character and style references:
+
+1. `src/images/topic-themes/prismo-tuple-scene.webp`
+2. `src/images/topic-themes/prismo-database-scene.webp`
+
+Inspect both before generation, then attach them or supply their absolute local paths
+to the built-in tool. These scenes establish the chrome mascot, visor colors, frosted
+glass, perspective, soft lighting, and fading floor grid. Ask for a new pose and action,
+not a copy of either reference. The original brand-kit images and topic diagrams helped
+establish the first two scenes; they are not required to extend the approved set.
+
+### 3. Generate one cohesive scene
+
+Copy the [shared prompt](#shared-prompt) verbatim and append a new ending following the
+[topic-specific examples](#topic-specific-prompt-endings):
+
+```text
+Topic: <section title>.
+Scene: <one action, gaze direction, what each hand does, main data objects, and a subtle topic reflection color>.
+```
+
+Submit the assembled prompt with the two references and actual transparency enabled.
+For an agent with the same built-in tool, the input shape is:
+
+```json
+{
+  "prompt": "<shared prompt followed by the new Topic and Scene lines>",
+  "referenced_image_paths": [
+    "<absolute repository path>/src/images/topic-themes/prismo-tuple-scene.webp",
+    "<absolute repository path>/src/images/topic-themes/prismo-database-scene.webp"
+  ],
+  "transparent_background": true
+}
+```
+
+The angle-bracket values are placeholders to replace, not literal paths or prompt text.
+Request the 4:3 composition in the prompt; the built-in tool does not provide a size or
+quality argument in this workflow. Save the returned PNG without flattening its alpha.
+
+### 4. Review and iterate
+
+Inspect the full output and a 300px-wide preview on the intended pale background. Check:
+
+- One recognizable Prismo, with visor bands in cyan, yellow, coral order and exactly two hands.
+- A visible interaction with the data object, a gaze directed at the task, and consistent lighting and perspective.
+- Readable geometry, modest transparent margins, and no clipped character or main object.
+- Real transparent pixels rather than an opaque white rectangle or a painted checkerboard.
+- No text, vendor logos, watermark, extra limbs, or unrelated props.
+
+If a candidate misses the action or style, regenerate with the approved references.
+For a small correction, edit the candidate with a single focused instruction and state
+which features must remain unchanged. Retain the accepted prompt and any edit prompts
+in this document. Do not paste a stock mascot onto a separately generated background.
+
+### 5. Export the accepted asset
+
+Use the site's installed `sharp` dependency to resize proportionally to 720 × 540 and
+encode WebP with `quality: 85` and `alphaQuality: 100`, the settings used for the ten
+additional scenes. Run this from the repository root after installing dependencies;
+replace the PNG path and choose a new `prismo-<topic>-scene.webp` filename:
+
+```bash
+node - "/absolute/path/to/accepted-scene.png" "src/images/topic-themes/prismo-new-topic-scene.webp" <<'JS'
+const sharp = require('sharp')
+const [input, output] = process.argv.slice(2)
+;(async () => {
+  const metadata = await sharp(input).metadata()
+  const stats = await sharp(input).stats()
+  if (metadata.width * 3 !== metadata.height * 4 || !metadata.hasAlpha || stats.isOpaque) {
+    throw new Error('Expected a 4:3 source with actual transparency; review or regenerate it.')
+  }
+  await sharp(input).resize({ width: 720 }).webp({ quality: 85, alphaQuality: 100 }).toFile(output)
+  const saved = await sharp(output).metadata()
+  console.log({ output, width: saved.width, height: saved.height, hasAlpha: saved.hasAlpha })
+})().catch(error => { console.error(error); process.exitCode = 1 })
+JS
+```
+
+Inspect the exported WebP again. Keep the image proportional and preserve the alpha;
+do not stretch it to fit or bake the page's wash color into the asset. Record the saved
+path, references, assembled prompt, edits, and export settings here. Add only the final
+WebP to `src/images/topic-themes/`; keep rejected candidates out of the site bundle.
+
+### 6. Connect the homepage and subpages
+
+Use the topic's stable top-level URL segment (for example, `postgresql`), not its title:
+
+1. Add the slug to `THEMED_TOPICS` in `src/utils/topicThemes.ts`.
+2. Add a matching block in `src/styles/topic-themes.css`, following the existing pattern:
+
+   ```css
+   .topic-home > section[data-topic='new-topic'],
+   .top-section[data-topic='new-topic'] {
+     --topic-wash: #effbfd;
+     --topic-border: #d0e9ed;
+     --topic-scene: url('../images/topic-themes/prismo-new-topic-scene.webp');
+   }
+   ```
+
+3. Link the section's `##` heading in `content/index.mdx` to `/new-topic`. The
+   `rehypeTopicSections` plugin in `gatsby-config.ts` adds `data-topic` to the generated
+   homepage section from this link. Heading copy and anchor ids can change freely.
+4. `src/templates/docs.tsx` uses the same `getThemedTopic` helper for hubs and nested
+   article headers. No additional per-article markup or theme list is needed.
+
+Choose wash and border colors that fit the scene and keep the existing dark text readable.
+The registry/CSS regression test fails when a slug is missing from either side, an asset
+is missing, or a registered topic has no matching homepage hook. Extend the topic rather
+than introducing a new heading-id selector or another mascot layer.
+
+### 7. Verify the complete section
+
+Run `npm test`, `npm run typecheck`, and a clean production build with
+`npm run clean` followed by `ADD_PREFIX=true npm run build`. Review the generated
+`/dataguide/` homepage, `/dataguide/new-topic`, and a nested article in a fresh browser
+at 1440px, 1280px, 1024px, 768px, and 390px. A local server bound to `127.0.0.1` can
+serve `public/` mounted under `/dataguide/` to match the production path prefix.
+
+Check that all three surfaces show the same scene, existing topics still render, assets
+load beneath the production prefix, and there are no horizontal overflows or JavaScript
+errors. Review long titles, inline tables of contents, share buttons, and update dates.
+Homepage artwork stays beside the copy on desktop; subpage artwork is larger and crosses
+the divider at desktop widths of 1280px and above. Narrow screens keep a separate artwork
+area above the title. Record the commands actually run and the pages/widths checked in
+the PR, including any limitations.
+
 ## Remaining sections
 
 The ten additional scenes use the approved tuple and database illustrations as character

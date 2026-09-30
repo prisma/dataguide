@@ -1,5 +1,6 @@
 import type { GatsbyConfig } from 'gatsby'
 import dataguideConfig from './config'
+import { rehypeTopicSections } from './src/utils/rehypeTopicSections'
 
 // MDX 2 no longer parses GitHub Flavored Markdown (tables, strikethrough, ...)
 // by default. remark-gfm is ESM-only, which Node >= 20.19 can `require`.
@@ -34,7 +35,7 @@ let plugins: any = [
       extensions: ['.mdx', '.md'],
       mdxOptions: {
         remarkPlugins: [remarkGfm],
-        rehypePlugins: [rehypeCodeMeta],
+        rehypePlugins: [rehypeCodeMeta, rehypeTopicSections],
       },
       gatsbyRemarkPlugins: [
         'gatsby-remark-sectionize',

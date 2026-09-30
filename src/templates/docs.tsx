@@ -18,25 +18,11 @@ import { getParentTitle } from '../utils/parentTitle'
 import { useAllArticlesQuery } from '../hooks/useAllArticlesQuery'
 import authorsJSON from '../../authors.json'
 import dataguideConfig from '../../config'
+import { getThemedTopic } from '../utils/topicThemes'
 
 type ArticleLayoutProps = ArticleQueryData &
   Pick<PageProps, 'location'> &
   CreatePageContext & { children?: React.ReactNode }
-
-const themedTopics = new Set([
-  'intro',
-  'datamodeling',
-  'types',
-  'postgresql',
-  'mysql',
-  'sqlite',
-  'mssql',
-  'mongodb',
-  'database-tools',
-  'managing-databases',
-  'serverless',
-  'just-for-fun',
-])
 
 const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   if (!data) {
@@ -55,8 +41,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
-  const topic = urlGenerator(modSlug).split('/')[1]
-  const themedTopic = themedTopics.has(topic) ? topic : undefined
+  const themedTopic = getThemedTopic(urlGenerator(modSlug))
   const tocItems = toc || toc == null ? tableOfContents?.items : undefined
 
   return (
