@@ -25,6 +25,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '00 23 * * 0'
+
+# Commits compressed images and opens pull requests
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   build:
     name: calibreapp/image-actions
@@ -36,13 +41,12 @@ jobs:
        github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - name: Checkout Branch
-        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Compress Images
         id: calibre
-        uses: calibreapp/image-actions@c3752f0cc46d3f73677f20c7bfe20ed4601ba2a3 # main as of 2026-09-30
+        uses: calibreapp/image-actions@9d037c06280028c110ff61c433ad4dc7d33c3c43 # 1.5.0
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
           # For non-pull requests, run in compressOnly mode and we'll PR after
           compressOnly: ${{ github.event_name != 'pull_request' }}
 
@@ -51,7 +55,7 @@ jobs:
         if: |
           github.event_name != 'pull_request' &&
           steps.calibre.outputs.markdown != ''
-        uses: peter-evans/create-pull-request@38e0b6e68b4c852a5500a94740f0e535e0d7ba54 # v4.2.4
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           title: Auto Compress Images
           branch-suffix: timestamp
