@@ -1,17 +1,17 @@
 import React from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import CopyButton from './copy'
-import Copy from '../../icons/Copy'
 import { stringify } from '../../utils/stringify'
+import { copyableText, DIFF_MARKERS } from '../../utils/codeBlock'
 import styled from 'styled-components'
 import './prism/index.css'
 require('./prism/prism-prisma')
 
-interface CodeProps {
-  copy?: boolean
+interface PreCodeProps {
+  children?: React.ReactNode
+  className?: string
+  [flag: string]: unknown
 }
-
-type PreCodeProps = CodeProps & React.ReactNode
 
 function cleanTokens(tokens: any[]) {
   const tokensLength = tokens.length
@@ -29,7 +29,7 @@ function cleanTokens(tokens: any[]) {
 const propList = ['copy', 'bash-symbol']
 
 const Code = ({ children, className, ...props }: PreCodeProps) => {
-  let language = className && className.replace(/language-/, '')
+  let language = className ? className.replace(/language-/, '') : ''
   let breakWords = false
 
   if (propList.includes(language)) {
@@ -38,7 +38,10 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
 
   const code = stringify(children)
 
-  const hasCopy = props['copy'] || language === 'copy'
+  // Every block can be copied, unless marked `no-copy`. `copy` is kept for older content.
+  const hasCopy = !props['no-copy']
+  // Diff highlighting only when asked for: lines of query output often start with - + or |
+  const hasDiff = !!props['diff']
   const hasLineNo = props['line-number'] || language === 'line-number'
   const hasTerminalSymbol = props['bash-symbol'] || language === 'bash-symbol'
   const tokenCopyClass = `${hasCopy ? 'has-copy-button' : ''} ${breakWords ? 'break-words' : ''}`
@@ -48,12 +51,10 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
       <div className="gatsby-highlight pre-highlight">
         <Highlight code={code} language={language || 'text'} theme={themes.github}>
           {({ className: blockClassName, style, tokens, getLineProps, getTokenProps }) => (
-            <Pre className={blockClassName} style={style}>
-              {(props['copy'] || language === 'copy') && (
+            <Pre className={blockClassName} style={style} tabIndex={0}>
+              {hasCopy && (
                 <AbsoluteCopyButton className="copy-button">
-                  <CopyButton text={code}>
-                    <Copy />
-                  </CopyButton>
+                  <CopyButton text={copyableText(code, hasDiff)} />
                 </AbsoluteCopyButton>
               )}
               <code>
@@ -80,17 +81,14 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
                   }
 
                   if (
-                    (line[0] &&
+                    hasDiff &&
+                    ((line[0] &&
                       line[0].content.length &&
-                      (line[0].content[0] === '+' ||
-                        line[0].content[0] === '-' ||
-                        line[0].content[0] === '|')) ||
-                    (line[0] &&
-                      line[0].content === '' &&
-                      line[1] &&
-                      (line[1].content === '+' ||
-                        line[1].content === '-' ||
-                        line[1].content === '|'))
+                      DIFF_MARKERS.includes(line[0].content[0])) ||
+                      (line[0] &&
+                        line[0].content === '' &&
+                        line[1] &&
+                        DIFF_MARKERS.includes(line[1].content)))
                   ) {
                     diffSymbol =
                       line[0] && line[0].content.length ? line[0].content[0] : line[1].content
@@ -110,7 +108,7 @@ const Code = ({ children, className, ...props }: PreCodeProps) => {
 
                   const lineProps = getLineProps({ line })
 
-                  lineProps.style = { ...lineClass }
+                  lineProps.style = isDiff ? { backgroundColor: lineClass.backgroundColor } : {}
 
                   return (
                     <Line key={line + i} {...lineProps}>

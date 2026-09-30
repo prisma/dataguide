@@ -8,7 +8,7 @@ import { useLocation } from '../hooks/useLocation'
 import { Wordmark } from './header'
 import { headerCtaUrl } from '../cta'
 
-const HeaderWrapper = styled.div`
+const HeaderWrapper = styled.header`
   position: relative;
   overflow: hidden;
   background:
@@ -68,7 +68,7 @@ const HeaderWrapper = styled.div`
       margin: 0 0 24px;
     }
 
-    h3 {
+    .tagline {
       font-family: var(--font-sans);
       font-size: 20px;
       font-weight: 400;
@@ -110,7 +110,7 @@ const HeaderWrapper = styled.div`
     .container h1 {
       font-size: 44px;
     }
-    .container h3 {
+    .container .tagline {
       font-size: 18px;
       line-height: 28px;
     }
@@ -227,11 +227,11 @@ const HomePageHeader = () => {
         <div className="container">
           <div className="content">
             <h1>Prisma's Data Guide</h1>
-            <h3>
+            <p className="tagline">
               Learn how databases work, how to choose the right one, and{' '}
               <Highlight>how to use databases</Highlight> with your applications to their full
               potential.
-            </h3>
+            </p>
           </div>
           <div>
             <HeaderDiagram className="main-image" />

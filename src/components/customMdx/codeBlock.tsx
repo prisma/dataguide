@@ -5,7 +5,7 @@ interface CodeProps {
   languages?: string[]
 }
 
-type CodeBlockProps = CodeProps & React.ReactNode
+type CodeBlockProps = React.PropsWithChildren<CodeProps>
 
 const CodeBlock = ({ languages, children }: CodeBlockProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0)

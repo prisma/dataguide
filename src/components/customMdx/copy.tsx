@@ -1,63 +1,78 @@
 import React from 'react'
 import styled from 'styled-components'
-import * as CopyToClipboard from 'react-copy-to-clipboard'
+import Copy from '../../icons/Copy'
 
-interface CopyProps {
-  text: string
-}
-
-type CopyButtonProps = CopyProps & React.ReactNode
-
-const CopyButton = ({ text, children }: CopyButtonProps) => {
+// Copies a code block to the clipboard
+const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = React.useState(false)
-  let copyTimer: any
+  const timer = React.useRef<number>(undefined)
 
-  const onCopyContent = () => {
+  React.useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      // Without clipboard access (e.g. an insecure context), fall back to a selection
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.setAttribute('readonly', '')
+      textarea.style.position = 'absolute'
+      textarea.style.left = '-9999px'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      textarea.remove()
+    }
     setCopied(true)
-    copyTimer = window.setTimeout(() => setCopied(false), 500)
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setCopied(false), 1500)
   }
 
   return (
-    <CopyToClipboard text={text} onCopy={onCopyContent}>
-      <CopyComponent>
-        {copied && (
-          <div className="indicator" style={{ color: 'var(--list-bullet-color)' }}>
-            Copied
-          </div>
-        )}
-        {children}
-      </CopyComponent>
-    </CopyToClipboard>
+    <CopyComponent type="button" onClick={copy} aria-label="Copy code" title="Copy code">
+      <Copy aria-hidden="true" />
+      <span className="indicator" role="status" aria-live="polite">
+        {copied ? 'Copied' : ''}
+      </span>
+    </CopyComponent>
   )
 }
 
 export default CopyButton
 
-const CopyComponent = styled.div`
-  font-family: 'Open Sans';
-  & {
-    position: relative;
-    cursor: pointer;
-    display: inline-block;
+const CopyComponent = styled.button`
+  position: relative;
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-sans);
+
+  svg {
+    display: block;
   }
-  @keyframes copying {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, 0);
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, 30px);
-    }
+
+  &:hover svg rect {
+    stroke: var(--border-strong);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .indicator {
     position: absolute;
-    top: 20px;
-    left: 0;
-    transform: translate(-50%, 0);
-    animation: copying 700ms linear;
+    top: 50%;
+    right: calc(100% + 8px);
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    pointer-events: none;
   }
 `

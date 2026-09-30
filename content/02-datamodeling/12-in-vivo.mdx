@@ -68,9 +68,9 @@ Most NoSQL data stores are designed for clusters, some to the point that being a
 ## CAP Theorem
 
 <details>
-<summary>Distributed databases are often described as favoring data *consistency* or *availability* in the inevitable event of a network partition preventing some set of nodes from communicating writes to other nodes, after Eric Brewer's original <a href="https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf">conjecture</a> around the turn of the millennium. </summary>
+<summary>Distributed databases are often described as favoring data *consistency* or *availability* in the inevitable event of a network partition preventing some set of nodes from communicating writes to other nodes, after Eric Brewer's original conjecture around the turn of the millennium.</summary>
 
-His "CAP Theorem" (consistency, availability, partition tolerance: pick two) still resonates today, but, like the animal/vegetable/mineral trichotomy, is an elegant oversimplification -- no more and no less.
+His ["CAP Theorem"](https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf) (consistency, availability, partition tolerance: pick two) still resonates today, but, like the animal/vegetable/mineral trichotomy, is an elegant oversimplification -- no more and no less.
 
 Martin Kleppmann [described the shortcomings of CAP in detail in 2015](https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html), building on an earlier effort by Coda Hale to [clarify the "pick two" aspect](https://codahale.com/you-cant-sacrifice-partition-tolerance). Brewer himself has gone on to declare Google's Spanner database ["effectively CA"](https://research.google/pubs/pub45855), overcoming the AP/CP dichotomy thanks to the sheer scale of Google's network.
 

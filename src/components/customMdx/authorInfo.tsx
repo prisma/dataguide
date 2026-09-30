@@ -7,7 +7,7 @@ interface AuthorProps {
   image?: string
 }
 
-type AuthorInfoProps = React.ReactNode & AuthorProps
+type AuthorInfoProps = React.PropsWithChildren<AuthorProps>
 
 const AuthorInfo = ({ children, ...props }: AuthorInfoProps) => {
   return (

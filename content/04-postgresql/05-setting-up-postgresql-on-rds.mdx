@@ -4,7 +4,14 @@ metaTitle: 'Configure production-ready PostgreSQL on AWS RDS'
 metaDescription: "Learn how to configure PostgreSQL on Amazon's RDS with production-capable settings."
 metaImage: '../dataguide-images/postgresql/rds/header.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-30
 ---
+
+<StatusNotice title="Parts of this walkthrough are out of date">
+
+This guide was written in April 2022, and the RDS console has changed since, so screens and option names differ from what you'll see. The explanations of private network access and backups were corrected in September 2026, but the console steps haven't been re-tested. For the current steps, see AWS's guide to [creating an Amazon RDS DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html).
+
+</StatusNotice>
 
 ## Introduction
 
@@ -215,7 +222,7 @@ Next, you need to select the Subnet group. This defines the IP range within the 
 
 One of the most important choices you'll have to make is whether to allow public access to your database instance. This is largely a function of your security requirements and your ability to configure special access to your database.
 
-The most secure approach is to turn off public access. This will only allow your database to be accessed by (or through) instances deployed within the same network environment as your database. To access your database externally, you'll need to configure a [jump host](https://en.wikipedia.org/wiki/Jump_server) or an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) with external access to authenticate and route external connections to your database. This can be a significant undertaking if you're not familiar with configuring infrastructure or managing network rules.
+The most secure approach is to turn off public access. This will only allow your database to be accessed by (or through) instances deployed within the same network environment as your database. To reach it from outside the VPC, you connect through something that is inside it: a [jump host](https://en.wikipedia.org/wiki/Jump_server) (bastion), a VPN or AWS Direct Connect link into the VPC, or port forwarding with AWS Systems Manager Session Manager. An [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) doesn't provide this: it only routes traffic for resources that have public IP addresses, and a database without public access has none. Setting up private access can be a significant undertaking if you're not familiar with configuring infrastructure or managing network rules. AWS describes the common setups in [scenarios for accessing a DB instance in a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.Scenarios.html).
 
 The other approach is to allow for public access. This will make your database instance accessible from the public internet. It is less secure as anyone can attempt to connect to your database, but it does allow for a simpler access model from external connections. If you choose this option, ensure that all of your database passwords are very strong and rotated frequently. You will likely see external attempts to access your service in the logs, so password strength is vitally important.
 
@@ -269,13 +276,13 @@ Next you can configure the options associated with automatic database backups:
 
 ![Configure backups](../dataguide-images/postgresql/rds/configure-backups.png)
 
-If you want to enable automatic backups, select the _enable automatic backups_ box. This will tell AWS to automatically take daily point-in-time snapshots of your database instances that you can use to restore from. It is worth noting that, while not mentioned on this page, backups will be stored in AWS's Simple Storage Service (S3) and that you will be charged for the space they consume.
+If you want to enable automatic backups, select the _enable automatic backups_ box. AWS then takes a daily snapshot of your instance's storage during the backup window and also keeps its transaction logs, so you can [restore the instance to any point in time](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIT.html) within the retention period, not only to the moment a snapshot was taken. Backups are stored in Amazon S3 (managed by RDS, not in a bucket you can browse), and backup storage is billed as described on the [RDS pricing page](https://aws.amazon.com/rds/pricing/).
 
-By default, backups are set with a retention window of 7 days, meaning that you will be able to restore snapshots of your database taken within the last 7 days. If you are using this feature, you might want to increase the retention period to 14 days to give yourself more time to catch unwanted changes. Keep in mind however that increasing the retention period will incur greater costs for the additional storage.
+By default, backups are set with a retention window of 7 days, meaning that you will be able to restore your database to any point within the last 7 days. If you are using this feature, you might want to increase the retention period to 14 days to give yourself more time to catch unwanted changes. Keep in mind however that increasing the retention period will incur greater costs for the additional storage.
 
 If you have any preferences around _when_ backups occur, you can select an appropriate window of time, otherwise, it's safe to leave as "No preference".
 
-Keep "Copy tags to snapshots" selected to make it easier to find the appropriate snapshots within S3.
+Keep "Copy tags to snapshots" selected so that snapshots carry the instance's tags, which makes them easier to find and to attribute costs to.
 
 If you want additional protection, you can also select _Backup replication_ to replicate your changes to a different AWS region automatically as well. This will allow you to quickly restore from a different region, but will increase your S3 storage costs and data transfer costs.
 
@@ -291,7 +298,7 @@ In general, you can use the default AWS KMS Key for this unless you have additio
 
 ### Performance insights
 
-Next, configure the **performance insights** for your instance:
+Next, configure the **performance insights** for your instance. AWS has since made Performance Insights part of [Amazon CloudWatch Database Insights](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.html), so the current console presents these monitoring options differently:
 
 ![Configure performance insights](../dataguide-images/postgresql/rds/configure-performance-insights.png)
 

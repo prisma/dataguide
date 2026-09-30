@@ -20,6 +20,14 @@ Will be auto-generated from h2 headings
 
 ## MDX blocks
 
+### Status notice
+
+<StatusNotice>
+
+This guide was written in 2021 for MongoDB 4.4, which reached end of life on February 29, 2024. To install a supported version, follow [MongoDB's installation guide](https://www.mongodb.com/docs/manual/installation/).
+
+</StatusNotice>
+
 ### Paragraph
 
 Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.
@@ -66,9 +74,11 @@ model User {
 }
 ```
 
-### Code block with copy
+### Code block without copy button
 
-```js copy
+Every code block has a copy button unless it is marked `no-copy`:
+
+```js no-copy
 async function main() {
   const allUsers = await prisma.user.findMany()
   console.log(allUsers)
@@ -86,7 +96,9 @@ async function main() {
 
 ### Code block with highlighted code
 
-```js
+Lines starting with `+`, `-` or `|` are highlighted only in blocks marked `diff`:
+
+```js diff
 async function main() {
 +  added code
 -  deleted code

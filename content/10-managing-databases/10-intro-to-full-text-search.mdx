@@ -3,6 +3,7 @@ title: 'Introduction to full-text search'
 metaTitle: 'Introduction to full-text search'
 metaDescription: 'Learn about full-text search is and how to control the indexing and querying processes for better results.'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -29,7 +30,7 @@ Full-text search often also includes the ability to rank and sort results based 
 
 ## The importance of indexing
 
-While many database operations can be improved by indexing, full-text search is especially dependent on an asynchronous indexing processes.
+While many database operations can be improved by indexing, full-text search is especially dependent on it.
 
 Indexing is the process of parsing existing documents to compile an index. An [index](/intro/database-glossary#index) is a smaller, optimized structure specifically designed for quickly finding requested items. While normal database indexes might analyze a few fields to create an index, a full-text search index is created by analyzing the complete text of documents.
 
@@ -42,6 +43,45 @@ The indexing process is composed of a number of related stages. First, documents
 Tokens are then processed into ["lexemes"](/intro/database-glossary#lexeme), a language-level unit of meaning. During this process, terms are often normalized to collapse related words into a single entry which allows the querying engine to return relevant results that are slight variations of the literal search.
 
 The results of the analysis are then sorted and stored in an optimized index so that the querying engine can find relevant results and compare different factors about each document. The index includes information about the lexemes found in each document and may include additional context like positional data, lexeme density, etc. to help with more sophisticated search criteria.
+
+### When the index is updated
+
+Unlike the database behind `locate`, a full-text index doesn't have to be rebuilt on a schedule. When a change shows up in search results depends on where the index is kept.
+
+Databases with built-in full-text search maintain the index as part of each write, like any other index. In PostgreSQL, a [`tsvector` column with a GIN index](https://www.postgresql.org/docs/current/textsearch-tables.html#TEXTSEARCH-TABLES-INDEX) is updated by the same transaction that changes the row. The writing transaction can search its own changes right away, and other sessions can find them as soon as the transaction commits:
+
+```sql
+CREATE TABLE articles (
+  id int PRIMARY KEY,
+  body text NOT NULL,
+  body_tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', body)) STORED
+);
+
+CREATE INDEX articles_body_tsv_idx ON articles USING GIN (body_tsv);
+
+BEGIN;
+
+INSERT INTO articles (id, body) VALUES (1, 'The cooks were cooking dinner');
+
+-- the table is tiny, so tell the planner to use the index anyway
+SET LOCAL enable_seqscan = off;
+
+SELECT id, body FROM articles
+WHERE body_tsv @@ to_tsquery('english', 'cooked');
+```
+
+```text
+ id |             body
+----+-------------------------------
+  1 | The cooks were cooking dinner
+(1 row)
+```
+
+The search finds the new row before the transaction has committed, and matches "cooked" because it's stemmed to the same lexeme as "cooks" and "cooking". GIN indexes can postpone part of the work of adding entries by keeping them in a [pending list](https://www.postgresql.org/docs/current/gin.html#GIN-FAST-UPDATE), but searches check that list too, so it doesn't delay results.
+
+MySQL's InnoDB `FULLTEXT` indexes are also maintained by the database, but [changes to them are processed when the transaction commits](https://dev.mysql.com/doc/refman/8.4/en/innodb-fulltext-index.html#innodb-fulltext-index-transaction). A full-text search can't see uncommitted changes, not even the writing transaction's own, although other queries in that transaction can. Once the transaction commits, its rows can be found.
+
+Dedicated search engines such as Elasticsearch and OpenSearch keep their indexes outside the database, so every change has to be sent to them, either by the application or by a pipeline that reads the database's changes. The search index then trails the database by the time that pipeline takes, plus the engine's own delay before newly indexed documents become searchable, which in Elasticsearch is [up to a second by default](https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html). That can be a reasonable trade for the engines' search features and for moving search load off the database, but the application has to accept eventual consistency: a record that was just saved may not turn up in searches yet, and one that was just deleted may still appear.
 
 ### Balancing the indexing process
 

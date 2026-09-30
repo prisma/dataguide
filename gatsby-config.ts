@@ -66,26 +66,6 @@ let plugins: any = [
           },
         },
         {
-          resolve: 'gatsby-remark-check-links-numberless',
-          options: {
-            // Do not surface links to these pages as broken:
-            exceptions: [
-              '/guides/upgrade-guides/upgrade-from-prisma-1/schema-incompatibilities-postgres',
-              '/guides/upgrade-guides/upgrade-from-prisma-1/upgrading-the-prisma-layer-postgres',
-              '/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql',
-              '/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql',
-              '/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-planetscale',
-              '/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-planetscale',
-              '/getting-started/setup-prisma/add-to-existing-project/relational-databases/introspection-typescript-planetscale',
-              '/getting-started/setup-prisma/start-from-scratch/relational-databases/connect-your-database-typescript-planetscale',
-              '/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb',
-              '/getting-started/setup-prisma/start-from-scratch/mongodb-typescript-mongodb',
-              '/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-cockroachdb',
-              '/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-cockroachdb',
-            ],
-          },
-        },
-        {
           resolve: 'gatsby-remark-copy-linked-files',
           options: {
             destinationDir: 'static',
@@ -109,15 +89,19 @@ let plugins: any = [
       output: '/sitemap',
       entryLimit: 5000,
       excludes: [
-        // Remove these from sitemap for SEO purposes as they're redirected
-        `/dummy`,
+        // Pages that aren't meant to be found
         `/intro/example`,
+        // Pages that moved elsewhere: production redirects them
+        ...dataguideConfig.redirects.map((redirect) => redirect.fromPath),
       ],
       resolvePagePath: (page: any) => {
         return page.path.replace(/\/$/, '')
       },
     },
   },
+  // This robots.txt ends up at the root of the deployment's own domain (e.g. *.vercel.app) and
+  // keeps that duplicate of the site out of search results. Crawling of the Data Guide itself is
+  // governed by https://www.prisma.io/robots.txt, which allows /dataguide.
   {
     resolve: 'gatsby-plugin-robots-txt',
     options: {
@@ -148,6 +132,21 @@ let plugins: any = [
   },
   'gatsby-plugin-meta-redirect',
   'gatsby-plugin-page-list',
+  {
+    resolve: 'gatsby-plugin-markdown-export',
+    options: {
+      // Moved elsewhere: production redirects these pages
+      exclude: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
+      repository: 'https://github.com/prisma/dataguide/blob/main',
+    },
+  },
+  {
+    // Fails the build on broken internal links and anchors, checked in the rendered pages
+    resolve: 'gatsby-plugin-check-links',
+    options: {
+      redirects: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
+    },
+  },
 ]
 
 if (process.env.INDEX_ALGOLIA === 'true') {

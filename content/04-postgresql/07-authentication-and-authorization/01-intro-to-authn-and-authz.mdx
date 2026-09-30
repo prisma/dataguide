@@ -70,7 +70,7 @@ Authorization policies determine what powers each role has within the database c
 
 Administrators can make roles as _members_ of other roles to give the member access to the "container" role's privileges. This flexibility lets you treat some roles as analogs for user accounts and other roles as analogs for user groups, classes, or duties.
 
-A single role can operate as both a container and a member to implement more complex policy. In general, roles intended to be used as user agents have defined authentication policies, with their level of authorization determined by their own privileges, the privileges of roles they are members of, and the objects they own. In contrast, roles that are meant to work as groups typically do not have associated authorization.
+A single role can operate as both a container and a member to implement more complex policy. In general, roles intended to be used as user agents have defined authentication policies, with their level of authorization determined by their own privileges, the privileges of roles they are members of, and the objects they own. In contrast, roles that are meant to work as groups typically do not have associated authentication.
 
 The article dedicated to roles covers [how to define and configure roles within PostgreSQL](/postgresql/authentication-and-authorization/role-management).
 

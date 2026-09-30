@@ -11,6 +11,12 @@ import NextPrevious from '../components/nextPrevious'
 import AuthorDetails from '../components/authorDetails'
 import EndCta from '../components/cta/EndCta'
 import MobileStickyCta from '../components/cta/MobileStickyCta'
+import { isIndexSlug } from '../utils/navigation'
+import { urlGenerator } from '../utils/urlGenerator'
+import { getParentTitle } from '../utils/parentTitle'
+import { useAllArticlesQuery } from '../hooks/useAllArticlesQuery'
+import authorsJSON from '../../authors.json'
+import dataguideConfig from '../../config'
 
 type ArticleLayoutProps = ArticleQueryData &
   Pick<PageProps, 'location'> &
@@ -23,7 +29,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   const {
     mdx: {
       fields: { slug, modSlug },
-      frontmatter: { title, toc, hnPostId, authors },
+      frontmatter: { title, toc, hnPostId, authors, lastUpdated, lastUpdatedLabel },
       parent,
       tableOfContents,
     },
@@ -43,7 +49,12 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
             slug={modSlug}
             toc={toc || toc == null ? tableOfContents : []}
           />
-          <SocialShareSection hnPostId={hnPostId} slug={modSlug} />
+          <SocialShareSection
+            hnPostId={hnPostId}
+            slug={modSlug}
+            lastUpdated={lastUpdated}
+            lastUpdatedLabel={lastUpdatedLabel}
+          />
         </section>
       )}
       {children}
@@ -53,7 +64,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
           <AuthorDetails authors={authors} />
         </section>
       )}
-      {!slug.includes('index') && <NextPrevious slug={modSlug} />}
+      {!isIndexSlug(slug) && <NextPrevious slug={modSlug} />}
       <PageBottom editDocsPath={`${docsLocation}/${parent.relativePath}`} pageUrl={slug} />
       {!isHomePage && <MobileStickyCta slug={modSlug} />}
     </Layout>
@@ -63,15 +74,42 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
 export default ArticleLayout
 
 export const Head = ({
+  data,
   location,
   pageContext: { seoTitle, seoDescription, metaImage },
 }: ArticleLayoutProps) => {
+  const { allMdx } = useAllArticlesQuery()
+  const {
+    fields: { slug, modSlug },
+    frontmatter: { title, authors, lastUpdated, hidePage },
+  } = data.mdx
+  // Hidden and moved pages have no Markdown version
+  const hasMarkdown =
+    !hidePage &&
+    !dataguideConfig.redirects.some((redirect) => redirect.fromPath === urlGenerator(modSlug))
+  const article =
+    slug === '/'
+      ? undefined
+      : {
+          type: isIndexSlug(slug) ? ('CollectionPage' as const) : ('TechArticle' as const),
+          headline: title,
+          authors: (authors || [])
+            .map((id) => (authorsJSON as Record<string, { name: string }>)[id]?.name)
+            .filter(Boolean),
+          dateModified: lastUpdated || undefined,
+          breadcrumbs: getParentTitle(modSlug, allMdx).map((part: any) => ({
+            name: part.title,
+            path: part.link,
+          })),
+        }
   return (
     <SEO
       location={location}
       title={seoTitle}
       description={seoDescription}
       image={metaImage || undefined}
+      hasMarkdown={hasMarkdown}
+      article={article}
     />
   )
 }
@@ -102,6 +140,9 @@ export const query = graphql`
         toc
         hnPostId
         authors
+        hidePage
+        lastUpdated
+        lastUpdatedLabel: lastUpdated(formatString: "MMMM D, YYYY")
       }
     }
   }

@@ -4,6 +4,7 @@ metaTitle: 'Managing roles & attributes with PostgreSQL | Prisma'
 metaDescription: 'PostgreSQL roles are a combination of the ideas of users and groups into a single, flexible entity.  This guide will cover what roles are and how to manage them within a PostgreSQL database cluster.'
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-09-29
 ---
 
 ## Introduction
@@ -41,7 +42,7 @@ Attributes that can be applied to a role include:
 - `CREATEDB`: Allows the role to create new databases.
 - `CREATEROLE`: Allows the role to create, alter, and delete other roles. This attribute also allows the role to assign or alter role membership. An exception is that a role with the `CREATEROLE` attribute cannot alter `SUPERUSER` roles without also having the `SUPERUSER` attribute.
 - `REPLICATION`: Allows the role to initiate streaming replication. Roles with this attribute must also have the `LOGIN` attribute.
-- `PASSWORD`: Assigns a password to the role that will be used with `password` or `md5` authentication mechanisms. This attribute takes a password in quotations as an argument directly after the attribute keyword.
+- `PASSWORD`: Assigns a password to the role that will be used with the password authentication methods, such as `scram-sha-256`. This attribute takes a password in quotations as an argument directly after the attribute keyword. PostgreSQL stores a hash of the password, using the method set by the `password_encryption` setting (`scram-sha-256` by default).
 - `INHERIT`: Determines whether the role inherits the privileges of roles it is a member of. Without the `INHERIT`, members must use `SET ROLE` to change into the other role in order to access those exclusive privileges. This attribute is set for new roles by default.
 
 You can find out more about role attributes by checking out PostgreSQL's documentation on [role attributes](https://www.postgresql.org/docs/current/role-attributes.html) and the [`CREATE ROLE` command](https://www.postgresql.org/docs/current/sql-createrole.html).
@@ -265,11 +266,13 @@ The general syntax is:
 createuser <options> <rolename>
 ```
 
-For example, to create a role named `admin` with `superuser` privileges while prompting for a password, you could type:
+For example, to create a role named `admin` with `superuser` privileges while prompting for a password for the new role, you could type:
 
+```bash
+createuser --superuser --pwprompt admin
 ```
-createuser --superuser admin
-```
+
+The `--pwprompt` (`-P`) option is what makes `createuser` ask for the new role's password. Don't confuse it with `--password` (`-W`), which only prompts for the password `createuser` itself uses to connect to the server.
 
 You would then be able to log in using the `admin` account according to the authentication methods outlined in the [`pg_hba.conf` file](/postgresql/authentication-and-authorization/configuring-user-authentication#understanding-postgresqls-authentication-file).
 
@@ -470,7 +473,7 @@ ALTER ROLE <role> WITH PASSWORD '<password>';
 Alternatively, you can also use the `psql` meta-command like so:
 
 ```sql
-- To change your own password
+-- To change your own password
 \password
 -- To change the password for another role
 \password <role>
@@ -481,7 +484,7 @@ Alternatively, you can also use the `psql` meta-command like so:
 <details>
 <summary>How do check your current user attributes in PostgreSQL?</summary>
 
-To find the [attributes of the current role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#listing-your-own-attributes), you can use `psql` meta-commands with the `USER` variable which will be substitued with the current connected role.
+To find the [attributes of the current role](https://www.prisma.io/dataguide/postgresql/authentication-and-authorization/role-management#listing-your-own-attributes), you can use `psql` meta-commands with the `USER` variable which will be substituted with the current connected role.
 
 The basic syntax and result would look like:
 

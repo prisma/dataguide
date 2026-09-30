@@ -12,6 +12,8 @@ exports.createSchemaCustomization = ({ actions }: any) => {
     }
     type MdxFrontmatter {
       metaImage: String
+      # Set when an article's content changes substantively (YYYY-MM-DD), never automatically
+      lastUpdated: Date @dateformat
     }
   `)
 }

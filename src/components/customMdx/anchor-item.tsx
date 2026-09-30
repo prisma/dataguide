@@ -7,13 +7,13 @@ interface AnchorItemProps {
 }
 
 const AnchorItemWrapper = styled.div`
-    margin-bottom: 3rem;
-    p {
-        margin: 0;
-    }
+  margin-bottom: 3rem;
+  p {
+    margin: 0;
+  }
 `
 
-const AnchorItem = ({ children, ...props }: AnchorItemProps & React.ReactNode) => (
+const AnchorItem = ({ children, ...props }: React.PropsWithChildren<AnchorItemProps>) => (
   <AnchorItemWrapper>
     <dt id={props.id}>
       <strong>{props.title}</strong>

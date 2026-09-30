@@ -34,7 +34,7 @@ Document database management systems also structure their data through a hierarc
 
 As with relational databases, document database systems use an overarching "database" abstraction to encapsulate related data to allow for global policy and namespacing. The database layer serves as a container to define wide-ranging properties, allow for cohesive access control, and to scope actions to the relevant context.
 
-Within the database, a grouping called [collections](/intro/database-glossary#collection) are used to bundle together individual documents. Collections are more loosely defined than tables (their relational counterpart) and mainly serve as a container and additional scoping mechanism.
+Within the database, a grouping called [collections](/intro/database-glossary#collections) are used to bundle together individual documents. Collections are more loosely defined than tables (their relational counterpart) and mainly serve as a container and additional scoping mechanism.
 
 Unlike relational databases, collections themselves do not define the fields or properties of the documents that they can store. Instead, the structure of each document is defined implicitly by the fields and data that it declares. Because the structure being a property of individual documents rather than a collection, the shape of the documents within a collection can vary widely. Conforming to an intelligible structure is left as a responsibility of the database user rather than a property that the database system enforces by itself.
 

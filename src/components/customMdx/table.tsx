@@ -1,11 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type TableProps = React.ReactNode
+type TableProps = React.ComponentProps<'table'>
 
 const Table = ({ children, ...props }: TableProps) => {
   return (
-    <TableWrapper>
+    // Focusable so keyboard users can scroll wide tables
+    <TableWrapper role="group" aria-label="Table" tabIndex={0}>
       <table {...props}>{children}</table>
     </TableWrapper>
   )

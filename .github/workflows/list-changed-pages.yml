@@ -3,50 +3,66 @@ name: Comment with Vercel Deploy URLs of changed pages
 on:
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   post-comment-with-links-to-changed-pages:
     name: Create or Update
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Get list of changed files
-        id: files
-        uses: Ana06/get-changed-files@v1.2 # it's a fork of jitterbit/get-changed-files@v1 which works better with pull requests
       - name: List Vercel Deploy URLs
         id: links
-        # Note that this uses `%0A` instead of `\n` because of https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file which I could not get to work here - but this brute force method does.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # Branch names and file paths come from the pull request author, so they are passed
+          # through the environment and never interpolated into the script
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          body="This PR changes the following pages (Vercel Preview Deploy links):%0A%0A"
-          no_changed_pages="%0A- This PR does not change any pages the [GH Actions workflow](https://github.com/prisma/dataguide/blob/main/.github/workflows/list-changed-pages.yml) could detect."
-          vercelLinks="Changed Vercel links"
-          body="$body%0A%0A$vercelLinks"
-          for changed_file in ${{ steps.files.outputs.all }}; do
-            if [[ $changed_file == content/* ]]
-            then
-              no_changed_pages=""
+          # Vercel's branch alias: lowercase, underscores dropped, other symbols (like /) become -
+          branch_slug=$(printf '%s' "$HEAD_REF" | tr '[:upper:]' '[:lower:]' | tr -d '_' | sed -E 's/[^a-z0-9]+/-/g')
+          preview="https://dataguide-git-$branch_slug-prisma.vercel.app"
+          # Fail instead of reporting "no changed pages" when the file list can't be fetched
+          if ! files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files" --jq '.[] | select(.status != "removed") | .filename'); then
+            echo "::error::Failed to list the pull request's files"
+            exit 1
+          fi
 
-              cleaned_file=$(echo "$changed_file" | sed -E 's:content/:/:g' | sed -E 's:/index.mdx::g' | sed -e 's/.mdx//g' | sed -E 's:/[0-9]+-:/:g' )
-              # TODO special case for images and similar non .mdx files
+          links=""
+          while IFS= read -r changed_file; do
+            case "$changed_file" in
+              content/*.md | content/*.mdx) ;;
+              *) continue ;;
+            esac
+            # The page path, as the site derives it: no content/ prefix, no extension or
+            # /index, and no numeric order prefixes
+            page=$(printf '%s' "${changed_file#content}" | sed -E 's/\.mdx?$//; s:/index$::; s/[0-9]{2,}-//g')
+            echo "- $preview$page"
+            links="$links
+          - [/dataguide$page]($preview$page) ([currently](https://www.prisma.io/dataguide$page))"
+          done <<< "$files"
 
-              normalized_ref=$(echo "${{github.event.pull_request.head.ref}}" | sed -E 's:_::g')
-              # Output inside the action
-              echo "- https://dataguide-git-${normalized_ref}-prisma.vercel.app$cleaned_file"
+          if [ -z "$links" ]; then
+            links="
+          - This PR does not change any pages the [GH Actions workflow](https://github.com/prisma/dataguide/blob/main/.github/workflows/list-changed-pages.yml) could detect."
+          fi
 
-              # Also collect into string
-              linksVercel="%0A- [/dataguide$cleaned_file](https://dataguide-git-${normalized_ref}-prisma.vercel.app$cleaned_file) ([currently](https://prisma.io/dataguide$cleaned_file))"
-              body="$body$linksVercel"
-            fi
-          done
-
-          body="$body$no_changed_pages"
-          body="$body%0A%0A(Note that links will only be valid after Vercel preview deploy succeeded)"
-          echo "::set-output name=body::$body"
+          delimiter="EOF_$(openssl rand -hex 16)"
+          {
+            echo "body<<$delimiter"
+            echo "This PR changes the following pages (Vercel Preview Deploy links):"
+            echo "$links"
+            echo
+            echo "(Note that links will only be valid after Vercel preview deploy succeeded)"
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Find existing comment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -55,14 +71,14 @@ jobs:
 
       - name: Create comment
         if: steps.fc.outputs.comment-id == ''
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.links.outputs.body }}
 
       - name: Update comment
         if: steps.fc.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: ${{ steps.links.outputs.body }}

@@ -44,7 +44,11 @@ pre[class*='language-'] code {
   overflow: auto;
 }
 
-/* Code blocks */
+/* Code blocks: the pre scrolls (and is focusable), not the code inside it */
+pre[class*='language-'] code {
+  overflow: visible;
+}
+
 pre[class*='language-'] {
   padding: 1em 0;
   margin: 0;

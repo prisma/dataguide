@@ -41,7 +41,7 @@ Both methods have some inherent vulnerabilities depending on the data status but
 
 ### Encryption in transit
 
-[Encryption in transit](/intro/database-glossary#encryption-transport) is securing data when it is in motion from one point to another. Before being sent, the data is encrypted for its “journey” and then decrypted and verified at the reception point. The best visualization is to imagine the data as money transported via an armored van from one bank branch to another to replenish the vault.
+[Encryption in transit](/intro/database-glossary#encrypted-transport) is securing data when it is in motion from one point to another. Before being sent, the data is encrypted for its “journey” and then decrypted and verified at the reception point. The best visualization is to imagine the data as money transported via an armored van from one bank branch to another to replenish the vault.
 
 [MongoDB Atlas](https://www.prisma.io/dataguide/mongodb/mongodb-atlas-setup) supports [transport layer security (TSL)](https://en.wikipedia.org/wiki/Transport_Layer_Security) and secure socket layer (SSL) for communications between application client and server and within intra-cluster communications by setting certificates for the servers. A certificate is an electronic document used to prove the validity of ownership of a private key. Certificates ensure data is encrypted for transport over a trusted network connection preventing network snooping activities such as packet sniffing or IP/DNS spoofing.
 

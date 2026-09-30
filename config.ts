@@ -6,12 +6,14 @@ const siteConfig = {
   redirects: [
     {
       fromPath: '/postgresql/setting-up-a-local-postgresql-database',
-      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database',
+      toPath:
+        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database',
       isPermanent: false,
     },
     {
       fromPath: '/postgresql/introduction-to-data-types',
-      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types',
+      toPath:
+        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types',
       isPermanent: false,
     },
     {
@@ -21,19 +23,22 @@ const siteConfig = {
     },
     {
       fromPath: '/postgresql/connecting-to-postgresql-databases',
-      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases',
+      toPath:
+        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases',
       isPermanent: false,
     },
     {
       fromPath: '/postgresql/short-guides/connection-uris',
-      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris',
+      toPath:
+        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris',
       isPermanent: false,
     },
     {
       fromPath: '/intro/database-glossary',
-      toPath: "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary",
+      toPath:
+        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary',
       isPermanent: false,
-    }
+    },
   ],
   header: {
     logoLink: '/',
@@ -49,7 +54,7 @@ const siteConfig = {
     description:
       'Learn how databases work, how to choose the right one, and how to use databases with your applications to their full potential.',
     keywords: "Prisma's Data Guide, prisma, database, mysql, postgres, postgresql, dataguide",
-    docsLocation: 'https://github.com/prisma/dataguide/tree/master/content',
+    docsLocation: 'https://github.com/prisma/dataguide/tree/main/content',
     twitter: {
       site: '@prisma',
       creator: '@prisma',

@@ -8,9 +8,13 @@ The code in this repository is licensed under an [Apache License, Version 2.0](h
 
 The [written content](./content/) is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
+## Contributing
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the content standards every change is held to, and [AGENTS.md](./AGENTS.md) if you are a coding agent.
+
 ## Run locally
 
-Download the code and get started by running the following commands:
+You need Node.js 22 or later. Download the code and get started by running the following commands:
 
 ```
 git clone git@github.com:prisma/dataguide.git
@@ -19,13 +23,18 @@ npm install
 npm run dev
 ```
 
-To prettify or format the code, run:
-
-```
-npm run prettify
-```
-
 Visit `http://localhost:8000/` to view the app.
+
+Other commands:
+
+```
+npm test            # unit tests
+npm run typecheck   # TypeScript
+npm run build       # production build, including the internal link check
+npm run prettify    # format the code and content
+```
+
+Every article is also published as Markdown by appending `.md` to its URL, and `/llms.txt` lists them all.
 
 ## MDX blocks
 
@@ -35,7 +44,7 @@ View the example MDX blocks on `http://localhost:8000/intro/example` and the usa
 
 Write MDX files in `content` folder.
 
-Open [`config.js`](./config.js) for available config options for `gatsby`, `header`, `footer`, `feedback` and `siteMetadata`
+Open [`config.ts`](./config.ts) for available config options for `gatsby`, `header`, `footer` and `siteMetadata`, and for the redirects of moved articles.
 
 ## Inserting, moving and deleting files
 

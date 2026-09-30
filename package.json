@@ -33,15 +33,17 @@
     "gatsby-transformer-sharp": "5.16.0",
     "posthog-js": "^1.434.17",
     "prismjs": "1.30.0",
-    "prop-types": "15.8.1",
     "qs": "6.16.0",
     "react": "19.3.0",
-    "react-copy-to-clipboard": "5.1.1",
     "react-dom": "19.3.0",
     "react-feather": "2.0.10",
     "react-instantsearch": "7.50.0",
     "remark-gfm": "3.0.1",
+    "remark-mdx": "2.3.0",
+    "remark-parse": "10.0.2",
+    "remark-stringify": "10.0.3",
     "styled-components": "6.5.3",
+    "unified": "10.1.2",
     "unist-util-visit": "5.1.0"
   },
   "keywords": [
@@ -53,6 +55,8 @@
     "dev": "gatsby develop",
     "serve": "npm run build && gatsby serve --prefix-paths -o",
     "prettify": "prettier . --write --check",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test 'src/**/*.test.ts' 'plugins/**/*.test.mjs'",
+    "typecheck": "tsc",
     "postinstall": "husky",
     "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install"
   },
