@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
+import { posix } from 'node:path'
 
 export const validateVerification = (manifest, root = process.cwd()) => {
   const errors = []
@@ -40,7 +41,14 @@ export const validateVerification = (manifest, root = process.cwd()) => {
           .digest('hex')
       )
         errors.push(`tested status has no matching-fixture run: ${entry.file}`)
-      for (const source of run.supportingSources || []) {
+      const supportingSources = [
+        ...(run.supportingSources || []),
+        ...(run.sources || []).map((source) => ({
+          ...source,
+          file: posix.join(posix.dirname(entry.fixture), source.file),
+        })),
+      ]
+      for (const source of supportingSources) {
         if (
           !existsSync(`${root}/${source.file}`) ||
           createHash('sha256')

@@ -83,3 +83,47 @@ test('a changed dependency lock invalidates executed evidence even if the runner
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test('a reference-app schema change invalidates fixture-relative source evidence', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'dg-verification-app-'))
+  const sha = (value) => createHash('sha256').update(value).digest('hex')
+  try {
+    mkdirSync(path.join(root, 'content'))
+    mkdirSync(path.join(root, 'app'))
+    writeFileSync(path.join(root, 'content/article.md'), 'article')
+    writeFileSync(path.join(root, 'app/run.mjs'), 'runner')
+    writeFileSync(path.join(root, 'app/schema.sql'), 'original schema')
+    writeFileSync(
+      path.join(root, 'evidence.json'),
+      JSON.stringify({
+        status: 'passed',
+        cleanedUp: true,
+        fixtureSha256: sha('runner'),
+        articles: [{ file: 'content/article.md', sourceSha256: sha('article') }],
+        sources: [{ file: 'schema.sql', sha256: sha('original schema') }],
+      })
+    )
+    const metadata = {
+      articles: [
+        {
+          file: 'content/article.md',
+          owner: 'Test maintainer',
+          scope: 'Reference app',
+          level: 'executed',
+          releaseChannel: 'stable',
+          reviewDate: '2026-09-30',
+          evidence: 'evidence.json',
+          fixture: 'app/run.mjs',
+          versions: ['fixture'],
+        },
+      ],
+    }
+    assert.deepEqual(validateVerification(metadata, root), [])
+    writeFileSync(path.join(root, 'app/schema.sql'), 'changed schema')
+    assert.ok(
+      validateVerification(metadata, root).some((error) => error.includes('app/schema.sql'))
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
