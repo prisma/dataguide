@@ -6,6 +6,12 @@ metaImage: '/social/generic-mongodb.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice>
+
+This guide was written for MongoDB 4.4, which reached end of life on February 29, 2024, and its examples use the legacy `mongo` shell, which was [removed in MongoDB 6.0](https://www.mongodb.com/docs/v6.0/release-notes/6.0-compatibility/). Use the [MongoDB Shell, `mongosh`](https://www.mongodb.com/docs/mongodb-shell/), instead. Its shell methods use the same syntax as their legacy counterparts, but some legacy methods are deprecated and some behavior differs; MongoDB lists the [differences](https://www.mongodb.com/docs/mongodb-shell/reference/compatibility/) and the [`mongosh` command-line options](https://www.mongodb.com/docs/mongodb-shell/reference/options/).
+
+</StatusNotice>
+
 ## Introduction
 
 Once you have a [MongoDB](/intro/database-glossary#mongodb) server available, one of the first and most common actions you'll need to take is to connect to the actual database. This requires coordination to make sure that the database is configured in a way that allows your client to connect and authenticate.
