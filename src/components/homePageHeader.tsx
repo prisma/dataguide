@@ -1,7 +1,8 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { withPrefix } from 'gatsby'
-import HeaderDiagram from '../icons/HeaderDiagram'
+import heroScene from '../images/home/connected-data-scene.webp'
+import grain from '../images/home/grain.svg'
 import Logo from '../icons/Logo'
 import Search from '../components/search'
 import { useLocation } from '../hooks/useLocation'
@@ -12,26 +13,22 @@ const HeaderWrapper = styled.header`
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(38% 55% at 88% 100%, rgba(254, 67, 82, 0.24), transparent 70%),
-    radial-gradient(30% 45% at 64% 105%, rgba(254, 190, 41, 0.16), transparent 70%),
-    radial-gradient(45% 70% at 6% 105%, rgba(4, 213, 231, 0.18), transparent 70%),
-    radial-gradient(60% 80% at 75% 20%, rgba(90, 63, 216, 0.35), transparent 70%),
-    linear-gradient(135deg, #100d20 0%, #1b1540 55%, #26152f 100%);
+    radial-gradient(ellipse 50% 42% at 100% 100%, #ffe8eb, transparent 85%),
+    radial-gradient(ellipse 42% 36% at 58% 100%, #fff7e0, transparent 85%),
+    radial-gradient(ellipse 65% 56% at 12% 100%, #dcfdff, transparent 85%), #ffffff;
   min-height: 540px;
   display: flex;
   justify-content: center;
-  color: #ffffff;
+  color: var(--ink);
 
-  /* A faint grid, like the isometric pattern on prisma.io */
+  /* Fine grain over the spectral wash, following prisma.io/brand. */
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%);
+    background-image: url(${grain});
+    opacity: 0.06;
+    mix-blend-mode: multiply;
     pointer-events: none;
   }
 
@@ -47,14 +44,18 @@ const HeaderWrapper = styled.header`
   }
 
   .container {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 24px;
     align-items: center;
     padding: 56px 0 72px;
     max-width: 1040px;
     margin: 0 auto;
-    > * {
-      flex: 1;
+    .main-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
     }
 
     h1 {
@@ -62,9 +63,10 @@ const HeaderWrapper = styled.header`
       font-style: normal;
       font-weight: 500;
       font-size: 64px;
-      line-height: 1.02;
+      line-height: 1.08;
       letter-spacing: -0.035em;
-      color: #ffffff;
+      text-wrap: balance;
+      color: var(--ink);
       margin: 0 0 24px;
     }
 
@@ -75,19 +77,20 @@ const HeaderWrapper = styled.header`
       line-height: 32px;
       letter-spacing: 0;
       max-width: 430px;
-      color: rgba(255, 255, 255, 0.72);
+      color: var(--text);
       margin: 0;
     }
   }
 
-  @media (min-width: 0) and (max-width: 1024px) {
+  @media (max-width: 800px) {
     .sub-wrapper {
       width: 100%;
     }
     .container {
-      flex-direction: column;
+      grid-template-columns: minmax(0, 1fr);
       align-items: center;
-      padding-top: 40px;
+      padding: 48px 0 64px;
+      gap: 16px;
 
       .content {
         margin: 0;
@@ -100,15 +103,16 @@ const HeaderWrapper = styled.header`
           margin-right: auto;
         }
       }
-      svg {
-        margin-top: 24px;
+      .artwork {
+        width: min(100%, 480px);
+        margin: 0 auto;
       }
     }
   }
   @media (min-width: 0px) and (max-width: 500px) {
     min-height: 0;
     .container h1 {
-      font-size: 44px;
+      font-size: clamp(36px, 10vw, 44px);
     }
     .container .tagline {
       font-size: 18px;
@@ -125,16 +129,8 @@ const HeaderWrapper = styled.header`
 `
 
 const Highlight = styled.span`
-  font-weight: 500;
-  background: linear-gradient(
-    90deg,
-    var(--prisma-cyan),
-    var(--prisma-yellow) 55%,
-    var(--prisma-coral)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-weight: 600;
+  color: var(--ink);
 `
 
 const SearchComponent = styled(Search)`
@@ -161,12 +157,12 @@ const HeaderNavWrapper = styled.div`
   height: 44px;
 
   ${Wordmark} {
-    color: #ffffff;
+    color: var(--ink);
     .separator {
-      color: rgba(255, 255, 255, 0.4);
+      color: var(--text-subtle);
     }
     .product:hover {
-      color: #d7ceff;
+      color: var(--accent);
     }
   }
 `
@@ -174,18 +170,28 @@ const HeaderNavWrapper = styled.div`
 const CtaButton = styled.a`
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 16px;
+  min-height: 40px;
+  padding: 0 20px;
   border-radius: 999px;
-  background: #ffffff;
-  color: var(--ink);
+  background: var(--ink);
+  color: #ffffff;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.15s;
+  transition: box-shadow 0.2s;
   &:hover {
-    background: #ebebea;
+    box-shadow:
+      -8px 4px 24px -8px var(--prisma-cyan),
+      0 8px 24px -8px var(--prisma-yellow),
+      8px 4px 24px -8px var(--prisma-coral);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
   @media (max-width: 420px) {
     display: none;
@@ -233,8 +239,16 @@ const HomePageHeader = () => {
               potential.
             </p>
           </div>
-          <div>
-            <HeaderDiagram className="main-image" />
+          <div className="artwork">
+            <img
+              className="main-image"
+              src={heroScene}
+              alt=""
+              width={1200}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
+            />
           </div>
         </div>
       </div>
