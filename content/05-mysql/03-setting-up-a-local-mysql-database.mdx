@@ -33,9 +33,11 @@ After the installation, the guide shows how to lock the server down, create a da
 Since MySQL 8.1, MySQL has had [two release tracks](https://dev.mysql.com/doc/refman/9.7/en/mysql-releases.html):
 
 - **Long-term support (LTS) releases** change as little as possible within a series. Updates contain bug and security fixes, and nothing is removed. An LTS series is supported for eight years (five years of premier support and three of extended support). The current LTS series are **MySQL 8.4** and **MySQL 9.7**.
-- **Innovation releases** add features every quarter and may change behavior or remove features from one release to the next. Each is supported only until the next one comes out. Starting in July 2026, Innovation releases use calendar version numbers: the current one, MySQL 26.7, is the July 2026 release.
+- **Innovation releases** add features every quarter and may change behavior or remove features from one release to the next. Each is supported only until the next one comes out. The current one is MySQL 26.7.
 
-MySQL 8.0 reached the end of its support in April 2026, and MySQL 5.7 in October 2023 (see MySQL's [end-of-life notices](https://www.mysql.com/support/eol-notice.html)).
+MySQL 9.7 is the last release line with a sequential version number. Later Innovation and LTS releases use calendar versions in the form YY.M, the year and month of the release: MySQL 26.7 is the July 2026 release. An LTS release keeps its YY.M version for as long as it is supported.
+
+MySQL 8.0 stopped receiving updates when it moved to Oracle Lifetime Sustaining Support on April 21, 2026, and MySQL 5.7 did in October 2023 (see MySQL's [end-of-life notices](https://www.mysql.com/support/eol-notice.html)).
 
 This guide installs **MySQL 9.7**, the newest LTS series, which gives a new project the longest support window. If you are matching an existing server, install the series it runs instead; the sections below point out where you choose the version. One difference that can decide the question: MySQL 9.7 no longer includes the `mysql_native_password` authentication plugin. MySQL 8.4 still ships it, disabled by default, for old clients that can't use the default `caching_sha2_password`.
 
@@ -50,11 +52,10 @@ You need Docker installed: [Docker Desktop](https://docs.docker.com/desktop/) on
 First, generate a random password for MySQL's administrative `root` account and store it in a file that only you can read:
 
 ```bash
-openssl rand -base64 24 > mysql-root-password.txt
-chmod 600 mysql-root-password.txt
+(umask 077; openssl rand -base64 24 > mysql-root-password.txt)
 ```
 
-Keep this file out of version control. Then start the server:
+The `umask` in the subshell makes sure the file is created readable only by you, without a moment where others could read it. Keep this file out of version control. Then start the server:
 
 ```bash
 docker run --name mysql -d \
@@ -69,7 +70,7 @@ Each option has a job:
 
 - `-p 127.0.0.1:3306:3306` makes the server reachable on port 3306 of your computer, but only from your computer. Without the `127.0.0.1` part, [Docker publishes the port on all of the host's addresses](https://docs.docker.com/engine/network/port-publishing/), which makes your database reachable from the network. If port 3306 is already in use, pick another host port, such as `127.0.0.1:3307:3306`, and connect to that port.
 - `-v mysql-data:/var/lib/mysql` keeps the data directory in a named volume, so your databases survive when you remove or recreate the container.
-- `MYSQL_ROOT_PASSWORD_FILE` tells the image to read the root password from the mounted file. Unlike `-e MYSQL_ROOT_PASSWORD=...`, this keeps the password out of your shell history and out of the output of `docker inspect`. The image only uses it to initialize an empty data directory; after that, the password is stored in the database.
+- `MYSQL_ROOT_PASSWORD_FILE` tells the image to read the root password from the mounted file. Unlike `-e MYSQL_ROOT_PASSWORD=...`, this keeps the password out of your shell history and out of the output of `docker inspect`. It doesn't hide the password from the container itself: the file stays mounted, and the image's startup script passes the password on to the server process as an environment variable. The image only uses the password to initialize an empty data directory; after that, it is stored in the database.
 - `mysql:9.7` follows the 9.7 LTS series: pulling it again gets you the latest 9.7 patch release, never a new series. Use `mysql:8.4` for MySQL 8.4.
 
 On the first start, the container initializes the data directory, runs a temporary server to set the root password, and then starts the real server. Wait until `docker logs mysql` shows `ready for connections` with `port: 3306`:
@@ -108,7 +109,7 @@ mysql -h 127.0.0.1 -P 3306 -u root -p
 
 Use `127.0.0.1` rather than `localhost` here. The client treats `localhost` as a request to connect through a Unix socket file instead of TCP, and that socket only exists inside the container, so the connection fails with `ERROR 2002 (HY000): Can't connect to local MySQL server through socket`.
 
-The image creates `root` accounts for both `localhost` and `%` (any host), so anyone who can reach the port can try to log in as `root`. Binding the port to `127.0.0.1` is what keeps them out.
+The image creates `root` accounts for both `localhost` and `%` (any host), so anyone who can reach the port can try to log in as `root`. Binding the port to `127.0.0.1` is what keeps them out. If you'll only ever administer the server with `docker exec`, you can also add `-e MYSQL_ROOT_HOST=localhost` to the `docker run` command before the first start. The image then creates only `root@localhost`, and logging in as `root` through the published port fails with `ERROR 1130 (HY000): Host '…' is not allowed to connect to this MySQL server`.
 
 The image can also create a database and a user on the first start, through the `MYSQL_DATABASE`, `MYSQL_USER` and `MYSQL_PASSWORD` variables (the user gets all privileges on that database). This guide creates them by hand instead, in [Creating a database and a user for your application](#creating-a-database-and-a-user-for-your-application), so that you can see and choose the privileges. The [image's documentation](https://hub.docker.com/_/mysql) lists all of its options.
 
@@ -214,7 +215,7 @@ sudo grep 'temporary password' /var/log/mysqld.log
 ```
 
 ```text
-2026-09-30T03:47:57.408630Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: s5*C?ya6e<qt
+2026-09-30T06:57:58.975767Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: 2LlY*2Ae(Ac*
 ```
 
 Log in with that password (`mysql -u root -p`). The temporary password is already expired, so MySQL refuses to do anything until you choose a new one with `ALTER USER`. These packages also enable MySQL's [password validation component](https://dev.mysql.com/doc/refman/9.7/en/validate-password.html), whose default policy requires at least eight characters, including an uppercase letter, a lowercase letter, a digit and a special character:
@@ -224,8 +225,8 @@ mysql> SELECT VERSION();
 ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'weakpass';
 ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
-mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-password';
-Query OK, 0 rows affected (0.007 sec)
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-root-password';
+Query OK, 0 rows affected (0.014 sec)
 ```
 
 Like the APT packages, the server listens on all network addresses, so continue with [Listening only on your own machine](#listening-only-on-your-own-machine). MySQL's [Yum repository guide](https://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/) has more details.
@@ -272,6 +273,8 @@ The installer doesn't create a configuration file, so the server listens on all 
 ## Installing MySQL on Windows
 
 MySQL Installer, the tool that older guides use, isn't available for current releases: MySQL's download page says that MySQL 8.0 is the final series with MySQL Installer. MySQL 8.4 and 9.7 come as an MSI package that installs the server together with **MySQL Configurator**, a separate tool that sets it up.
+
+MySQL's Windows downloads are for x86-64 only; there is no native build for Windows on ARM. On an ARM-based Windows PC, [run MySQL in Docker](#running-mysql-in-docker) instead: the official image includes an `arm64` variant.
 
 1. On MySQL's [download page for MySQL 9.7](https://dev.mysql.com/downloads/mysql/9.7.html), select **Microsoft Windows** and download **Windows (x86, 64-bit), MSI Installer**. (The general download page starts with the newest release, which is an Innovation release, so make sure you have the LTS series you want.)
 2. Run the MSI as an administrator. When it finishes, let it start MySQL Configurator: the server can't run until it has been configured.
@@ -383,11 +386,15 @@ SHOW VARIABLES LIKE '%bind_address';
 
 Your applications shouldn't connect as `root`. Instead, give each application its own database and an account that can only work with that database. If the application's credentials leak, or a bug runs the wrong statement, the damage stays inside that one database.
 
-Log in as `root` with the method from your installation (`docker exec -it mysql mysql -u root -p`, `sudo mysql`, or `mysql -u root -p`), then create the database, the account and its privileges:
+Log in as `root` with the method from your installation (`docker exec -it mysql mysql -u root -p`, `sudo mysql`, or `mysql -u root -p`). The statements in this section are written for a native installation.
+
+**With Docker, write `'app'@'%'` wherever this section says `'app'@'localhost'`.** Connections through the published port don't come from `localhost` as far as the server inside the container is concerned, but from the address of Docker's network gateway. The `%` host lets the account connect from anywhere that can reach the server, which with the `127.0.0.1` port binding means your own machine. Don't create `'localhost'` accounts for your applications in the container: the image runs the server with `skip-name-resolve`, and granting privileges to a `'localhost'` account there returns `Query OK, 0 rows affected, 1 warning`, where warning 1285 says that the grant won't work in this mode.
+
+Create the database, the account and its privileges:
 
 ```sql
 CREATE DATABASE app;
-CREATE USER 'app'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-password';
+CREATE USER 'app'@'localhost' IDENTIFIED BY 'Choose-a-str0ng-app-password';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES
   ON app.* TO 'app'@'localhost';
 ```
@@ -398,9 +405,9 @@ Replace the password with one of your own. The statements do the following:
 - `CREATE USER 'app'@'localhost'` creates an account named `app` that can only connect from the same machine. The account uses MySQL's default authentication plugin, `caching_sha2_password`.
 - The `GRANT` statement lets the account read and change data (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) and manage tables and indexes (`CREATE`, `ALTER`, `DROP`, `INDEX`, `REFERENCES`), but only in the `app` database (`app.*`). If a separate account runs your schema migrations, leave out everything after `DELETE`.
 
-**With Docker, use `'app'@'%'` instead of `'app'@'localhost'` in both statements.** Connections through the published port don't come from `localhost` as far as the server inside the container is concerned, but from the address of Docker's network gateway. The `%` host lets the account connect from anywhere that can reach the server, which with the `127.0.0.1` port binding means your own machine.
+If you use Prisma ORM, `prisma migrate dev` also needs a temporary _shadow database_, which this account isn't allowed to create. Prisma's [shadow database documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database) (for Prisma ORM 7 at the time of writing) lists the privileges it needs on MySQL and explains how to use a shadow database you create yourself instead.
 
-You can check the result with `SHOW GRANTS`:
+You can check the result with `SHOW GRANTS` (with Docker, `SHOW GRANTS FOR 'app'@'%';`):
 
 ```sql
 SHOW GRANTS FOR 'app'@'localhost';
@@ -436,7 +443,7 @@ CREATE DATABASE other;
 
 ```text
 mysql> CREATE TABLE notes (id INT AUTO_INCREMENT PRIMARY KEY, body TEXT NOT NULL);
-Query OK, 0 rows affected (0.023 sec)
+Query OK, 0 rows affected (0.026 sec)
 
 mysql> INSERT INTO notes (body) VALUES ('hello');
 Query OK, 1 row affected (0.006 sec)
@@ -455,7 +462,7 @@ mysql> CREATE DATABASE other;
 ERROR 1044 (42000): Access denied for user 'app'@'localhost' to database 'other'
 ```
 
-The last two errors are what you want to see. To learn more about accounts and privileges, read [how to manage users and authentication in MySQL](/mysql/authentication-and-authorization/user-management-and-authentication) and [how to manage privileges with `GRANT` and `REVOKE`](/mysql/authentication-and-authorization/privilege-management). To connect from other tools, see [connecting to MySQL databases](/mysql/connecting-to-mysql-databases).
+The last two errors are what you want to see. With Docker, the first error names your Docker network's gateway address instead of `localhost`, and the second names `'app'@'%'`. To learn more about accounts and privileges, read [how to manage users and authentication in MySQL](/mysql/authentication-and-authorization/user-management-and-authentication) and [how to manage privileges with `GRANT` and `REVOKE`](/mysql/authentication-and-authorization/privilege-management). To connect from other tools, see [connecting to MySQL databases](/mysql/connecting-to-mysql-databases).
 
 ## Managing the server and finding its files
 
