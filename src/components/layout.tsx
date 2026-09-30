@@ -76,6 +76,24 @@ const MaxWidth = styled.article<{ $noIndex: boolean }>`
     &:last-of-type {
       padding-bottom: ${(p) => p.$noIndex && '164px'};
     }
+
+    /* Cards with section artwork: the art sits behind the content and is cropped by the card,
+       and the heading and intro text leave room for it */
+    &:has(> .section-art) {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      @media (min-width: 768px) {
+        > h2,
+        > p:first-of-type {
+          padding-right: 240px;
+        }
+        h1,
+        nav[aria-label='Breadcrumb'] {
+          padding-right: 200px;
+        }
+      }
+    }
   }
 `
 

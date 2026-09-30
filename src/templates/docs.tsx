@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ArticleQueryData } from '../interfaces/Article.interface'
 import Layout from '../components/layout'
 import TopSection from '../components/topSection'
+import SectionArt, { sectionThemeForSlug } from '../components/sectionArt'
 import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
 import { graphql, PageProps } from 'gatsby'
@@ -39,11 +40,13 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
+  const sectionTheme = sectionThemeForSlug(modSlug)
 
   return (
     <Layout isHomePage={isHomePage} slug={slug} {...props}>
       {!isHomePage && (
         <section className="top-section">
+          {sectionTheme && <SectionArt theme={sectionTheme} variant="page" />}
           <TopSection
             title={title}
             slug={modSlug}

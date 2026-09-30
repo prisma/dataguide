@@ -16,6 +16,7 @@ import PrismaOutlinks from './prismaOutlinks'
 import PostgresCallout from '../cta/PostgresCallout'
 import AnchorItem from './anchor-item'
 import StatusNotice from './statusNotice'
+import SectionArt from '../sectionArt'
 
 export default {
   h1: () => <h1 style={{ display: 'none' }} />,
@@ -49,6 +50,7 @@ export default {
   Sidenote,
   AnchorItem,
   StatusNotice,
+  SectionArt,
   img: ({ src, ...props }: any) => {
     const newSrc = src.replace(/(\..\/)/g, '')
     return (

@@ -8,7 +8,7 @@ import remarkGfm from 'remark-gfm'
 import remarkStringify from 'remark-stringify'
 
 // Product panels: useful on the site, clutter in a plain-text copy of the article
-const DROPPED = new Set(['PrismaOutlinks', 'PostgresCallout'])
+const DROPPED = new Set(['PrismaOutlinks', 'PostgresCallout', 'SectionArt'])
 
 const text = (value) => ({ type: 'text', value })
 const paragraph = (children) => ({ type: 'paragraph', children })
