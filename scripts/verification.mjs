@@ -40,6 +40,15 @@ export const validateVerification = (manifest, root = process.cwd()) => {
           .digest('hex')
       )
         errors.push(`tested status has no matching-fixture run: ${entry.file}`)
+      for (const source of run.supportingSources || []) {
+        if (
+          !existsSync(`${root}/${source.file}`) ||
+          createHash('sha256')
+            .update(readFileSync(`${root}/${source.file}`))
+            .digest('hex') !== source.sha256
+        )
+          errors.push(`tested supporting source changed: ${source.file}`)
+      }
     } catch (error) {
       errors.push(`unreadable evidence for ${entry.file}: ${error.message}`)
     }

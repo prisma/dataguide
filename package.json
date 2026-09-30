@@ -61,7 +61,8 @@
     "typecheck": "tsc",
     "postinstall": "husky",
     "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install",
-    "test:tutorials": "node tests/tutorials/run.mjs"
+    "test:tutorials": "node tests/tutorials/run.mjs",
+    "test:orms": "node experiments/orm-type-safety/run.mjs"
   },
   "devDependencies": {
     "@mdx-js/mdx": "2.3.0",

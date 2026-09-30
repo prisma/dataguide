@@ -64,5 +64,59 @@
     "url": "https://docs.deno.com/deploy/changelog/",
     "sha256": "0897920a2bbe8abbd29eb8d7e3bb26627f0e71312c03430d3ac13733292e2d8f",
     "checkedAt": "2026-09-30T18:14:51.124Z"
+  },
+  {
+    "id": "comparison-prisma",
+    "url": "https://registry.npmjs.org/prisma/latest",
+    "sha256": "5edd43415884fc6df2356c2b5ef90459d01faed0cf395a003b59b080bbc4c7f7",
+    "checkedAt": "2026-09-30T19:29:05.363Z"
+  },
+  {
+    "id": "comparison-drizzle",
+    "url": "https://registry.npmjs.org/drizzle-orm/latest",
+    "sha256": "652a75988358cf9ce06735e8975769bac04a29b036a0e3831846b322c601b195",
+    "checkedAt": "2026-09-30T19:29:05.575Z"
+  },
+  {
+    "id": "comparison-kysely",
+    "url": "https://registry.npmjs.org/kysely/latest",
+    "sha256": "27973d7344c0b07235e1074e5b5ebb03c128d06e5a31cae0ce4dedde75f15b1c",
+    "checkedAt": "2026-09-30T19:29:05.367Z"
+  },
+  {
+    "id": "comparison-typeorm",
+    "url": "https://registry.npmjs.org/typeorm/latest",
+    "sha256": "04c917f21cea89b8654b36dfe2e272f0222ebbbf9c12228f96185d89ddeee0a2",
+    "checkedAt": "2026-09-30T19:29:05.366Z"
+  },
+  {
+    "id": "comparison-sequelize",
+    "url": "https://registry.npmjs.org/sequelize/latest",
+    "sha256": "4fe8b8e9906bdc66ba1c49dd059c7840face7c61e6e66981ef90ef2f03d3af40",
+    "checkedAt": "2026-09-30T19:29:05.364Z"
+  },
+  {
+    "id": "comparison-mikroorm",
+    "url": "https://registry.npmjs.org/@mikro-orm/core/latest",
+    "sha256": "31c6034a0da69bbd657e14c7317e4eb72b41a107af2ed26469f7e0cb8ddc9eab",
+    "checkedAt": "2026-09-30T19:29:05.380Z"
+  },
+  {
+    "id": "comparison-mongoose",
+    "url": "https://registry.npmjs.org/mongoose/latest",
+    "sha256": "2c3a36a264adfe47d3cde61bb18409dfcd5d5286ae47c8ef3bc3875727391258",
+    "checkedAt": "2026-09-30T19:29:05.363Z"
+  },
+  {
+    "id": "comparison-knex",
+    "url": "https://registry.npmjs.org/knex/latest",
+    "sha256": "4c44bdfa9c67835b521d01d2111f7be3c098d4202c75e870cd149f8858032d8a",
+    "checkedAt": "2026-09-30T19:29:05.377Z"
+  },
+  {
+    "id": "comparison-typescript",
+    "url": "https://registry.npmjs.org/typescript/latest",
+    "sha256": "28a8ef314c6bbc3fddb831088f80eb2fcac6351cb618c8ac029f7229f587b8aa",
+    "checkedAt": "2026-09-30T19:29:05.355Z"
   }
 ]
