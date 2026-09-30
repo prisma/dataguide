@@ -58,7 +58,7 @@ db.bookOrders.insertMany ( [
      quantity: 18, date: ISODate( "2022-10-21T11:19:30Z" ) },
 	{ _id: 7, first_name: "Virginia", last_name: "Woolf", book_title: "Mr's Dalloway", genre: 'Fiction', quantity: 14, date: ISODate( "2022-10-21T11:19:30Z" ) },
 	{ _id: 8, first_name: "Zadie", last_name: "Smith", book_title: 'White Teeth', genre: 'Fiction', quantity: 8, date: ISODate( "2022-10-21T11:19:30Z" ) },
-	{ _id: 9, first_name: "Charles", last_name: "Dickens", book_title: 'The Old Curiosity Shop', genre: 'Fiction', quantity: 6, date: ISODate( "2022-10-21T11:19:30Z" ) }
+	{ _id: 9, first_name: "Charles", last_name: "Dickens", book_title: 'The Old Curiousity Shop', genre: 'Fiction', quantity: 6, date: ISODate( "2022-10-21T11:19:30Z" ) }
 ] )
 ```
 
@@ -118,7 +118,7 @@ After running our aggregation query, we get the following output:
 
 This example is intentionally simple, but it demonstrates how an aggregation pipeline can take some of the complexity out of some queries. Each step to reaching your desired output is clearly broken down and compartmentalized into a clear stage.
 
-Depending on the collection and document data structure, there are optimizations to consider when building an aggregation pipeline. Additionally, this framework may not work for all complex logic. It is case dependent.
+Depending on the collection and document data structure, there are optmizations to consider when building an aggregation pipeline. Additionally, this framework may not work for all complex logic. It is case dependent.
 
 One small optimization that should be pointed out can be seen in the first two stages of our example. Generally, the `$match` operator is used to begin most pipelines and is best practice. However, if your collection is full of very large documents, then it is recommended to begin with the `$project` operator instead. Starting with `$project` limits the amount of fields that get passed onto the next stage earlier in the pipeline and reduces some unnecessary load.
 

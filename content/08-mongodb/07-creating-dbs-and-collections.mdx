@@ -279,7 +279,7 @@ To create a new collection, there are two options: you can create collections ei
 
 As with databases, MongoDB can automatically create collections the first time a document is written to them. This method tells MongoDB to create a new collection by inserting a document into a collection that does not exist yet.
 
-For instance, we can change back to the `playground` database that we were interested in earlier. Once we are in that namespace, we can insert a new document into a collection by calling the `insert()` command on the name we'd like to use for the new collection. Here, we can create a document about a slide in a new collection called `equipment`:
+For instance, we can change back to the `playground` database that we were interested in earlier. Once we are in that namespace, we can insert a new document into a collection by calling the `insert.()` command on the name we'd like to use for the new collection. Here, we can create a document about a slide in a new collection called `equipment`:
 
 ```
 use playground
@@ -302,7 +302,7 @@ db.equipment.count()
 db.equipment.find()
 ```
 
-The output should show that the `playground` database is now among the listed databases, that the `equipment` collection is listed, that there is one document within the `equipment` collection, and that the document is the `{name: "slide"}` document we inserted in the command.
+The output should show that the `playground` database is now among the listed databases, that the `equipment` collection is listed, that there is one document within the `equipement` collection, and that the document is the `{name: "slide"}` document we inserted in the command.
 
 The other option to use to create collections is to explicitly use the `db.createCollection()` method. This allows you to create collections without adding any documents to them.
 
@@ -350,7 +350,7 @@ db.createCollection(
 This will create a capped `notification` collection, which we can verify by typing:
 
 ```
-db.getCollectionInfos({"options.capped": true})
+db.getCollecitonInfos({"options.capped": true})
 ```
 
 ```

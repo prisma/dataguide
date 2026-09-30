@@ -151,7 +151,7 @@ For instance, here, we can give the `'librarymanager'@'localhost'` account `SELE
 GRANT SELECT,INSERT,UPDATE,DELETE ON library.* TO 'librarymanager'@'localhost' WITH GRANT OPTION;
 ```
 
-It is important to realize that the `WITH GRANT OPTION` clause applies to the account (`'librarymanager'@'localhost'`) and the scope (`library.*`), **not** the specific privileges in the statement. This means that although we've assigned four new privileges to the `'librarymanager'@'localhost'` account in this statement, the `WITH GRANT OPTION` allows it to pass on **any** of its privileges at the `library.*` scope. Since the account now has the `GRANT OPTION` for this scope, if we give `'librarymanager'@'localhost'` additional privileges in the future, it'll also be able to pass on those privileges automatically.
+It is important to realize that the `WITH GRANT OPTION` clause applies to the account (`'librarymanager'@'localhost'`) and the scope (`library.*`), **not** the specific privileges in the statement. This means that although we've assigned four new privileges to the `'librarymanager'@'localhost'` account in this statement, the `WITH GRANT OPTION` allows it to pass on **any** of its privileges at the `library.*` scope. Since the account now has the `GRANT OPTION` for this scope, if we give `'librarymanager'@'localhoast'` additional privileges in the future, it'll also be able to pass on those privileges automatically.
 
 Although you can use the `WITH GRANT OPTION` clause as demonstrated above to allow an account to pass on its privileges while you are giving them additional privileges, it's often more clear if you separate these two actions, like this:
 

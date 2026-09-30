@@ -80,7 +80,7 @@ A [write-through caching](/intro/database-glossary#write-through-caching) strate
 
 ![Write-Through](../dataguide-images/database-caching/write-through.png)
 
-The benefit to a write-through strategy is that the cache is ensured to have any written data and no new read will experience delay while the cache requests it from the main database. If solely making this arrangement, there is the big disadvantage of extra write latency because the action must go to the cache and then to the database. This should happen immediately, but there is still two writes occurring in succession.
+The benefit to a write-through strategy is that the cache is ensured to have any written data and no new read will experience delay while the cache requests it from the main database. If solely making this arrangement, there is the big disadvantage of extra write latency because the action must go to the cache and then to the database. This should happen immediately, but there is still two writes occuring in succession.
 
 The real benefit comes from pairing a write-through with a read-through cache. This strategy will adopt all the aforementioned benefits of the read-through caching strategy with the added benefit of removing the potential for data inconsistency.
 
