@@ -12,7 +12,7 @@ An ORM or query builder sits between your TypeScript code and a database that th
 
 Every library in this article ships its own TypeScript types, so "does it support TypeScript?" is no longer a useful question. This article asks a narrower one: **which common mistakes does the compiler actually catch?** We modeled the same small schema in eight libraries, wrote the same seven checks as code, and let `tsc` decide. Where a mistake compiled, we also ran it against a throwaway database to see what happened instead.
 
-This article is published by Prisma, the company behind Prisma ORM, one of the libraries tested; the versions and method are listed in full so that you can reproduce every result.
+This article is published by Prisma, the company behind Prisma ORM, one of the libraries tested; the versions and method are listed so that you can repeat the checks.
 
 For the popularity, release activity and maintenance of these libraries, see the companion article, [Top Node.js ORMs, query builders and database libraries](/database-tools/top-nodejs-orms-query-builders-and-database-libraries). If you're new to the difference between ORMs and query builders, start with [Comparing SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).
 
@@ -22,18 +22,20 @@ For the popularity, release activity and maintenance of these libraries, see the
 
 Each library was tested at its latest stable release on npm at the end of September 2026:
 
-| Library     | Version tested | Kind                           | Notes                                                                                       |
-| ----------- | -------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| Prisma ORM  | 7.10.0         | ORM with a generated client    | Prisma ORM 8 is a release candidate on npm (`8.0.0-rc.19`) and wasn't tested                |
-| Drizzle ORM | 0.45.3         | ORM and SQL-like query builder | The same checks were repeated on the `1.0.0-rc.4` release candidate, with identical results |
-| Kysely      | 0.29.6         | Query builder                  |                                                                                             |
-| TypeORM     | 1.1.1          | ORM                            |                                                                                             |
-| Sequelize   | 6.37.8         | ORM                            | Sequelize 7 (`@sequelize/core`) is still in alpha (`7.0.0-alpha.48`) and wasn't tested      |
-| MikroORM    | 7.2.2          | ORM                            |                                                                                             |
-| Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                                                                                 |
-| Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                                                                      |
+| Library     | Version tested | Kind                           | Notes                                                                                                                                                                         |
+| ----------- | -------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Prisma ORM  | 7.10.0         | ORM with a generated client    | The same checks were repeated on the Prisma ORM 8 release candidate (`prisma` `8.0.0-rc.19` with `@prisma/orm-postgres` `8.0.0-rc.13`), with identical results for checks 1–6 |
+| Drizzle ORM | 0.45.3         | ORM and SQL-like query builder | The same checks were repeated on the `1.0.0-rc.4` release candidate, with identical results                                                                                   |
+| Kysely      | 0.29.6         | Query builder                  | `0.30.0-beta.2`, on the `next` tag, wasn't tested                                                                                                                             |
+| TypeORM     | 1.1.1          | ORM                            |                                                                                                                                                                               |
+| Sequelize   | 6.37.8         | ORM                            | Sequelize 7 (`@sequelize/core`) is still in alpha (`7.0.0-alpha.48`) and wasn't tested                                                                                        |
+| MikroORM    | 7.2.2          | ORM                            |                                                                                                                                                                               |
+| Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                                                                                                                                                                   |
+| Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                                                                                                                                                        |
 
-The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the results were identical. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24 against PostgreSQL 18.6 and MongoDB 8.0.11 in local Docker containers.
+Prisma's documentation now defaults to Prisma ORM 8, and the `latest` tag of the `prisma` package resolves to the release candidate, so pin `prisma@7` and `@prisma/client@7` to reproduce the 7.10.0 results.
+
+The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the results were identical. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24 against PostgreSQL 18.6 and MongoDB 8.0.32 in local Docker containers.
 
 ### Setup
 
@@ -73,6 +75,11 @@ In Mongoose, these are two collections, with `Post.author` referencing a user an
 6. **Nullability**: is `name` typed so that you have to handle `null`?
 7. **Raw SQL**: what type does the library's raw SQL escape hatch return?
 
+Checks 1 to 6 are caught, not caught or partially caught. Check 7 records a type instead, because the TypeScript compiler can't check a SQL string against your database. Two rules keep the grading consistent:
+
+- SQL that you write as a string, whether a whole raw query or a fragment passed to a query builder, only counts under check 7.
+- For check 6, nullability counts as caught when it is declared in one place and the TypeScript type follows from that declaration. It counts as partial when it is declared twice, as a TypeScript type and as a column option, and nothing checks that the two agree.
+
 ### How the test files prove the results
 
 Each line that the compiler should reject is preceded by a [`// @ts-expect-error`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html) comment. If the line compiles anyway, `tsc` reports the comment as unused and fails, so a passing build proves that every expected error happened. Because the comment suppresses any error on the next line, each project was compiled a second time with the comments removed to confirm that each error was the intended one, and each rejected write and filter has a corrected control line next to it that compiles.
@@ -111,31 +118,34 @@ What the compiler caught:
 | ----------- | ----------------- | ------------- | ---------------- | ----------------- | ------------ | -------------- | ------------------------------ |
 | Prisma ORM  | Caught            | Caught        | Caught           | Caught            | Caught       | Caught         | `unknown`                      |
 | Drizzle ORM | Caught            | Caught        | Caught           | Caught            | Caught       | Caught         | `Record<string, unknown>` rows |
-| Kysely      | Caught            | Caught        | Caught           | Caught            | Caught ¹     | Caught         | `unknown` rows                 |
-| TypeORM     | Not caught        | Caught        | Partial ²        | Not caught        | Not caught   | Partial ³      | `any`                          |
-| Sequelize   | Caught            | Caught        | Caught           | Not caught        | Not caught   | Partial ³      | `unknown[]`                    |
-| MikroORM    | Caught            | Caught        | Caught           | Caught            | Partial ⁴    | Caught ⁵       | Rows with `any` properties     |
-| Mongoose    | Not caught        | Caught        | Not caught       | Not caught        | Not caught   | Caught ⁵       | `any[]` ⁶                      |
-| Knex.js     | Partial ⁷         | Caught        | Partial ⁸        | Caught            | Not caught   | Caught         | `any`                          |
+| Kysely      | Caught            | Caught        | Caught           | Caught            | Caught ¹     | Caught ²       | `unknown` rows                 |
+| TypeORM     | Not caught        | Caught        | Caught ³         | Not caught        | Not caught   | Partial ⁴      | `any`                          |
+| Sequelize   | Caught            | Caught        | Caught           | Not caught        | Partial ⁵    | Partial ⁴      | `unknown[]`                    |
+| MikroORM    | Caught            | Caught        | Caught           | Caught            | Partial ⁶    | Caught ⁷       | Rows with `any` properties     |
+| Mongoose    | Not caught        | Caught        | Not caught       | Not caught        | Not caught   | Caught ⁷       | `any[]` ⁸                      |
+| Knex.js     | Partial ⁹         | Caught        | Partial ¹⁰       | Caught            | Partial ¹¹   | Caught ²       | `any`                          |
 
 1. Kysely has no relation model. You load posts with a subquery, for example with its `jsonArrayFrom` helper, and the result of that subquery is fully typed and absent from the type when you don't select it.
-2. TypeORM checks the `where` option of its `find` methods, but the conditions you pass to its `QueryBuilder` are SQL strings and aren't checked.
-3. `name` is typed `string | null` because the model class declares it that way. Nothing checks that declaration against the column definition (`nullable: true` in TypeORM, `allowNull: true` in Sequelize), and a model that declares `name: string` for a nullable column compiles.
-4. A populated collection is typed as loaded, its typed accessor `posts.$` doesn't compile unless the collection was populated, and an unpopulated reference only exposes its primary key. But the `posts` collection is present in the type either way, and `posts.getItems()` compiles on a collection that wasn't populated. Calling it at runtime threw an error.
-5. Typed as `string | null | undefined`, because nullable fields are also optional.
-6. MongoDB has no SQL. The escape hatches tested were `aggregate()`, which returns `any[]`, and the underlying MongoDB driver collection, whose documents have `any` properties.
-7. Caught only when you write the table's insert type by hand with `Knex.CompositeTableType`. If you only declare a row type, `insert()` accepts partial rows.
-8. The object form, `where({ emial: … })`, is caught. The column-name form, `where('emial', …)`, isn't.
+2. Nullability is declared once, in the `Database` or `Tables` interface, and that interface is written by hand. For Kysely, tools such as kysely-codegen can generate it from the database instead. As with every library's model, nothing checks the interface against the actual database.
+3. Caught in the `where` option of TypeORM's `find` methods. The conditions you pass to its `QueryBuilder` are SQL strings, which count under check 7.
+4. Nullability is declared twice: as the property's TypeScript type and as a column option (`nullable: true` in TypeORM, `allowNull: true` in Sequelize). Nothing checks that they agree, and a model that declares `name: string` for a nullable column compiles.
+5. `posts` is declared optional, so using it without a check, such as reading `posts.length`, doesn't compile whether or not the query included posts. But the type doesn't change when you include them.
+6. A populated collection is typed as loaded, its typed accessor `posts.$` doesn't compile unless the collection was populated, and an unpopulated reference only exposes its primary key. But the `posts` collection is present in the type either way, and `posts.getItems()` compiles on a collection that wasn't populated. Calling it at runtime threw an error.
+7. Typed as `string | null | undefined`, because nullable fields are also optional.
+8. MongoDB has no SQL. The escape hatches tested were `aggregate()`, which returns `any[]`, and the underlying MongoDB driver collection, whose documents have `any` properties.
+9. Caught only when you write the table's insert type by hand with `Knex.CompositeTableType`. If you only declare a row type, `insert()` accepts partial rows.
+10. The object form, `where({ emial: … })`, is caught. The column-name form, `where('emial', …)`, isn't.
+11. Knex has no relation model. A join's rows are typed when you select unqualified column names (`Pick<User & Post, 'email' | 'title'>[]`), but table-qualified names such as `'users.email'`, and misspelled names, give `any[]` without an error.
 
 A few patterns stand out:
 
 - **Writes**: every library rejects a wrong value type. They differ on missing fields: TypeORM's `insert()`, `save()` and `create()` and Mongoose's `create()` accept partial objects, so a missing required field is only reported by the database or by Mongoose's validation at runtime.
 - **Reads**: the result type is where the libraries differ most. Prisma ORM, Drizzle, Kysely and, for most cases, MikroORM compute the result type from the query, so selecting fewer columns or loading a relation changes the type. TypeORM, Sequelize and Mongoose return the full model type whatever the query selected or loaded, so the type can disagree with the value. In these tests, properties typed `string | null` held `undefined`, and a populated reference typed `ObjectId` held a document.
-- **Raw SQL**: the TypeScript compiler can't check a SQL string against your database. A result typed `unknown` makes you narrow or validate the rows before you use them, while `any` turns off checking for everything that touches the result. The raw query methods of every library except Knex (which wasn't tested for this) also accept a type argument, such as `$queryRaw<T>` or `sql<T>`, that is trusted without being checked against the query. Prisma ORM's TypedSQL and MikroORM's Kysely integration go further by deriving the types for you.
+- **Raw SQL**: the TypeScript compiler can't check a SQL string against your database. A result typed `unknown` makes you narrow or validate the rows before you use them, while `any` turns off checking for everything that touches the result. The raw query methods of every library tested also accept a type argument, such as `$queryRaw<T>`, `sql<T>` or `knex.raw<T>`, that is trusted without being checked against the query. Prisma ORM's TypedSQL and MikroORM's Kysely integration go further by deriving the types for you.
 
 ## Prisma ORM
 
-In Prisma ORM, you define models in a Prisma schema file, and a generate step writes a client with types for that schema into your project. The client's methods take plain objects, and their return types are computed from the objects you pass, which is how `select` and `include` change the result type. Because the types are generated, you rerun the generate step after changing the schema.
+In Prisma ORM 7, you define models in a Prisma schema file, and a generate step writes a client with types for that schema into your project. The client's methods take plain objects, and their return types are computed from the objects you pass, which is how `select` and `include` change the result type. Because the types are generated, you rerun the generate step after changing the schema.
 
 ```prisma
 model User {
@@ -154,7 +164,7 @@ model Post {
 }
 ```
 
-All six checks were caught:
+All six pass/fail checks were caught:
 
 ```typescript
 await prisma.user.findMany({ where: { emial: 'alice@example.com' } })
@@ -174,26 +184,18 @@ withoutPosts.posts
 
 A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
 
-For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project. To do that, the generate step connects to a database that has your schema, so it needs one available when you generate. For this query file:
-
-```sql
--- @param {String} $1:domain
-SELECT id, email, name FROM "User" WHERE email LIKE '%@' || $1
-```
-
-the generated function typed both the parameter and the result, including the nullable `name` column:
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project when you run `prisma generate --sql`, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
 
 ```typescript
 const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
 // { id: number; email: string; name: string | null }[]
-
-await prisma.$queryRawTyped(getUserEmails(42))
-// error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 ```
+
+Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For raw SQL, a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data) in the Prisma ORM 8 documentation.
 
 <PrismaOutlinks>
 
-Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Type safety in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/type-safety). To set up a project, follow the [Prisma ORM 7 getting started guide](https://www.prisma.io/docs/v7/getting-started).
+Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Type safety in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/type-safety).
 
 </PrismaOutlinks>
 
@@ -209,7 +211,7 @@ export const users = pgTable('users', {
 })
 ```
 
-Drizzle has two query APIs: a SQL-like one (`db.select().from(users)`) and a relational one (`db.query.users.findMany()`). All six checks were caught, in both APIs where a check applies to both:
+Drizzle has two query APIs: a SQL-like one (`db.select().from(users)`) and a relational one (`db.query.users.findMany()`). All six pass/fail checks were caught, in both APIs where a check applies to both:
 
 ```typescript
 await db.select().from(users).where(eq(users.emial, 'alice@example.com'))
@@ -241,7 +243,7 @@ interface Database {
 }
 ```
 
-`Generated<>` marks columns that the database fills in, so they're optional on insert. All six checks were caught:
+`Generated<>` marks columns that the database fills in, so they're optional on insert. All six pass/fail checks were caught:
 
 ```typescript
 await db.selectFrom('users').selectAll().where('emial', '=', 'alice@example.com').execute()
@@ -327,7 +329,7 @@ export class Mismatched {
 }
 ```
 
-For raw SQL, `dataSource.query()` returns `Promise<any>`, and the query builder's `getRawMany()` returns `any[]`. See TypeORM's documentation on [find options](https://typeorm.io/docs/working-with-entity-manager/find-options) and the [select query builder](https://typeorm.io/docs/query-builder/select-query-builder).
+For raw SQL, `dataSource.query()` returns `Promise<any>`, and the query builder's `getRawMany()` returns `any[]`. The `QueryBuilder` conditions shown above are SQL fragments too, so, like raw SQL in every library, they aren't checked. See TypeORM's documentation on [find options](https://typeorm.io/docs/working-with-entity-manager/find-options) and the [select query builder](https://typeorm.io/docs/query-builder/select-query-builder).
 
 ## Sequelize
 
@@ -363,7 +365,17 @@ await User.findAll({ attributes: ['id', 'emial'] })
 await User.findOne({ include: [{ model: Post, as: 'postz' }] })
 ```
 
-At runtime, `subset[0].name` was `undefined`, the misspelled attribute failed with `column "emial" does not exist`, and the misspelled alias threw an `EagerLoadingError`. `posts` is typed as optional (`NonAttribute<Post[]> | undefined`) whether or not it was included, which makes you check for `undefined` even after including it. As with TypeORM, a model that declares `name: string` while `init()` sets `allowNull: true` compiles.
+At runtime, `subset[0].name` was `undefined`, the misspelled attribute failed with `column "emial" does not exist`, and the misspelled alias threw an `EagerLoadingError`.
+
+Relations are safer than in TypeORM. Because the documented declaration makes `posts` optional (`NonAttribute<Post[]> | undefined`), reading `posts.length` on a user loaded without its posts doesn't compile:
+
+```typescript
+const withoutPosts = await User.findOne({ rejectOnEmpty: true })
+withoutPosts.posts.length
+// error TS18048: 'withoutPosts.posts' is possibly 'undefined'.
+```
+
+The type doesn't narrow when you include posts, though, so the same check (`posts?.length`) is needed after including them. As with TypeORM, a model that declares `name: string` while `init()` sets `allowNull: true` compiles.
 
 For raw SQL, `sequelize.query()` returns `[unknown[], unknown]`. With `type: QueryTypes.SELECT`, it returns `object[]`, or whatever type argument you pass.
 
@@ -450,19 +462,24 @@ declare module 'knex/types/tables.js' {
 }
 ```
 
-With that declaration, inserts without an `email` and inserts with wrong value types were rejected. A table typed with only its row type, `users: User`, accepted an insert without `email`. Selecting columns narrowed the result type to `Pick<User, 'id' | 'email'>[]`. These compiled:
+With that declaration, inserts without an `email` and inserts with wrong value types were rejected. A table typed with only its row type, `users: User`, accepted an insert without `email`. Selecting columns narrowed the result type to `Pick<User, 'id' | 'email'>[]`.
+
+Knex has no relation model, but joins between declared tables are typed, as long as you select unqualified column names. Table-qualified names, which you need when both tables have a column with the same name, and misspelled names fall back to `any[]` without an error:
 
 ```typescript
-await knex('users').where('emial', 'alice@example.com') // the object form, where({ emial }), is rejected
+await knex('users').join('posts', 'posts.author_id', 'users.id').select('email', 'title')
+// Pick<User & Post, 'email' | 'title'>[]
 
-const joined = await knex('users')
+await knex('users')
   .join('posts', 'posts.author_id', 'users.id')
-  .select('users.id', 'posts.title') // any[]
+  .select('users.email', 'posts.title')
+// any[]
 
-const raw = await knex.raw('SELECT id, email FROM users') // any
+await knex('users').where('emial', 'alice@example.com')
+// compiles; the object form, where({ emial: … }), is rejected
 ```
 
-At runtime, the misspelled column failed with `column "emial" does not exist`. Tables you haven't declared in `Tables` are also typed `any`.
+At runtime, the misspelled column failed with `column "emial" does not exist`. Tables you haven't declared in `Tables` are typed `any`, and so is the result of `knex.raw()`, unless you pass a type argument such as `knex.raw<T>()`, which is trusted without being checked.
 
 ## Libraries that weren't tested
 
@@ -470,9 +487,9 @@ The 2022 version of this article also covered three libraries that weren't teste
 
 ## Conclusion
 
-In these tests, the libraries that compute result types from the query caught the most mistakes. Prisma ORM, Drizzle and Kysely caught all six, and MikroORM caught everything except one way of reading a relation that wasn't loaded. They get there in different ways: Prisma ORM generates types from its own schema language, Drizzle and MikroORM infer them from TypeScript definitions, and Kysely relies on an interface that you write or generate.
+In these tests, the libraries that compute result types from the query caught the most mistakes. Prisma ORM, Drizzle and Kysely caught all six pass/fail checks, and MikroORM caught everything except one way of reading a relation that wasn't loaded. They get there in different ways: Prisma ORM generates types from its own schema language, Drizzle and MikroORM infer them from TypeScript definitions, and Kysely relies on an interface that you write or generate.
 
-Sequelize catches mistakes in writes and filters, but its result types don't follow what a query selected or included. TypeORM and Mongoose accept partial objects on create and return the full model type from queries, so several mistakes in this test compiled and only showed up at runtime, or, in Mongoose's case, as a query that silently matched nothing. Knex's types help once you declare your tables, but joins and raw queries are untyped.
+Sequelize catches mistakes in writes and filters, and its optional relation properties make you check for `undefined` before using them, but its result types don't follow what a query selected or included. TypeORM and Mongoose accept partial objects on create and return the full model type from queries, so several mistakes in this test compiled and only showed up at runtime, or, in Mongoose's case, as a query that silently matched nothing. Knex's types help once you declare your tables, but joins are only typed when you select unqualified column names, and raw queries are typed `any` unless you pass a type yourself.
 
 Across all eight libraries, the raw query escape hatch is the weakest point. Prefer escape hatches that return `unknown`, validate rows before using them, and use a tool that derives types from the query where one is available.
 
