@@ -13,7 +13,77 @@
   --topic-scene: url('../images/topic-themes/prismo-tuple-scene.webp');
 }
 
-.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)),
+.topic-home > section:has(> h2#database-types),
+.top-section[data-topic='types'] {
+  --topic-wash: #f6f3ff;
+  --topic-border: #e2dcef;
+  --topic-scene: url('../images/topic-themes/prismo-types-scene.webp');
+}
+
+.topic-home > section:has(> h2#postgresql),
+.top-section[data-topic='postgresql'] {
+  --topic-wash: #eff7ff;
+  --topic-border: #d8e6f3;
+  --topic-scene: url('../images/topic-themes/prismo-postgresql-scene.webp');
+}
+
+.topic-home > section:has(> h2#mysql),
+.top-section[data-topic='mysql'] {
+  --topic-wash: #fff9ed;
+  --topic-border: #eee3ce;
+  --topic-scene: url('../images/topic-themes/prismo-mysql-scene.webp');
+}
+
+.topic-home > section:has(> h2#sqlite),
+.top-section[data-topic='sqlite'] {
+  --topic-wash: #f3f7fa;
+  --topic-border: #dce5ec;
+  --topic-scene: url('../images/topic-themes/prismo-sqlite-scene.webp');
+}
+
+.topic-home > section:has(> h2#microsoft-sql-server),
+.top-section[data-topic='mssql'] {
+  --topic-wash: #fff3f4;
+  --topic-border: #eedbdf;
+  --topic-scene: url('../images/topic-themes/prismo-mssql-scene.webp');
+}
+
+.topic-home > section:has(> h2#mongodb),
+.top-section[data-topic='mongodb'] {
+  --topic-wash: #f0fbf4;
+  --topic-border: #d7eadf;
+  --topic-scene: url('../images/topic-themes/prismo-mongodb-scene.webp');
+}
+
+.topic-home > section:has(> h2#database-tools),
+.top-section[data-topic='database-tools'] {
+  --topic-wash: #f6f3ff;
+  --topic-border: #e4ddf0;
+  --topic-scene: url('../images/topic-themes/prismo-tools-scene.webp');
+}
+
+.topic-home > section:has(> h2#managing-databases),
+.top-section[data-topic='managing-databases'] {
+  --topic-wash: #effaf8;
+  --topic-border: #d4e9e4;
+  --topic-scene: url('../images/topic-themes/prismo-management-scene.webp');
+}
+
+.topic-home > section:has(> h2#serverless-architecture),
+.top-section[data-topic='serverless'] {
+  --topic-wash: #effbff;
+  --topic-border: #d6eaf3;
+  --topic-scene: url('../images/topic-themes/prismo-serverless-scene.webp');
+}
+
+.topic-home > section:has(> h2#just-for-fun),
+.top-section[data-topic='just-for-fun'] {
+  --topic-wash: #fffbed;
+  --topic-border: #efe7cd;
+  --topic-scene: url('../images/topic-themes/prismo-fun-scene.webp');
+}
+
+.topic-home > section:has(> h2),
 article > section.top-section[data-topic] {
   position: relative;
   isolation: isolate;
@@ -21,7 +91,7 @@ article > section.top-section[data-topic] {
   border-color: var(--topic-border);
 }
 
-.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::before,
+.topic-home > section:has(> h2)::before,
 article > section.top-section[data-topic]::before {
   content: '';
   position: absolute;
@@ -34,13 +104,13 @@ article > section.top-section[data-topic]::before {
   pointer-events: none;
 }
 
-.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > h2,
-.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p,
+.topic-home > section:has(> h2) > h2,
+.topic-home > section:has(> h2) > p,
 article > section.top-section[data-topic] > div:first-child {
   padding-right: 300px;
 }
 
-.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p {
+.topic-home > section:has(> h2) > p {
   min-height: 130px;
 }
 
@@ -49,12 +119,12 @@ article > section.top-section[data-topic] > div:first-child {
 }
 
 @media (max-width: 767px) {
-  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)),
+  .topic-home > section:has(> h2),
   article > section.top-section[data-topic] {
     padding-top: 180px;
   }
 
-  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::before,
+  .topic-home > section:has(> h2)::before,
   article > section.top-section[data-topic]::before {
     top: 8px;
     right: 16px;
@@ -62,8 +132,8 @@ article > section.top-section[data-topic] > div:first-child {
     height: 160px;
   }
 
-  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > h2,
-  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p,
+  .topic-home > section:has(> h2) > h2,
+  .topic-home > section:has(> h2) > p,
   article > section.top-section[data-topic] > div:first-child {
     padding-right: 0;
     min-height: 0;

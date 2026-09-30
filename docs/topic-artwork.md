@@ -17,7 +17,113 @@ References: the brand kit's [salute](https://www.prisma.io/brand-kit/mascot/salu
 topic diagrams. The generated modeling scene was also a style reference for the introduction
 scene. These are decorative illustrations, not executable examples or precise schema diagrams.
 
-## Generation prompts
+## Remaining sections
+
+The ten additional scenes use the approved tuple and database illustrations as character
+and style references. They are generated with the same built-in tool and saved alongside
+the first two assets as transparent WebP files.
+
+| Topic                   | Saved asset                                            | Scene                                                                                                                                                                                                    |
+| ----------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Database types          | `src/images/topic-themes/prismo-types-scene.webp`      | Prismo compares three different ways to organize data.                                                                                                                                                   |
+| PostgreSQL              | `src/images/topic-themes/prismo-postgresql-scene.webp` | Prismo leans toward a blue frosted relational table panel, using a handheld magnifying glass to inspect a highlighted cell.                                                                              |
+| MySQL                   | `src/images/topic-themes/prismo-mysql-scene.webp`      | Prismo actively filters rows from a relational database: one hand guides a small horizontal row strip toward a translucent funnel, the other receives a matching highlighted row from the narrow output. |
+| SQLite                  | `src/images/topic-themes/prismo-sqlite-scene.webp`     | Prismo slides a thin compact database-file tile into a small open laptop.                                                                                                                                |
+| Microsoft SQL Server    | `src/images/topic-themes/prismo-mssql-scene.webp`      | Prismo carefully slides a rectangular relational-table module into an open bay of a small organized server cabinet.                                                                                      |
+| MongoDB                 | `src/images/topic-themes/prismo-mongodb-scene.webp`    | Prismo organizes flexible document records into a translucent collection tray.                                                                                                                           |
+| Database tools          | `src/images/topic-themes/prismo-tools-scene.webp`      | Prismo uses a small chrome wrench to tighten a connection between a frosted database cylinder and a simple upright application panel showing a tiny data grid.                                           |
+| Managing databases      | `src/images/topic-themes/prismo-management-scene.webp` | Prismo checks and maintains a database while making a backup.                                                                                                                                            |
+| Serverless architecture | `src/images/topic-themes/prismo-serverless-scene.webp` | Prismo assembles a small cloud data workflow.                                                                                                                                                            |
+| Just for fun            | `src/images/topic-themes/prismo-fun-scene.webp`        | Prismo playfully explores interesting data: it is arranging three colorful frosted bar-chart blocks on a tiny podium while inspecting a small translucent globe with abstract continent silhouettes.     |
+
+### Shared prompt
+
+For each additional scene, the exact submitted prompt consists of the following shared
+text, followed by `Topic: <title>.` and `Scene: <scene description>` from the entries below.
+
+```text
+Use case: stylized-concept.
+Asset type: decorative topic-card and article-header illustration for Prisma's Data Guide.
+Input images: the two images are ONLY references for the approved visual world and character identity. Make a new scene; do not reuse or paste the reference poses.
+Style: match the references' refined softly lit 3D editorial miniature. One round chrome Prismo head on its small pedestal base, exactly two articulated chrome hands, expressive dark eyes, recognizable horizontal visor bands in cyan, yellow, coral order. Brushed silver and translucent frosted glass, rounded readable geometry, soft consistent studio lighting, subtle contact shadows, fine sparse isometric floor grid fading away.
+Composition: compact landscape 4:3 isolated vignette. Prismo at left in three-quarter view actively looking at and handling the topic objects on the right. The objects occupy slightly more space than the character. Make the action obvious at 300px wide. Entire character and all main objects inside the frame with modest transparent margins. Robot and objects share the same perspective, material treatment and lighting as one cohesive scene.
+Palette: restrained Prisma cyan #01D7E4, yellow #F3C306 and coral #F34A60 accents; preserve visor colors. Follow the topic-specific subtle reflection color below.
+Constraints: genuinely transparent background, no rectangular background or large opaque ground plane. No text, letters, numbers, captions, brand logos or watermarks. Exactly one robot. No face looking at viewer, no salute or hand-on-chin pose, no disembodied extra hands. No photographic scenery or unnecessary props. These are decorative topic metaphors, not literal schema or architecture specifications.
+```
+
+### Topic-specific prompt endings
+
+#### Database types
+
+```text
+Topic: Database types.
+Scene: Prismo compares three different ways to organize data. Three small frosted pedestals hold an upright table grid, a document card with nested colored blocks, and a branching graph of four connected spheres. Prismo holds one small data tile between its hands, studying which pedestal to place it on. Keep all three structures recognizable and balanced; the scene conveys choosing among database types. Pale violet reflections.
+```
+
+#### PostgreSQL
+
+```text
+Topic: PostgreSQL.
+Scene: Prismo leans toward a blue frosted relational table panel, using a handheld magnifying glass to inspect a highlighted cell. Its other hand traces a thin link from that row to a second smaller table beside a compact database cylinder. The magnifier should visibly enlarge the cell shape, without text. Convey exploring queries and relationships, with cool blue reflections. No elephant or vendor logo.
+```
+
+#### MySQL
+
+```text
+Topic: MySQL.
+Scene: Prismo actively filters rows from a relational database: one hand guides a small horizontal row strip toward a translucent funnel, the other receives a matching highlighted row from the narrow output. Three small rows are visible entering the wide funnel, one neatly organized row exits toward a compact frosted database cylinder. Clearly show filtering and selecting data, keep the funnel and output row large and simple. Pale amber reflections. No dolphin or vendor logo.
+```
+
+#### SQLite
+
+```text
+Topic: SQLite.
+Scene: Prismo slides a thin compact database-file tile into a small open laptop. The tile has a tiny embossed stack-of-disks symbol but no lettering. One hand inserts the tile into the laptop's side slot, the other rests lightly on the laptop keyboard. The laptop screen shows a simple 3-column table with a few colored cells and no text. Convey a self-contained database in a local device, with cool silver-blue reflections. No vendor logo.
+```
+
+#### Microsoft SQL Server
+
+```text
+Topic: Microsoft SQL Server.
+Scene: Prismo carefully slides a rectangular relational-table module into an open bay of a small organized server cabinet. The module's front shows a clear 3-column grid with tiny colored cells; the cabinet has three rounded stacked horizontal bays and discreet cyan indicator lights. One hand pushes the module, the other steadies the cabinet. Convey structured data in a server system. Pale coral reflections. No Microsoft logo or Windows symbol.
+```
+
+#### MongoDB
+
+```text
+Topic: MongoDB.
+Scene: Prismo organizes flexible document records into a translucent collection tray. It holds a rounded upright document card containing three differently sized nested colored blocks, placing it among two other document cards with visibly different internal block arrangements. The other hand steadies the tray. Add one tiny branching connector linking two nested blocks to suggest document structure. Clear document silhouettes, no table grid. Soft pale green reflections. No leaf vendor logo.
+```
+
+#### Database tools
+
+```text
+Topic: Database tools.
+Scene: Prismo uses a small chrome wrench to tighten a connection between a frosted database cylinder and a simple upright application panel showing a tiny data grid. Its other hand holds the cylindrical connector steady; a short curved translucent cable joins the two objects. The wrench, connector and active hands are the focus. Convey tools that help applications work with databases. Soft lilac reflections, no text or vendor logos.
+```
+
+#### Managing databases
+
+```text
+Topic: Managing databases.
+Scene: Prismo checks and maintains a database while making a backup. It holds a small inspection probe against a large frosted database stack; its other hand guides a data tile along a short curved transfer path toward a smaller matching backup stack. A simple small clock dial behind the backup has hands and tick marks but no numbers. Convey care, monitoring and backups rather than emergency repair. Pale mint reflections. No padlock claims, labels or vendor logos.
+```
+
+#### Serverless architecture
+
+```text
+Topic: Serverless architecture.
+Scene: Prismo assembles a small cloud data workflow. A soft frosted-glass cloud on the right cradles a tiny database cylinder. Two small rounded function tiles connect to it with a single curved line; each tile has only a simple abstract lightning glyph, no code or lettering. Prismo's hands snap the nearer function tile onto the connection, looking at the join. Keep cloud and hands large and clear. Pale sky-cyan reflections, no server rack or vendor logos.
+```
+
+#### Just for fun
+
+```text
+Topic: Just for fun.
+Scene: Prismo playfully explores interesting data: it is arranging three colorful frosted bar-chart blocks on a tiny podium while inspecting a small translucent globe with abstract continent silhouettes. One hand lifts the shortest chart bar into place, the other gently turns the globe on its stand. The curious happy expression and tactile chart should feel like a small data experiment. Soft pale yellow reflections. No text, numeric scales, flags or specific geographic data claims.
+```
+
+## Generation prompts for the first two scenes
 
 ### Data modeling
 

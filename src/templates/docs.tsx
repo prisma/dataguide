@@ -23,6 +23,21 @@ type ArticleLayoutProps = ArticleQueryData &
   Pick<PageProps, 'location'> &
   CreatePageContext & { children?: React.ReactNode }
 
+const themedTopics = new Set([
+  'intro',
+  'datamodeling',
+  'types',
+  'postgresql',
+  'mysql',
+  'sqlite',
+  'mssql',
+  'mongodb',
+  'database-tools',
+  'managing-databases',
+  'serverless',
+  'just-for-fun',
+])
+
 const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   if (!data) {
     return null
@@ -41,7 +56,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
 
   const isHomePage = slug === '/'
   const topic = urlGenerator(modSlug).split('/')[1]
-  const themedTopic = topic === 'intro' || topic === 'datamodeling' ? topic : undefined
+  const themedTopic = themedTopics.has(topic) ? topic : undefined
   const tocItems = toc || toc == null ? tableOfContents?.items : undefined
 
   return (
