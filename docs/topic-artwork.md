@@ -287,6 +287,10 @@ the webpage's share control is omitted from the preview image.
 
 The renderer reads `src/styles/topic-themes.css` and checks it against `THEMED_TOPICS`,
 so future sections added through the workflow above also get matching sharing cards.
+It also reads `--ink`, `--accent`, `--surface`, and `--page-bg` from the `:root` tokens
+in `src/styles/layout.css`, so headline/footer ink, topic labels, and neutral surfaces
+follow the site's palette. Missing tokens or values other than six-digit hex colors
+fail the build explicitly. Update the parser if the site's token format changes.
 There is no second artwork/color registry to maintain. A missing theme or a title
 that cannot fit fails the build instead of publishing a broken or truncated card.
 Long titles wrap and reduce in size, down to 32px. Short titles (up to 30 characters)

@@ -1,5 +1,10 @@
 import siteConfig from './config'
-import { loadCardThemes, writeSocialCard, pruneSocialCards } from './src/utils/socialCards'
+import {
+  loadCardThemes,
+  loadCardPalette,
+  writeSocialCard,
+  pruneSocialCards,
+} from './src/utils/socialCards'
 import { getThemedTopic } from './src/utils/topicThemes'
 import type { SocialImage } from './src/utils/socialMetadata'
 
@@ -90,6 +95,7 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
 
   const root = process.cwd()
   const cardThemes = await loadCardThemes(root)
+  const cardPalette = await loadCardPalette(root)
   const pagePath = (node: any) => node.fields.modSlug.replace(/\d{2,}-/g, '') || '/'
   const topicTitles = new Map<string, string>(
     posts.map((node: any) => [pagePath(node), node.frontmatter.title])
@@ -112,6 +118,7 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
         {
           root,
           theme,
+          palette: cardPalette,
           title: pathname === '/' ? "Prisma's Data Guide" : node.frontmatter.title,
           topicTitle,
         },

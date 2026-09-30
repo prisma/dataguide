@@ -13,6 +13,29 @@ export interface CardTheme {
   scene: string
 }
 
+export interface CardPalette {
+  ink: string
+  accent: string
+  surface: string
+  pageBackground: string
+}
+
+export const loadCardPalette = async (root: string): Promise<CardPalette> => {
+  const css = await readFile(path.join(root, 'src/styles/layout.css'), 'utf8')
+  const tokens = css.match(/:root\s*\{([^}]+)\}/)?.[1] || ''
+  const color = (name: string) => {
+    const value = tokens.match(new RegExp(`--${name}:\\s*(#[0-9a-f]{6})\\s*;`, 'i'))?.[1]
+    if (!value) throw new Error(`Missing or invalid social card color token: --${name}`)
+    return value
+  }
+  return {
+    ink: color('ink'),
+    accent: color('accent'),
+    surface: color('surface'),
+    pageBackground: color('page-bg'),
+  }
+}
+
 export const loadCardThemes = async (root: string): Promise<Map<string, CardTheme>> => {
   const cssPath = path.join(root, 'src/styles/topic-themes.css')
   const css = await readFile(cssPath, 'utf8')
@@ -36,17 +59,19 @@ export const renderSocialCard = async ({
   title,
   topicTitle,
   theme,
+  palette,
   root,
 }: {
   title: string
   topicTitle: string
   theme: CardTheme
+  palette: CardPalette
   root: string
 }) => {
   const fontfile = path.join(root, 'src/fonts/Sora.ttf')
   let headline: Awaited<ReturnType<typeof textImage>> | undefined
   for (let size = 64; size >= 32; size -= 2) {
-    const candidate = await textImage(title, size, '#141414', 640, fontfile)
+    const candidate = await textImage(title, size, palette.ink, 640, fontfile)
     if (
       candidate.info.height <= 296 &&
       candidate.info.width <= 640 &&
@@ -57,10 +82,10 @@ export const renderSocialCard = async ({
     }
   }
   if (!headline) throw new Error(`Social card title does not fit: ${title}`)
-  const label = await textImage(topicTitle, 24, '#5639ef', 640, fontfile)
+  const label = await textImage(topicTitle, 24, palette.accent, 640, fontfile)
   if (label.info.height > 68 || label.info.width > 640)
     throw new Error(`Social card topic label does not fit: ${topicTitle}`)
-  const footer = await textImage('Prisma / dataguide', 23, '#141414', 480, fontfile)
+  const footer = await textImage('Prisma / dataguide', 23, palette.ink, 480, fontfile)
   const artwork = await sharp(theme.scene).resize(420, 315, { fit: 'contain' }).png().toBuffer()
   const logo = await sharp(path.join(root, 'src/images/favicon.svg'))
     .resize(34, 34)
@@ -68,9 +93,9 @@ export const renderSocialCard = async ({
     .toBuffer()
   const background = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
     <defs><linearGradient id="wash" x1="0" y1="0" x2="1" y2="0.5">
-      <stop offset="25%" stop-color="#ffffff"/><stop offset="100%" stop-color="${theme.wash}"/>
+      <stop offset="25%" stop-color="${palette.surface}"/><stop offset="100%" stop-color="${theme.wash}"/>
     </linearGradient></defs>
-    <rect width="1200" height="630" fill="#f9faf5"/>
+    <rect width="1200" height="630" fill="${palette.pageBackground}"/>
     <rect x="1" y="1" width="1198" height="628" rx="30" fill="url(#wash)" stroke="${theme.border}" stroke-width="2"/>
   </svg>`)
   return sharp(background)
@@ -81,7 +106,7 @@ export const renderSocialCard = async ({
       { input: logo, left: 72, top: 535 },
       { input: footer.data, left: 122, top: 541 },
     ])
-    .flatten({ background: '#f9faf5' })
+    .flatten({ background: palette.pageBackground })
     .removeAlpha()
     .png({ compressionLevel: 9 })
     .toBuffer()

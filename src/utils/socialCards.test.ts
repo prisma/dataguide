@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, readdir, unlink, rmdir, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, readdir, unlink, rmdir, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,6 +8,7 @@ import sharp from 'sharp'
 import { THEMED_TOPICS } from './topicThemes.ts'
 import {
   loadCardThemes,
+  loadCardPalette,
   renderSocialCard,
   writeSocialCard,
   pruneSocialCards,
@@ -26,8 +27,55 @@ test('social cards reuse all registered CSS themes and valid transparent artwork
   }
 })
 
+test('CSS palette changes reach headline, label, footer, and background pixels', async () => {
+  const fixture = await mkdtemp(path.join(tmpdir(), 'dataguide-social-palette-'))
+  const styles = path.join(fixture, 'src/styles')
+  const cssPath = path.join(styles, 'layout.css')
+  const css = ':root { --ink: #912345; --accent: #087654; --surface: #fffaf0; --page-bg: #e4e5e6; }'
+  try {
+    await mkdir(styles, { recursive: true })
+    await writeFile(cssPath, css)
+    const palette = await loadCardPalette(fixture)
+    const themes = await loadCardThemes(root)
+    const png = await renderSocialCard({
+      root,
+      palette,
+      theme: themes.get('intro')!,
+      title: 'What are databases?',
+      topicTitle: 'Introduction to databases',
+    })
+    for (const [top, left, width, height, rgb] of [
+      [92, 72, 640, 68, [8, 118, 84]],
+      [186, 72, 640, 296, [145, 35, 69]],
+      [541, 122, 480, 40, [145, 35, 69]],
+      [300, 10, 10, 10, [255, 250, 240]],
+      [0, 0, 1, 1, [228, 229, 230]],
+    ] as const) {
+      const { data, info } = await sharp(png)
+        .extract({ top, left, width, height })
+        .raw()
+        .toBuffer({ resolveWithObject: true })
+      let matches = 0
+      for (let i = 0; i < data.length; i += info.channels) {
+        if (rgb.every((value, channel) => data[i + channel] === value)) matches++
+      }
+      assert.ok(matches > 0, `Expected CSS token color ${rgb} in region at ${left},${top}`)
+    }
+    await writeFile(cssPath, css.replace('--ink: #912345;', '--ink: var(--unknown);'))
+    await assert.rejects(loadCardPalette(fixture), /Missing or invalid.*--ink/)
+    await writeFile(cssPath, css.replace('--accent: #087654;', ''))
+    await assert.rejects(loadCardPalette(fixture), /Missing or invalid.*--accent/)
+  } finally {
+    await unlink(cssPath)
+    await rmdir(styles)
+    await rmdir(path.join(fixture, 'src'))
+    await rmdir(fixture)
+  }
+})
+
 test('punctuation and long article titles render into opaque, full-sized PNGs', async () => {
   const themes = await loadCardThemes(root)
+  const palette = await loadCardPalette(root)
   for (const title of [
     'What are databases?',
     'Comparing database types: how database types evolved to meet different needs',
@@ -35,6 +83,7 @@ test('punctuation and long article titles render into opaque, full-sized PNGs', 
   ]) {
     const png = await renderSocialCard({
       root,
+      palette,
       theme: themes.get('intro')!,
       title,
       topicTitle: 'Introduction to databases',
@@ -50,8 +99,10 @@ test('punctuation and long article titles render into opaque, full-sized PNGs', 
 
 test('short headlines stay on one line regardless of the build host font DPI', async () => {
   const themes = await loadCardThemes(root)
+  const palette = await loadCardPalette(root)
   const png = await renderSocialCard({
     root,
+    palette,
     theme: themes.get('intro')!,
     title: 'What are databases?',
     topicTitle: 'Introduction to databases',
@@ -80,6 +131,7 @@ test('content-addressed files and metadata stay in sync when a title or theme ch
     const themes = await loadCardThemes(root)
     const options = {
       root,
+      palette: await loadCardPalette(root),
       theme: themes.get('intro')!,
       title: 'What are databases?',
       topicTitle: 'Introduction to databases',
@@ -105,6 +157,15 @@ test('content-addressed files and metadata stay in sync when a title or theme ch
       (await writeSocialCard({ ...options, theme: themes.get('mysql')! }, output)).url,
       image.url
     )
+    assert.notEqual(
+      (
+        await writeSocialCard(
+          { ...options, palette: { ...options.palette, ink: '#912345' } },
+          output
+        )
+      ).url,
+      image.url
+    )
   } finally {
     // Only the disposable directory created by this test is removed.
     for (const file of await readdir(output)) await unlink(path.join(output, file))
@@ -118,6 +179,7 @@ test('rebuild cleanup removes obsolete cards while preserving active cards and u
     const themes = await loadCardThemes(root)
     const options = {
       root,
+      palette: await loadCardPalette(root),
       theme: themes.get('intro')!,
       title: 'What are databases?',
       topicTitle: 'Introduction to databases',
