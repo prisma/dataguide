@@ -121,6 +121,8 @@ let plugins: any = [
     options: {
       name: 'images',
       path: `${__dirname}/src/images/`,
+      // The section artwork's generator and its notes live next to the SVGs; they aren't pages
+      ignore: ['**/*.md', '**/*.py'],
     },
     __key: 'images',
   },

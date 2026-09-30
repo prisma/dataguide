@@ -91,6 +91,10 @@ const MaxWidth = styled.article<{ $noIndex: boolean }>`
         > p:first-of-type {
           padding-right: var(--art-space);
         }
+        /* On the homepage, the links below a short intro start where the artwork has faded out */
+        &:has(> .section-art[data-variant='card']) > p:first-of-type {
+          min-height: 84px;
+        }
         h1,
         nav[aria-label='Breadcrumb'] {
           padding-right: var(--art-space-page);
@@ -101,15 +105,9 @@ const MaxWidth = styled.article<{ $noIndex: boolean }>`
         }
       }
     }
-    /* Room for each theme's scene (its width at the sizes set in sectionArt.tsx, plus a gap) */
-    &:has(> .section-art[data-theme='intro']) {
-      --art-space: 200px;
-      --art-space-page: 170px;
-    }
-    &:has(> .section-art[data-theme='datamodeling']) {
-      --art-space: 250px;
-      --art-space-page: 210px;
-    }
+    /* Room for the artwork's frame (see sectionArt.tsx), less the card's padding, plus a gap */
+    --art-space: 240px;
+    --art-space-page: 200px;
   }
 `
 
