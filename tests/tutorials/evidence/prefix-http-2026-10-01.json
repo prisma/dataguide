@@ -1,0 +1,390 @@
+{
+  "checkedAt": "2026-09-30T19:59:38.423Z",
+  "base": "http://127.0.0.1:8917/dataguide",
+  "expectedRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626",
+  "results": [
+    {
+      "route": "/",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide",
+          "status": 301,
+          "location": "/dataguide/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "Intro, Data Modeling, Databases | Prisma&#x27;s Data Guide",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/setting-up-a-local-postgresql-database",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/setting-up-a-local-postgresql-database",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/setting-up-a-local-postgresql-database/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/setting-up-a-local-postgresql-database",
+          "status": 301,
+          "location": "/dataguide/postgresql/setting-up-a-local-postgresql-database/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/setting-up-a-local-postgresql-database/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "Set up a local PostgreSQL database with Docker, Linux, macOS or Windows",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/introduction-to-data-types",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/introduction-to-data-types",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/introduction-to-data-types/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/introduction-to-data-types",
+          "status": 301,
+          "location": "/dataguide/postgresql/introduction-to-data-types/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/introduction-to-data-types/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "PostgreSQL Data Types - Numeric, Text, and More",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/introduction-to-data-types",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/date-types",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types",
+          "status": 301,
+          "location": "/dataguide/postgresql/date-types/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "PostgreSQL Date Types - Format, Functions, and More",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/connecting-to-postgresql-databases",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/connecting-to-postgresql-databases",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/connecting-to-postgresql-databases/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/connecting-to-postgresql-databases",
+          "status": 301,
+          "location": "/dataguide/postgresql/connecting-to-postgresql-databases/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/connecting-to-postgresql-databases/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "Connecting to PostgreSQL databases | Prisma&#x27;s Data Guide",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/short-guides/connection-uris",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/short-guides/connection-uris",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/short-guides/connection-uris/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/short-guides/connection-uris",
+          "status": 301,
+          "location": "/dataguide/postgresql/short-guides/connection-uris/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/short-guides/connection-uris/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "Understanding connection URI strings in PostgreSQL",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/intro/database-glossary",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/intro/database-glossary",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/intro/database-glossary/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/intro/database-glossary",
+          "status": 301,
+          "location": "/dataguide/intro/database-glossary/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/intro/database-glossary/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "Database glossary | Prisma&#x27;s Data Guide",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/intro/database-glossary",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/date-types/",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "PostgreSQL Date Types - Format, Functions, and More",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/postgresql/date-types#get-the-interval-between-two-dates",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types#get-the-interval-between-two-dates",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types#get-the-interval-between-two-dates",
+          "status": 301,
+          "location": "/dataguide/postgresql/date-types/"
+        },
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types/",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": "PostgreSQL Date Types - Format, Functions, and More",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626",
+      "anchorExists": true
+    },
+    {
+      "route": "/postgresql/date-types.md",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types.md",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/postgresql/date-types.md",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/postgresql/date-types.md",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": null,
+      "representationError": null,
+      "contentType": "text/markdown; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/llms.txt",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/llms.txt",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/llms.txt",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/llms.txt",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": null,
+      "representationError": null,
+      "contentType": "text/plain; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/sitemap/sitemap-index.xml",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/sitemap/sitemap-index.xml",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/sitemap/sitemap-index.xml",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/sitemap/sitemap-index.xml",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": null,
+      "representationError": null,
+      "contentType": "application/xml",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/content-manifest.json",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/content-manifest.json",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/content-manifest.json",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/content-manifest.json",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "documentTitle": null,
+      "representationError": null,
+      "contentType": "application/json; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626"
+    },
+    {
+      "route": "/definitely-missing-review-route-91f6",
+      "requestedUrl": "http://127.0.0.1:8917/dataguide/definitely-missing-review-route-91f6",
+      "finalUrl": "http://127.0.0.1:8917/dataguide/definitely-missing-review-route-91f6",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/dataguide/definitely-missing-review-route-91f6",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "documentTitle": "Page not found | Prisma&#x27;s Data Guide",
+      "representationError": null,
+      "contentType": "text/html; charset=UTF-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": "noindex",
+      "contentRevision": null
+    },
+    {
+      "route": "/robots.txt (origin)",
+      "requestedUrl": "http://127.0.0.1:8917/robots.txt",
+      "finalUrl": "http://127.0.0.1:8917/robots.txt",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/robots.txt",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "documentTitle": "Error",
+      "representationError": null,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null,
+      "robotsPolicy": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /robots.txt</pre>\n</body>\n</html>\n"
+    }
+  ],
+  "formerDocs": [],
+  "failures": [
+    {
+      "route": "/robots.txt (origin)",
+      "requestedUrl": "http://127.0.0.1:8917/robots.txt",
+      "finalUrl": "http://127.0.0.1:8917/robots.txt",
+      "chain": [
+        {
+          "url": "http://127.0.0.1:8917/robots.txt",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "documentTitle": "Error",
+      "representationError": null,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null,
+      "robotsPolicy": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /robots.txt</pre>\n</body>\n</html>\n"
+    }
+  ],
+  "scope": "HTTP status, redirects, indexing signals, canonical, one retained anchor and revision. Robots content is retained for policy review; network errors remain inconclusive."
+}

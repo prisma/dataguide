@@ -38,4 +38,6 @@ jobs:
       - run: npm run typecheck
 
       - name: Build
+        env:
+          ADD_PREFIX: 'true'
         run: npm run build

@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-09-30T19:59:38.784Z",
+  "base": "http://127.0.0.1:8917/dataguide",
+  "scope": "New comparison at deployment prefix, mobile layout, automated axe tags, command copy and report navigation",
+  "contentRevision": "9c8eca770603c55702af45f023a3a82e2bdcac6e1d4e25405398d0d76fa60626",
+  "verification": "Verification: New independent reproduction of seven checks across eight pinned stable libraries: three compiler versions, unsuppressed diagnostics, exact result-type assertions and disposable PostgreSQL/MongoDB runtime controls. Preview versions and TypedSQL excluded. (Node.js 24.18.0, PostgreSQL 18.6, MongoDB 8.0.32, TypeScript 7.0.2 / 6.0.3 / 5.9.3, Prisma ORM 7.10.0, Drizzle 0.45.3, Kysely 0.29.6, TypeORM 1.1.1, Sequelize 6.37.8, MikroORM 7.2.3, Mongoose 9.10.3, Knex 3.3.0). Reviewed 2026-10-01.",
+  "audit": {
+    "violations": [],
+    "passes": 31,
+    "width": 390,
+    "scrollWidth": 390
+  },
+  "copiedCommand": "npm run test:orms\n",
+  "reportHref": "/dataguide/experiments/orm-comparison-2026-10-01.json",
+  "pageResourceFailures": [
+    {
+      "url": "https://www.googletagmanager.com/gtm.js?id=GTM-KCGZPWB",
+      "error": {
+        "errorText": "net::ERR_BLOCKED_BY_ORB"
+      }
+    }
+  ],
+  "download": {
+    "url": "http://127.0.0.1:8917/dataguide/experiments/orm-comparison-2026-10-01.json",
+    "status": 200,
+    "contentType": "application/json; charset=UTF-8",
+    "statusInReport": "passed",
+    "cleanedUp": true,
+    "projects": [
+      {
+        "name": "prisma",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "drizzle",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "kysely",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "typeorm",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "sequelize",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "mikroorm",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "mongoose",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      },
+      {
+        "name": "knex",
+        "status": "passed",
+        "compilers": ["Version 7.0.2", "Version 6.0.3", "Version 5.9.3"]
+      }
+    ]
+  }
+}

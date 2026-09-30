@@ -146,7 +146,7 @@
       "status": "verified-local",
       "outcome": "Pinned disposable PostgreSQL/PgBouncer/reference-app checks plus a separate eight-library compiler/runtime job; weekly and relevant-change triggers retain reports on failure.",
       "evidence": ".github/workflows/tutorials.yml",
-      "remaining": "Database/reference-app job passed hosted checks on 663b9ab; new comparison job must pass the current PR gate before release.",
+      "remaining": "Database/reference-app and new comparison jobs passed hosted checks at 36a95bf; inspect the current PR gates before release.",
       "humanReviewer": null
     },
     {
@@ -180,7 +180,7 @@
       "id": "R20",
       "title": "Publish the comparison experiment, not only its narrative",
       "status": "verified-local",
-      "outcome": "Seven checks independently recreated for all eight stable libraries; TypeScript 7.0.2/6.0.3/5.9.3, unsuppressed diagnostics, asserted result types and disposable runtime controls pass.",
+      "outcome": "Seven checks independently recreated for all eight stable libraries; TypeScript 7.0.2/6.0.3/5.9.3, unsuppressed diagnostics, asserted result types and disposable runtime controls pass. The new hosted comparison job also passed at 36a95bf.",
       "evidence": "static/experiments/orm-comparison-2026-10-01.json",
       "remaining": "Prisma 8, Drizzle 1 and TypedSQL preview results were removed from the grades; later releases need separate runs. Human comparison review pending.",
       "humanReviewer": null
