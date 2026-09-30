@@ -10,11 +10,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+
       - name: Get list of changed files
         id: files
-        uses: Ana06/get-changed-files@v1.2 # it's a fork of jitterbit/get-changed-files@v1 which works better with pull requests
+        uses: Ana06/get-changed-files@a2f6df8c195e713211f9f6258baafc445149355b # v1.2; it's a fork of jitterbit/get-changed-files@v1 which works better with pull requests
       - name: List Vercel Deploy URLs
         id: links
         # Note that this uses `%0A` instead of `\n` because of https://github.com/peter-evans/create-or-update-comment#setting-the-comment-body-from-a-file which I could not get to work here - but this brute force method does.
@@ -46,7 +46,7 @@ jobs:
           echo "::set-output name=body::$body"
 
       - name: Find existing comment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@d2dae40ed151c634e4189471272b57e76ec19ba8 # v1.3.0
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -55,14 +55,14 @@ jobs:
 
       - name: Create comment
         if: steps.fc.outputs.comment-id == ''
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@a35cf36e5301d70b76f316e867e7788a55a31dae # v1.4.5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.links.outputs.body }}
 
       - name: Update comment
         if: steps.fc.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@a35cf36e5301d70b76f316e867e7788a55a31dae # v1.4.5
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: ${{ steps.links.outputs.body }}
