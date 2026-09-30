@@ -227,10 +227,6 @@ const Links = styled.div`
     color: var(--text-muted);
     text-decoration: none;
     overflow-wrap: anywhere;
-    /* The docs' spectrum, with pink and red deepened to keep 4.5:1 contrast for 14px text */
-    background-image: linear-gradient(85deg, #9333ea, #d11a4b, #d62d2d, #d11a4b, #9333ea);
-    background-clip: text;
-    -webkit-background-clip: text;
     transition: color 0.35s;
 
     &:first-child {
@@ -245,8 +241,14 @@ const Links = styled.div`
     &:hover {
       color: var(--text-strong);
     }
+    /* The gradient is only painted behind active entries: behind grey text it would tint the
+       glyph edges on 1x screens. It's the docs' spectrum, with pink and red deepened to keep
+       4.5:1 contrast for 14px text. */
     &[data-active='true'] {
       color: transparent;
+      background-image: linear-gradient(85deg, #9333ea, #d11a4b, #d62d2d, #d11a4b, #9333ea);
+      background-clip: text;
+      -webkit-background-clip: text;
     }
 
     @media (prefers-reduced-motion: reduce) {
