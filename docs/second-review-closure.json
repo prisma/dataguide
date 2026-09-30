@@ -119,7 +119,7 @@
       "status": "verified-local",
       "outcome": "Node 22.18.0 and 24.18.0 tests, type-checking and clean-cache builds; application fixture also runs on both.",
       "evidence": "tests/tutorials/evidence/site-node22-2026-09-30.json",
-      "remaining": "Hosted CI pending; runtime support does not validate unreviewed articles.",
+      "remaining": "Hosted site builds passed for 4c5e1ec; check the current PR gates separately. Runtime support does not validate unreviewed articles.",
       "humanReviewer": null
     },
     {
@@ -144,7 +144,7 @@
       "id": "R16",
       "title": "Add database tutorial execution to CI",
       "status": "verified-local",
-      "outcome": "Pinned disposable tutorial/application execution on changes and weekly; reports retained, no production DB secrets.",
+      "outcome": "Pinned disposable PostgreSQL/PgBouncer fixtures with actual CI success and retained reports; weekly schedule and relevant-change triggers.",
       "evidence": ".github/workflows/tutorials.yml",
       "remaining": "Hosted workflow execution pending; implemented scope is PostgreSQL/reference app.",
       "humanReviewer": null
@@ -317,7 +317,7 @@
       "status": "external-needed",
       "outcome": "Production HTTP/redirect/canonical/robots/anchor observations retained; local branch representations and unknown-route 404 pass.",
       "evidence": "tests/tutorials/evidence/production-http-2026-09-30.json",
-      "remaining": "Production date Markdown is 404; new manifest not deployed. Need preview and final committed deployment checks/routing owner.",
+      "remaining": "Production date Markdown is 404. Preview 4c5e1ec serves a failed-deployment placeholder with HTTP 200; Prisma-team logs are inaccessible to the signed-in CLI. Final deployment/routing verification remains blocked.",
       "humanReviewer": null
     },
     {

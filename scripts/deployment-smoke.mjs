@@ -40,6 +40,22 @@ const inspect = async (url) => {
       continue
     }
     const body = await response.text()
+    const documentTitle = body.match(/<title[^>]*>(.*?)<\/title>/is)?.[1] || null
+    const unavailable = documentTitle === 'Deployment has failed'
+    let manifestRevision = null
+    let representationError = null
+    if (url.endsWith('/content-manifest.json') && response.ok && !unavailable) {
+      try {
+        manifestRevision = JSON.parse(body).contentRevision
+      } catch (error) {
+        representationError = error.message
+      }
+    }
+    if (
+      /(?:\.md|llms\.txt|sitemap[^/]*\.xml)$/.test(new URL(url).pathname) &&
+      response.headers.get('content-type')?.includes('text/html')
+    )
+      representationError = 'Received HTML for a Markdown, llms or sitemap representation'
     const fragment = new URL(chain[0].url).hash.slice(1)
     const attribute = (tag, key) =>
       tag?.match(new RegExp(`\\b${key}=["']([^"']+)["']`, 'i'))?.[1] || null
@@ -55,6 +71,9 @@ const inspect = async (url) => {
       finalUrl: url,
       chain,
       status: response.status,
+      result: unavailable ? 'unavailable' : undefined,
+      documentTitle,
+      representationError,
       contentType: response.headers.get('content-type'),
       indexingHeader: response.headers.get('x-robots-tag'),
       canonicalHeader: response.headers.get('link'),
@@ -64,9 +83,7 @@ const inspect = async (url) => {
       contentRevision:
         meta('dataguide:content-revision') ||
         body.match(/Content revision: ([^\n]+)/)?.[1] ||
-        (url.endsWith('/content-manifest.json') && response.ok
-          ? JSON.parse(body).contentRevision
-          : null),
+        manifestRevision,
       anchorExists: fragment
         ? [...body.matchAll(/\bid=["']([^"']+)["']/g)].some(
             ([, id]) => id === decodeURIComponent(fragment)
@@ -119,6 +136,8 @@ if (!new URL(root).hostname.match(/^(127\.0\.0\.1|localhost)$/))
 const failures = results.filter(
   (result) =>
     result.result === 'inconclusive' ||
+    result.result === 'unavailable' ||
+    result.representationError ||
     result.anchorExists === false ||
     (result.route.includes('definitely-missing') ? result.status !== 404 : result.status !== 200) ||
     (expectedRevision &&
@@ -140,5 +159,7 @@ const report = {
 mkdirSync('.verification-runs', { recursive: true })
 writeFileSync('.verification-runs/deployment.json', `${JSON.stringify(report, null, 2)}\n`)
 for (const row of results)
-  console.log(`${row.status || row.result} ${row.route} ${row.finalUrl || row.error}`)
+  console.log(
+    `${row.result || (row.representationError ? 'invalid-representation' : row.status)} ${row.route} ${row.finalUrl || row.error}`
+  )
 if (failures.length) process.exitCode = 1

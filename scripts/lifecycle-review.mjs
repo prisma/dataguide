@@ -14,11 +14,9 @@ for (let i = 0; i < sources.length; i += 4)
         try {
           const response = await fetch(source.url, { signal: AbortSignal.timeout(15000) })
           if (!response.ok) throw new Error(`HTTP ${response.status}`)
-          const body = (await response.text())
-            .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '')
-            .replace(/<[^>]+>/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
+          // Hash fetched content as data, without attempting HTML sanitization.
+          // Markup/asset changes can trigger a review; no remote markup is rendered.
+          const body = (await response.text()).replace(/\s+/g, ' ').trim()
           const sha256 = createHash('sha256').update(body).digest('hex')
           return {
             ...source,
