@@ -1,535 +1,481 @@
 ---
-title: 'Top 8 TypeScript ORMs, query builders, & database libraries: evaluating type safety'
-metaTitle: 'Top 8 TypeScript ORMs, Query Builders, Libraries: Evaluate Type Safety'
-metaDescription: 'This article assesses the type safety of popular TypeScript ORMs, query builders, and database libraries.'
-metaImage: '/social/typescript-orms-2022.png'
+title: 'Evaluating type safety in TypeScript ORMs and query builders (2026)'
+metaTitle: 'TypeScript ORM Type Safety, Tested: Prisma, Drizzle, Kysely & More'
+metaDescription: 'We ran the same seven type safety checks against Prisma ORM, Drizzle, Kysely, TypeORM, Sequelize, MikroORM, Mongoose and Knex with strict TypeScript and recorded which mistakes each library catches at compile time.'
+metaImage: '/social/docs-social.png'
+lastUpdated: 2026-09-30
 ---
-
-<StatusNotice title="This evaluation is from February 2022">
-
-The libraries were evaluated with the versions that were current in February 2022, and their TypeScript support has changed since. Check each library's current documentation before relying on these results. This article was first published on October 2, 2020.
-
-</StatusNotice>
 
 ## Introduction
 
-Evaluating the level of type safety a TypeScript ORM provides out-of-the-box can be time consuming. This article briefly assesses the type safety of libraries considered in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries).
+An ORM or query builder sits between your TypeScript code and a database that the compiler can't see. Its type definitions are a promise about what the database accepts and returns. When that promise is accurate, the compiler catches a misspelled column or a missing field before the code runs. When it isn't, you get something worse than no types: code that compiles, looks right, and fails when it runs.
 
-While all of the libraries considered in this article have TypeScript bindings for their API, they vary wildly in the level of type safety they _actually_ provide. Some, like [Waterline](https://waterlinejs.org/), compile without errors but then pass around `any` types liberally, skipping over any sort of type checking. Conversely, others, like [Prisma](https://www.prisma.io/), have full type safety for advanced functions like partial queries that change the shape of return data.
+Every library in this article ships its own TypeScript types, so "does it support TypeScript?" is no longer a useful question. This article asks a narrower one: **which common mistakes does the compiler actually catch?** We modeled the same small schema in eight libraries, wrote the same seven checks as code, and let `tsc` decide. Where a mistake compiled, we also ran it against a throwaway database to see what happened instead.
 
-This article will look at the following:
+This article is published by Prisma, the company behind Prisma ORM, one of the libraries tested; the versions and method are listed in full so that you can reproduce every result.
 
-- **Source**: Are library type definitions officially built-in, or sourced from the [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped) @types repository?
-- **Record Creation:** Are models type-safe and can records be created in a type-safe manner?
-- **Record Fetching**: When fetching data, are objects type-safe, even for partial models and relations?
+For the popularity, release activity and maintenance of these libraries, see the companion article, [Top Node.js ORMs, query builders and database libraries](/database-tools/top-nodejs-orms-query-builders-and-database-libraries). If you're new to the difference between ORMs and query builders, start with [Comparing SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).
 
-This article will assume some familiarity with TypeScript and type safety. To learn more, please consult the official [TypeScript documentation](https://www.typescriptlang.org/docs). It will also assume some familiarity with ORMs and query builders. To learn more about these database tools, please see [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms), also from Prisma's [Data Guide](https://www.prisma.io/dataguide).
+## How the libraries were tested
 
-## Prisma
+### Versions
 
-### Evaluation summary
+Each library was tested at its latest stable release on npm at the end of September 2026:
 
-- **Type definitions**: Built-in
-- **Record creation**: Type-safe
-- **Record fetching**: Type-safe
+| Library     | Version tested | Kind                           | Notes                                                                                       |
+| ----------- | -------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
+| Prisma ORM  | 7.10.0         | ORM with a generated client    | Prisma ORM 8 is a release candidate on npm (`8.0.0-rc.19`) and wasn't tested                |
+| Drizzle ORM | 0.45.3         | ORM and SQL-like query builder | The same checks were repeated on the `1.0.0-rc.4` release candidate, with identical results |
+| Kysely      | 0.29.6         | Query builder                  |                                                                                             |
+| TypeORM     | 1.1.1          | ORM                            |                                                                                             |
+| Sequelize   | 6.37.8         | ORM                            | Sequelize 7 (`@sequelize/core`) is still in alpha (`7.0.0-alpha.48`) and wasn't tested      |
+| MikroORM    | 7.2.2          | ORM                            |                                                                                             |
+| Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                                                                                 |
+| Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                                                                      |
 
-### Overview
+The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the results were identical. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24 against PostgreSQL 18.6 and MongoDB 8.0.11 in local Docker containers.
 
-- [Website](https://www.prisma.io/)
-- [GitHub](https://github.com/prisma/prisma)
-- [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
+### Setup
 
-Prisma differs from most ORMs in that models are not defined in classes but in the _Prisma schema_, the main configuration and data model definition file used by the Prisma toolkit. In the Prisma schema you define your data source, like a PostgreSQL database, and models, like `users` and `posts` and the relations between them. Using this schema, Prisma generates a type-safe _Client_ that exposes a Create-Read-Update-Delete (CRUD) API, which you then use to query your database. This Prisma Client functions as a rich query builder that you can use in your Node.js app to return plain JavaScript objects, not instances of a model class.
+Each library got its own project with exact version pins and this `tsconfig.json`:
 
-### What is Prisma?
+```json
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src"]
+}
+```
 
-Prisma is a newer ORM and has gone through several iterations and redesigns. Its unique, schema-centric architecture stands in contrast to typical ORMs which use Classes to define models. It allows developers to reap some of the rewards of type safety, even in JavaScript Node.js applications. For a deeper dive into Prisma’s type safety, please see [Productive Development With Prisma’s Zero-Cost Type Safety](https://dev.to/prisma/productive-development-with-prisma-s-zero-cost-type-safety-4od2).
+The TypeORM project also set `experimentalDecorators` and `emitDecoratorMetadata`, which its decorators need. [`strict`](https://www.typescriptlang.org/tsconfig/#strict) matters here: without `strictNullChecks`, which it turns on, no library can make you handle a nullable column.
+
+Each project models the same two tables, using the approach the library's documentation recommends for TypeScript:
+
+- `User`: `id` (auto-incremented primary key), `email` (required and unique) and `name` (nullable)
+- `Post`: `id`, `title` (required), `published` (a boolean that defaults to `false`) and `authorId` (a reference to `User`)
+
+In Mongoose, these are two collections, with `Post.author` referencing a user and a virtual `posts` field on `User` for populating a user's posts.
+
+### The seven checks
+
+1. **Missing required field**: create a user without an `email`.
+2. **Wrong value type**: create a post with `published: 'yes'`.
+3. **Misspelled column in a filter**: find users where `emial` equals a value.
+4. **Partial select**: select only `id` and `email`. Does the result type drop `name`?
+5. **Relations**: load a user with its posts. Is `posts` typed, and is it absent from the type when the query didn't load it?
+6. **Nullability**: is `name` typed so that you have to handle `null`?
+7. **Raw SQL**: what type does the library's raw SQL escape hatch return?
+
+### How the test files prove the results
+
+Each line that the compiler should reject is preceded by a [`// @ts-expect-error`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html) comment. If the line compiles anyway, `tsc` reports the comment as unused and fails, so a passing build proves that every expected error happened. Because the comment suppresses any error on the next line, each project was compiled a second time with the comments removed to confirm that each error was the intended one, and each rejected write and filter has a corrected control line next to it that compiles.
+
+Mistakes that the compiler doesn't catch are written without the comment, so the passing build proves that they compile. Result types are pinned with a small helper that only compiles when two types are identical:
+
+```typescript
+type Equals<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false
+function expectType<T extends true>(): void {}
+
+// Compiles only if `subset` is exactly { id: number; email: string }[]
+expectType<Equals<typeof subset, { id: number; email: string }[]>>()
+```
+
+The checks are about compile time. When a mistake compiled, it was also run against the database, and the section on that library says what happened. Nothing in this article about runtime behavior is inferred from types alone.
+
+## Results
+
+Many of the results follow from one design choice, where each library's types come from:
+
+| Library     | You define the model in      | The TypeScript types come from                                |
+| ----------- | ---------------------------- | ------------------------------------------------------------- |
+| Prisma ORM  | A Prisma schema file         | Code generated from the schema                                |
+| Drizzle ORM | TypeScript table definitions | Inferred from the table definitions                           |
+| Kysely      | A `Database` interface       | The interface, written by hand or generated from the database |
+| TypeORM     | Decorated entity classes     | The class property declarations                               |
+| Sequelize   | Model classes and `init()`   | The class property declarations                               |
+| MikroORM    | `defineEntity()`             | Inferred from the entity definition                           |
+| Mongoose    | A `Schema`                   | Inferred from the schema                                      |
+| Knex.js     | A `Tables` interface         | The interface, written by hand                                |
+
+What the compiler caught:
+
+| Library     | 1. Required field | 2. Value type | 3. Filter column | 4. Partial select | 5. Relations | 6. Nullability | 7. Raw SQL returns             |
+| ----------- | ----------------- | ------------- | ---------------- | ----------------- | ------------ | -------------- | ------------------------------ |
+| Prisma ORM  | Caught            | Caught        | Caught           | Caught            | Caught       | Caught         | `unknown`                      |
+| Drizzle ORM | Caught            | Caught        | Caught           | Caught            | Caught       | Caught         | `Record<string, unknown>` rows |
+| Kysely      | Caught            | Caught        | Caught           | Caught            | Caught ¹     | Caught         | `unknown` rows                 |
+| TypeORM     | Not caught        | Caught        | Partial ²        | Not caught        | Not caught   | Partial ³      | `any`                          |
+| Sequelize   | Caught            | Caught        | Caught           | Not caught        | Not caught   | Partial ³      | `unknown[]`                    |
+| MikroORM    | Caught            | Caught        | Caught           | Caught            | Partial ⁴    | Caught ⁵       | Rows with `any` properties     |
+| Mongoose    | Not caught        | Caught        | Not caught       | Not caught        | Not caught   | Caught ⁵       | `any[]` ⁶                      |
+| Knex.js     | Partial ⁷         | Caught        | Partial ⁸        | Caught            | Not caught   | Caught         | `any`                          |
+
+1. Kysely has no relation model. You load posts with a subquery, for example with its `jsonArrayFrom` helper, and the result of that subquery is fully typed and absent from the type when you don't select it.
+2. TypeORM checks the `where` option of its `find` methods, but the conditions you pass to its `QueryBuilder` are SQL strings and aren't checked.
+3. `name` is typed `string | null` because the model class declares it that way. Nothing checks that declaration against the column definition (`nullable: true` in TypeORM, `allowNull: true` in Sequelize), and a model that declares `name: string` for a nullable column compiles.
+4. A populated collection is typed as loaded, its typed accessor `posts.$` doesn't compile unless the collection was populated, and an unpopulated reference only exposes its primary key. But the `posts` collection is present in the type either way, and `posts.getItems()` compiles on a collection that wasn't populated. Calling it at runtime threw an error.
+5. Typed as `string | null | undefined`, because nullable fields are also optional.
+6. MongoDB has no SQL. The escape hatches tested were `aggregate()`, which returns `any[]`, and the underlying MongoDB driver collection, whose documents have `any` properties.
+7. Caught only when you write the table's insert type by hand with `Knex.CompositeTableType`. If you only declare a row type, `insert()` accepts partial rows.
+8. The object form, `where({ emial: … })`, is caught. The column-name form, `where('emial', …)`, isn't.
+
+A few patterns stand out:
+
+- **Writes**: every library rejects a wrong value type. They differ on missing fields: TypeORM's `insert()`, `save()` and `create()` and Mongoose's `create()` accept partial objects, so a missing required field is only reported by the database or by Mongoose's validation at runtime.
+- **Reads**: the result type is where the libraries differ most. Prisma ORM, Drizzle, Kysely and, for most cases, MikroORM compute the result type from the query, so selecting fewer columns or loading a relation changes the type. TypeORM, Sequelize and Mongoose return the full model type whatever the query selected or loaded, so the type can disagree with the value. In these tests, properties typed `string | null` held `undefined`, and a populated reference typed `ObjectId` held a document.
+- **Raw SQL**: the TypeScript compiler can't check a SQL string against your database. A result typed `unknown` makes you narrow or validate the rows before you use them, while `any` turns off checking for everything that touches the result. The raw query methods of every library except Knex (which wasn't tested for this) also accept a type argument, such as `$queryRaw<T>` or `sql<T>`, that is trusted without being checked against the query. Prisma ORM's TypedSQL and MikroORM's Kysely integration go further by deriving the types for you.
+
+## Prisma ORM
+
+In Prisma ORM, you define models in a Prisma schema file, and a generate step writes a client with types for that schema into your project. The client's methods take plain objects, and their return types are computed from the objects you pass, which is how `select` and `include` change the result type. Because the types are generated, you rerun the generate step after changing the schema.
+
+```prisma
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  published Boolean @default(false)
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+```
+
+All six checks were caught:
+
+```typescript
+await prisma.user.findMany({ where: { emial: 'alice@example.com' } })
+// error TS2561: Object literal may only specify known properties, but 'emial' does not
+// exist in type 'UserWhereInput'. Did you mean to write 'email'?
+
+const subset = await prisma.user.findMany({ select: { id: true, email: true } })
+// { id: number; email: string }[]
+
+const withPosts = await prisma.user.findFirstOrThrow({ include: { posts: true } })
+// withPosts.posts: { id: number; title: string; published: boolean; authorId: number }[]
+
+const withoutPosts = await prisma.user.findFirstOrThrow()
+withoutPosts.posts
+// error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.
+```
+
+A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
+
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project. To do that, the generate step connects to a database that has your schema, so it needs one available when you generate. For this query file:
+
+```sql
+-- @param {String} $1:domain
+SELECT id, email, name FROM "User" WHERE email LIKE '%@' || $1
+```
+
+the generated function typed both the parameter and the result, including the nullable `name` column:
+
+```typescript
+const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
+// { id: number; email: string; name: string | null }[]
+
+await prisma.$queryRawTyped(getUserEmails(42))
+// error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+```
 
 <PrismaOutlinks>
 
-If you want to learn more about why we think Prisma is a great option, check out our [Why Prisma? page](https://www.prisma.io/docs/orm/overview/introduction/why-prisma).
+Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Type safety in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/type-safety). To set up a project, follow the [Prisma ORM 7 getting started guide](https://www.prisma.io/docs/v7/getting-started).
 
 </PrismaOutlinks>
 
-### Type definitions: built-in
+## Drizzle ORM
 
-Prisma Client's type definitions are auto-generated when generating the client. The models defined in the Prisma schema (like `User` and `Post`) are automatically exported as types in a generated `index.d.ts` file, readily enabling full type safety when querying data.
+In Drizzle, you define tables in TypeScript, and the types are inferred from those definitions, with no generate step. Columns are nullable unless you call `.notNull()`, so `name` is `string | null` here:
 
-### Record creation: type-safe
-
-When creating a new record with Prisma, attempting to add properties not defined in the model results in a type error. Model properties are autocompleted. Furthermore, nested writes are also type safe. Nested writes insert data into multiple tables using relations. This means that when creating a `User` and a nested `Post` using the same `prisma.user.create()` call, the `Post` model fields are also type-checked and autocompleted, guaranteeing that the nested record will also be valid.
-
-### Record fetching: type-safe
-
-When fetching records from the database, return objects are fully typed, even for relation queries. For example, when fetching all users from the database and including the post relation to additionally fetch all of a user's posts, the type is inferred as `(User & {posts: Post[];})[]`. Furthermore autocomplete also works when using `include` to add fetched relations, so that you can't query relations that don't exist, a feature lacking from many of the libraries considered in this article.
-
-To further demonstrate the level of type safety Prisma builds in, consider a partial query, where only certain properties are queried, changing the return object's type:
-
-```javascript
-const usersWithPartialPosts = await prisma.user.findMany({
-  include: {
-    posts: {
-      select: {
-        title: true,
-        published: true,
-      },
-    },
-  },
+```typescript
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name'),
 })
 ```
 
-In this query, all users are returned, but only the `title` and `published` fields are selected for the `posts` relation model. `usersWithPartialPosts` is then typed as:
+Drizzle has two query APIs: a SQL-like one (`db.select().from(users)`) and a relational one (`db.query.users.findMany()`). All six checks were caught, in both APIs where a check applies to both:
 
-```javascript
-(User & {
-    posts: {
-        title: string;
-        published: boolean;
-    }[];
-})[]
+```typescript
+await db.select().from(users).where(eq(users.emial, 'alice@example.com'))
+// error TS2551: Property 'emial' does not exist on type 'PgTableWithColumns<…>'. Did you mean 'email'?
+
+const subset = await db.select({ id: users.id, email: users.email }).from(users)
+// { id: number; email: string }[]
+
+const withPosts = await db.query.users.findFirst({ with: { posts: true } })
+// withPosts.posts is typed; without `with`, `posts` isn't part of the type
 ```
 
-This means that attempting to access `post` fields that weren't selected, like `content`, will fail. Prisma is the only ORM-like library considered in this article that is able to achieve this granularity of type safety.
+In the SQL-like API, joins are typed too: after `leftJoin(posts, …)`, each row's `posts` value is typed as a post or `null`, because a left join can return a user without posts.
 
-### Type safety: strong
+The error messages for inserts are harder to read than the others. Because `values()` accepts one row or an array of rows, TypeScript reports the mismatch against the array form. For `published: 'yes'`, the message said that `'title' does not exist in type '{ … }[]'` instead of pointing at `published`.
 
-Prisma's unique design of generating a local CRUD client that encodes your data model allows it to achieve an unparalleled level of type safety among TypeScript ORMs. When using Prisma to manipulate and query data from your database, you'll have accurate typings for nested relation queries and also partial queries that modify the shape of returned models.
+For raw SQL, ``db.execute(sql`…`)`` types the rows as `Record<string, unknown>`. The `sql<T>` template tag, which you can also use for a single expression inside a typed `select()`, trusts the type you give it.
 
-<PostgresCallout />
+Drizzle's documentation now describes the upcoming 1.0 release, which changes how relations are defined (`defineRelations()`) and lets the relational API filter with plain objects (`where: { email: … }`). The same checks against `1.0.0-rc.4` gave identical results, including for a misspelled key in an object filter. See [Upgrade to Drizzle 1.0](https://orm.drizzle.team/docs/upgrade-v1) and the [relational query API](https://orm.drizzle.team/docs/rqb).
 
-## Sequelize
+## Kysely
 
-### Evaluation summary
+Kysely is a query builder, not an ORM. You describe your tables in a `Database` interface, and Kysely computes the type of every query from it, including selected columns, joins and subqueries:
 
-- **Type definitions**: Built-in
-- **Record creation**: Not Type-safe
-- **Record fetching**: Not Type-safe
+```typescript
+interface Database {
+  users: { id: Generated<number>; email: string; name: string | null }
+  posts: { id: Generated<number>; title: string; published: Generated<boolean>; author_id: number }
+}
+```
 
-### Overview
+`Generated<>` marks columns that the database fills in, so they're optional on insert. All six checks were caught:
 
-- [Website](https://sequelize.org/)
-- [GitHub](https://github.com/sequelize/sequelize/)
-- [npm: sequelize](https://www.npmjs.com/package/sequelize)
+```typescript
+await db.selectFrom('users').selectAll().where('emial', '=', 'alice@example.com').execute()
+// error TS2345: Argument of type '"emial"' is not assignable to parameter of type 'ReferenceExpression<Database, "users">'.
 
-### What is Sequelize
+const subset = await db.selectFrom('users').select(['id', 'email']).execute()
+// { id: number; email: string }[]
+```
 
-Sequelize is an established, mature, promise-based Node.js ORM that supports PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows a traditional ORM ActiveRecord pattern of defining models by extending a base `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`. It is very popular in the JavaScript community and has been around for a long time. However, the project has stagnated more recently and does not seem to be as active as it once was.
+Kysely has no concept of relations, so you load related rows with a join or a subquery. With the `jsonArrayFrom` helper from `kysely/helpers/postgres`, the nested array is typed from the subquery:
 
-<PrismaOutlinks>
+```typescript
+const withPosts = await db
+  .selectFrom('users')
+  .selectAll('users')
+  .select((eb) => [
+    jsonArrayFrom(
+      eb.selectFrom('posts').selectAll('posts').whereRef('posts.author_id', '=', 'users.id')
+    ).as('posts'),
+  ])
+  .executeTakeFirstOrThrow()
+// withPosts.posts: { id: number; title: string; published: boolean; author_id: number }[]
+```
 
-For a more focused comparison of Prisma and Sequelize, you can look at our [Sequelize comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-sequelize).
+The interface is the only thing Kysely knows about your database, so if it disagrees with the real tables, the types are wrong without any error. Generating the interface from the database, with a tool such as [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen), avoids that; Kysely's documentation lists [several type generators](https://kysely.dev/docs/generating-types).
 
-</PrismaOutlinks>
-
-### Type definitions: built-in
-
-As of v5 (at the time of writing, Sequelize is v6.16.1), Sequelize contains built-in type definitions. Prior to this, type definitions were available via [`@types`](https://github.com/DefinitelyTyped/DefinitelyTyped). Sequelize was originally designed as a JavaScript ORM, and TypeScript support was added in recent years.
-
-### Record creation: not type-safe
-
-Out-of-the-box, Sequelize will not provide strict type-checking for model properties. To implement this, the developer must write a [non-trivial](https://sequelize.org/master/manual/typescript.html) amount of boilerplate including `interfaces`, classes and definitions for CRUD methods for any relations. For complex data models with multiple relations, this can quickly become cumbersome and unwieldy. When creating records using mixins added to models or using nested models, it is again up to the developer to provide type definitions.
-
-Sequelize also allows you to define models without type checking their attributes. Using this approach, you can get up and running quickly with Sequelize and TypeScript, but lose all type safety when working with your data.
-
-### Record fetching: not type-safe
-
-Given that Sequelize allows both strict and loose type checking of model attributes, the compiler will only correctly type check queries if the developer provides all of the necessary type definitions. Furthermore, when fetching associations using `include`, the return type does not include information about the nested shape of the fetched data, and to properly compile without errors, the developer must use `!` non-null assertions and `rejectOnEmpty` parameters to override the compiler.
-
-### Type safety: weak
-
-As of v5, Sequelize provides built-in type definitions, but to have any sort of real type safety when working with models and records, the onus is on the developer to write interfaces and fully define typings for associations and classes. Out-of-the-box, not much type safety is provided.
+For raw SQL, ``sql`…`.execute(db)`` types the rows as `unknown`, and `sql<T>` trusts the type you give it.
 
 ## TypeORM
 
-### Evaluation summary
+In TypeORM, entities are classes whose properties you declare in TypeScript and decorate with column and relation options:
 
-- **Type definitions**: Built-in
-- **Record creation**: Type-safe
-- **Record fetching**: Partially Type-safe
+```typescript
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id!: number
 
-### Overview
+  @Column({ unique: true })
+  email!: string
 
-- [Website](https://typeorm.io/#/)
-- [GitHub](https://github.com/typeorm)
-- [npm: TypeORM](https://www.npmjs.com/package/typeorm)
+  @Column({ type: 'text', nullable: true })
+  name!: string | null
 
-### What is TypeORM?
-
-TypeORM is a Hibernate-influenced JavaScript and TypeScript ORM that can run on multiple platforms like Node.js, web browsers, and Cordova. It was built with TypeScript and type safety in mind and supports both main ORM architecture patterns, Data Mapper and Active Record, offering the developer flexibility to choose between the two. It also includes a query builder and supports many popular databases.
-
-<PrismaOutlinks>
-
-For a more focused comparison of Prisma and TypeORM, you can look at our [TypeORM comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-typeorm).
-
-</PrismaOutlinks>
-
-### Type definitions: built-in
-
-TypeORM is a TypeScript-first ORM that was explicitly designed for use with TypeScript. Types are built-in to the library and it leverages TypeScript features like decorators when defining models.
-
-### Record creation: type safe
-
-With TypeORM, models are defined using the `Entity` class. You decorate a model class (like `User`) with the `@Entity()` decorator, and decorate its properties like `id` and `name` with column decorators like `@PrimaryGeneratedColumn()` and `@Column`. If you're using the DataMapper pattern, a record is then defined by creating a new instance of the now type-safe model class and setting its properties. The record is saved using a model-specific `Repository` object, which is also typed.
-
-Nested writes are accomplished by creating an instance of the related class (for example a `Post` for a `User`) and then saving both the `User` and `Post` objects. Using the `cascade` feature, this can be done with one `save` call. With TypeORM, model type-safety is available out-of-the-box.
-
-Using the query builder, model properties are also type-checked:
-
-```javascript
-await conn
-  .createQueryBuilder()
-  .insert()
-  .into(User)
-  .values([
-    { firstName: 'Timber', lastName: 'Saw' },
-    { firstName: 'Phantom', lastName: 'Lancer' },
-  ])
-  .execute()
+  @OneToMany(() => Post, (post) => post.author)
+  posts!: Relation<Post>[]
+}
 ```
 
-If the `User` class does not have a `firstName` field, the compiler will emit an error.
+The property types are what the rest of your code sees, and they don't depend on the query. Wrong value types, misspelled columns in `find` options and misspelled relation names in `relations` were caught. These compiled:
 
-When using relations with the query builder, type safety breaks down as the following does not emit a compiler error:
+```typescript
+// Missing required field: insert(), save() and create() accept partial entities
+await users.insert({ name: 'Alice' })
 
-```javascript
-await conn.createQueryBuilder().relation(User, 'postsssss').of(user).add(post)
-```
-
-Even though there is no valid `postssss` relation.
-
-### Record fetching: partially type safe
-
-Fetching records from the database can be accomplished in many different ways. Using typed, model-specific `Repository` objects, the developer calls a method on the repository like `userRepo.find()`, where the return type is correctly inferred as `User[]`.
-
-When including relations like `userRepo.find({relations: ["posts"]});` , the return type is still inferred as `User[]` and the compiler is not aware of the included relation. It is up to the developer to access the `user.posts` property in a defensive manner.
-
-Using the built-in query builder, a query like the following is typed as `User`:
-
-```javascript
-const firstUser = await conn
-  .getRepository(User)
+// QueryBuilder conditions are SQL strings
+await users
   .createQueryBuilder('user')
-  .where('user.id = :id', { id: 1 })
-  .getOne()
+  .where('user.emial = :email', { email: 'alice@example.com' })
+  .getMany()
+
+// Partial select: still typed as User[]
+const subset = await users.find({ select: { id: true, email: true } })
+subset[0].name // typed string | null
+
+// Relations: posts is typed Post[] whether or not it was loaded
+const withoutPosts = await users.findOneOrFail({ where: { id: 1 } })
+withoutPosts.posts.length
 ```
 
-And in a query like the following:
+At runtime, PostgreSQL rejected the insert with `null value in column "email" of relation "user" violates not-null constraint`, and the `QueryBuilder` query failed with a database error. `subset[0].name` was `undefined`, not a string or `null`. `withoutPosts.posts` was `undefined`, so reading `.length` threw a `TypeError`.
 
-```javascript
-const user = await conn.manager.findOne(User, 1)
-user.photos = await getConnection()
-  .createQueryBuilder()
-  .relation(User, 'photos')
-  .of(user) // you can use just post id as well
-  .loadMany()
+The nullability of `name` depends on your declaration. TypeORM doesn't compare the property type with the column options, so this entity compiles although its `name` column is nullable:
+
+```typescript
+@Entity()
+export class Mismatched {
+  @PrimaryGeneratedColumn()
+  id!: number
+
+  @Column({ type: 'text', nullable: true })
+  name!: string
+}
 ```
 
-The type of `user.photos` is `Photo[]`.
+For raw SQL, `dataSource.query()` returns `Promise<any>`, and the query builder's `getRawMany()` returns `any[]`. See TypeORM's documentation on [find options](https://typeorm.io/docs/working-with-entity-manager/find-options) and the [select query builder](https://typeorm.io/docs/query-builder/select-query-builder).
 
-### Type safety: strong
+## Sequelize
 
-TypeORM is TypeScript ORM with good type safety around its models. Its query builder also has a good level of type safety. Type safety for relations is less strict and it is up to the developer to program defensively against this limitation.
+The [TypeScript approach recommended for Sequelize 6](https://sequelize.org/docs/v6/other-topics/typescript/) declares each attribute's type on the model class and its column definition in `init()`:
 
-## Bookshelf.js
+```typescript
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare id: CreationOptional<number>
+  declare email: string
+  declare name: string | null
+  declare posts?: NonAttribute<Post[]>
+}
 
-### Evaluation summary
-
-- **Type definitions**: @types
-- **Record creation**: Not Type-safe
-- **Record fetching**: Not Type-safe
-
-### Overview
-
-- [Website](https://bookshelfjs.org/)
-- [GitHub](https://github.com/bookshelf/bookshelf)
-- [npm: Bookshelf](https://www.npmjs.com/package/bookshelf)
-
-### What is Bookshelf.js?
-
-Bookshelf.js is Node.js ORM built on top of the Knex.js query builder library. It is inspired by the Data Mapper ORM pattern and provides a pared-down interface for modeling and interacting with your data. Bookshelf.js gives you the standard set of data modeling, querying, and manipulation tools. Since it's built on top of the Knex.js query builder, you can always drop down and write more involved queries if you find yourself limited by its interface. It is not as active a project as some of the other tools considered in this article, but has been around for a long time and has a core user base that prefers its streamlined style.
-
-### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
-
-Type definitions for Bookshelf.js can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository of TypeScript type definitions. They are not built-in to the library.
-
-### Record creation: not type-safe
-
-Bookshelf.js models are created by extending the `bookshelf.Model` class or calling `bookshelf.model()` with a model and table name. The tables and schema must be created beforehand and are not defined within these models. For example, after creating a `User` model that corresponds to table name `users`, to set the `name` property, the developer would call `user.set('name', 'Joe')`. If the `name` column does not exist in the `users` table, then this call will fail at runtime. As such, model creation in Bookshelf is not type safe out-of-the-box. The type of most objects passed around is `any`.
-
-### Record fetching: not type-safe
-
-Given the above, it is no surprise that fetching records from the database is also not type safe. When fetching a `user` record using `const user = await User.where({'name': 'Joe'}).fetch();`, the resulting type is `any`. Including relations using `withRelated` within a `fetch()` does not change this. Query parameters in the `where()` clause are not type checked and if you include a column that does not exist in the database, the command will pass compilation but fail at run time.
-
-### Type safety: weak
-
-Although Bookshelf.js does have `@types` type definitions, these provide the bare minimum to compile TypeScript code without errors. If you're looking to work with a Knex.js-based ORM-like library with strong TypeScript support, both Objection.js and MikroORM provide thorough type safety and are better supported and maintained.
-
-## Objection.js
-
-### Evaluation summary
-
-- **Type definitions**: Built-in
-- **Record creation**: Type-safe
-- **Record fetching**: Partially Type-safe
-
-### Overview
-
-- [Website](https://vincit.github.io/objection.js/)
-- [GitHub](https://github.com/Vincit/objection.js)
-- [npm: Objection](https://www.npmjs.com/package/objection)
-
-### What is Objection.js?
-
-Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to. Objection.js seems to be more actively maintained and better documented than Bookshelf.js, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](https://github.com/Vincit/objection.js/issues/1069)
-
-### Type definitions: built-in
-
-Objection.js provides [built-in TypeScript support](https://github.com/Vincit/objection.js/blob/master/typings/objection/index.d.ts). Like Bookshelf.js, Objection.js began as a JavaScript library and typings were added later as TypeScript grew in popularity and adoption. However, unlike Bookshelf.js, Objection.js provides thorough type safety when working with models and queries.
-
-### Record creation: type safe
-
-Models are defined in Objection.js by extending the `Model` class. Within a, say, `User` model, the developer defines non-nullable and optional properties like `name!` and `age?`, and provides a required `tableName` property. The developer can also provide an optional [JSON Schema](https://json-schema.org) for Model validation. Relations to other models like `HasMany` are also defined in the model class.
-
-When creating new records, the `User.query().insert()` method is type-safe. Model properties are autocompleted and attempting to add properties not defined in the model class will result in compiler errors.
-
-When creating new records for relations, like a new `Post` for a `User`, the developer uses the `user.$relatedQuery('posts').insert()` call. This is also type safe and although you can replace `posts` with a non-existent model or relation, the chained `insert` call will then spit out compiler errors. Model properties are autocompleted within the `insert()` command and including undefined `Post` properties will result in a compiler error.
-
-Nested writes can also be done using the `insertGraph()` operation:
-
-```javascript
-const user = await User.query().insertGraph({
-  firstName: 'Sylvester',
-  lastName: 'Stallone',
-  posts: [
-    {
-      title: 'My first post',
-    },
-  ],
-})
+User.init(
+  {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    name: { type: DataTypes.STRING, allowNull: true },
+  },
+  { sequelize, tableName: 'users' }
+)
 ```
 
-This operation is also type-safe and model properties are autocompleted for the nested model.
+With these declarations, `create()` rejected a missing `email` and a wrong value type, and `findAll({ where })` rejected a misspelled column. Reads are where the types stop following the query:
 
-### Record fetching: partially type safe
+```typescript
+// Partial select: still typed as User[], and attribute names aren't checked
+const subset = await User.findAll({ attributes: ['id', 'email'] })
+subset[0].name // typed string | null
+await User.findAll({ attributes: ['id', 'emial'] })
 
-When fetching records from the database, queries and return objects are typed. When fetching relations using `relatedQuery`, the return type of the relation is also correctly inferred. In the following example, the return type of posts is `Post[]`:
-
-```javascript
-const posts = await User.relatedQuery('posts').for(1).orderBy('title')
-console.log(posts[0].name)
+// The association alias in include isn't checked
+await User.findOne({ include: [{ model: Post, as: 'postz' }] })
 ```
 
-If instead of `'posts'` you enter a model or relation that doesn't exist, the compiler won't emit any errors until you attempt to access a model property. At this point the compiler will spit out a `Property does not exist` error.
+At runtime, `subset[0].name` was `undefined`, the misspelled attribute failed with `column "emial" does not exist`, and the misspelled alias threw an `EagerLoadingError`. `posts` is typed as optional (`NonAttribute<Post[]> | undefined`) whether or not it was included, which makes you check for `undefined` even after including it. As with TypeORM, a model that declares `name: string` while `init()` sets `allowNull: true` compiles.
 
-Using eager loading and the `withGraphFetched()` method, where relation data loaded at the same time, the above snippet would look like this:
-
-```javascript
-const userWithPosts = await User.query().findById(1).withGraphFetched('posts');
-console.log(userWithPosts.posts![0].title);
-```
-
-In this case the type of `userWithPosts` is inferred as `User`. The compiler emits an `Object is possibly undefined` error when attempting to access the post's `title` property unless a non-null assertion is included.
-
-If instead of `'posts'` you enter a model or relation that doesn't exist, the compiler won't emit any errors. For example the following code would be valid according to the compiler:
-
-```javascript
-const userWithPosts = await User.query().findById(1).withGraphFetched('postssss')
-```
-
-### Type safety: strong
-
-Along with MikroORM and Bookshelf.js, Objection.js is an ORM-like library built around the Knex.js query builder. Its TypeScript support and type safety are much stronger than Bookshelf.js and comparable to MikroORM’s. It is a strong choice for developers seeking a pared-down, minimal ORM-like library with strong TypeScript typings.
+For raw SQL, `sequelize.query()` returns `[unknown[], unknown]`. With `type: QueryTypes.SELECT`, it returns `object[]`, or whatever type argument you pass.
 
 ## MikroORM
 
-### Evaluation summary
+MikroORM 7 recommends [`defineEntity()`](https://mikro-orm.io/docs/define-entity) for defining entities without decorators. The entity types are inferred from the definition:
 
-- **Type definitions**: Built-in
-- **Record creation**: Type-safe
-- **Record fetching**: Type-safe
+```typescript
+const UserSchema = defineEntity({
+  name: 'User',
+  properties: {
+    id: p.integer().primary(),
+    email: p.string().unique(),
+    name: p.string().nullable(),
+    posts: () => p.oneToMany(Post).mappedBy('author'),
+  },
+})
 
-### Overview
-
-- [Website](https://mikro-orm.io/)
-- [GitHub](https://github.com/mikro-orm/mikro-orm)
-- [npm](https://www.npmjs.com/package/mikro-orm)
-
-### What is MikroORM?
-
-MikroORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js). It is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
-
-### Type definitions: built-in
-
-As a TypeScript-first ORM, MikroORM builds in its own extensive set of type definitions.
-
-### Record creation: type safe
-
-Defining models with MikroORM involves extending a `BaseEntity` class where the model's properties are declared, typed, and decorated with `@Property` and relation decorators. With these classes defined, records can be created in a type-safe manner by creating instances of these model classes. Model fields are type-checked and autocompleted. Models linked by a relation can be persisted at the same time in a transaction using `persistAndFlush()`. For example:
-
-```javascript
-const user = new User('Dave Johnson', 'dave@johns.on')
-user.age = 14
-const post1 = new Post("Dave's First Post", user)
-const post2 = new Post("Dave's Second Post", user)
-
-// Persist the post, author will be automatically cascade persisted
-await DI.em.persistAndFlush([post1, post2])
+export class User extends UserSchema.class {}
+UserSchema.setClass(User)
 ```
 
-Here the `Post` model requires a `title` and `User` in its constructor, and record creation will fail if these are not provided. You can access the post's author object using its properties, e.g. `post1.author.title`.
+Result types track what a query loaded. Partial loading and populated relations are part of the type:
 
-### Record fetching: type-safe
+```typescript
+const subset = await em.find(User, {}, { fields: ['id', 'email'] })
+subset[0].name
+// error TS2339: Property 'name' does not exist on type 'Loaded<User, never, "email" | "id", never>'.
 
-MikroORM also provides strong type safety when fetching records from the database. Records can be fetched using EntityRepositories or an EntityManager.
+const withPosts = await em.findOneOrFail(User, 1, { populate: ['posts'] })
+for (const post of withPosts.posts.$) post.title // typed access to a populated collection
 
-When fetching records using a repository for a given model, say a `userRepository`, the return object is typed and you cannot query based on properties that haven't been defined in the model. Furthermore, including relations will result in the object's type reflecting which relations were loaded. For example, with a `User` model linked to `Post` and `Item` models, the following command:
-
-```javascript
-const UserWithPosts = await DI.userRepository.findOne(1, ['posts'])
+const withoutPosts = await em.findOneOrFail(User, 1)
+withoutPosts.posts.$
+// error TS2339: Property '$' does not exist on type 'Collection<Post, object>'.
 ```
 
-Results in this type:
+Misspelled populate hints were rejected, and a many-to-one reference that wasn't populated only exposed its primary key. The gap is that the `posts` collection itself is in the type whether or not it was populated, and its `getItems()` method compiles either way. At runtime, calling it on the unpopulated collection threw `Collection<Post> of entity User[1] not initialized`. The [type-safe relations guide](https://mikro-orm.io/docs/type-safe-relations) describes the `$` accessor and the `Ref` wrapper.
 
-```javascript
-const UserWithPosts: (User & {
-    posts: LoadedCollection<Post, Post>;
-    items: Collection<Item, unknown>;
-}) | null
+For raw SQL, `em.execute()` types the rows' properties as `any`, and `em.execute<T>()` trusts the type you pass. MikroORM 7 also exposes a [Kysely instance](https://mikro-orm.io/docs/kysely) through `em.getKysely()`, typed from the entity definitions: `selectFrom('user').select(['id', 'email'])` is typed `{ id: number; email: string }[]`.
+
+## Mongoose
+
+Mongoose's documentation recommends [letting it infer types from the schema](https://mongoosejs.com/docs/typescript/schemas.html) instead of writing a separate interface:
+
+```typescript
+const userSchema = new Schema({
+  email: { type: String, required: true, unique: true },
+  name: { type: String, default: null },
+})
+userSchema.virtual('posts', { ref: 'Post', localField: '_id', foreignField: 'author' })
+
+export const User = model('User', userSchema)
 ```
 
-Here we see that posts were loaded and items were not. One limitation is that in the `findOne` relation array, additional strings corresponding to non-existent relations can be appended (like appending ‘postsss’ to the array) without any error output from the compiler. Furthermore, relations can be accessed even though they weren't explicitly populated without any error from the compiler.
+The inferred document type had `email: string` and `name: string | null | undefined`. Wrong value types were rejected in `create()` and, for fields that exist in the schema, in filters. But `create()` accepts partial documents, filters accept keys that aren't in the schema, and query results keep the full document type:
 
-A similar level of type-safety applies when using `EntityManager`'s `find()` or `findOne()` functions, like in the following example:
+```typescript
+await User.create({ name: 'Alice' }) // missing email
+await User.find({ emial: 'alice@example.com' }) // misspelled key
 
-```javascript
-const userWithPosts = await DI.em.findOne(User, { email: 'dave@johns.on' }, ['posts'])
+const subset = await User.find().select({ email: 1 }).lean()
+subset[0].name // typed string | null | undefined
+
+const post = await Post.findOne().populate('author').orFail()
+post.author // typed Types.ObjectId
 ```
 
-The type is again inferred as:
+At runtime, `create()` failed Mongoose's validation with ``Path `email` is required.`` The misspelled filter didn't fail: Mongoose passed the unknown key to MongoDB, and the query matched no documents instead of one. With the [`strictQuery`](https://mongoosejs.com/docs/guide.html#strictQuery) option set to `'throw'`, the same query threw a `StrictModeError`. `subset[0].name` was `undefined`, and the populated `author` was the user document, not an `ObjectId`.
 
-```javascript
-const user: (User & {
-    posts: LoadedCollection<Post, Post>;
-    items: Collection<Item, unknown>;
-}) | null
+Mongoose's documentation recommends [passing the populated type as a type argument](https://mongoosejs.com/docs/typescript/populate.html), as in `populate<{ author: UserType }>('author')`. That type isn't checked against the schema: `populate<{ author: { nickname: number } }>('author')` compiled too. The virtual `posts` field isn't part of the inferred type, so it also needs a type argument.
+
+MongoDB has no SQL. Of the equivalent escape hatches, `aggregate()` is typed `any[]`, and the MongoDB driver's collection object returns documents whose properties are typed `any`. `aggregate<T>()` trusts the type you pass.
+
+## Knex.js
+
+Knex is a query builder whose [TypeScript support](https://knexjs.org/guide/#typescript) its documentation describes as best effort. Without any type declarations, queries return `any`. To type tables, you augment its `Tables` interface. `Knex.CompositeTableType` lets you declare a separate type for inserts:
+
+```typescript
+declare module 'knex/types/tables.js' {
+  interface Tables {
+    users: Knex.CompositeTableType<User, Omit<User, 'id' | 'name'> & Partial<Pick<User, 'name'>>>
+  }
+}
 ```
 
-### Type safety: strong
+With that declaration, inserts without an `email` and inserts with wrong value types were rejected. A table typed with only its row type, `users: User`, accepted an insert without `email`. Selecting columns narrowed the result type to `Pick<User, 'id' | 'email'>[]`. These compiled:
 
-MikroORM is a powerful ORM that also packs in the flexible Knex.js query builder. Knex.js results can be mapped to Models using `EntityManager.map()`, a unique and powerful feature. It provides strong type safety when working with models and query results.
+```typescript
+await knex('users').where('emial', 'alice@example.com') // the object form, where({ emial }), is rejected
 
-## Waterline
+const joined = await knex('users')
+  .join('posts', 'posts.author_id', 'users.id')
+  .select('users.id', 'posts.title') // any[]
 
-### Evaluation summary
+const raw = await knex.raw('SELECT id, email FROM users') // any
+```
 
-- **Type definitions**: @types
-- **Record creation**: Not Type-safe
-- **Record fetching**: Not Type-safe
+At runtime, the misspelled column failed with `column "emial" does not exist`. Tables you haven't declared in `Tables` are also typed `any`.
 
-### Overview
+## Libraries that weren't tested
 
-- [Website](https://sailsjs.com/documentation/reference/waterline-orm)
-- [GitHub](https://github.com/balderdashy/waterline)
-- [npm: Waterline](https://www.npmjs.com/package/waterline)
-
-### What is Waterline?
-
-Waterline is the default ORM used in the Sails Node.js framework. Part of its design is to allow you to use "write once, use anywhere" data manipulation code, so that you can write code to query or manipulate your data whether it lives in a MySQL, PostgreSQL, MongoDB, or other database.
-
-### Type definitions: [@types](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/30813acabce6fce9fcd6871421784a9113662fe3/types/bookshelf/index.d.ts)
-
-Type definitions for Waterline can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository of TypeScript type definitions. They are not built-in to the library.
-
-### Record creation: not type-safe
-
-With Waterline, models are defined using `Waterline.Collection.extend()`. The table name is specified and attributes for the model like `id` and `name` are declared along with their type. Models are then added to the Waterline instance which is used to create records. Record creation in Waterline is not type-safe and you can set attributes in new records that weren't defined in the model. Furthermore, the return type is `any`, which is frequently passed around when using Waterline.
-
-### Record fetching: not type-safe
-
-When fetching records from the database using the Waterline instance and the given model, any attributes, even non-existent ones, can be inserted into the `find()` method without triggering any compiler errors. The method's return type is `any`. Querying data using Waterline and the `@types` typings is generally not type-safe.
-
-### Type safety: weak
-
-Waterline's models are not type-safe and data manipulation and creation operations are similarly not type-safe. Waterline is primarily a JavaScript library and its typings provide the bare minimum for TypeScript code to compile.
-
-## Typegoose and Mongoose
-
-### Evaluation summary
-
-- **Type definitions**: @types
-- **Record creation**: Type-safe
-- **Record fetching**: Not Type-safe
-
-### Overview
-
-- [Website](https://typegoose.github.io/typegoose/)
-- [GitHub](https://github.com/typegoose/typegoose)
-- [npm: Typegoose](https://www.npmjs.com/package/typegoose)
-
-### What is Mongoose?
-
-Mongoose is a popular and well maintained Node.js data modeling tool for MongoDB. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks. If you're using a MongoDB database with Node.js and want to use an ORM-like tool to map objects to database documents (or ODM), Mongoose is a safe bet: it is a popular, mature project that continues to be actively maintained.
-
-There are two main ways to use strong TypeScript typing with Mongoose. One way is to use types from the `@types` repository and write custom interfaces for your models. The other is to use [Typegoose](https://github.com/typegoose/typegoose) along with typings from `@types`. Typegoose allows you to define Mongoose models using classes. In this article we'll consider Typegoose.
-
-<PrismaOutlinks>
-
-For a more focused comparison of Prisma and Mongoose, you can look at our [Mongoose comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-mongoose).
-
-</PrismaOutlinks>
-
-### Type definitions: @types
-
-To use Typegoose you first have to install Mongoose and its `@types` type definitions. These can be found in the [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped) repository. They are not built-in to the library.
-
-### Record creation: type-safe
-
-To create models with Typegoose, you define model classes, like `User`, and their properties, like `name` and `age`. Properties are decorated with the `@prop()` decorator to specify additional information like whether or not the properties are required and how they are related to other models.
-
-Once the models have been defined, records can be created in a type-safe manner using Mongoose `Model` objects. Model properties are autocompleted and attempting to add undefined properties results in a compiler error. The return object type corresponds to the defined Model class (`DocumentType<User>`) and its properties can be accessed in a type-safe manner. This type safety also extends to nested models (for example saving a `User` with nested `Post` objects).
-
-### Record fetching: not type-safe
-
-When querying records from the database using `Model.find()`, filter properties are not type checked and it is possible to append properties that haven't been defined without any compiler error. This will result in Mongoose attempting to cast the filter. If this fails, a `CastError` will be thrown at runtime.
-
-When using `.populate()` on a model to populate references to other documents, anything can be entered into the `.populate()` method without compiler error, so this operation similarly is not type-safe.
-
-The return type from a `find()` or `findOne()` command is correctly typed according to the model used to query the database.
-
-### Type safety: moderate
-
-Typegoose leverages Classes and Decorators to help you build Mongoose models quickly. When creating records, parameters are type checked, but when querying it is up to the developer to build in additional safeguards. It is a great place to get started with type-safe TypeScript and MongoDB.
-
-## Briefly considered
-
-This article focuses on the type safety of the most popular ORMs referenced in [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries) from Prisma's [Data Guide](https://www.prisma.io/dataguide). There are other libraries you may want to consider when working with TypeScript, Node.js, and databases.
-
-### Knex.js
-
-- [GitHub](https://github.com/knex/knex)
-- [Website](https://knexjs.org)
-- [npm](https://www.npmjs.com/package/knex)
-
-Knex.js is a Node.js query builder (not ORM) that supports multiple databases and includes features like transaction support, connection pooling, and a streaming interface. It allows you to work at a level above the database driver and avoid writing SQL by hand. However, as it is a lower level library, familiarity with SQL and relational database concepts like joins and indices is expected. Official TypeScript bindings are built-in to the `knex` NPM package. TypeScript support is best-effort and "not all usage patterns can be type-checked." The knex documentation also states that "lack of type errors doesn't currently guarantee that the generated queries will be correct."
-
-### PgTyped
-
-- [GitHub](https://github.com/adelsz/pgtyped)
-- [Website](https://pgtyped.now.sh/)
-
-PgTyped's goal is to allow you to write raw SQL and also guarantee the type-safety of the queries you write. It automatically generates TypeScript typings for the parameters and results of SQL queries by processing a SQL file and connecting directly to a running PostgreSQL database. It currently only supports PostgreSQL.
-
-### @slonik/typegen
-
-- [GitHub](https://github.com/mmkal/slonik-tools/tree/master/packages/typegen#sloniktypegen)
-- [npm](https://www.npmjs.com/package/@slonik/typegen)
-
-A similar package to PgTyped is the Slonik typegen library that uses the [Slonik PostgreSQL client](https://github.com/gajus/slonik) to generate TypeScript interfaces from raw SQL queries. To use the typegen library, you import it and use a proxy object that it generates to run queries. After running a query, typegen will inspect the field types of the query result and generate a TypeScript interface for that query. Subsequent queries can then be executed in a type-safe manner.
+The 2022 version of this article also covered three libraries that weren't tested this time. Their latest releases on npm are Objection.js 3.1.5 (September 2024), Bookshelf.js 1.2.0 (June 2020) and Waterline 0.15.2 (December 2022). Objection.js and Bookshelf.js are built on Knex, and Waterline is the ORM of the Sails framework. Check their repositories ([Objection.js](https://github.com/Vincit/objection.js), [Bookshelf.js](https://github.com/bookshelf/bookshelf), [Waterline](https://github.com/balderdashy/waterline)) for their current status before starting a new project with them.
 
 ## Conclusion
 
-This article briefly assesses the type safety of the most popular Node.js ORMs, database toolkits, and query builders. It draws its list of libraries from [Top 11 Node.js ORMs, Query Builders & Database Libraries in 2022](https://www.prisma.io/dataguide/database-tools/top-nodejs-orms-query-builders-and-database-libraries), where the health of these libraries is evaluated according to criteria like repository activity and developer support.
+In these tests, the libraries that compute result types from the query caught the most mistakes. Prisma ORM, Drizzle and Kysely caught all six, and MikroORM caught everything except one way of reading a relation that wasn't loaded. They get there in different ways: Prisma ORM generates types from its own schema language, Drizzle and MikroORM infer them from TypeScript definitions, and Kysely relies on an interface that you write or generate.
 
-Type safety is not the only criteria you should use when choosing a tool to interact with your database. It is also important to consider the package’s programming interface, design, support for your database’s features, and flexibility. Different Node.js projects may require different tools.
+Sequelize catches mistakes in writes and filters, but its result types don't follow what a query selected or included. TypeORM and Mongoose accept partial objects on create and return the full model type from queries, so several mistakes in this test compiled and only showed up at runtime, or, in Mongoose's case, as a query that silently matched nothing. Knex's types help once you declare your tables, but joins and raw queries are untyped.
 
-To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide), a free helpful knowledge base for learning about databases, data modeling, and much more.
+Across all eight libraries, the raw query escape hatch is the weakest point. Prefer escape hatches that return `unknown`, validate rows before using them, and use a tool that derives types from the query where one is available.
+
+Keep in mind what a compiler can't check: every one of these libraries trusts a description of the database, whether that's a schema file, table definitions or an interface. If the real database doesn't match it, the types are wrong, so tests against a real database are still necessary. And type safety is one criterion among several. The API style, migrations, database support and the health of the project matter too; the [companion comparison](/database-tools/top-nodejs-orms-query-builders-and-database-libraries) covers popularity and maintenance.
+
+<PostgresCallout />
