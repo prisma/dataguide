@@ -1,3 +1,5 @@
+import type { SocialImage } from '../utils/socialMetadata'
+
 export interface HeaderProps {
   logoLink: string
 }
@@ -23,5 +25,6 @@ export interface CreatePageContext {
     seoTitle: string
     seoDescription: string
     metaImage: string
+    socialImage?: SocialImage
   }
 }

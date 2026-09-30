@@ -72,11 +72,15 @@ Frontmatter:
 | `title`           | yes      | Page heading and sidebar entry                                                                                      |
 | `metaTitle`       | yes      | `<title>` and social title                                                                                          |
 | `metaDescription` | yes      | Meta description and the summary in `llms.txt`                                                                      |
-| `metaImage`       | no       | Social preview image                                                                                                |
+| `metaImage`       | no       | Legacy fallback only; see [sharing cards](docs/topic-artwork.md#social-sharing-cards).                              |
 | `authors`         | no       | Keys from [`authors.json`](./authors.json)                                                                          |
 | `lastUpdated`     | no       | See [`lastUpdated`](#lastupdated)                                                                                   |
 | `toc`             | no       | `false` hides the table of contents                                                                                 |
 | `hidePage`        | no       | `true` keeps the page out of navigation and `llms.txt`; also add it to the sitemap `excludes` in `gatsby-config.ts` |
+
+Generated topic cards override `metaImage` on the homepage, topic hubs, and articles.
+All current content sections are themed, so setting this legacy field on those pages
+has no effect. It remains a fallback for future pages without a generated topic card.
 
 Formatting:
 

@@ -1,0 +1,141 @@
+// Build-time only: compose existing artwork and text into crawler-readable PNGs.
+import sharp from 'sharp'
+import { readFile, mkdir, writeFile, readdir, unlink } from 'node:fs/promises'
+import path from 'node:path'
+import { createHash } from 'node:crypto'
+import { THEMED_TOPICS } from './topicThemes.ts'
+import type { SocialImage } from './socialMetadata.ts'
+import { textImage } from './socialCardText.ts'
+
+export interface CardTheme {
+  wash: string
+  border: string
+  scene: string
+}
+
+export interface CardPalette {
+  ink: string
+  accent: string
+  surface: string
+  pageBackground: string
+}
+
+export const loadCardPalette = async (root: string): Promise<CardPalette> => {
+  const css = await readFile(path.join(root, 'src/styles/layout.css'), 'utf8')
+  const tokens = css.match(/:root\s*\{([^}]+)\}/)?.[1] || ''
+  const color = (name: string) => {
+    const value = tokens.match(new RegExp(`--${name}:\\s*(#[0-9a-f]{6})\\s*;`, 'i'))?.[1]
+    if (!value) throw new Error(`Missing or invalid social card color token: --${name}`)
+    return value
+  }
+  return {
+    ink: color('ink'),
+    accent: color('accent'),
+    surface: color('surface'),
+    pageBackground: color('page-bg'),
+  }
+}
+
+export const loadCardThemes = async (root: string): Promise<Map<string, CardTheme>> => {
+  const cssPath = path.join(root, 'src/styles/topic-themes.css')
+  const css = await readFile(cssPath, 'utf8')
+  const themes = new Map<string, CardTheme>()
+  for (const [, topic, block] of css.matchAll(
+    /\.top-section\[data-topic='([^']+)'\] \{([^}]+)\}/g
+  )) {
+    const wash = block.match(/--topic-wash: (#[0-9a-f]{6});/)?.[1]
+    const border = block.match(/--topic-border: (#[0-9a-f]{6});/)?.[1]
+    const scene = block.match(/--topic-scene: url\('([^']+)'\);/)?.[1]
+    if (!wash || !border || !scene) throw new Error(`Incomplete social card theme: ${topic}`)
+    themes.set(topic, { wash, border, scene: path.resolve(path.dirname(cssPath), scene) })
+  }
+  if (themes.size !== THEMED_TOPICS.length || THEMED_TOPICS.some((topic) => !themes.has(topic))) {
+    throw new Error('Social card themes do not match the topic registry')
+  }
+  return themes
+}
+
+export const renderSocialCard = async ({
+  title,
+  topicTitle,
+  theme,
+  palette,
+  root,
+}: {
+  title: string
+  topicTitle: string
+  theme: CardTheme
+  palette: CardPalette
+  root: string
+}) => {
+  const fontfile = path.join(root, 'src/fonts/Sora.ttf')
+  let headline: Awaited<ReturnType<typeof textImage>> | undefined
+  for (let size = 64; size >= 32; size -= 2) {
+    const candidate = await textImage(title, size, palette.ink, 640, fontfile)
+    if (
+      candidate.info.height <= 296 &&
+      candidate.info.width <= 640 &&
+      (title.length > 30 || candidate.lines === 1)
+    ) {
+      headline = candidate
+      break
+    }
+  }
+  if (!headline) throw new Error(`Social card title does not fit: ${title}`)
+  const label = await textImage(topicTitle, 24, palette.accent, 640, fontfile)
+  if (label.info.height > 68 || label.info.width > 640)
+    throw new Error(`Social card topic label does not fit: ${topicTitle}`)
+  const footer = await textImage('Prisma / dataguide', 23, palette.ink, 480, fontfile)
+  const artwork = await sharp(theme.scene).resize(420, 315, { fit: 'contain' }).png().toBuffer()
+  const logo = await sharp(path.join(root, 'src/images/favicon.svg'))
+    .resize(34, 34)
+    .png()
+    .toBuffer()
+  const background = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+    <defs><linearGradient id="wash" x1="0" y1="0" x2="1" y2="0.5">
+      <stop offset="25%" stop-color="${palette.surface}"/><stop offset="100%" stop-color="${theme.wash}"/>
+    </linearGradient></defs>
+    <rect width="1200" height="630" fill="${palette.pageBackground}"/>
+    <rect x="1" y="1" width="1198" height="628" rx="30" fill="url(#wash)" stroke="${theme.border}" stroke-width="2"/>
+  </svg>`)
+  return sharp(background)
+    .composite([
+      { input: label.data, left: 72, top: 92 },
+      { input: headline.data, left: 72, top: 186 },
+      { input: artwork, left: 746, top: 140 },
+      { input: logo, left: 72, top: 535 },
+      { input: footer.data, left: 122, top: 541 },
+    ])
+    .flatten({ background: palette.pageBackground })
+    .removeAlpha()
+    .png({ compressionLevel: 9 })
+    .toBuffer()
+}
+
+export const writeSocialCard = async (
+  options: Parameters<typeof renderSocialCard>[0],
+  outputDir: string
+): Promise<SocialImage> => {
+  const png = await renderSocialCard(options)
+  const name = `${createHash('sha256').update(png).digest('hex').slice(0, 20)}.png`
+  await mkdir(outputDir, { recursive: true })
+  await writeFile(path.join(outputDir, name), png)
+  return {
+    url: `/social/generated/${name}`,
+    alt: `${options.title}. Prisma's Data Guide, with Prismo artwork for ${options.topicTitle}.`,
+    width: 1200,
+    height: 630,
+    type: 'image/png',
+  }
+}
+
+// Prune only this generator's files, after every current card has rendered successfully.
+export const pruneSocialCards = async (outputDir: string, images: Iterable<SocialImage>) => {
+  const active = new Set([...images].map((image) => path.basename(image.url)))
+  await mkdir(outputDir, { recursive: true })
+  for (const entry of await readdir(outputDir, { withFileTypes: true })) {
+    if (entry.isFile() && /^[a-f0-9]{20}\.png$/.test(entry.name) && !active.has(entry.name)) {
+      await unlink(path.join(outputDir, entry.name))
+    }
+  }
+}

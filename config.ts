@@ -58,16 +58,15 @@ const siteConfig = {
     twitter: {
       site: '@prisma',
       creator: '@prisma',
-      image: '/social/docs-social.png',
     },
     og: {
       site_name: "Prisma's Data Guide",
       type: 'website',
       image: {
         alt: "Prisma's Data Guide",
-        height: '630',
+        height: '628',
         type: 'image/png',
-        url: '/social/docs-social.png', //replace social image
+        url: '/social/docs-social.png', // Fallback for pages without a generated or frontmatter image.
         width: '1200',
       },
     },
