@@ -160,9 +160,11 @@ serve `public/` mounted under `/dataguide/` to match the production path prefix.
 Check that all three surfaces show the same scene, existing topics still render, assets
 load beneath the production prefix, and there are no horizontal overflows or JavaScript
 errors. Review long titles, inline tables of contents, share buttons, and update dates.
-Homepage artwork stays beside the copy on desktop; subpage artwork is larger and crosses
-the divider at desktop widths of 1280px and above. Narrow screens keep a separate artwork
-area above the title. Record the commands actually run and the pages/widths checked in
+Homepage artwork stays beside the copy on desktop; subpage artwork is larger and extends
+into the share-row area at desktop widths of 1280px and above. The themed subpage header
+uses spacing to separate its title and share controls, with no horizontal divider.
+Narrow screens keep a separate artwork area above the title. Record the commands actually
+run and the pages/widths checked in
 the PR, including any limitations.
 
 ## Remaining sections

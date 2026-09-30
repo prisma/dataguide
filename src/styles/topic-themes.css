@@ -118,7 +118,11 @@ article > section.top-section[data-topic] > div:first-child {
   min-height: 112px;
 }
 
-/* Subpage scenes extend across the divider without reserving a full image-height row. */
+article > section.top-section[data-topic] > div:last-child {
+  border-top: 0;
+}
+
+/* Subpage scenes extend into the share-row area without reserving a full image-height row. */
 @media (min-width: 768px) {
   article > section.top-section[data-topic]::before {
     top: 4px;
@@ -128,12 +132,6 @@ article > section.top-section[data-topic] > div:first-child {
 
   article > section.top-section[data-topic] > div:last-child {
     padding-right: 300px;
-    border-image: linear-gradient(
-        to right,
-        var(--border) calc(100% - 340px),
-        transparent calc(100% - 280px)
-      )
-      1;
   }
 }
 
