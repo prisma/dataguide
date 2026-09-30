@@ -46,11 +46,11 @@ MongoDB provides two [APIs](https://docs.mongodb.com/manual/core/transactions/#t
 
 The comparison of the two APIs is best summarized in the following table:
 
-| Core API                                                                                                                                                                                        | Callback API                                                                                                           |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Requires an explicit call to start and to commit the transaction                                                                                                                                | Starts a transaction, executes the specified operations, and commits (or aborts on error)                              |
-| Does not automatically incorporate error-handling logic for `TransientTransactionError` and `UnknownTransactionCommitResult` but instead grants the ability to integrate custom error handling. | Automatically incorporates error-handling logic for `TransientTransactionError` and `UnknownTransactionCommmitResult`. |
-| Requires explicit logical session to be passed to API for the specific transaction.                                                                                                             | Requires explicit logical session to be passed to API for the specific transaction.                                    |
+| Core API                                                                                                                                                                                        | Callback API                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Requires an explicit call to start and to commit the transaction                                                                                                                                | Starts a transaction, executes the specified operations, and commits (or aborts on error)                             |
+| Does not automatically incorporate error-handling logic for `TransientTransactionError` and `UnknownTransactionCommitResult` but instead grants the ability to integrate custom error handling. | Automatically incorporates error-handling logic for `TransientTransactionError` and `UnknownTransactionCommitResult`. |
+| Requires explicit logical session to be passed to API for the specific transaction.                                                                                                             | Requires explicit logical session to be passed to API for the specific transaction.                                   |
 
 <PrismaOutlinks>
 

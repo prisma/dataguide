@@ -50,7 +50,7 @@ An example use of the method would look something like:
 db.mycoll.createIndex( { "country": 1 } )
 ```
 
-You can also create an index on multiple field with the `createIndex()` method by creating a comma seperated list like the following:
+You can also create an index on multiple fields with the `createIndex()` method by creating a comma-separated list like the following:
 
 ```
 db.COLLECTION_NAME.createIndex( { "FIELD_NAME_1": 1, "FIELD_NAME_2": -1 } )
@@ -98,7 +98,7 @@ If you're interested in using full text indexes with MongoDB, Prisma has the [`f
 
 Now with the ability to create and check what indexes exist on your collection, you will want to see if your indexes are performing the way you expect.
 
-To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collecton provided by [MongoDB University](https://university.mongodb.com/) simulating a datastore of movie and tv comments.
+To begin the example, we will work with the `sample_mflix` database and the `comments` collection which has ~50.3k documents. This is a sample collection provided by [MongoDB University](https://university.mongodb.com/) simulating a datastore of movie and tv comments.
 
 To understand the performance of an index, we will want to first run a query that does not have an index. The following query will return all 273 documents in the collection that are comments made by `Ramsay Bolton`:
 

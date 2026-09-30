@@ -218,7 +218,7 @@ If you are working with very large numbers with lots of floating point range, th
 |     Decimal128     |   19   | "decimal" |
 ```
 
-The BSON type, `Decimal128`, provides 128 bits of decimal representation for storing numbers where rounding decimals exactly is important. `Decimal128` supports 34 decimal digits of precision, or a [sinificand](https://en.wikipedia.org/wiki/Significand) with a range of -6143 to +6144. This allows for a high amount of precision.
+The BSON type, `Decimal128`, provides 128 bits of decimal representation for storing numbers where rounding decimals exactly is important. `Decimal128` supports 34 decimal digits of precision, or a [significand](https://en.wikipedia.org/wiki/Significand) with a range of -6143 to +6144. This allows for a high amount of precision.
 
 Inserting a value using the `Decimal128` data type requires using the [`NumberDecimal()`](https://docs.mongodb.com/manual/core/shell-types/#std-label-shell-type-decimal) constructor with your number as a `String` to keep MongoDB from using the default numeric type, `Double`.
 
@@ -403,7 +403,7 @@ db.mytestcoll.find().pretty()
 The `Object` data type in MongoDB is used for storing embedded documents. An embedded document is a series of nested documents in `key: value` pair format. We demonstrate the `Object` type below:
 
 ```shell
-var classGrades = {"Physics": 88, "German": 92, "LitTheoery": 79}
+var classGrades = {"Physics": 88, "German": 92, "LitTheory": 79}
 
 db.mytestcoll.insertOne({student_name: "John Smith", report_card: classGrades})
 {
@@ -420,7 +420,7 @@ db.mytestcoll.find().pretty()
 {
 	_id: ObjectId("614b37296a124db40ae74d18"),
 	student_name: 'John Smith',
-	report_card: {Physics: 88, German: 92, LitTheoery: 79}
+	report_card: {Physics: 88, German: 92, LitTheory: 79}
 }
 ```
 
