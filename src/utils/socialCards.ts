@@ -1,6 +1,6 @@
 // Build-time only: compose existing artwork and text into crawler-readable PNGs.
 import sharp from 'sharp'
-import { readFile, mkdir, writeFile } from 'node:fs/promises'
+import { readFile, mkdir, writeFile, readdir, unlink } from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { THEMED_TOPICS } from './topicThemes.ts'
@@ -101,5 +101,16 @@ export const writeSocialCard = async (
     width: 1200,
     height: 630,
     type: 'image/png',
+  }
+}
+
+// Prune only this generator's files, after every current card has rendered successfully.
+export const pruneSocialCards = async (outputDir: string, images: Iterable<SocialImage>) => {
+  const active = new Set([...images].map((image) => path.basename(image.url)))
+  await mkdir(outputDir, { recursive: true })
+  for (const entry of await readdir(outputDir, { withFileTypes: true })) {
+    if (entry.isFile() && /^[a-f0-9]{20}\.png$/.test(entry.name) && !active.has(entry.name)) {
+      await unlink(path.join(outputDir, entry.name))
+    }
   }
 }

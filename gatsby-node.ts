@@ -1,5 +1,5 @@
 import siteConfig from './config'
-import { loadCardThemes, writeSocialCard } from './src/utils/socialCards'
+import { loadCardThemes, writeSocialCard, pruneSocialCards } from './src/utils/socialCards'
 import { getThemedTopic } from './src/utils/topicThemes'
 import type { SocialImage } from './src/utils/socialMetadata'
 
@@ -97,6 +97,7 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
 
   // Generate before HTML rendering, so sharing crawlers need neither JavaScript nor a live image service.
   const socialImages = new Map<string, SocialImage>()
+  const socialOutput = path.join(root, 'public/social/generated')
   for (const node of posts) {
     const pathname = pagePath(node)
     const topic = pathname === '/' ? 'intro' : getThemedTopic(pathname)
@@ -114,10 +115,11 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
           title: pathname === '/' ? "Prisma's Data Guide" : node.frontmatter.title,
           topicTitle,
         },
-        path.join(root, 'public/social/generated')
+        socialOutput
       )
     )
   }
+  await pruneSocialCards(socialOutput, socialImages.values())
   reporter.info(`Social cards: generated ${socialImages.size} page previews`)
 
   // you'll call `createPage` for each result

@@ -307,7 +307,9 @@ Generated files live in `public/social/generated/`, with a filename derived from
 SHA-256 hash of the PNG contents. They are build outputs, not committed assets. A
 change to the title, scene, colors, font, or layout produces a new URL when it changes
 the rendered image. Rebuild after any such change; clean builds discard obsolete
-output. Pixel-identical rendering across different operating systems is not promised.
+output. After successful generation, every build also removes obsolete generated
+PNGs, including incremental builds, while preserving the active cards and unrelated
+files. Pixel-identical rendering across different operating systems is not promised.
 
 Gatsby passes each generated image's URL, dimensions, MIME type, and descriptive alt
 text into the page's SEO component. The initial HTML contains both `og:image` and
@@ -316,7 +318,10 @@ The [Open Graph image properties](https://ogp.me/#structured) describe the actua
 `og:image:type`, `og:image:width`, `og:image:height`, and `og:image:alt`. Article pages
 use `og:type=article`; hubs and the homepage use `website`. Canonical URLs and image
 URLs include `/dataguide` exactly once, even when reviewing an unprefixed local build.
-Existing frontmatter images remain a fallback for pages outside the themed sections.
+Generated cards intentionally override legacy frontmatter `metaImage` fields on
+themed pages. All current content sections are themed; setting `metaImage` on those
+pages has no effect. It remains a fallback only for future unthemed pages, followed by
+the site's generic OG image. OG and Twitter share that single fallback configuration.
 
 To review a new section's sharing cards, run the existing tests, typecheck, and full
 build, then open its generated PNG at full size and at a small feed-preview size.

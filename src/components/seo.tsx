@@ -139,7 +139,6 @@ const query = graphql`
         twitter {
           site
           creator
-          image
         }
         og {
           site_name

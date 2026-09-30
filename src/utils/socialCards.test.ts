@@ -1,12 +1,17 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, readdir, unlink, rmdir } from 'node:fs/promises'
+import { mkdtemp, readFile, readdir, unlink, rmdir, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 import { THEMED_TOPICS } from './topicThemes.ts'
-import { loadCardThemes, renderSocialCard, writeSocialCard } from './socialCards.ts'
+import {
+  loadCardThemes,
+  renderSocialCard,
+  writeSocialCard,
+  pruneSocialCards,
+} from './socialCards.ts'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 
@@ -102,6 +107,38 @@ test('content-addressed files and metadata stay in sync when a title or theme ch
     )
   } finally {
     // Only the disposable directory created by this test is removed.
+    for (const file of await readdir(output)) await unlink(path.join(output, file))
+    await rmdir(output)
+  }
+})
+
+test('rebuild cleanup removes obsolete cards while preserving active cards and unrelated files', async () => {
+  const output = await mkdtemp(path.join(tmpdir(), 'dataguide-social-prune-'))
+  try {
+    const themes = await loadCardThemes(root)
+    const options = {
+      root,
+      theme: themes.get('intro')!,
+      title: 'What are databases?',
+      topicTitle: 'Introduction to databases',
+    }
+    const old = await writeSocialCard(options, output)
+    const current = await writeSocialCard(
+      { ...options, title: 'Introduction to database schemas' },
+      output
+    )
+    await writeFile(path.join(output, 'notes.txt'), 'Unrelated file')
+    await pruneSocialCards(output, [current])
+    assert.deepEqual(
+      (await readdir(output)).sort(),
+      [path.basename(current.url), 'notes.txt'].sort()
+    )
+    await assert.rejects(readFile(path.join(output, path.basename(old.url))), { code: 'ENOENT' })
+    await pruneSocialCards(output, [current])
+    assert.equal((await readdir(output)).length, 2, 'Cleanup is idempotent')
+    await pruneSocialCards(output, [])
+    assert.deepEqual(await readdir(output), ['notes.txt'])
+  } finally {
     for (const file of await readdir(output)) await unlink(path.join(output, file))
     await rmdir(output)
   }
