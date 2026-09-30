@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ArticleQueryData } from '../interfaces/Article.interface'
 import Layout from '../components/layout'
 import TopSection from '../components/topSection'
+import FloatingToc from '../components/floatingToc'
 import SectionArt, { sectionThemeForSlug } from '../components/sectionArt'
 import PageBottom from '../components/pageBottom'
 import SEO from '../components/seo'
@@ -40,10 +41,16 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
+  const tocItems = toc || toc == null ? tableOfContents?.items : undefined
   const sectionTheme = sectionThemeForSlug(modSlug)
 
   return (
-    <Layout isHomePage={isHomePage} slug={slug} {...props}>
+    <Layout
+      isHomePage={isHomePage}
+      slug={slug}
+      aside={tocItems && <FloatingToc items={tocItems} />}
+      {...props}
+    >
       {!isHomePage && (
         <section className="top-section">
           {sectionTheme && <SectionArt theme={sectionTheme} variant="page" />}

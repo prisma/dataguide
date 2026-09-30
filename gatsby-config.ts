@@ -49,6 +49,8 @@ let plugins: any = [
             <path d="M12 1L10.25 17" stroke="#CBD5E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>`,
             className: `title-link`,
+            // Land linked headings below the sticky header (see scroll-padding-top in layout.css)
+            offsetY: 80,
             enableCustomId: true,
           },
         },
