@@ -1,437 +1,433 @@
 ---
 title: 'Setting up a local MongoDB database'
-metaTitle: 'How to Install and Set Up a Local MongoDB Database'
-metaDescription: 'Learn how to set up a MongoDB database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
+metaTitle: 'How to Install and Set Up a Local MongoDB 9.0 Database'
+metaDescription: 'Install MongoDB Community Server 9.0 and mongosh locally with Docker, apt, dnf, Homebrew or the Windows installer, turn on authentication, and create your first database.'
 metaImage: '/social/generic-mongodb.png'
 toc: false
-authors: ['justinellingwood']
+lastUpdated: 2026-09-30
 ---
-
-<StatusNotice>
-
-This guide was written in 2021 for MongoDB 4.4 and the legacy `mongo` shell. MongoDB 4.4 reached end of life on February 29, 2024, and the `mongo` shell has been replaced by [`mongosh`](https://www.mongodb.com/docs/mongodb-shell/). The steps below install a version that no longer receives updates and haven't been re-tested. To install a supported version, follow [MongoDB's installation guide](https://www.mongodb.com/docs/manual/installation/).
-
-</StatusNotice>
 
 ## Overview
 
-This page explains how to install and configure a [MongoDB database server](https://www.mongodb.com/what-is-mongodb) and the default [`mongo` shell](https://docs.mongodb.com/manual/mongo/). This guide will cover how to install and set up these components on your computer for local access.
+A local [MongoDB](/intro/database-glossary#mongodb) server gives you a private place to learn the query language, try out schema ideas and run your application's tests without touching shared data. This guide installs MongoDB Community Server 9.0 and the MongoDB Shell, `mongosh`, on your computer, turns on authentication, and walks you through creating your first database.
 
-This guide will cover the following platforms:
+The quickest route is Docker, which works the same on Linux, macOS and Windows. If you'd rather install MongoDB directly on your operating system, follow the section for your platform instead:
 
-- [Setting up MongoDB on Windows](#setting-up-mongodb-on-windows)
-- [Setting up MongoDB on macOS](#setting-up-mongodb-on-macos)
-- [Setting up MongoDB on Linux](#setting-up-mongodb-on-linux)
-  - [Debian and Ubuntu](#debian-and-ubuntu)
-  - [CentOS](#centos)
+- [What you'll install](#what-youll-install)
+- [Run MongoDB with Docker](#run-mongodb-with-docker)
+- [Install MongoDB on Linux](#install-mongodb-on-linux)
+- [Install MongoDB on macOS](#install-mongodb-on-macos)
+- [Install MongoDB on Windows](#install-mongodb-on-windows)
+- [Turn on access control](#turn-on-access-control) (native installs)
+- [Create a database and your first document](#create-a-database-and-your-first-document)
+- [Where MongoDB keeps its files](#where-mongodb-keeps-its-files)
+- [Remove MongoDB](#remove-mongodb)
 
-Navigate to the sections that match the platforms you will be working with.
+## What you'll install
 
-<PrismaOutlinks>
+MongoDB publishes a major release every two years and supports each one for five years. [MongoDB's lifecycle schedule](https://www.mongodb.com/legal/support-policy/lifecycles) lists these major releases as supported:
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
+| Release     | Released       | End of life      |
+| ----------- | -------------- | ---------------- |
+| MongoDB 9.0 | September 2026 | October 31, 2031 |
+| MongoDB 8.0 | October 2024   | October 31, 2029 |
+| MongoDB 7.0 | August 2023    | August 31, 2027  |
 
-To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+This guide uses 9.0, the newest one. If your production database runs 8.0 or 7.0, install the same release series locally so that you develop against the behavior you'll deploy on. MongoDB's installation guides have a version selector for each release. Since MongoDB 8.2 there are also [minor releases](https://www.mongodb.com/docs/manual/reference/versioning/) between the major ones. The current one, 8.3 (May 2026), is listed as supported until October 31, 2029, the same date as 8.0. Unless you need a feature that only a minor release has, stick with a major release.
 
-</PrismaOutlinks>
+A working setup has up to four parts:
 
-## Setting up MongoDB on Windows
+| Component                                                                | What it does                                                                                                                                                   | Do you need it?                                                |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| MongoDB Community Server (`mongod`)                                      | The database server itself                                                                                                                                     | Yes                                                            |
+| [MongoDB Shell (`mongosh`)](https://www.mongodb.com/docs/mongodb-shell/) | An interactive JavaScript shell for running commands and queries. It replaces the legacy `mongo` shell, which was deprecated in MongoDB 5.0 and removed in 6.0 | Yes                                                            |
+| [MongoDB Database Tools](https://www.mongodb.com/docs/database-tools/)   | Command-line tools such as `mongodump`, `mongorestore`, `mongoimport` and `mongoexport`                                                                        | Optional. The Linux packages and Homebrew install them for you |
+| [MongoDB Compass](https://www.mongodb.com/docs/compass/install/)         | A graphical interface for browsing and editing data                                                                                                            | Optional                                                       |
 
-> **Note:** This guide was written for MongoDB version 4 and the installation procedure has changed since the time of writing. To install more recent versions of MongoDB for Windows, check out [MongoDB's Windows installation documentation](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/).
+MongoDB Community Server doesn't include MongoDB Search and Vector Search. If you need them locally, MongoDB documents them as a [separate installation](https://www.mongodb.com/docs/search/self-managed/current/installation/docker/).
 
-[MongoDB](/intro/database-glossary#mongodb) provides a native Windows installer to install and configure your databases.
+## Run MongoDB with Docker
 
-Visit the [download page for the MongoDB Community Server](https://www.mongodb.com/try/download/community) and select the latest msi package available for Windows. Click **Download** to get the installer:
+Running MongoDB in a container keeps it separate from the rest of your system: one command starts it, the image tag pins the exact version, and removing it later leaves nothing behind. You need [Docker](https://docs.docker.com/get-started/get-docker/) (Docker Desktop on macOS and Windows, or Docker Engine on Linux).
 
-![MongoDB download page](../dataguide-images/mongodb/setting-up-a-local-database/windows/01_download_page.png)
+MongoDB maintains its own image, [`mongodb/mongodb-community-server`](https://hub.docker.com/r/mongodb/mongodb-community-server), and uses it in its [Docker installation guide](https://www.mongodb.com/docs/manual/administration/install-community-docker/). (The [`mongo`](https://hub.docker.com/_/mongo) image on Docker Hub is a separate image maintained by the Docker community.) The image comes in several variants. Its Docker Hub page recommends the `ubi9-slim` variants, because the Ubuntu-based, UBI 8 and non-slim variants are being deprecated. The tag `9.0-ubi9-slim` follows the latest 9.0 patch release. To pin an exact release, use a tag such as `9.0.2-ubi9-slim`.
 
-Once the download is complete, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
-
-Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
-
-![MongoDB installer greeting](../dataguide-images/mongodb/setting-up-a-local-database/windows/02_installer_welcome.png)
-
-Click **Next** on the initial page to continue.
-
-On the next page, read and review the end-user license agreement and check the box confirming that you agree to the terms
-
-![MongoDB EULA agreement](../dataguide-images/mongodb/setting-up-a-local-database/windows/03_accept_eula.png)
-
-Click **Next** to continue.
-
-The next page allows you to choose which components you wish to install:
-
-![MongoDB installation type](../dataguide-images/mongodb/setting-up-a-local-database/windows/04_select_installation_type.png)
-
-Choose the **Complete** installation to install all of the MongoDB components.
-
-The next screen allows you to customize the installation location and other configuration items:
-
-![MongoDB service configuration](../dataguide-images/mongodb/setting-up-a-local-database/windows/05_service_config.png)
-
-The default values should work well for most scenarios. Click **Next** when you are satisfied with your selections.
-
-Next, choose whether you want to install [MongoDB Compass](https://www.mongodb.com/products/compass), a graphical interface that you can use to connect to and manage MongoDB servers. This component is optional:
-
-![MongoDB compass installation](../dataguide-images/mongodb/setting-up-a-local-database/windows/06_compass_installation.png)
-
-Click **Next** after making your decision.
-
-The next screen indicates that the pre-installation configuration is complete and that MongoDB is ready to install:
-
-![MongoDB ready to install](../dataguide-images/mongodb/setting-up-a-local-database/windows/07_ready_to_install.png)
-
-Click **Install** to begin installing all of the MongoDB components on your computer.
-
-Once the installation is complete, MongoDB Compass may open automatically. If so, you can ignore it for now.
-
-Now that MongoDB is installed, we can run the server and connect to it using the included MongoDB shell. Both of these components are run from the command line.
-
-In your start menu, type `cmd` and click on the Windows Command Prompt to launch a terminal session.
-
-Before you run the server, you need to create the default directory where MongoDB stores its data: `\data\db`. You can create that directory by typing:
-
-```
-md \data\db
-```
-
-![MongoDB create data directory](../dataguide-images/mongodb/setting-up-a-local-database/windows/09_make_data_dir.png)
-
-Afterwards, you can start up the MongoDB server by typing in the absolute path to the `mongod.exe` executable file. Part of the path contains the MongoDB version number that you installed, so your installation path may be slightly different than the one used below:
-
-```
-C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe
-```
-
-![MongoDB run server](../dataguide-images/mongodb/setting-up-a-local-database/windows/10_run_mongo_server.png)
-
-If everything is functioning correctly, the server will start up and output diagnostic information to the console. To verify that the startup was successful, look for a message that indicates that it is now accepting connections from clients:
-
-![MongoDB waiting for connections](../dataguide-images/mongodb/setting-up-a-local-database/windows/11_waiting_for_connections.png)
-
-To connect to your running MongoDB server, open another Command Prompt window. Similar to before, we need to type in the absolute path to the executable file.
-
-In this case, we are trying to run the `mongo.exe` executable so, taking into account the differences in version numbers, the command should look something like this:
-
-```
-C:\Program Files\MongoDB\Server\4.4\bin\mongo.exe
-```
-
-![MongoDB run shell](../dataguide-images/mongodb/setting-up-a-local-database/windows/12_run_mongo_shell.png)
-
-Once the shell connects to the server, it will print information about the connection and drop you into a MongoDB prompt:
-
-![MongoDB connect to database](../dataguide-images/mongodb/setting-up-a-local-database/windows/13_connect_to_db.png)
-
-To verify that the server is responding to commands, run the `show dbs` command:
-
-![MongoDB show_dbs](../dataguide-images/mongodb/setting-up-a-local-database/windows/14_show_dbs.png)
-
-If you installed the MongoDB Compass component, you can also connect to and manage your MongoDB server from a graphical interface.
-
-Open up MongoDB Compass to begin.
-
-The initial screen will give you the opportunity to connect to a running MongoDB server by providing a connection string:
-
-![MongoDB compass connect](../dataguide-images/mongodb/setting-up-a-local-database/windows/15_compass_connect.png)
-
-If you click **Connect** without entering any information, Compass will automatically attempt to connect to a local MongoDB server running with the default configuration.
-
-Click **Connect** to connect to the MongoDB server you are running.
-
-Once Compass connects to your local server, it will display information about the databases within and allow you to manage your data using a friendly graphical interface:
-
-![MongoDB compass running](../dataguide-images/mongodb/setting-up-a-local-database/windows/16_compass_running.png)
-
-When you are finished working with your MongoDB server, you can stop each of the components.
-
-In MongoDB Compass, click the **Connect** menu and select **Disconnect** to drop the connection to your MongoDB server. Afterwards, you can safely close the MongoDB Compass application.
-
-In the MongoDB shell, you can type `exit` to end your session.
-
-To stop the MongoDB server, type <kbd>CTRL</kbd>-<kbd>c</kbd> to begin the shutdown process for the server component.
-
-<PrismaOutlinks>
-
-If you are looking to get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
-
-</PrismaOutlinks>
-
-## Setting up MongoDB on macOS
-
-MongoDB provides a native macOS installer to install and configure your database.
-
-Visit the [download page for the MongoDB Community Server](https://www.mongodb.com/try/download/community) and select the latest `.tgz` file available for macOS. Click **Download** to get the installer:
-
-![MongoDB download page](../dataguide-images/mongodb/setting-up-a-local-database/macos/download_installer.png)
-
-Once the download completes, open a new terminal window and navigate to the location where you downloaded the MongoDB `.tgz` file.
-
-Extract the contents of the `.tgz` file by typing:
+Start the server with a named volume for its data and an administrator account. The first line waits for you to type a password for the administrator and press Enter. It doesn't echo what you type, and the password doesn't end up in your shell history, as it would if you wrote it into the `docker run` command. The second line makes it available to `docker run`:
 
 ```bash
-tar xzvf mongodb-macos*.tgz
+read -rs MONGO_INITDB_ROOT_PASSWORD
+export MONGO_INITDB_ROOT_PASSWORD
+docker run -d --name mongodb \
+  -p 127.0.0.1:27017:27017 \
+  -v mongodb-data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD \
+  mongodb/mongodb-community-server:9.0-ubi9-slim
 ```
 
-![MongoDB extract tarball](../dataguide-images/mongodb/setting-up-a-local-database/macos/extract_tarball.png)
+Each option has a job:
 
-Change into the extracted directory and then copy the executables to your `/usr/local/bin` directory so that they are a part of `PATH` that the operating system uses to search for executables:
+- `-p 127.0.0.1:27017:27017` publishes MongoDB's port on your computer's loopback interface only. Many examples, including MongoDB's own, use `-p 27017:27017`, which listens on every network interface of your computer, so anyone on the same network could reach the server.
+- `-v mongodb-data:/data/db` stores the database files in a Docker volume named `mongodb-data`. The data survives when you stop, restart or even delete the container.
+- `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` tell the image to create a user with the `root` role in the `admin` database the first time it starts with an empty volume, and to start `mongod` with authentication turned on. `-e MONGO_INITDB_ROOT_PASSWORD` without a value passes the variable from your shell. Anyone who can run `docker inspect` on your computer can still read the password, so don't reuse one from anywhere else.
+
+Connect with the `mongosh` that ships inside the image. It asks for the password:
 
 ```bash
-cd mongodb-macos*
-sudo cp bin/* /usr/local/bin
+docker exec -it mongodb mongosh -u admin -p --authenticationDatabase admin
 ```
 
-![MongoDB copy executables](../dataguide-images/mongodb/setting-up-a-local-database/macos/copy_executables.png)
+If you also [install `mongosh`](https://www.mongodb.com/docs/mongodb-shell/install/) on your computer, the same command without the `docker exec -it mongodb` prefix connects through the published port.
 
-Before you can start the MongoDB server, you need to create some of the directories that it will need.
-
-First, create the MongoDB server data directory by typing:
+To check that the server really requires a login, try to write without one:
 
 ```bash
-sudo mkdir -p /usr/local/var/mongodb
+docker exec mongodb mongosh --quiet --eval 'db.getSiblingDB("test").items.insertOne({ a: 1 })'
 ```
 
-![MongoDB create data directory](../dataguide-images/mongodb/setting-up-a-local-database/macos/create_data_directory.png)
+```text
+MongoServerError: Command insert requires authentication
+```
 
-Next, create a directory that MongoDB can use to store its logs:
+**Pass the two `MONGO_INITDB_ROOT_*` variables again whenever you re-create the container**, for example to move to a newer 9.0 image. On a volume that already holds data, the image doesn't create the user again, but the variables are still what makes it start `mongod` with `--auth`. If you start a new container on the same volume without them, the users still exist but MongoDB no longer asks anyone to log in. If you'd rather not pass the password again, drop both variables and add `--auth` after the image name instead. Don't combine the two: with the variables set, an extra `--auth` makes `mongod` exit with `Multiple occurrences of option "--auth"`.
+
+Authentication is already on, so you can skip ahead to [Create a database and your first document](#create-a-database-and-your-first-document).
+
+## Install MongoDB on Linux
+
+MongoDB publishes its own package repositories for Ubuntu, Debian and the RHEL family, and its [Linux installation guide](https://www.mongodb.com/docs/manual/administration/install-community-linux/) covers SUSE and Amazon Linux too. Install from these repositories rather than from your distribution: a package called `mongodb` from your distribution isn't maintained by MongoDB and conflicts with the official `mongodb-org` packages, so remove it first if you have one.
+
+The `mongodb-org` package pulls in the server, `mongosh` and the Database Tools.
+
+### Ubuntu
+
+MongoDB 9.0 supports Ubuntu 24.04 LTS ("Noble") and 22.04 LTS ("Jammy") on x86_64 and ARM64.
+
+First, download MongoDB's signing key and store it as a keyring file:
 
 ```bash
-sudo mkdir -p /usr/local/var/log/mongodb
+sudo apt-get update
+sudo apt-get install -y gnupg curl
+curl -fsSL https://pgp.mongodb.com/server-9.asc | \
+  sudo gpg -o /usr/share/keyrings/mongodb-server-9.gpg --dearmor
 ```
 
-![MongoDB create log directory](../dataguide-images/mongodb/setting-up-a-local-database/macos/create_log_directory.png)
-
-Next, give your current user ownership over the new directories so that MongoDB can write to them when you run the server with your user:
+Next, add the repository. The `signed-by` option ties the key to this one repository, so apt only accepts it for MongoDB's packages. The [`apt-key` command](https://manpages.ubuntu.com/manpages/noble/man8/apt-key.8.html) that older guides use trusted a key for every repository, and it's deprecated. For Ubuntu 22.04, replace `noble` with `jammy`:
 
 ```bash
-sudo chown $USER /usr/local/var/mongodb
-sudo chown $USER /usr/local/var/log/mongodb
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-9.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/9.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-9.0.list
 ```
 
-![MongoDB reassign ownership](../dataguide-images/mongodb/setting-up-a-local-database/macos/assign_owner.png)
-
-Now that the directories that the MongoDB server needs are in order, you can run start the MongoDB server with the paths we created by typing:
+Then install MongoDB, start it, and have it start at boot:
 
 ```bash
-mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
 ```
 
-![MongoDB start server](../dataguide-images/mongodb/setting-up-a-local-database/macos/start_server.png)
+`sudo systemctl status mongod` shows whether the server is running. If it isn't, the log at `/var/log/mongodb/mongod.log` says why.
 
-Depending on your version of macOS, it's possible you will see a prompt stating that the execution of the MongoDB server has been blocked:
+### Debian
 
-![MongoDB execution blocked](../dataguide-images/mongodb/setting-up-a-local-database/macos/execution_blocked.png)
-
-This is a security policy that is activated whenever an application is run that Apple does not recognize. You can allow an exception for your MongoDB server by going in to your **System Preferences**, clicking **Security and Privacy** and then clicking **Allow Anyway** next to the MongoDB server entry:
-
-![MongoDB allow execution](../dataguide-images/mongodb/setting-up-a-local-database/macos/allow_execution.png)
-
-When you run the command again, another prompt will likely appear. However, this time, you have the option to allow the program to execute by clicking **Open**:
-
-![MongoDB confirm execution](../dataguide-images/mongodb/setting-up-a-local-database/macos/confirm_execution.png)
-
-Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server. To run the MongoDB shell, type:
+MongoDB 9.0 supports Debian 13 ("Trixie"), on x86_64 only; the repository has no ARM64 server packages for Debian. Import the key exactly as for [Ubuntu](#ubuntu), then add the Debian repository:
 
 ```bash
-mongo
+echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-9.gpg ] https://repo.mongodb.org/apt/debian trixie/mongodb-org/9.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-9.0.list
 ```
 
-![MongoDB run_shell](../dataguide-images/mongodb/setting-up-a-local-database/macos/run_shell.png)
+Install and start MongoDB with the same `apt-get` and `systemctl` commands as on Ubuntu.
 
-Depending on your version of macOS, you may receive a notice that the execution was blocked again. If that's the case, go through the same procedure as before to allow an exception and confirm that you want to run the MongoDB shell.
+### RHEL, Rocky Linux, AlmaLinux and Oracle Linux
 
-When all goes well, the MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt:
-
-![MongoDB shell connected](../dataguide-images/mongodb/setting-up-a-local-database/macos/shell_connected.png)
-
-To verify that the server is responding to commands, run the `show dbs` command:
-
-```
-show dbs
-```
-
-![MongoDB show databases](../dataguide-images/mongodb/setting-up-a-local-database/macos/show_dbs.png)
-
-You can also optionally install a graphical MongoDB manager called MongoDB compass. To install Compass, use the `install_compass` command that's been included in the MongoDB installation:
+MongoDB 9.0 supports versions 8, 9 and 10 of RHEL, Rocky Linux and AlmaLinux on x86_64 and ARM64. On Oracle Linux, the [platform support table](https://www.mongodb.com/docs/community-platform-support/) lists only x86_64, and MongoDB supports it only with the Red Hat Compatible Kernel (RHCK), not the Unbreakable Enterprise Kernel (UEK). Create a repository definition. This one is for version 9; for the others, change the `9` after `redhat/`. `$basearch` is a `dnf` variable that becomes `x86_64` or `aarch64`, and the quotes around `'EOF'` keep your shell from expanding it:
 
 ```bash
-install_compass
-```
-
-![MongoDB install compass](../dataguide-images/mongodb/setting-up-a-local-database/macos/install_compass.png)
-
-Occasionally, the installer will run into an error, as shown above, but usually it does not affect the actual installation.
-
-The initial screen will give you the opportunity to connect to a running MongoDB server by providing a connection string:
-
-![MongoDB compass connect](../dataguide-images/mongodb/setting-up-a-local-database/macos/compass_connect.png)
-
-If you click **Connect** without entering any information, Compass will automatically attempt to connect to a local MongoDB server running with the default configuration.
-
-Click **Connect** to connect to the MongoDB server you are running.
-
-Once Compass connects to your local server, it will display information about the databases within and allow you to manage your data using a friendly graphical interface:
-
-![MongoDB compass connect](../dataguide-images/mongodb/setting-up-a-local-database/macos/compass_running.png)
-
-When you are finished working with your MongoDB server, you can stop each of the components.
-
-In MongoDB Compass, click the **Connect** menu and select **Disconnect** to drop the connection to your MongoDB server. Afterwards, you can safely close the MongoDB Compass application.
-
-In the MongoDB shell, you can type `exit` to end your session.
-
-To stop the MongoDB server, you can find and kill the MongoDB server process by typing:
-
-```bash
-pkill mongod
-```
-
-## Setting up MongoDB on Linux
-
-Installation methods differ depending on the Linux distribution you are using. Follow the section below that matches your Linux distribution.
-
-- [Debian and Ubuntu](#debian-and-ubuntu)
-- [CentOS](#centos)
-
-### Debian and Ubuntu
-
-The best way to install MongoDB on Ubuntu or Debian is to configure your system to use the repositories that MongoDB maintains.
-
-First, download the MongoDB GPG key to your collection of trusted `apt` signing keys by typing:
-
-```bash
-curl -L https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-```
-
-Next, find and record the latest version of MongoDB available for your operating system by typing:
-
-```bash
-LATEST_MONGO_VERSION=$(. /etc/os-release && curl -L repo.mongodb.org/apt/${ID}/dists/${VERSION_CODENAME}/mongodb-org | grep -Eo '[0-9]+\.[0-9]+' | sort -V | tail -1)
-```
-
-Afterwards, configure the `apt` repository appropriate for your operating system.
-
-If you are running **Ubuntu**, type:
-
-```bash
-(. /etc/os-release && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/${ID} ${VERSION_CODENAME}/mongodb-org/${LATEST_MONGO_VERSION} multiverse") | sudo tee /etc/apt/sources.list.d/mongodb-org-${LATEST_MONGO_VERSION}.list
-```
-
-If you are running **Debian**, type this instead:
-
-```bash
-(. /etc/os-release && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/${ID} ${VERSION_CODENAME}/mongodb-org/${LATEST_MONGO_VERSION} main") | sudo tee /etc/apt/sources.list.d/mongodb-org-${LATEST_MONGO_VERSION}.list
-```
-
-With the MongoDB apt repository configured, update the local package index and install MongoDB by typing:
-
-```bash
-sudo apt update
-sudo apt install mongodb-org
-```
-
-Once the software is installed, you can start the MongoDB server by typing:
-
-```bash
-sudo systemctl start mongod.service
-```
-
-Optionally, you can also automatically start MongoDB on boot with the `enable` command:
-
-```bash
-sudo systemctl enable mongod.service
-```
-
-Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server. To run the MongoDB shell, type:
-
-```bash
-mongo
-```
-
-When all goes well, the MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt. To verify that the server is responding to commands, run the `show dbs` command:
-
-```
-show dbs
-```
-
-When you are finished working with your MongoDB server, you can stop each of the components.
-
-In the MongoDB shell, you can type `exit` to end your session.
-
-To stop the MongoDB server, type:
-
-```bash
-sudo systemctl stop mongod.service
-```
-
-### CentOS
-
-The best way to download and install MongoDB on CentOS is to use the repositories maintained by the MongoDB.
-
-First, find and record the latest version of MongoDB available for your operating system by typing:
-
-```bash
-LATEST_MONGO_VERSION=$(. /etc/os-release && curl -L repo.mongodb.org/yum/redhat/${VERSION_ID}/mongodb-org | grep -Eo '[0-9]+\.[0-9]+' | sort -V | tail -1)
-```
-
-Next, write the repository definition file using the version info you just queried. You can type the following command to write the repository file to the filesystem:
-
-```bash
-sudo tee /etc/yum.repos.d/mongodb-org-${LATEST_MONGO_VERSION}.repo << EOF
-[mongodb-org-${LATEST_MONGO_VERSION}]
+sudo tee /etc/yum.repos.d/mongodb-org-9.0.repo <<'EOF'
+[mongodb-org-9.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/${LATEST_MONGO_VERSION}/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/9.0/$basearch/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-${LATEST_MONGO_VERSION}.asc
+gpgkey=https://pgp.mongodb.com/server-9.asc
 EOF
 ```
 
-With the repository definition file in place, you can install the MongoDB server package by typing:
+`gpgcheck=1` makes `dnf` verify every package against MongoDB's key. The first time you install, `dnf` shows the key it imports:
 
 ```bash
-sudo yum install mongodb-org
+sudo dnf install -y mongodb-org
 ```
 
-Once the software is installed, you can start the MongoDB server by typing:
+```text
+Importing GPG key 0x602E502D:
+ Userid     : "MongoDB 9 Release Signing Key <packaging@mongodb.com>"
+ Fingerprint: B3B4 2B6C 39E5 CDDE C0A2 7E3C F366 D55B 602E 502D
+ From       : https://pgp.mongodb.com/server-9.asc
+Key imported successfully
+```
+
+Start MongoDB and have it start at boot:
 
 ```bash
-sudo systemctl start mongod.service
+sudo systemctl start mongod
+sudo systemctl enable mongod
 ```
 
-Optionally, you can also automatically start MongoDB on boot with the `enable` command:
+If SELinux is enforcing on your system, read the SELinux section of [MongoDB's installation guide](https://www.mongodb.com/docs/manual/administration/install-community-linux/). MongoDB provides a policy that works with the default paths, but not with custom data or log directories.
+
+### Running mongod without systemd
+
+In a container or another environment without systemd, start `mongod` yourself as the service account the package created (`mongodb` on Ubuntu and Debian, `mongod` on the RHEL family), with the package's configuration file:
 
 ```bash
-sudo systemctl enable mongod.service
+sudo -u mongodb mongod --config /etc/mongod.conf --fork
 ```
 
-Now that the MongoDB server is running, you can start up the MongoDB shell to connect to and manage your server. To run the MongoDB shell, type:
+To stop it again, run the same command with `--shutdown` instead of `--fork`. Started this way, `mongod` may warn that the limit on open files is too low. The packaged systemd unit raises that limit to 64000, and MongoDB describes the [recommended limits](https://www.mongodb.com/docs/manual/reference/ulimit/) for starting it any other way.
+
+## Install MongoDB on macOS
+
+MongoDB 9.0 supports macOS 14 or later, on Apple silicon and Intel Macs. MongoDB distributes it through its own [Homebrew tap](https://github.com/mongodb/homebrew-brew) rather than Homebrew's main repository. These steps follow [MongoDB's macOS installation guide](https://www.mongodb.com/docs/manual/administration/install-community-macos/); we couldn't run them on a Mac for this article.
+
+If you don't have [Homebrew](https://brew.sh/) yet, install it first. Then add the tap, mark it as trusted, and install MongoDB:
 
 ```bash
-mongo
+brew tap mongodb/brew
+brew trust mongodb/brew
+brew update
+brew install mongodb-community@9.0
 ```
 
-When all goes well, the MongoDB shell will connect to your local MongoDB server and provide you with a MongoDB prompt. To verify that the server is responding to commands, run the `show dbs` command:
+`brew trust` is needed because, [since Homebrew 6.0.0](https://docs.brew.sh/Tap-Trust), Homebrew only loads formulae from non-official taps that you have trusted. The formula also installs `mongosh` and the Database Tools. `mongodb-community@9.0` is an alias for the tap's `mongodb-community` formula, so `brew list` and `brew services list` show it under that name.
 
-```
-show dbs
-```
-
-When you are finished working with your MongoDB server, you can stop each of the components.
-
-In the MongoDB shell, you can type `exit` to end your session.
-
-To stop the MongoDB server, type:
+Start MongoDB as a background service that also starts when you log in:
 
 ```bash
-sudo systemctl stop mongod.service
+brew services start mongodb-community@9.0
 ```
+
+`brew services list` shows `mongodb-community` as `started`. MongoDB notes that the open files limit might not be set when you start MongoDB through `brew services`, so you might need to set the [`ulimit` values](https://www.mongodb.com/docs/manual/reference/ulimit/) yourself. If macOS blocks `mongod` because it can't verify the developer, MongoDB's guide explains how to allow it in the Privacy & Security settings.
+
+## Install MongoDB on Windows
+
+MongoDB 9.0 supports Windows 11 and Windows Server 2022 on x86_64. MongoDB doesn't support running it inside the Windows Subsystem for Linux (WSL); use the native installer or [Docker](#run-mongodb-with-docker) instead. These steps follow [MongoDB's Windows installation guide](https://www.mongodb.com/docs/manual/administration/install-community-windows/); we couldn't run them on Windows for this article.
+
+1. From the [MongoDB Download Center](https://www.mongodb.com/try/download/community), download the 9.0 release for Windows as an `.msi` package.
+2. Run the installer and choose the **Complete** setup type.
+3. Keep the option to install MongoDB as a Windows service, so that MongoDB runs in the background and starts as soon as the installation finishes. The default service account, the built-in Network Service account, is fine for local development. Note the data and log directories the installer shows, so that you can find your files later.
+4. Installing Compass is optional.
+5. The installer doesn't include `mongosh`. [Install it separately](https://www.mongodb.com/docs/mongodb-shell/install/) and make sure its directory is on your `PATH`.
+
+To stop and start the service, use the Services console, or run these commands in a terminal opened as Administrator:
+
+```powershell
+net stop MongoDB
+net start MongoDB
+```
+
+## Turn on access control
+
+This section is for the native installations above; the Docker container already requires a login.
+
+A fresh MongoDB installation starts without access control. It only listens on localhost, but every program and every user account on your computer can read, change or delete every database without a password. And if you ever change that network binding, for example so that another machine or a container can connect, the whole server is open to your network. When you connect with `mongosh`, it warns you about this:
+
+```bash
+mongosh
+```
+
+```text
+   The server generated these startup warnings when booting
+   2026-09-30T03:47:18.513+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+```
+
+Turning it on takes three steps.
+
+**1. Create an administrator.** In `mongosh`, switch to the `admin` database and create a user. `passwordPrompt()` asks for the password, so it doesn't end up in your shell history:
+
+```javascript
+use admin
+db.createUser({
+  user: "admin",
+  pwd: passwordPrompt(),
+  roles: [
+    { role: "userAdminAnyDatabase", db: "admin" },
+    { role: "readWriteAnyDatabase", db: "admin" }
+  ]
+})
+```
+
+```text
+{ ok: 1 }
+```
+
+These are the roles MongoDB's [SCRAM authentication tutorial](https://www.mongodb.com/docs/manual/tutorial/configure-scram-client-authentication/) uses: `userAdminAnyDatabase` manages users and roles, and `readWriteAnyDatabase` reads and writes data in every database. The Docker image gives its first user the broader [`root` role](https://www.mongodb.com/docs/manual/reference/built-in-roles/) instead. Type `exit` to leave `mongosh`.
+
+**2. Enable authorization in the configuration file.** Open the configuration file for your platform in an editor with administrator rights:
+
+| Platform         | Configuration file                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| Linux            | `/etc/mongod.conf`                                                                      |
+| macOS (Homebrew) | `/opt/homebrew/etc/mongod.conf` on Apple silicon, `/usr/local/etc/mongod.conf` on Intel |
+| Windows          | `C:\Program Files\MongoDB\Server\9.0\bin\mongod.cfg`                                    |
+
+On Linux, the packaged file contains a commented-out `#security:` line. Replace it with this block, or add the block if your file has no such line:
+
+```yaml
+security:
+  authorization: enabled
+```
+
+The file is YAML, so indent `authorization` with spaces, not a tab.
+
+**3. Restart MongoDB** so that it reads the new setting:
+
+| Platform         | Command                                                         |
+| ---------------- | --------------------------------------------------------------- |
+| Linux            | `sudo systemctl restart mongod`                                 |
+| macOS (Homebrew) | `brew services restart mongodb-community@9.0`                   |
+| Windows          | `net stop MongoDB`, then `net start MongoDB` (as Administrator) |
+
+Connections without a login still succeed, but they can't read or change data anymore:
+
+```bash
+mongosh --quiet --eval 'db.getSiblingDB("test").items.insertOne({ a: 1 })'
+```
+
+```text
+MongoServerError: Command insert requires authentication
+```
+
+From now on, connect as the administrator and type the password when `mongosh` asks for it:
+
+```bash
+mongosh -u admin -p --authenticationDatabase admin
+```
+
+The `--authenticationDatabase admin` option tells MongoDB where the user is defined. If you turn on authorization before creating any user, MongoDB's [localhost exception](https://www.mongodb.com/docs/manual/core/localhost-exception/) still lets you create the first user from the same machine.
+
+## Create a database and your first document
+
+Use the administrator account for administration only, and give each application its own user that can only work with its own database.
+
+If you run MongoDB in Docker and haven't installed `mongosh` on your computer, put `docker exec -it mongodb` in front of each `mongosh` command in this section, for example `docker exec -it mongodb mongosh -u admin -p --authenticationDatabase admin`.
+
+Connect as the administrator:
+
+```bash
+mongosh -u admin -p --authenticationDatabase admin
+```
+
+Then create a user for a `bookstore` database:
+
+```javascript
+use bookstore
+db.createUser({
+  user: "bookstore_app",
+  pwd: passwordPrompt(),
+  roles: [ { role: "readWrite", db: "bookstore" } ]
+})
+```
+
+`use bookstore` switches to the database even though it doesn't exist yet. MongoDB [creates databases and collections](/mongodb/creating-dbs-and-collections) the first time you store data in them. The user belongs to `bookstore`, which is its authentication database, and the `readWrite` role only applies to that database.
+
+Exit and connect again as the new user. Because the connection string names a user but no password, `mongosh` asks for the password:
+
+```bash
+mongosh "mongodb://bookstore_app@127.0.0.1:27017/bookstore"
+```
+
+Insert a document into a `books` collection and read it back:
+
+```javascript
+db.books.insertOne({ title: 'Dune', author: 'Frank Herbert', year: 1965 })
+db.books.find()
+```
+
+```text
+{
+  acknowledged: true,
+  insertedId: ObjectId('6abc88a44084dbe033284d0c')
+}
+[
+  {
+    _id: ObjectId('6abc88a44084dbe033284d0c'),
+    title: 'Dune',
+    author: 'Frank Herbert',
+    year: 1965
+  }
+]
+```
+
+MongoDB created the `bookstore` database and the `books` collection when the first document arrived, and added a unique `_id` because the document didn't have one. Your application connects with the same kind of [connection URI](/mongodb/connection-uris), with the password included: `mongodb://bookstore_app:<password>@127.0.0.1:27017/bookstore`.
+
+## Where MongoDB keeps its files
+
+| Installation      | Configuration                                        | Data                                                        | Log                                          |
+| ----------------- | ---------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------- |
+| Docker            | Options on the `docker run` command                  | The `mongodb-data` volume (`/data/db` inside the container) | `docker logs mongodb`                        |
+| Ubuntu and Debian | `/etc/mongod.conf`                                   | `/var/lib/mongodb`                                          | `/var/log/mongodb/mongod.log`                |
+| RHEL family       | `/etc/mongod.conf`                                   | `/var/lib/mongo`                                            | `/var/log/mongodb/mongod.log`                |
+| macOS (Homebrew)  | `$(brew --prefix)/etc/mongod.conf`                   | `$(brew --prefix)/var/mongodb`                              | `$(brew --prefix)/var/log/mongodb/mongo.log` |
+| Windows           | `C:\Program Files\MongoDB\Server\9.0\bin\mongod.cfg` | Chosen in the installer                                     | Chosen in the installer                      |
+
+`brew --prefix` is `/opt/homebrew` on Apple silicon Macs and `/usr/local` on Intel Macs. On Linux, the server runs as the `mongodb` user (Ubuntu and Debian) or the `mongod` user (RHEL family), which owns the data and log directories. MongoDB reads its configuration file only at startup, so restart it after every change. The [configuration file options](https://www.mongodb.com/docs/manual/reference/configuration-options/) reference lists every setting.
+
+To start, stop and restart the server:
+
+| Installation | Start                                       | Stop                                       | Restart                                       |
+| ------------ | ------------------------------------------- | ------------------------------------------ | --------------------------------------------- |
+| Docker       | `docker start mongodb`                      | `docker stop mongodb`                      | `docker restart mongodb`                      |
+| Linux        | `sudo systemctl start mongod`               | `sudo systemctl stop mongod`               | `sudo systemctl restart mongod`               |
+| macOS        | `brew services start mongodb-community@9.0` | `brew services stop mongodb-community@9.0` | `brew services restart mongodb-community@9.0` |
+| Windows      | `net start MongoDB`                         | `net stop MongoDB`                         | Stop, then start                              |
+
+## Remove MongoDB
+
+Removing MongoDB's data directory deletes every database in it, and there's no undo. If you want to keep anything, back it up first with [`mongodump`](/mongodb/mongodb-database-tools).
+
+**Docker:** remove the container, the volume that holds the data, and the image:
+
+```bash
+docker rm -f mongodb
+docker volume rm mongodb-data
+docker image rm mongodb/mongodb-community-server:9.0-ubi9-slim
+```
+
+**Ubuntu and Debian:** name `mongosh` and the Database Tools explicitly, because `mongodb-org*` alone leaves them installed:
+
+```bash
+sudo systemctl stop mongod
+sudo apt-get purge -y "mongodb-org*" mongodb-mongosh mongodb-database-tools
+sudo rm -r /var/lib/mongodb /var/log/mongodb
+sudo rm /etc/apt/sources.list.d/mongodb-org-9.0.list /usr/share/keyrings/mongodb-server-9.gpg
+```
+
+**RHEL family:**
+
+```bash
+sudo systemctl stop mongod
+sudo dnf remove -y "mongodb-org*" mongodb-mongosh mongodb-database-tools
+sudo rm -r /var/lib/mongo /var/log/mongodb
+sudo rm /etc/yum.repos.d/mongodb-org-9.0.repo
+```
+
+If you edited `/etc/mongod.conf`, `dnf` keeps your version as `/etc/mongod.conf.rpmsave`. Delete it too if you don't need it.
+
+**macOS:** stop the service, uninstall the formulae (`brew list` shows what's installed), and delete the data, log and configuration files listed in the table above. `brew untap mongodb/brew` removes the tap, and `brew untrust mongodb/brew` withdraws the trust you granted it.
+
+**Windows:** uninstall MongoDB, and `mongosh` and Compass if you installed them, the way you remove any other Windows program. Then delete the data and log directories you chose during installation.
+
+## Next steps
+
+- [Connecting to MongoDB databases](/mongodb/connecting-to-mongodb) covers connecting to local and remote servers in more detail. It was written for the legacy `mongo` shell, which MongoDB removed in version 6.0; use `mongosh` instead, with the options in the [`mongosh` reference](https://www.mongodb.com/docs/mongodb-shell/reference/options/).
+- [Configuring MongoDB user accounts and authentication](/mongodb/configuring-mongodb-user-accounts-and-authentication) and [Authorization and privileges](/mongodb/authorization-and-privileges) explain users and roles. The first shows output from the legacy `mongo` shell, which `mongosh` formats differently.
+- [Transactions](/mongodb/mongodb-transactions) and change streams need a replica set. A replica set with a single member is enough for development; MongoDB explains how to [convert a standalone server into one](https://www.mongodb.com/docs/manual/tutorial/convert-standalone-to-replica-set/).
+- Before you let anything but your own computer connect to MongoDB, work through MongoDB's [security checklist](https://www.mongodb.com/docs/manual/administration/security-checklist/).
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
-
-To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+To use your local MongoDB server from a TypeScript application, see [Prisma ORM's MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb). MongoDB support in Prisma ORM 8 is in early access, and the quickstart explains when you need a replica set.
 
 </PrismaOutlinks>

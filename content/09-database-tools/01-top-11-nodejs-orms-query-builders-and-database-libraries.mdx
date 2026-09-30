@@ -1,719 +1,465 @@
 ---
-title: 'Top 11 Node.js ORMs, query builders & database libraries in 2022'
-metaTitle: 'Best 11 ORMs for Node.js, Query Builders & Database Libraries in 2022'
-metaDescription: "Choosing an ORM or query builder for your Node.js app can be daunting. We review the most popular query builders, ORMs, and other database libraries so you don't have to."
-metaImage: '/social/node-orms-2022.png'
+title: 'Node.js ORMs, query builders and database libraries in 2026'
+metaTitle: 'Node.js ORMs, Query Builders & Database Libraries Compared (2026)'
+metaDescription: 'A September 2026 comparison of Node.js and TypeScript ORMs and query builders (Drizzle, MikroORM, Prisma ORM, Sequelize, TypeORM, Mongoose, Knex.js and Kysely), with figures you can check.'
+metaImage: '/social/docs-social.png'
+lastUpdated: 2026-09-30
 ---
-
-<StatusNotice title="The figures in this comparison are from February 2022">
-
-The popularity and activity figures here (GitHub stars, npm downloads, releases and issues) were collected in February 2022 and haven't been updated. The libraries have changed since, and newer ones aren't covered, so check each project's repository and npm statistics before choosing. This article was first published on September 18, 2020.
-
-</StatusNotice>
 
 ## Introduction
 
-Choosing an ORM or query builder for your Node.js app can be daunting. There are many different libraries that allow you to query and manipulate data from your JavaScript application, and each varies in its design and level of abstraction.
+Choosing a database library for a Node.js or TypeScript application is a decision you live with for a long time: it shapes how you model data, how you write queries and how you change your schema. There are many options, and they differ in their level of abstraction, their TypeScript support, the databases and runtimes they work with, and how actively they're maintained.
 
-This article is meant as a jumping-off point for choosing a library and summarizing data that a developer would look up before picking a tool for their project. It attempts to remain objective and make as few value judgments as possible.
+This article collects the information you'd look up before choosing, for the most widely used ORMs and query builders. It doesn't rank them or pick a winner: which library fits depends on your database, your team and how you like to work.
 
-It does not attempt to choose "one best library" or rank packages in an opinionated fashion. Instead, it summarizes the most popular Node.js query builders, ORMs, and database toolkits and describes their project health. This is done using criteria like popularity, repo activity, developer support, and project maturity.
+This guide is published by Prisma, which develops Prisma ORM, one of the libraries compared here. To keep the comparison fair, every library gets the same structure, all figures come from public sources you can check, and every section describes trade-offs, including Prisma ORM's.
 
-## Criteria: evaluating database libraries
+All figures were collected on **September 30, 2026**. They change quickly, so check the linked repositories and npm pages before you decide.
 
-This article will focus on the most popular Node.js query builders, ORMs, and database toolkits. Database drivers and newer libraries will briefly be considered at the end. Type safety and TypeScript support are not covered and will be evaluated in a forthcoming article.
+## What's covered
 
-Libraries will be briefly summarized and evaluated according to the following criteria:
+- **ORMs:** Drizzle ORM, MikroORM, Prisma ORM, Sequelize and TypeORM
+- **ODM for MongoDB:** Mongoose
+- **Query builders:** Knex.js and Kysely
+- **Libraries with little or no recent development:** Bookshelf.js, Objection.js, Waterline and MassiveJS
+- **Other notable libraries:** database drivers and SQL-first libraries such as pg-promise and Slonik
 
-| Criteria                 | Description                                                     | Evaluated by                                                                                                                             |
-| ------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Popularity**           | How popular is the library amongst developers?                  | GitHub stars, npm downloads & [compound monthly growth rate](https://en.wikipedia.org/wiki/Compound_annual_growth_rate) in npm downloads |
-| **Repo Activity**        | How active is development in the repo?                          | Commits, releases, merged PRs & GitHub issues                                                                                            |
-| **Support**              | Will the developer be well supported?                           | Documentation quality, StackOverflow and Reddit presences, Gitter/Slack/IRC channels & GitHub issues                                     |
-| **Maturity & Stability** | How new is this project? Is it stable and backed by supporters? | npm module and GitHub repo age, maintenance, financial investment, corporate backing & production use cases                              |
+Within each group, libraries are listed alphabetically.
 
-The month of data considered for this article is **January 15 2022 to February 15 2022**. Note that the packages on this page are presented in no particular order, meaning the list does not represent a dedicated ranking.
+The set differs from the 2022 edition of this article. Drizzle ORM and Kysely are new: they now have the most npm downloads of the ORMs and query builders compared here. MikroORM moved from "other notable" to a full section because it's now one of the most actively developed ORMs. Bookshelf.js, Objection.js and Waterline moved to a shorter section because they've had little or no development since (the evidence is [below](#libraries-with-little-or-no-recent-development)).
 
-This criteria is not exhaustive and you should choose the tool that best suits your project and programming preferences.
+## Criteria
 
-<PostgresCallout />
+| Criterion                   | What it tells you                                  | Measured by                                                                                          |
+| --------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Popularity**              | How widely the library is installed                | npm downloads in 30 days, the change from the same 30 days in 2025, GitHub stars                     |
+| **Activity**                | Whether the library is being developed             | Stable releases, commits and commit authors in the last 12 months; date of the latest stable release |
+| **Maintenance and support** | Who keeps it running, and where you can get help   | Who maintains it and how that's funded, documentation, community channels, open issues               |
+| **Maturity**                | How settled the API is                             | Age, current major version, whether a new major version is in alpha, beta or release candidate       |
+| **TypeScript**              | Where the types come from                          | The project's documentation                                                                          |
+| **Databases and runtimes**  | Whether it works with your database and deployment | The project's documentation (Node.js versions, Bun, Deno, edge runtimes), only what the docs state   |
+| **Migrations**              | How you change the database schema                 | The project's documentation                                                                          |
+| **License**                 | Whether you can use it                             | npm and GitHub                                                                                       |
 
-## SQL, query builders, and ORMs
+This article doesn't measure how precisely each library types query results. That's the subject of the companion article, [Evaluating type safety in TypeScript ORMs](/database-tools/evaluating-type-safety-in-the-top-8-typescript-orms).
 
-Libraries to query and manipulate data can broadly be grouped into three categories, each operating at a different level of abstraction.
+### How to read the numbers
 
-From lowest to highest these are:
+- **npm downloads** count every install, including CI runs and installs as a dependency of another package. For example, `kysely` is a dependency of `better-auth` and of MikroORM 7's `@mikro-orm/sql`, and `drizzle-orm` is a dependency of Payload's PostgreSQL adapter, `@payloadcms/db-postgres`. Downloads measure how widely a package is installed, not how many projects chose it.
+- **Download growth** was high across the whole npm registry: between the same 30 days in 2025 and 2026, downloads of `express` grew by 169% and `react` by 273%. Compare growth figures between libraries rather than reading them as adoption on their own.
+- **Stars** accumulate over a project's lifetime and say little about current use.
+- **Commits** depend on workflow: some projects squash each pull request into one commit, others commit in many small steps. One rule applies to every project: a commit isn't counted if its GitHub account ends in `[bot]` or its commit author name ends in "bot". That excludes Dependabot, Renovate, GitHub Actions, release bots and coding agents that commit under a bot name. Contributors are the distinct accounts behind the remaining commits. The share of the most active account shows how much a project depends on one person; an account can be a person or an automation working on their behalf.
+- **Open issues** reflect how a project triages as much as the quality of the code.
 
-- Database drivers, clients and connectors, like [node-postgres](https://github.com/brianc/node-postgres)
-- Query builders, like [Knex.js](https://knexjs.org/) that operate at a level above database clients and allow you to write JavaScript code to manipulate and query data
-- Object-relational mapping tools (ORMs) like [Sequelize](https://sequelize.org/) and database toolkits like [Prisma](https://www.prisma.io/) that allow the developer to work with _models_, abstract entities that correspond to database tables
+Downloads are for the 30 days from August 30 to September 28, 2026 ([npm's "last month" window](https://github.com/npm/registry/blob/main/docs/download-counts.md)), compared with August 30 to September 28, 2025. Commits and contributors are for the default branch between September 30, 2025 and September 30, 2026, except for Drizzle ORM (see the note under the activity table).
 
-Many tools blur the lines between these and allow the developer to drop down to lower levels when additional flexibility or control is necessary. To learn more, please consult [Comparing SQL, query builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from Prisma’s [Data Guide](https://www.prisma.io/dataguide).
+## SQL, query builders and ORMs
 
-## Prisma
+Database libraries work at different levels of abstraction. From lowest to highest:
 
-### Evaluation summary
+- **Database drivers** such as `pg` (node-postgres) connect to the database and send the SQL you write.
+- **Query builders** such as Kysely and Knex.js let you build SQL with JavaScript or TypeScript method calls. You still think in tables, joins and columns.
+- **Object-relational mappers (ORMs)** such as Prisma ORM, TypeORM and Sequelize let you work with _models_ that correspond to tables, and load related records for you. An **ODM** (object-document mapper) such as Mongoose does the same for a document database.
 
-- **Popularity**: Popular
-- **Repo Activity**: Very active
-- **Support**: Strong
-- **Maturity and Stability:** Newer
-- **Supported Databases**: MySQL, PostgreSQL, MSSQL, & SQLite (MongoDB, CockroachDB, and PlanetScale in Preview support)
+Many libraries blur these lines. Drizzle ORM, for example, has both an SQL-like query builder and a relational query API, and most ORMs let you drop down to raw SQL. To learn more about the trade-offs between the levels, read [Comparing SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).
+
+## Summary
 
 ### Overview
 
-- [Website](https://www.prisma.io/)
-- [GitHub](https://github.com/prisma/prisma)
-- [npm: prisma](https://www.npmjs.com/package/prisma)
-- [npm: @prisma/client](https://www.npmjs.com/package/@prisma/client)
-
-Prisma differs from most ORMs in that models are not defined in classes but in the _Prisma schema_, the main configuration and data model definition file used by the Prisma toolkit. In the Prisma schema you define your data source, like a PostgreSQL database, and models, like `users` and `posts` and the relations between them. Using this schema, Prisma generates a _Client_ that exposes a Create-Read-Update-Delete (CRUD) API, which you then use to query your database. This Prisma Client functions as a rich query builder that you can use in your Node.js app to return plain JavaScript objects, not instances of a model class.
+| Library     | Type          | Models defined with                               | Latest stable release | Databases                                                                                       | License    |
+| ----------- | ------------- | ------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------- | ---------- |
+| Drizzle ORM | ORM           | TypeScript table definitions                      | 0.45.3 (1.0 in RC)    | PostgreSQL, MySQL, SQLite, SingleStore, Gel (0.45 only); SQL Server and CockroachDB in 1.0 RC   | Apache-2.0 |
+| MikroORM    | ORM           | `defineEntity`, decorators or `EntitySchema`      | 7.2.2                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, MongoDB                                 | MIT        |
+| Prisma ORM  | ORM           | Prisma schema file                                | 7.10.0 (8.0 in RC)    | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite, CockroachDB (Prisma ORM 7)                      | Apache-2.0 |
+| Sequelize   | ORM           | `Model.init()` or `sequelize.define()`            | 6.37.8 (7.0 in alpha) | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, Db2, Snowflake                          | MIT        |
+| TypeORM     | ORM           | Decorated classes or `EntitySchema`               | 1.1.1                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, SAP HANA, CockroachDB, Spanner, MongoDB | MIT        |
+| Mongoose    | ODM           | `Schema` objects                                  | 9.10.3                | MongoDB                                                                                         | MIT        |
+| Knex.js     | Query builder | No models                                         | 3.3.0                 | PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, CockroachDB, Amazon Redshift            | MIT        |
+| Kysely      | Query builder | A TypeScript interface that describes your tables | 0.29.6 (0.30 in beta) | PostgreSQL, MySQL, SQL Server, SQLite, PGlite, plus community dialects                          | MIT        |
 
 ### Popularity
 
-With 20.7k stars on the [Prisma GitHub repository](https://github.com/prisma/prisma), Prisma is a popular database tool among Node developers, comparable to established libraries like Bookshelf.js and Objection.js, but not quite as popular as libraries like Sequelize and TypeORM, which have more than 25k GitHub stars. It should be noted that Prisma has only been released for production in June 2020 while most other tools have been around for several more years.
+| Library     | npm package       | Downloads (30 days) | Change from 2025 | GitHub stars |
+| ----------- | ----------------- | ------------------- | ---------------- | ------------ |
+| Drizzle ORM | `drizzle-orm`     | 90.2M               | +951%            | 35.9k        |
+| MikroORM    | `@mikro-orm/core` | 3.7M                | +211%            | 9.2k         |
+| Prisma ORM  | `@prisma/client`  | 65.2M               | +309%            | 47.7k        |
+| Sequelize   | `sequelize`       | 11.0M               | +22%             | 30.4k        |
+| TypeORM     | `typeorm`         | 20.0M               | +82%             | 36.7k        |
+| Mongoose    | `mongoose`        | 26.5M               | +72%             | 27.5k        |
+| Knex.js     | `knex`            | 20.7M               | +102%            | 20.3k        |
+| Kysely      | `kysely`          | 68.9M               | +1,385%          | 14.2k        |
 
-In terms of npm downloads, with 362k weekly downloads at the time period considered, it is higher than tools like Bookshelf.js and Objection.js but is not quite in the same tier as Sequelize, TypeORM, and Mongoose. It is however growing at a higher rate among all the major tools considered for this article, with 94% npm download growth in the last 6 months.
+`@prisma/client` is the package that Prisma ORM 7 and earlier apps import. Prisma ORM 8 apps import `@prisma/orm-postgres` or `@prisma/orm-mongo` instead, which had about 180,000 and 47,000 downloads in the same 30 days.
 
-**Evaluation:** Popular
+### Activity
 
-### Repo activity
+| Library     | Latest stable release | Stable versions (12 months) | Commits (12 months) | Contributors (12 months) | Most active account's share | Open issues |
+| ----------- | --------------------- | --------------------------- | ------------------- | ------------------------ | --------------------------- | ----------- |
+| Drizzle ORM | 0.45.3, Sept 21, 2026 | 6                           | 1,321               | 20                       | 35%                         | 1,383       |
+| MikroORM    | 7.2.2, Sept 28, 2026  | 57                          | 1,026               | 56                       | 86%                         | 16          |
+| Prisma ORM  | 7.10.0, Aug 25, 2026  | 23                          | 7,926               | 31                       | 82%                         | 2,574       |
+| Sequelize   | 6.37.8, Mar 7, 2026   | 1                           | 93                  | 21                       | 44%                         | 934         |
+| TypeORM     | 1.1.1, Sept 1, 2026   | 7                           | 460                 | 83                       | 41%                         | 453         |
+| Mongoose    | 9.10.3, Sept 29, 2026 | 72                          | 1,938               | 101                      | 68%                         | 160         |
+| Knex.js     | 3.3.0, June 26, 2026  | 12                          | 127                 | 47                       | 28%                         | 578         |
+| Kysely      | 0.29.6, Sept 16, 2026 | 17                          | 249                 | 29                       | 87%                         | 140         |
 
-It is safe to say that the Prisma GitHub repo is the most active out of all the tools considered for this article. With 258 commits in the month of data considered for this article, 3 releases, and 101 merged PRs, Prisma is under active development. New features, bug fixes, and updates are pushed frequently, with new versions released every two weeks.
+- "Stable versions" counts versions published to npm without a prerelease tag, on every release line a project maintains. The counts for MikroORM (6.x), Prisma ORM (6.x), TypeORM (0.3.x) and Mongoose (6.x to 8.x) include releases for older major versions.
+- Drizzle ORM develops 1.0 on working branches that are merged into its `beta` branch when a prerelease is published (for example, the `rc4` branch for 1.0.0-rc.4). Its commits are counted on `rc5`, the branch for the next release candidate, which contains all of `beta` plus 258 newer commits. Its default branch, which holds 0.45.x, had 65 commits in the same period. Prisma ORM's default branch holds Prisma ORM 8, and Sequelize's holds Sequelize 7.
 
-**Evaluation:** Very active
+## Drizzle ORM
 
-### Support
+### At a glance
 
-Although Prisma hasn't been around as long as some of the other tools considered here, it benefits from a strong and active developer support network. Its [documentation](https://www.prisma.io/docs) is well-organized, being actively expanded, and is quite thorough.
+- **Type:** ORM with an SQL-like query builder and a relational query API
+- **Latest release:** 0.45.3 (September 21, 2026). Version 1.0 is a release candidate: the latest one, 1.0.0-rc.4, was published on June 27, 2026, and only builds of the next one, tagged with a commit hash, have been published since. The [Drizzle documentation](https://orm.drizzle.team/docs/overview) already installs the release candidate (`drizzle-orm@rc`).
+- **Databases:** PostgreSQL, MySQL, SQLite, SingleStore and Gel, including serverless services such as Neon, Supabase, Turso, PlanetScale and Cloudflare D1. The 1.0 release candidate adds SQL Server and CockroachDB; its package doesn't include the Gel driver (`drizzle-orm/gel`), although the docs still describe it.
+- **Runtimes:** according to the README, Node.js, Bun, Deno, Cloudflare Workers, Supabase functions, other edge runtimes and browsers
+- **TypeScript:** you define tables in TypeScript, and query types are inferred from those definitions without a code generation step
+- **Schema and migrations:** Drizzle Kit, a separate CLI, generates SQL migration files from changes to your schema, or pushes changes directly to the database
+- **License:** Apache-2.0 (`drizzle-orm`), MIT (`drizzle-kit`)
+- **Links:** [Website](https://orm.drizzle.team/), [GitHub](https://github.com/drizzle-team/drizzle-orm), [npm](https://www.npmjs.com/package/drizzle-orm)
 
-If you have a question, you can use the Prisma Slack channel, ask on their GitHub Discussions page, or file a GitHub Issue, all of which are quite active. Although there isn't quite as large a library of StackOverflow questions to draw from, the library of answered queries on GitHub discussions and Reddit more than makes up for this.
+### How it works
 
-**Evaluation:** Strong
+Drizzle describes itself as a "headless" ORM and a thin typed layer on top of SQL. You declare tables with functions such as `pgTable()`, and write queries with an API that mirrors SQL: `select`, `from`, `join` and `where`. A second API, relational queries, loads nested related records without writing the joins yourself. The `drizzle-orm` package has no dependencies of its own; you install the driver for your database next to it.
 
-### Maturity and stability
+A join that fetches the posts of a user with a given email:
 
-Prisma was first created and released in 2016, making it one of the newer tools being considered for this article. It has gone through several iterations and redesigns, beginning as Graphcool, a GraphQL backend-as-a-service. Graphcool then pivoted into a database and GraphQL tool to become Prisma 1.0, a very popular project with 16.9k GitHub stars. Prisma 2.0, released in beta in 2020, then shed both the Prisma server and GraphQL layer to become the JavaScript and TypeScript ORM alternative it is today.
-
-Prisma 2.0 is an open-source JavaScript ORM being maintained, supported, and actively developed by the private company Prisma, which recently closed a twelve-million-dollar Series A funding round. Prisma hires full-time engineers, developer advocates, technical writers, and more to maintain and build Prisma. This means that developers can be assured that they will be well-supported when implementing Prisma as their JavaScript database interface.
-
-**Evaluation:** Newer
-
-### Database support
-
-Prisma currently supports **PostgreSQL, MySQL, MSSQL, and SQLite**. Additionally, MongoDB, PlanetScale, and CockroachDB are currently in Preview support.
-
-### Notable features
-
-- Work directly with JavaScript objects and not classes and instances
-- A "single source of truth," the Prisma Schema, to reduce object-relational impedance mismatch
-- Type-safe database queries
-- Auto-generated migrations (preview)
-- Intuitive relations API
-- VSCode plugin
-- Autocompletion support
-
-For a full list of features consult [Database Features](https://www.prisma.io/docs/orm/reference/database-features) from the Prisma official documentation.
-
-### Usage example
-
-Relation query (fetch all posts by a given user, given user’s email):
-
-```js
-const postsByUser = await prisma.user
-  .findOne({ where: { email: 'alice@prisma.io' } })
-  .posts()
+```ts
+const rows = await db
+  .select({ title: posts.title, author: users.name })
+  .from(posts)
+  .innerJoin(users, eq(posts.userId, users.id))
+  .where(eq(users.email, 'alice@example.com'))
 ```
 
-### Summary
+### Project health
 
-Although Prisma is a newer database tool and has gone through several iterations and redesigns, its unique, schema-centric architecture stands in contrast to typical ORMs which use JavaScript Classes to define models. It benefits from the backing of a funded company and paid developers, as well as an active support community and quick development cycle. It is a popular, fast-growing choice, and is here to stay.
+Drizzle ORM had the most npm downloads of the ORMs and query builders compared here: 90.2 million in 30 days, about ten times as many as a year earlier. These downloads include installs as a dependency of other packages, such as Payload's PostgreSQL adapter. It's developed by the Drizzle Team. According to the project's [sustainability page](https://orm.drizzle.team/docs/sustainability), PlanetScale hired the entire core team in March 2026 so they can work on Drizzle full time. Version 1.0 is developed on working branches that are merged into the `beta` branch when a prerelease is published. The branch for the next release candidate, `rc5`, holds 1,321 commits from 20 people made in the past year, spread across several core team members; no release candidate has been published since June 27, 2026. Support is through [Discord](https://driz.link/discord) and GitHub, where 1,383 issues were open.
 
-<PrismaOutlinks>
+### Trade-offs
 
-If you want to learn more about why we think Prisma is a great option, check out our [Why Prisma? page](https://www.prisma.io/docs/orm/overview/introduction/why-prisma).
+Drizzle suits you if you like writing queries that look like SQL and want types without a code generation step, and it's one of the libraries whose documentation explicitly covers edge runtimes. On the other hand, it hasn't reached 1.0: the stable release is 0.45.3 while the documentation targets the release candidate, and the [upgrade guide](https://orm.drizzle.team/docs/upgrade-v1) describes breaking changes to the relational query API and to Drizzle Kit's migration folders. The team is small (20 commit authors in the past year), and the number of open issues is high.
 
-</PrismaOutlinks>
+## MikroORM
+
+### At a glance
+
+- **Type:** ORM based on the Data Mapper, Unit of Work and Identity Map patterns
+- **Latest release:** 7.2.2 (September 28, 2026). MikroORM 7.0.0 was released on March 11, 2026.
+- **Databases:** PostgreSQL (including CockroachDB and PGlite), MySQL, MariaDB, SQLite (including libSQL), SQL Server, Oracle and MongoDB
+- **Runtimes:** MikroORM 7 requires Node.js 22.17 or later and is an ES module. The [deployment docs](https://mikro-orm.io/docs/deployment) explain how to run on Cloudflare Workers and other edge runtimes that don't allow `eval`, and the README links a Bun example app.
+- **TypeScript:** written in TypeScript; entity types are inferred from `defineEntity()` definitions, or taken from decorated classes
+- **Schema and migrations:** a schema generator, and migrations generated from the difference between your entities and the database
+- **License:** MIT
+- **Links:** [Website](https://mikro-orm.io/), [GitHub](https://github.com/mikro-orm/mikro-orm), [npm](https://www.npmjs.com/package/@mikro-orm/core)
+
+### How it works
+
+MikroORM is influenced by Doctrine and Hibernate. An `EntityManager` keeps track of every entity you load (the identity map). You change entities as plain objects, and calling `em.flush()` works out what changed and writes all of it in a single transaction (the unit of work). For queries the ORM API can't express, MikroORM has its own query builder and, since version 7, an integration with Kysely, which replaced Knex.js as its query runner.
+
+A user and their posts:
+
+```ts
+const user = await em.findOne(
+  User,
+  { email: 'alice@example.com' },
+  { populate: ['posts'] }
+)
+```
+
+### Project health
+
+MikroORM is less widely installed than the other ORMs here (3.7 million downloads in 30 days), but it's one of the most active: 57 stable releases, 1,026 commits from 56 people, and only 16 open issues. It's led by its author, Martin Adámek, who made 86% of those commits and accepts sponsorships through [GitHub Sponsors](https://github.com/sponsors/b4nan). Support is through [Discord](https://discord.gg/w8bjxFHS7X) and GitHub.
+
+### Trade-offs
+
+MikroORM suits applications with complex domain models, where change tracking and automatic transactions save work, and it supports both SQL databases and MongoDB. The unit of work model takes time to learn: in a web server each request needs its own identity map (the docs describe a `RequestContext` helper for this), and changes are written only when you flush. Version 7 raised the minimum requirements to Node.js 22.17 and TypeScript 5.8. The project depends heavily on its lead maintainer.
+
+## Prisma ORM
+
+### At a glance
+
+- **Type:** ORM with a client generated from a schema
+- **Latest release:** Prisma ORM 7.10.0 (`@prisma/client`, August 25, 2026) is the current generally available version. Prisma ORM 8 is a release candidate (`prisma` 8.0.0-rc.19, September 29, 2026), and the [release status page](https://www.prisma.io/docs/orm/release-status) expects general availability in October 2026.
+- **Databases:** Prisma ORM 7 supports PostgreSQL, MySQL, MariaDB, SQL Server, SQLite and CockroachDB; for MongoDB, its docs point to Prisma ORM 6.19, which gets security patches until November 19, 2026. Prisma ORM 8 supports PostgreSQL (release candidate), MongoDB (early access) and SQLite (experimental), and lists the others as coming.
+- **Runtimes:** Prisma ORM 7 requires Node.js 20.19+, 22.12+ or 24+, and its docs cover Bun, Deno, Cloudflare Workers and Vercel Edge Functions. Prisma ORM 8 requires Node.js 22.18 or later (24.11 or later on the 24 line), and its guides cover Bun, Deno and Cloudflare Workers.
+- **TypeScript:** types are generated from the schema by the Prisma CLI
+- **Schema and migrations:** models are written in the Prisma schema language (Prisma ORM 8 also accepts a TypeScript builder). Migrations are planned from schema changes: SQL files in Prisma ORM 7, TypeScript files in Prisma ORM 8.
+- **License:** Apache-2.0
+- **Links:** [Website](https://www.prisma.io/docs/orm), [GitHub](https://github.com/prisma/orm), [npm: prisma](https://www.npmjs.com/package/prisma), [npm: @prisma/orm-postgres](https://www.npmjs.com/package/@prisma/orm-postgres)
+
+### How it works
+
+Prisma ORM doesn't define models as classes. You describe them in a schema file, and Prisma generates a client from it whose methods and result types match your models. Queries return plain objects. The same schema is the source for migrations: when you change it, Prisma plans the changes that bring the database in line.
+
+Prisma ORM 8, a rewrite in TypeScript, keeps this schema-first workflow (the schema is now called the _contract_) but changes the query API, the migration workflow and the packages: apps import one package per database, such as `@prisma/orm-postgres`, instead of `@prisma/client`.
+
+A user and their posts in Prisma ORM 7:
+
+```ts
+const user = await prisma.user.findUnique({
+  where: { email: 'alice@example.com' },
+  include: { posts: true },
+})
+```
+
+The same query in the Prisma ORM 8 release candidate:
+
+```ts
+const user = await db.orm.public.User.where({ email: 'alice@example.com' })
+  .include('posts')
+  .first()
+```
+
+### Project health
+
+Prisma ORM is developed by the company Prisma, which employs its maintainers. Its default branch, which holds Prisma ORM 8, had 7,926 commits from 31 people in the past year; 82% of them came from one maintainer's account. `@prisma/client` had 65.2 million downloads in 30 days. With 2,574 open issues, Prisma ORM has the largest issue backlog in this comparison. Support is through [Discord](https://pris.ly/discord) and GitHub.
+
+### Trade-offs
+
+Prisma ORM suits teams that want one schema as the source of truth for types and migrations, and a query API that doesn't require writing joins. Right now, though, it's in a transition. Prisma ORM 8 is the version the docs recommend for new projects, but it's a release candidate: it supports fewer databases than Prisma ORM 7, features such as filtering inside JSON columns, most nested writes and transaction isolation levels aren't available yet, and `$extends` won't be added because middleware replaces it (see [Coming from Prisma ORM 7](https://www.prisma.io/docs/orm/coming-from-prisma-orm-7)). Moving from 7 to 8 means learning a new query API. Prisma ORM 7 gets bug fixes and security updates for 18 months after 8 is final, but the `prisma` package's `latest` tag already points to the Prisma ORM 8 release candidate, so Prisma ORM 7 projects need to pin version 7. Both versions need a generation step after every schema change, which Drizzle doesn't.
 
 ## Sequelize
 
-### Evaluation summary
+### At a glance
 
-- **Popularity**: Very popular
-- **Repo Activity**: Very active
-- **Support**: Average
-- **Maturity and Stability:** Very mature
-- **Supported Databases**: MySQL, MariaDB, SQLite and Microsoft SQL Server
+- **Type:** ORM (Active Record style)
+- **Latest release:** 6.37.8 (March 7, 2026). Sequelize 7 has been in alpha since at least February 2022, when the first `@sequelize/core` package was published; its latest alpha is 7.0.0-alpha.48.
+- **Databases:** Sequelize 6 supports PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, Db2 and Snowflake (Snowflake support isn't handled by the core team), according to its [version compatibility table](https://sequelize.org/releases/)
+- **Runtimes:** Node.js 10 or later, according to the compatibility table
+- **TypeScript:** Sequelize ships its own type definitions, but its [TypeScript documentation](https://sequelize.org/docs/v6/other-topics/typescript/) says some parts are still a work in progress and recommends the community `sequelize-typescript` package in the meantime
+- **Schema and migrations:** `sync()` creates tables from models; migrations are JavaScript files with `up` and `down` functions that you write and run with the Sequelize CLI
+- **License:** MIT
+- **Links:** [Website](https://sequelize.org/), [GitHub](https://github.com/sequelize/sequelize), [npm](https://www.npmjs.com/package/sequelize)
 
-### Overview
+### How it works
 
-- [Website](https://sequelize.org/)
-- [GitHub](https://github.com/sequelize/sequelize/)
-- [npm: sequelize](https://www.npmjs.com/package/sequelize)
+Sequelize is the oldest ORM here (first published on npm in 2011). You define models with `Model.init()` or `sequelize.define()`, declare associations such as `hasMany()` and `belongsTo()`, and query through static methods on the model classes. It supports transactions, eager and lazy loading, and read replication.
 
-Sequelize is an established, mature, promise-based Node.js ORM that supports PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It follows the traditional ORM pattern of defining models by extending a `Model` class. Operations like `SELECT` and `INSERT` are then performed using class methods. Relations are also defined using class methods like `hasMany()` and `belongsTo()`.
+A user and their posts (eager loading):
 
-### Popularity
-
-With 25.7k GitHub stars and 1.35 million npm weekly downloads in the time period considered, Sequelize is the most popular relational database ORM considered in this article. It is still growing, with a 14% growth in npm downloads over the past 6 months. For comparison, the next most popular _relational_ database ORM is TypeORM, with 918k weekly npm downloads. (Mongoose is also very popular but only supports MongoDB.)
-
-**Evaluation:** Very popular
-
-### Repo activity
-
-In the time period considered, 10 new versions of Sequelize were released, 179 commits pushed (across all branches), and 86 PRs were merged. This indicates that Sequelize is very active.
-
-**Evaluation:** Very active
-
-### Support
-
-Having been around for close to ten years, you are likely to find support for Sequelize through StackOverflow or Reddit searches. Its documentation is extensive, contains numerous usage examples, and also some more theoretical discussions of usage patterns (for example its [Associations](https://sequelize.org/master/manual/assocs.html) documentation). However, Sequelize's GitHub Issues and Slack channel could use some love, with many queries going unanswered.
-
-**Evaluation:** Average
-
-### Maturity and stability
-
-Sequelize is one of the most mature Node ORMs available. It is no longer a rapidly shifting project and development lately seems to be maintenance-focused on bug fixes and documentation updates. It is a stable tool that relies entirely on open-source contributions from maintainers and the Sequelize community.
-
-According to its [documentation](https://sequelize.org/master/manual/whos-using.html), it has some notable users like WalmartLabs and Bitovi.
-
-**Evaluation:** Very mature
-
-### Database support
-
-PostgreSQL, MySQL, MariaDB, SQLite, and Microsoft SQL Server. It also supports CockroachDB using an external package.
-
-### Notable features
-
-- Familiar ORM interface and ActiveRecord usage patterns
-- Detailed control over transactions and how they are executed
-- Supports many databases
-- Ability to use multiple read replicas
-- [Eager and Lazy](https://sequelize.org/master/manual/eager-loading.html) loading of relations
-- Synchronizing database based on defined Models
-
-For a full list of features, consult the Sequelize [official documentation](https://sequelize.org/master/).
-
-### Usage example
-
-Relation query (all posts by a specific user, eager loading):
-
-```js
+```ts
 const user = await User.findOne({
-  where: {
-    email: 'alice@sequelize.org',
-  },
+  where: { email: 'alice@example.com' },
   include: Post,
 })
 ```
 
-### Summary
+### Project health
 
-Sequelize is an established, stable ActiveRecord ORM and due to its popularity and heavy use over the years, you can expect to find support from places like StackOverflow, Reddit, and GitHub Issues. The project currently has significantly more activity than in recent years past, which is a good sign.
+Sequelize is still widely installed (11.0 million downloads in 30 days), but its growth (+22%) was the lowest of the libraries in the main comparison, well below the npm registry as a whole. Sequelize 6 had one release in the past 12 months. The default branch, where Sequelize 7 is developed, had 93 commits from 21 people, and 934 issues were open. The README says the project is ["seeking new maintainers"](https://github.com/sequelize/sequelize#-seeking-new-maintainers-for-sequelize-) to finish the next major version, and that maintainers are paid from its [Open Collective](https://opencollective.com/sequelize). Support is through Slack, GitHub Discussions and Stack Overflow.
 
-<PrismaOutlinks>
+### Trade-offs
 
-For a more focused comparison of Prisma and Sequelize, you can look at our [Sequelize comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-sequelize).
-
-</PrismaOutlinks>
+Sequelize supports more databases than most libraries here and has a long track record, so a large body of answers and examples exists. For a new project, weigh that against slow development: the next major version has been in alpha for more than four years, the stable version gets few releases, and its TypeScript support is incomplete by its own documentation.
 
 ## TypeORM
 
-### Evaluation summary
+### At a glance
 
-- **Popularity**: Very popular
-- **Repo Activity**: Active
-- **Support**: Good
-- **Maturity and Stability:** Mature
-- **Supported Databases**: MySQL, MariaDB, PostgreSQL, CockroachDB, SQLite, Microsoft SQL Server, Oracle, SAP Hana, sql.js
+- **Type:** ORM that supports both the Active Record and Data Mapper patterns
+- **Latest release:** 1.1.1 (September 1, 2026). TypeORM 1.0 was released on May 19, 2026; the 0.3.x line still gets releases (0.3.31 on July 13, 2026).
+- **Databases:** PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, SAP HANA, CockroachDB, Google Spanner, MongoDB and sql.js
+- **Runtimes:** TypeORM 1.1 requires Node.js 20.19+, 22.13+ or 24.11+. The [supported platforms page](https://typeorm.io/docs/help/supported-platforms) also covers browsers (with sql.js), Capacitor, Cordova and Ionic, Expo, NativeScript and React Native.
+- **TypeScript:** written in TypeScript; entities are usually classes with decorators, which need the `experimentalDecorators` and `emitDecoratorMetadata` compiler options and the `reflect-metadata` package
+- **Schema and migrations:** can generate migrations from changes to your entities
+- **License:** MIT
+- **Links:** [Website](https://typeorm.io/), [GitHub](https://github.com/typeorm/typeorm), [npm](https://www.npmjs.com/package/typeorm)
 
-### Overview
+### How it works
 
-- [Website](https://typeorm.io/#/)
-- [GitHub](https://github.com/typeorm)
-- [npm: TypeORM](https://www.npmjs.com/package/typeorm)
+TypeORM is influenced by Hibernate, Doctrine and Entity Framework. You define entities as classes with decorators such as `@Entity()` and `@Column()`, and work with them through repositories (Data Mapper) or through methods on the entities themselves (Active Record). A query builder covers queries that the repository API can't express.
 
-TypeORM is a Hibernate-influenced JavaScript and TypeScript ORM that can run on multiple platforms like Node.js, web browsers, and Cordova. It was built with TypeScript and type support in mind and supports both main ORM architecture patterns, Data Mapper and Active Record, offering the developer flexibility to choose between the two. It also includes a query builder.
+A user and their posts:
 
-### Popularity
-
-Since its release in 2016, TypeORM has grown very rapidly to become one of the most popular JavaScript and TypeScript ORMs. It has 27.2k stars on GitHub and 918k weekly npm downloads, making it one of the most popular ORM choices, along with Sequelize and Mongoose.
-
-**Evaluation:** Very popular
-
-### Repo activity
-
-TypeORM's GitHub repo is active. In the past month, 74 commits were pushed (to all branches), and 41 PRs were merged. There seems to be no strict release schedule, with the latest release occurring on November 2021.
-
-**Evaluation:** Active
-
-### Support
-
-TypeORM's documentation is good, also covering database concepts like migrations, relations, and ORM patterns like Data Mapper and Active Record. It has a somewhat active Slack Community and moderate Reddit and StackOverflow presences, however you are unlikely to get much help using GitHub issues.
-
-**Evaluation:** Good
-
-### Maturity and stability
-
-Although comparable in maturity to Prisma, TypeORM's design has shifted less since its initial release as a Hibernate-influenced ORM built for TypeScript (that also works well with JavaScript). It is entirely dependent on open-source contributions, but has some support with a roughly \$15000 annual budget from OpenCollective contributions. Notable corporate contributors include Cockroach Labs, Aplas, and VoterCircle Inc.
-
-**Evaluation:** Mature
-
-### Database support
-
-MySQL, MariaDB, PostgreSQL, CockroachDB, SQLite, Microsoft SQL Server, Oracle, SAP Hana, sql.js
-
-### Notable features
-
-- Supports both Data Mapper and Active Record ORM patterns
-- Powerful and flexible query builder
-- Strong TypeScript support
-- Eager and lazy loading of relations
-- Automatic migrations generation
-- Transaction support
-- Supports many databases
-
-For a full list of features, consult the TypeORM [GitHub README](https://github.com/typeorm/typeorm#features).
-
-### Usage example
-
-Query all posts by a specific user in TypeORM :
-
-```js
-const userRepository = getRepository(User)
-const user = await userRepository.findOne(id, {
-  relations: ['posts'],
+```ts
+const user = await dataSource.getRepository(User).findOne({
+  where: { email: 'alice@example.com' },
+  relations: { posts: true },
 })
 ```
 
-### Summary
+### Project health
 
-TypeORM and Sequelize are the two most popular relational database ORMs. TypeORM differs from Sequelize in that it offers a little more flexibility, allowing you to choose between different usage patterns and also includes a powerful query builder. TypeORM supports many popular databases, and the project is still active, although entirely dependent on its open source contributors.
+TypeORM was created by Umed Khudoiberdiev in 2016. According to the [maintainers page](https://typeorm.io/maintainers), maintenance passed to David Höck and Michael Bromley in late 2024, and they put together the current team. Since then the project released 1.0, which removes long-deprecated APIs and requires Node.js 20 (see the [1.0 release notes](https://typeorm.io/docs/releases/1.0/release-notes)). In the past year it had 460 commits from 83 people, the broadest contributor base of the SQL ORMs here, and 453 open issues. `typeorm` had 20.0 million downloads in 30 days. Support is through Discord and Stack Overflow, and the core team offers commercial support.
 
-<PrismaOutlinks>
+### Trade-offs
 
-For a more focused comparison of Prisma and TypeORM, you can look at our [TypeORM comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-typeorm).
-
-</PrismaOutlinks>
+TypeORM suits teams that like class-based entities, such as those coming from Hibernate or using NestJS, and it supports the widest range of databases here. Upgrading from 0.3 to 1.0 involves breaking changes, described in the [upgrade guide](https://typeorm.io/docs/releases/1.0/upgrading-from-0.3). Decorator-based entities depend on TypeScript's experimental decorators. For how precisely TypeORM types query results compared with the other libraries, see the [type safety article](/database-tools/evaluating-type-safety-in-the-top-8-typescript-orms).
 
 ## Mongoose
 
-### Evaluation summary
+### At a glance
 
-- **Popularity**: Very popular
-- **Repo Activity**: Active
-- **Support**: Good
-- **Maturity and Stability:** Mature
-- **Supported Databases**: MongoDB
+- **Type:** ODM (object-document mapper) for MongoDB
+- **Latest release:** 9.10.3 (September 29, 2026). Mongoose 9.0.0 was released on November 21, 2025.
+- **Databases:** MongoDB. The [compatibility page](https://mongoosejs.com/docs/compatibility.html) lists which Mongoose versions support which MongoDB server versions.
+- **Runtimes:** Mongoose 9 requires Node.js 20.19 or later; the README lists Deno support as alpha
+- **TypeScript:** ships its own type definitions and [infers document types from schema definitions](https://mongoosejs.com/docs/typescript/schemas.html)
+- **Schema and migrations:** schemas are defined and validated in your application, not in the database; Mongoose doesn't include a migration tool
+- **License:** MIT
+- **Links:** [Website](https://mongoosejs.com/), [GitHub](https://github.com/Automattic/mongoose), [npm](https://www.npmjs.com/package/mongoose)
 
-### Overview
+### How it works
 
-- [Website](https://mongoosejs.com/)
-- [GitHub](https://github.com/Automattic/mongoose)
-- [npm: Mongoose](https://www.npmjs.com/package/mongoose)
+MongoDB doesn't require documents in a collection to share a structure. Mongoose adds that structure in your application: you define a schema with types, defaults and validators, compile it into a model, and query through the model. Middleware (hooks) runs before and after operations, and `populate()` replaces references with the documents they point to.
 
-Mongoose is a popular and well maintained Node.js object modeling tool for MongoDB. Strictly speaking, Mongoose is an _object document mapper_, because MongoDB is a document based database. It allows you to model your data using schemas and it includes built-in type casting, validation, query building, and business logic hooks.
+A user and their posts, using a virtual `posts` field:
 
-### Popularity
-
-Mongoose is the most popular JavaScript data modeling tool for MongoDB databases. It has 23.9k stars on GitHub and 1.9 million weekly npm downloads.
-
-**Evaluation:** Very popular
-
-### Repo activity
-
-Mongoose's GitHub repo is quite active. In the past month there were 199 commits across branches, and 58 merged PRs. Recent commits have focussed on bug fixes, adding features, and documentation. Releases seem to be quite frequent, with 5 in the time period considered.
-
-**Evaluation:** Active
-
-### Support
-
-Mongoose's documentation consists of usage guides for its most common operations, like querying, creating models, and validation. Its API docs also contain many useful snippets. It has a Slack and Gitter community (although both are relatively quiet), and you can expect to find a lot of support and tips on Reddit and StackOverflow. Its GitHub issues section also is quite active, with most issues receiving some sort of response or support from maintainers or other Mongoose users.
-
-**Evaluation:** Good
-
-### Maturity and stability
-
-Mongoose has been around since 2011, making it one of the most mature projects considered in this article. If you want to use a Node.js ODM with MongoDB, you can trust that the Mongoose interface is not going to radically change and that it will be kept up to date with MongoDB releases. It boasts an impressive amount of open-source financial backing with a \$67k annual budget derived entirely from OpenCollective contributors. Through a series of acquisitions, Automattic, the company that owns Wordpress.com, Tumblr, and Simplenote, inherited Mongoose. Terra Vera, SixPlus, and Payment Ninja are all built using Mongoose.
-
-**Evaluation:** Mature
-
-### Database support
-
-MongoDB
-
-### Notable features
-
-- Schemas and Models for your NoSQL database
-- Validators, pre and post middleware hooks
-- Reference documents in other collections using `populate()`
-- Subdocuments: nest schemas in other schemas
-
-For a full list of features, consult the Mongoose [official documentation](https://mongoosejs.com/docs/guides.html).
-
-### Usage example
-
-Relation query (fetch all posts by a given user, given user’s email):
-
-```js
-const userWithPosts = await User.findOne({
-  email: 'alice@mongoose.com',
+```ts
+const user = await User.findOne({
+  email: 'alice@example.com',
 }).populate('posts')
 ```
 
-### Summary
+`populate()` isn't a join: in the example above, Mongoose runs one query on `users` and a second query on `posts`.
 
-If you're using a MongoDB database with Node and want to use an ODM, Mongoose is a safe bet. It is a popular, mature project that continues to be actively maintained. It allows you to define a schema to model your data and provides features like validation, type casting, population, middleware, custom methods and query helpers.
+### Project health
 
-<PrismaOutlinks>
+Mongoose has been developed since 2010 and lives in Automattic's GitHub organization. It had the most contributors in this comparison: 1,938 commits from 101 people in the past year (68% of them from its most active maintainer) and 72 stable releases, with 160 open issues. `mongoose` had 26.5 million downloads in 30 days. Support is through Slack, Stack Overflow and GitHub.
 
-For a more focused comparison of Prisma and Mongoose, you can look at our [Mongoose comparison page](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-mongoose).
+### Trade-offs
 
-</PrismaOutlinks>
+If you use MongoDB from Node.js and want schemas, validation and middleware, Mongoose is the established choice. It works only with MongoDB. Because the schema lives in your application, documents written by other applications or before a schema change don't necessarily match it. Other libraries in this comparison also support MongoDB: MikroORM, TypeORM and Prisma ORM (early access in Prisma ORM 8). You can also use the [MongoDB Node.js driver](#database-drivers) directly.
 
-## Bookshelf.js
+## Knex.js
 
-### Evaluation summary
+### At a glance
 
-- **Popularity**: Popular
-- **Repo Activity**: Not very active
-- **Support**: Average
-- **Maturity and Stability:** Mature
-- **Supported Databases**: PostgreSQL, MySQL, and SQLite
+- **Type:** SQL query builder
+- **Latest release:** 3.3.0 (June 26, 2026)
+- **Databases:** PostgreSQL, MySQL, MariaDB, SQLite, SQL Server, Oracle, CockroachDB and Amazon Redshift
+- **Runtimes:** Node.js 16 or later. The docs also describe a browser build, but warn that composing SQL in the browser for execution on the server is "highly discouraged" because it can cause serious security vulnerabilities.
+- **TypeScript:** written in JavaScript, with official type definitions that the [docs](https://knexjs.org/guide/#typescript) call "best-effort". You pass row and result types as generic parameters, or declare your tables once by augmenting Knex's `Tables` interface.
+- **Schema and migrations:** a schema builder and a CLI for migrations and seed files, which you write by hand
+- **License:** MIT
+- **Links:** [Website](https://knexjs.org/), [GitHub](https://github.com/knex/knex), [npm](https://www.npmjs.com/package/knex)
 
-### Overview
+### How it works
 
-- [Website](https://bookshelfjs.org/)
-- [GitHub](https://github.com/bookshelf/bookshelf)
-- [npm: Bookshelf](https://www.npmjs.com/package/bookshelf)
+Knex.js builds SQL from chained method calls and runs it through the driver for your database. It handles connection pooling, transactions and streaming queries. It has no models: Objection.js and Bookshelf.js were built on top of it to add them, and MikroORM used it until version 7.
 
-Bookshelf.js is Node.js ORM built on top of the Knex.js query builder library. It is inspired by the Data Mapper ORM pattern and provides a pared-down interface for modeling and interacting with your data.
+The posts of a user with a given email:
 
-### Popularity
-
-With 6.3k GitHub stars, Bookshelf.js isn't quite as popular as Sequelize and TypeORM but is in the same range as Objection.js and Waterline.js. It has 82k weekly downloads (compared to Sequelize's 1.35 million), which means that although it may not be as widely adopted it still has a core base of developers who prefer its leaner interface. Its popularity appears to be waning somewhat, with a decrease of 36% in npm download in the last 6 months.
-
-**Evaluation:** Popular
-
-### Repo activity
-
-In the past month, there were no commits in the Bookshelf repo, no releases, and no merged pull requests. No new commits have been made to the main branch in about a year. The last release at the time of writing was `1.2.0` on June 7, 2020.
-
-**Evaluation:** Not very active
-
-### Support
-
-Bookshelf's core documentation consists of a brief quick start guide and some code snippets on creating different relation types. Its API docs, however, are quite extensive and contain many usage examples. Bookshelf has an IRC channel, but there are only 7 members in it and it seems pretty quiet. Similarly, support on StackOverflow and Reddit is lighter. Your best bet is its GitHub Issues page, though you might still have trouble getting a contributor's attention.
-
-**Evaluation:** Average
-
-### Maturity and stability
-
-Bookshelf.js has been around since 2013 and is quite mature at this point. Among its notable users are Ghost, Soapee, NodeZA, Sunday Cook, and FlyptoX. It is an open-source package with few maintainers and no financial or corporate backing.
-
-**Evaluation:** Mature
-
-### Database support
-
-PostgreSQL, MySQL, and SQLite.
-
-### Notable features
-
-- Lean interface with a streamlined set of ORM features
-- Built on top of Knex.js so can drop down and use query builder as necessary
-- Promise and callback interfaces
-- Eager and nested-eager relation loading
-- Supports transactions
-- Community plugins to extend functionality
-
-For a full list of features, consult the [Bookshelf.js official documentation](https://bookshelfjs.org/).
-
-### Usage example
-
-Relation query (fetch all posts by a given user, given user’s email):
-
-```js
-const userWithPosts = await User.where(“email”,  “alice@bookshelf.js”).fetch({
-    withRelated: [“posts”]
-});
+```ts
+const rows = await db('posts')
+  .join('users', 'users.id', 'posts.user_id')
+  .where('users.email', 'alice@example.com')
+  .select('posts.title', 'users.name as author')
 ```
 
-### Summary
+### Project health
 
-Bookshelf.js is a pared-down ORM that gives you the standard set of data modeling, querying, and manipulation tools. Since it's built on top of the Knex.js query builder, you can always drop down and write more involved queries if you find yourself limited by its interface. It is not much of an active project anymore, but has been around for a long time and has a core user base that prefers its streamlined style.
+Knex.js has been around since 2013 and is developed in the `knex` GitHub organization by a group of contributors. In the past year it had 12 stable releases and 127 commits from 47 people, the least concentrated contributor base in this comparison; there have been no commits to the default branch since the 3.3.0 release on June 26, 2026. 578 issues were open. `knex` had 20.7 million downloads in 30 days, twice as many as a year earlier. Support is through GitHub issues and Gitter.
 
-## Objection.js
+### Trade-offs
 
-### Evaluation summary
+Knex.js is mature, supports many databases and has a large [ecosystem of plugins and tools](https://github.com/knex/knex/blob/master/ECOSYSTEM.md), which makes it a dependable base for existing JavaScript code. It was designed before TypeScript became common, and its docs warn that a query that type-checks isn't guaranteed to generate correct SQL; if compile-time checking of your queries matters, compare it with Kysely. Development is slower than in most projects here.
 
-- **Popularity**: Popular
-- **Repo Activity**: Somewhat active
-- **Support**: Good
-- **Maturity and Stability:** Mature
-- **Supported Databases**: SQLite, Postgres and MySQL
+## Kysely
 
-### Overview
+### At a glance
 
-- [Website](https://vincit.github.io/objection.js/)
-- [GitHub](https://github.com/Vincit/objection.js)
-- [npm: Objection](https://www.npmjs.com/package/objection)
+- **Type:** type-safe SQL query builder
+- **Latest release:** 0.29.6 (September 16, 2026). Kysely hasn't reached 1.0; version 0.30 is in beta.
+- **Databases:** built-in dialects for PostgreSQL, MySQL, SQL Server, SQLite and PGlite; the [dialects page](https://kysely.dev/docs/dialects) lists community dialects for services such as PlanetScale, Cloudflare D1, Neon and libSQL
+- **Runtimes:** Kysely 0.29 requires Node.js 22 or later, and according to the README it also runs on Deno, Bun, Cloudflare Workers and in browsers
+- **TypeScript:** written in TypeScript; you describe your tables in a TypeScript interface, either by hand or generated from the database with tools such as `kysely-codegen`, and Kysely infers the type of each query's result
+- **Schema and migrations:** migrations are TypeScript files with `up` and `down` functions that you write; you run them with the `Migrator` API or the `kysely-ctl` CLI
+- **License:** MIT
+- **Links:** [Website](https://kysely.dev/), [GitHub](https://github.com/kysely-org/kysely), [npm](https://www.npmjs.com/package/kysely)
 
-Objection.js is self-described as more of a "relational query builder" than an ORM. Like Bookshelf.js, it is built on top of the powerful Knex.js query builder library, and so builds ORM-like features on top of a flexible query builder that you can always drop down to.
+### How it works
 
-### Popularity
+Kysely was inspired by Knex.js, but it was designed for TypeScript. It only lets you refer to tables and columns that are visible at that point in the query, and the result type contains exactly the selected columns, including aliases. There are no models and no relation loading: you write joins, and for nested results you use helpers such as `jsonArrayFrom()` on PostgreSQL.
 
-With 6.5k GitHub stars and 115k weekly npm downloads, Objection.js ranks close to Bookshelf.js in terms of popularity and behind Prisma. They are all not quite as popular as Sequelize and TypeORM, both in the 25k+ star and over 900k weekly download range.
+The posts of a user with a given email:
 
-**Evaluation:** Popular
-
-### Repo activity
-
-The Objection.js repo had no commits or merged PRs in the time period considered for this article. The last Objection release was on December 31, 2021, and included some bug fixes. Although not as active as projects like Prisma and TypeORM, it is actively maintained.
-
-**Evaluation:** Somewhat active
-
-### Support
-
-Objection's docs consist of a usage guide covering its main functionality, like creating models and relations, querying, transactions, hooks, and validation. It also contains API docs and a "Recipe Book" with examples for common operations like joins and subqueries. You won't find much help on StackOverflow, but the project's Gitter is fairly active and supportive, it has a moderate Reddit presence, and its maintainer frequently responds to GitHub issues.
-
-**Evaluation:** Good
-
-### Maturity and stability
-
-Objection has been out since 2015 and is a mature project. It does not seem to have any sort of financial or corporate backing and is maintained by the open-source community. For a list of production use cases of Objection.js, consult [Who uses objection.js in production?](Who uses objection.js in production?)
-
-**Evaluation:** Mature
-
-### Database support
-
-SQLite, PostgreSQL, and MySQL
-
-### Notable features
-
-- Built on top of Knex.js
-- Eager loading
-- Transaction support
-- Validate models against JSON Schema
-- Query hooks (pre/post insert, update, etc.)
-- Graph upserts
-- Paging
-
-For a full list of features, consult the [Objection.js GitHub README](https://github.com/Vincit/objection.js/#objectionjs).
-
-### Usage example
-
-Relation query (fetch all posts by a given user, given user’s email):
-
-```js
-const user = await User.query().findOne({
-  email: 'alice@objection.js',
-})
-
-const posts = await user.$relatedQuery('posts')
+```ts
+const rows = await db
+  .selectFrom('posts')
+  .innerJoin('users', 'users.id', 'posts.user_id')
+  .select(['posts.title', 'users.name as author'])
+  .where('users.email', '=', 'alice@example.com')
+  .execute()
 ```
 
-### Summary
+### Project health
 
-Objection.js is most similar to Bookshelf.js in that it builds a set of ORM-like features on top of the Knex.js query builder library. Objection.js seems to be more actively maintained and better documented, and many Objection.js developers formerly worked with Bookshelf.js according to [Who uses objection.js in production?](Who uses objection.js in production?)
+Kysely's downloads grew faster than those of any other library in the main comparison: 68.9 million in 30 days, about 15 times as many as a year earlier. These downloads include installs as a dependency of other packages, such as `better-auth` and MikroORM 7. In the past year it had 17 stable releases and 249 commits from 29 people, with 140 open issues. It's led by its author, Sami Koskimäki, and by Igal Klebanov, whose account made 87% of the past year's commits. Support is through [Discord](https://discord.gg/xyBJ3GwvAm) and GitHub.
 
-## Waterline
+### Trade-offs
 
-### Evaluation summary
+Kysely suits you if you want to write SQL-shaped queries with checked table and column names and inferred result types, without ORM abstractions, and its README lists edge runtimes such as Cloudflare Workers. You're responsible for keeping the TypeScript description of your tables in sync with the database (code generators help), and for writing migrations. It's still at 0.x, so minor versions can contain breaking changes, and day-to-day development depends mostly on one maintainer.
 
-- **Popularity**: Somewhat Popular
-- **Repo Activity**: Not very active
-- **Support**: Average
-- **Maturity and Stability:** Mature
-- **Supported Databases**: MySQL, PostgreSQL, MongoDB. Via community adapters: Redis, MS-SQL, Oracle, and many more.
+## Libraries with little or no recent development
 
-### Overview
+These libraries were covered in earlier editions of this article, and some are still widely installed. If you depend on one of them, don't expect new features or quick fixes, and plan how you'd handle a bug or a security issue yourself.
 
-- [Website](https://sailsjs.com/documentation/reference/waterline-orm)
-- [GitHub](https://github.com/balderdashy/waterline)
-- [npm: Waterline](https://www.npmjs.com/package/waterline)
+| Library      | Latest release       | Latest commit to the default branch | Archived | Downloads (30 days) |
+| ------------ | -------------------- | ----------------------------------- | -------- | ------------------- |
+| Bookshelf.js | 1.2.0, June 7, 2020  | February 28, 2021                   | No       | 237,000             |
+| MassiveJS    | 6.11.3, Dec 7, 2024  | December 7, 2024                    | No       | 28,000              |
+| Objection.js | 3.1.5, Sept 25, 2024 | June 23, 2026                       | No       | 991,000             |
+| Waterline    | 0.15.2, Dec 11, 2022 | December 11, 2022                   | No       | 134,000             |
 
-Waterline is the default ORM used in the Sails Node.js framework. Part of its design is to allow you to use "write once, use anywhere" data manipulation code, so that you can write code to query or manipulate your data whether it lives in a MySQL, PostgreSQL, MongoDB, or other database.
-
-### Popularity
-
-Waterline is a popular ORM, with 5.3k GitHub stars and 37k weekly npm downloads. Its 37k npm weekly downloads make it the least popular of all the tools evaluated.
-
-**Evaluation:** Somewhat popular
-
-### Repo activity
-
-Waterline's GitHub repo does not seem to be very active these days, with 0 commits and merged PRs in the month of data considered. Its last release was on October 22, 2021, with the release before that occurring in March of 2021.
-
-**Evaluation:** Not very active
-
-### Support
-
-You are most likely going to be on your own if you run into any issues with Waterline. Its docs consists of a short section in the Sails.js docs, although its API is documented quite extensively and contains numerous usage examples. You can find additional support on the Sails Gitter (which seems to be quite active), and using GitHub Issues, although it will be on the Sails framework GitHub Issues page. It may be some time before you get an answer to your question or a fix gets pushed for your bug, though.
-
-**Evaluation:** Average
-
-### Maturity and stability
-
-Waterline has been around since 2013 and is a mature package with a stable API. As part of the Sails.js JavaScript framework, it is managed and maintained by the Sails Company, a private, seed funded company that incubated at the Y Combinator startup incubator. Sails.js is a popular JavaScript framework used by Verizon, Postman, JetBlue, etc. but it is unclear how many production use cases depend on the standalone Waterline library.
-
-**Evaluation:** Mature
-
-### Database support
-
-MySQL, PostgreSQL, MongoDB. Via community adapters: Redis, MS-SQL, Oracle, and many more.
-
-### Notable features
-
-- Write database-agnostic code
-- Populate relations between models, even if the data for different models lives in different databases
-
-For a full list of features, consult the [Waterline ORM GitHub README](https://github.com/balderdashy/waterline).
-
-### Usage example
-
-Relation query (fetch all posts by a given user, given user’s email):
-
-```js
-const userWithPosts = await User.find({ email: 'alice@waterline.js' }).populate(
-  'posts'
-)
-```
-
-### Summary
-
-Waterline is the ORM/ODM built-in to the Sails.js JavaScript framework and as such its principal goal has been to support multiple database types (both relational and NoSQL) without having to rewrite code. In recent months the project has stagnated and support is not as strong as for some of the other libraries considered in this article.
-
-## Knex.js (Query Builder)
-
-### Evaluation summary
-
-- **Popularity**: Very popular
-- **Repo Activity**: Active
-- **Support**: Good
-- **Maturity and Stability:** Mature
-- **Supported Databases**: PostgreSQL, Amazon Redshift, MySQL, MariaDB, SQLite, MSSQL
-
-### Overview
-
-- [Website](https://knexjs.org)
-- [GitHub](https://github.com/knex/knex)
-- [npm: knex](https://www.npmjs.com/package/knex)
-
-Knex.js is a Node.js query builder (not ORM) that supports multiple databases and includes features like transaction support, connection pooling, and a streaming interface. It allows you to work at a level above the database driver and avoid writing SQL by hand. However, as it is a lower level library, familiarity with SQL and relational database concepts like joins and indices is expected.
-
-### Popularity
-
-With 15.4k GitHub stars and 1.04 million weekly npm downloads, Knex.js is a very popular JavaScript query builder.
-
-**Evaluation:** Very popular
-
-### Repo activity
-
-In the month of data considered, Knex.js had 42 commits pushed across all branches, 26 merged PRs, and published 3 releases. Recent commits include bug fixes and features.
-
-**Evaluation:** Active
-
-### Support
-
-Knex.js's docs mostly consist of full documentation of its API, which is extensive but can be quite spartan. Familiarity with relational databases, SQL, and its core set of features (joining, connections, etc.) is expected. It hosts an Gitter channel which isn't very active, but you may be able to find some support on StackOverflow and Reddit. Its GitHub Issues page seems to be quite active so you can be sure that your query will get looked at by a project maintainer.
-
-**Evaluation:** Good
-
-### Maturity and stability
-
-Knex has been around since 2013 and is a mature project. It was designed as a "batteries-included" JavaScript query builder that supports multiple database drivers, and since then its interface has not changed much. It is an open-source project maintained entirely by the community, and although it is not as active as some of the other libraries considered in this article, minor releases are frequent and a handful of contributors continue to push fixes and improvements to the library.
-
-**Evaluation:** Mature
-
-### Database support
-
-PostgreSQL, Amazon Redshift, MySQL, MariaDB, SQLite, MSSQL
-
-### Notable features
-
-- Callback and Promise interfaces
-- Stream interface
-- Query and Schema Builders
-- Transaction Support
-- Connection Pooling
-- Standardizing responses between different query clients and dialects
-
-For a full list of features, consult the [knex.js GitHub README](https://github.com/knex/knex#knexjs).
-
-### Usage example
-
-JOIN query (fetch all posts by a given user, given user’s email):
-
-```js
-const posts = await knex('posts')
-  .join('users', {
-    'users.id': 'posts.user_id',
-    'users.email': 'alice@knex.js',
-  })
-  .select('*')
-```
-
-### Summary
-
-Knex.js is different from most of the database tools considered in this article as it is _not_ an ORM or an abstraction layer that sits above your database used to model your data. It is a powerful, flexible query builder that acts as a wrapper around database drivers, allowing you to simplify some of your queries and remove boilerplate SQL. It is the most popular "pure" JavaScript query builder and is an actively maintained, mature project.
+- **[Bookshelf.js](https://github.com/bookshelf/bookshelf)**, an ORM built on Knex.js, hasn't had a release in more than six years, and an [issue asking whether it's maintained](https://github.com/bookshelf/bookshelf/issues/2121) hasn't had an answer from a maintainer since it was opened in March 2022. Its latest release declares a peer dependency on `knex` versions `>=0.15.0 <0.22.0`, while the fix for a [Knex.js SQL injection advisory (CVE-2016-20018)](https://github.com/advisories/GHSA-4jv9-3563-23j3) shipped in Knex.js 2.4.0. It's the only library in this article whose downloads fell over the year (−30%).
+- **[Objection.js](https://github.com/Vincit/objection.js)**, a "relational query builder" built on Knex.js, hasn't been developed by its author since 2022: in [The future of Objection.js](https://github.com/Vincit/objection.js/issues/2335), he wrote that he wouldn't be working on it anymore. A long-time contributor took over maintenance in 2023 to keep it up to date and fix bugs, but in April 2026 he [wrote](https://github.com/Vincit/objection.js/issues/2807) that he hadn't found the time lately. The latest release is from September 2024. Objection.js's author also created Kysely.
+- **[Waterline](https://github.com/balderdashy/waterline)** is the ORM of the Sails framework. It hasn't had a release or a commit since December 2022, and its repository doesn't accept issues. It's still part of Sails, whose ORM hook, `sails-hook-orm`, depends on `waterline@^0.15.0`, and Sails itself had a release in May 2026.
+- **[MassiveJS](https://gitlab.com/dmfay/massive-js)**, a data mapper for PostgreSQL that the 2022 edition listed as notable, has had no release or repository activity since December 2024.
 
 ## Other notable libraries
 
-This article has focussed on some of the most popular Node.js ORMs, database tools, and query builders, but there are several other tools you may wish to consider for your project:
-
-### MassiveJS
-
-- [Website](https://massivejs.org/)
-- [GitLab](https://gitlab.com/dmfay/massive-js)
-- [npm](https://www.npmjs.com/package/massive)
-
-MassiveJS is a Node.js database tool for PostgreSQL that builds abstractions for working with your database but is _not_ a full-blown ORM with models and entities. Similar to Prisma, it can connect to your database and introspect its schemas to build an API for the data model encoded in your database. It includes a dynamic query builder and transaction support, and is designed for PostgreSQL so supports its unique feature set like array fields and operations, regular expression matching, foreign tables, and materialized views.
-
-### Mikro-ORM
-
-- [Website](https://mikro-orm.io/)
-- [GitHub](https://github.com/mikro-orm/mikro-orm)
-- [npm](https://www.npmjs.com/package/mikro-orm)
-
-Mikro-ORM is a newer TypeScript ORM that also [supports vanilla JavaScript](https://mikro-orm.io/docs/usage-with-js/). Since it is primarily a TypeScript ORM, it was not fully evaluated for this article. Mikro-ORM is a fast growing project that is very active on GitHub and is strongly supported by its developers. Influenced by Doctrine (a PHP ORM), it is a Data Mapper, Identity Map, and Unit of Work influenced ORM. Some of its features include automatic transaction handling, support for multiple databases, a built-in Knex.js-based Query Builder, and Schema and Entity generators.
-
-### Slonik
-
-- [GitHub](https://github.com/gajus/slonik)
-- [npm](https://www.npmjs.com/package/slonik)
-
-Slonik sits at a level just above the `node-postgres` database driver. It is a collection of utilities that builds in type safety, query mocking, connection and transaction handling, detailed logging, value interpolation, and [many other features](https://github.com/gajus/slonik#features). You will still have to write raw SQL but it's designed to add a level of safety and efficiency when working with a PostgreSQL database. The library was released in 2017 and is still quite active and supported on GitHub.
-
 ### Database drivers
 
-At the lowest level of the abstraction spectrum sit database drivers, which can be used to interact directly with your database using its query language. Summarizing every Node.js database client goes beyond the scope of this article but for convenience purposes, here is a list of the main database drivers:
+Every library above uses a driver to talk to the database, and you can use a driver directly when you want to write SQL yourself. The most widely installed:
 
-- **PostgreSQL:** [node-postgres](https://github.com/brianc/node-postgres), [pg-promise](https://github.com/vitaly-t/pg-promise)
-- **MySQL:** [mysql](https://github.com/mysqljs/mysql), [node-mysql2](https://github.com/sidorares/node-mysql2), [mysql-connector-nodejs](https://github.com/mysql/mysql-connector-nodejs)
-- **SQLite:** [node-sqlite3](https://github.com/mapbox/node-sqlite3)
-- **MSSQL**: [node-sqlserver-v8](https://github.com/TimelordUK/node-sqlserver-v8), [node-mssql](https://github.com/tediousjs/node-mssql), [tedious](https://github.com/tediousjs/tedious)
-- **MongoDB**: [node-mongodb-native](https://github.com/mongodb/node-mongodb-native)
-- **Redis:** [node-redis](https://github.com/NodeRedis/node-redis), [ioredis](https://github.com/luin/ioredis)
+| Driver                                                                   | Database   | npm package      | Downloads (30 days) | Latest release        |
+| ------------------------------------------------------------------------ | ---------- | ---------------- | ------------------- | --------------------- |
+| [node-postgres](https://github.com/brianc/node-postgres)                 | PostgreSQL | `pg`             | 213.8M              | 8.23.0, Aug 8, 2026   |
+| [Postgres.js](https://github.com/porsager/postgres)                      | PostgreSQL | `postgres`       | 68.0M               | 3.4.9, Apr 5, 2026    |
+| [MySQL2](https://github.com/sidorares/node-mysql2)                       | MySQL      | `mysql2`         | 58.6M               | 3.24.5, Sept 29, 2026 |
+| [MongoDB Node.js driver](https://github.com/mongodb/node-mongodb-native) | MongoDB    | `mongodb`        | 58.8M               | 7.7.0, Sept 28, 2026  |
+| [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)             | SQLite     | `better-sqlite3` | 42.3M               | 13.0.3, Aug 5, 2026   |
 
-## Summary
+- `pg` is what most of the libraries above use to connect to PostgreSQL, including Drizzle ORM's `node-postgres` driver, Kysely's `PostgresDialect`, Knex.js and Prisma ORM's `@prisma/adapter-pg`. It has a pure JavaScript client and optional native `libpq` bindings.
+- Postgres.js builds queries with tagged template literals, which send values as parameters instead of interpolating them into the SQL string.
+- better-sqlite3 has a synchronous API. Node.js also has a built-in [`node:sqlite`](https://nodejs.org/docs/latest-v24.x/api/sqlite.html) module, marked as a release candidate in Node.js 24.
+- The older `mysql` package (5.1 million downloads in 30 days) hasn't had a release since version 2.18.1 on January 23, 2020, and TypeORM 1.0 dropped support for it in favor of `mysql2`.
 
-{/* ![Summary Infographic](../dataguide-images/database-tools/top-nodejs-orms-2020/orm_infographic.png) */}
+Other databases have their own drivers, such as `mssql` and `tedious` for SQL Server, `oracledb` for Oracle, and `@libsql/client` for libSQL and Turso.
 
-| Library          | Type                          | Popularity | Activity | Support  | Maturity and Stability                                      | Officially Supported Databases                                                               |
-| ---------------- | ----------------------------- | ---------- | -------- | -------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **Prisma**       | ORM + Query Builder           | 💜💜       | 🌳🌳🌳🌳 | 🔵🔵🔵🔵 | Newer, backed by the company Prisma                         | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL (MongoDB, CockroachDB, and PlanetScale in Preview) |
-| **Sequelize**    | ORM                           | 💜💜💜     | 🌳🌳     | 🔵🔵     | Mature, no Funding                                          | PostgreSQL, MySQL, MariaDB, SQLite, MSSQL                                                    |
-| **TypeORM**      | ORM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$15k)                       | PostgreSQL, MySQL, MariaDB SQLite, MSSQL, CockroachDB, Oracle, Sap Hana                      |
-| **Mongoose**     | ODM + Query Builder           | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, OpenCollective Funded (\$67k), backed by Automattic | MongoDB                                                                                      |
-| **Bookshelf.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳       | 🔵🔵     | Mature, no Funding                                          | PostgreSQL, MySQL, SQLite                                                                    |
-| **Objection.js** | ORM + Query Builder (knex.js) | 💜💜       | 🌳🌳     | 🔵🔵🔵   | Mature, no Funding                                          | PostgreSQL, MySQL, SQLite                                                                    |
-| **Waterline**    | ORM                           | 💜         | 🌳       | 🔵🔵     | Mature, backed by Sails Company                             | PostgreSQL, MySQL, MongoDB                                                                   |
-| **Knex.js**      | Query Builder                 | 💜💜💜     | 🌳🌳🌳   | 🔵🔵🔵   | Mature, no Funding                                          | PostgreSQL, MySQL, MariaDB, SQlite, MSSQL, Oracle, Amazon Redshift                           |
+### SQL-first libraries
 
-## Conclusion
+These libraries sit just above a driver. You write SQL, and they add safety and types around it:
 
-This article summarizes the most popular Node.js ORMs, database toolkits, and query builders. Their health as open-source projects is assessed according to criteria like repository contributions and developer support.
+| Library                                              | npm package        | Downloads (30 days) | Latest release          | What it adds                                                                          |
+| ---------------------------------------------------- | ------------------ | ------------------- | ----------------------- | ------------------------------------------------------------------------------------- |
+| [pg-promise](https://github.com/vitaly-t/pg-promise) | `pg-promise`       | 2.75M               | 12.7.1, Aug 20, 2026    | Query formatting, tasks and transactions on top of `pg`                               |
+| [Slonik](https://github.com/gajus/slonik)            | `slonik`           | 580k                | 49.10.10, Sept 21, 2026 | Strict types, runtime validation of results, safe connection and transaction handling |
+| [PgTyped](https://github.com/adelsz/pgtyped)         | `@pgtyped/runtime` | 350k                | 2.4.2, Feb 10, 2025     | Generates TypeScript types for SQL queries from a running PostgreSQL database         |
+| [Zapatos](https://github.com/jawj/zapatos)           | `zapatos`          | 85k                 | 6.6.1, Sept 19, 2025    | Generates TypeScript types for every table in your database, plus typed SQL helpers   |
 
-It is not meant as an exhaustive framework for choosing a Node.js database interface, and other factors like the package’s programming interface, design, support for your database’s features, and flexibility can be significantly more important than much of the criteria assessed here. Different Node.js projects may require different tools.
+All four work only with PostgreSQL. PgTyped and Zapatos have had no commits to their default branches in the past 12 months.
 
-To learn more about query builders and ORMs, please consult [Comparing SQL, Query Builders, and ORMs](https://www.prisma.io/dataguide/types/relational/comparing-sql-query-builders-and-orms) from [Prisma’s Data Guide](https://www.prisma.io/dataguide), a free helpful knowledge base for learning about databases, data modeling, and much more.
+## Choosing a library
+
+There's no single best library, but the data above suggests some starting points:
+
+- **You want one model definition to drive types and migrations:** Drizzle ORM (TypeScript), MikroORM (entities), Prisma ORM (schema file) and TypeORM (entities) all generate migrations from your models. Sequelize, Knex.js and Kysely migrations are written by hand.
+- **You prefer SQL-shaped queries with inferred result types:** Kysely and Drizzle ORM. If you want SQL itself, look at the drivers and SQL-first libraries.
+- **You want change tracking and a unit of work:** MikroORM.
+- **You use MongoDB:** Mongoose is the established ODM. MikroORM and TypeORM also support MongoDB, and so does Prisma ORM, in version 6.19 or as early access in Prisma ORM 8. The MongoDB driver works on its own.
+- **You deploy to edge runtimes:** check each library's docs for your platform. Drizzle ORM, Kysely and Prisma ORM document Cloudflare Workers, and MikroORM explains what edge runtimes need.
+- **You need a database beyond PostgreSQL, MySQL and SQLite:** TypeORM, Sequelize, MikroORM and Knex.js support SQL Server and Oracle; Prisma ORM 7, Kysely and the Drizzle ORM 1.0 release candidate support SQL Server.
+- **You value stability over new features:** check the maturity notes. Drizzle ORM and Kysely haven't reached 1.0, Prisma ORM 8 and Drizzle ORM 1.0 are release candidates, TypeORM just released 1.0, and Sequelize 7 is in alpha.
+
+Whichever you choose, try it on a small part of your application first, and read its issue tracker for the problems others run into.
+
+<PostgresCallout />
+
+To learn more about the different levels of abstraction, read [Comparing SQL, query builders, and ORMs](/types/relational/comparing-sql-query-builders-and-orms).

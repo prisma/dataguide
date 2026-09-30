@@ -1,199 +1,255 @@
 ---
-title: 'Introduction to provisioning MongoDB Atlas'
-metaTitle: "MongoDB Atlas Setup | Prisma's Data Guide"
-metaDescription: "In this guide, we'll cover provisioning MongoDB Atlas."
+title: 'Provisioning a MongoDB Atlas cluster'
+metaTitle: "How to Provision a MongoDB Atlas Cluster | Prisma's Data Guide"
+metaDescription: 'Learn how to provision a MongoDB Atlas cluster: choose between Free, Flex and Dedicated tiers, pick a region and version, lock down network access and database users, and script it all with the Atlas CLI.'
 metaImage: '/social/generic-mongodb.png'
-authors: ['alexemerich']
+lastUpdated: 2026-09-30
 ---
 
-<StatusNotice title="The screens in this walkthrough are out of date">
+## Introduction
 
-This walkthrough was written in February 2022. The Atlas interface and the cluster tiers it offers have changed since, so the screens and options you see will differ. For the current steps, see MongoDB's [Get Started with Atlas](https://www.mongodb.com/docs/atlas/getting-started/) guide.
+MongoDB Atlas is [MongoDB's](/intro/database-glossary#mongodb) managed database service. It runs your [cluster](/intro/database-glossary#cluster) on AWS, Google Cloud or Microsoft Azure and takes care of provisioning, patching and monitoring, and on paid tiers, backups. Every Atlas cluster is a [replica set](/intro/database-glossary#replication), or a sharded cluster built from replica sets, so features that need one, such as [transactions](/mongodb/mongodb-transactions), work without extra setup.
 
-</StatusNotice>
+This guide explains the decisions you make when you create a cluster and then shows how to make them with the Atlas CLI, so that the setup is repeatable. The Atlas web interface asks the same questions, but its screens change often; for click-by-click steps, follow MongoDB's [Create a Cluster](https://www.mongodb.com/docs/atlas/tutorial/create-new-cluster/) tutorial. To run MongoDB on your own machine instead, see [Setting up a local MongoDB database](/mongodb/setting-up-a-local-mongodb-database).
 
-## What is MongoDB Atlas?
+## How Atlas is organized
 
-MongoDB Atlas is [MongoDB's](/intro/database-glossary#mongodb) cloud database service. It offers data distribution and mobility across major cloud providers like AWS, Azure, and Google Cloud. It is popular for its built-in automation for resource and workload optimization.
+After you [register for Atlas](https://www.mongodb.com/cloud/atlas/register), your account belongs to an **organization**, which holds the billing settings and one or more **projects**. A project holds up to 25 clusters, and it's where network access and database users are defined: IP access list entries apply to every cluster in the project, and so do database users unless you restrict them to specific clusters. That makes projects a natural boundary between environments. If development and production live in separate projects, a development password can't open the production database.
 
-In this guide, we are going to walk through the steps to provision a MongoDB Atlas [cluster](/intro/database-glossary#cluster) from the browser. We'll walk through all of the options from configuring a cluster up until deploy.
+Keep the two kinds of users apart: **Atlas users** sign in to the Atlas UI, CLI or Administration API to manage infrastructure, while **database users** are the credentials that applications and tools such as `mongosh` use to read and write data.
+
+## Choosing a cluster tier
+
+The tier decides how much hardware your cluster gets, whether it shares that hardware with other customers, and which Atlas features you can use. As of September 2026, Atlas offers three kinds of clusters:
+
+|                            | Free                  | Flex                                   | Dedicated (`M10` and up)                         |
+| :------------------------- | :-------------------- | :------------------------------------- | :----------------------------------------------- |
+| Hardware                   | Shared                | Shared                                 | Each node on its own instance                    |
+| Storage (data and indexes) | 512 MB                | 5 GB                                   | 10 GB to 4 TB, depending on tier                 |
+| Operations per second      | 100                   | 500                                    | Sized by tier (RAM, vCPUs, storage)              |
+| Backups                    | None                  | One daily snapshot                     | Configurable snapshots and point-in-time restore |
+| Private networking         | No                    | No                                     | Private endpoints and network peering            |
+| MongoDB version            | 8.0, managed by Atlas | 8.0, managed by Atlas                  | Your choice of supported version                 |
+| Cost                       | Free, one per project | Billed hourly, capped at $30 per month | Billed hourly by tier, storage and region        |
+
+These figures come from MongoDB's [Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/), [Flex cluster limits](https://www.mongodb.com/docs/atlas/reference/flex-limitations/) and [Flex pricing](https://www.mongodb.com/docs/atlas/billing/atlas-flex-costs/) pages, and they change over time.
+
+**Free clusters** (`M0` in the CLI and API) are for learning and prototypes. They also allow at most 500 connections and 10 GB of data in and 10 GB out per seven days, and Atlas pauses them after 30 days without connections.
+
+**Flex clusters** are the low-cost option for development, proofs of concept and small or spiky workloads. They replaced the shared `M2` and `M5` tiers and the serverless instances, which you haven't been able to create since February 2025. Since January 22, 2026, Atlas no longer supports them at all: existing `M2` and `M5` clusters became Flex clusters, and serverless instances were migrated to Free, Flex or dedicated clusters depending on their usage.
+
+**Dedicated clusters** give each node its own instance and unlock the full Atlas feature set. `M10` and `M20` suit development and low-traffic production, but they use burstable infrastructure: after a burst, the cloud provider caps their CPU, which can throttle a heavy workload. MongoDB recommends `M30` and larger for production, and `M30` is also the smallest tier that can be sharded.
+
+You aren't locked in: you can later scale a Free cluster to Flex or dedicated, and a Flex cluster to dedicated. Dedicated clusters can also change tier automatically: cluster-tier auto-scaling is on by default when you create a cluster in the Atlas UI, but off by default through the Administration API, which the Atlas CLI uses.
+
+The UI may also offer **Atlas Infinite**, a new edition of dedicated clusters that separates compute from storage. It's in public preview, limited to selected AWS regions and doesn't support sharding yet. This guide uses the default edition, Atlas Core; the commands below create Atlas Core clusters.
+
+## Choosing a cloud provider and region
+
+Put the cluster on the same cloud provider and in the same region as the application that uses it. Every query crosses the network between them, so distance adds latency to every round trip, and traffic between regions or providers can add data transfer charges.
+
+Prefer regions that Atlas marks as recommended. On AWS, for example, these have at least three availability zones, and Atlas puts one node of a three-node replica set in each, so losing a zone still leaves a majority. Free and Flex clusters are available only in a subset of regions, while dedicated clusters can also span several regions or cloud providers.
+
+The Atlas CLI uses Atlas's own region names, such as `US_EAST_1` for AWS `us-east-1`. Once you're logged in, you can list the regions available for a provider and tier:
+
+```bash
+atlas clusters availableRegions list --provider AWS --tier M10
+```
+
+Choose the cluster name with care, too. Atlas builds the cluster's hostname from it, and you can't rename a cluster after it's deployed. Names can be up to 64 characters and shouldn't contain sensitive information.
+
+## Choosing a MongoDB version
+
+Free and Flex clusters run the version Atlas chooses (MongoDB 8.0 in September 2026), and Atlas upgrades them for you. On dedicated clusters, you choose between two release cadences:
+
+- **A major version**, such as 8.0. Atlas applies patch releases automatically, and you decide when to move to the next major version, which lets you test the upgrade in staging first.
+- **The latest version with automatic upgrades.** Atlas also moves the cluster to new minor and major releases, including the rapid releases between major versions (8.3 at the time of writing).
+
+[MongoDB 8.0 is supported until October 31, 2029](https://www.mongodb.com/legal/support-policy/lifecycles), and 7.0 until August 31, 2027. MongoDB 9.0 was released in September 2026, but when this was written Atlas's [version availability table](https://www.mongodb.com/docs/atlas/atlas-versions/) didn't list it for dedicated clusters yet. For a new cluster on a major-version cadence, choose 8.0. Atlas emails you at least six months before a version reaches end of life and upgrades the cluster after that date.
+
+## Securing access to the cluster
+
+Unless you set up private networking, clients reach an Atlas cluster over the public internet, so three layers protect it: which networks can connect, which credentials are accepted, and encryption.
+
+### Network access
+
+Over the public internet, Atlas accepts client connections only from addresses on the project's [IP access list](https://www.mongodb.com/docs/atlas/security/ip-access-list/). Each entry is a single IP address or a CIDR range. Keep the list short:
+
+- For development, add your current public IP address. Temporary entries, which Atlas removes automatically within a week, suit one-off access from somewhere new.
+- For production, add the outbound IP addresses of your application servers.
+- Avoid `0.0.0.0/0`. It lets anyone on the internet try to log in, leaving passwords as the only defense, and Atlas emails the project's members when someone adds it. If your hosting platform can't give you stable outbound addresses, look for a private networking option first.
+
+Dedicated clusters can avoid the public internet altogether. [Private endpoints](https://www.mongodb.com/docs/atlas/security-private-endpoint/) (AWS PrivateLink, Azure Private Link and Google Cloud Private Service Connect) and network peering keep traffic on the cloud provider's private network. Free and Flex clusters support neither, which is one more reason to run production on a dedicated tier.
+
+### Database users
+
+[Database users](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/) can authenticate with a password (SCRAM, the default), an X.509 client certificate, OIDC (workforce identity federation for people, workload identity federation for applications on Azure or Google Cloud; MongoDB 7.0 and later) or AWS IAM. Free and Flex clusters support only passwords, X.509 and AWS IAM. Where your platform supports them, MongoDB recommends the federated options and AWS IAM over passwords, because they avoid long-lived secrets.
+
+Give each user only the access it needs. Besides built-in roles such as `atlasAdmin`, `readWriteAnyDatabase` and `readAnyDatabase`, Atlas lets you grant specific privileges on one database or collection, such as `readWrite` on `appdb`, and define custom roles. The user that `atlas setup` creates gets `atlasAdmin`, and MongoDB's docs say the Atlas UI's connect dialog offers to create an Atlas Admin user when a project has none, so check the roles of any user the Atlas UI created for you. Admin rights are fine for a sandbox, but an application should have its own user with `readWrite` on its own database. For short-lived access, Atlas can create temporary users that it deletes automatically within a week.
+
+Manage database users only through the Atlas UI, the Atlas CLI or the Administration API: Atlas rolls back user changes made any other way, so the `db.createUser()` approach from [How to manage users and authentication in MongoDB](/mongodb/configuring-mongodb-user-accounts-and-authentication) is for self-managed servers. The role concepts in [How to manage authorization and privileges in MongoDB](/mongodb/authorization-and-privileges) apply to Atlas too.
+
+### Encryption
+
+Atlas requires TLS for every connection. It supports TLS 1.2 and 1.3 and rejects 1.0 and 1.1. On dedicated clusters, you can raise the minimum TLS version the cluster accepts; before you require 1.3, check that your drivers, language runtime and operating system support it. Free and Flex clusters also require clients that support the TLS SNI extension, as `mongosh` does. You don't need to turn anything on: connection strings that start with `mongodb+srv://` enable TLS automatically.
+
+Atlas also [encrypts cluster storage and snapshot volumes at rest](https://www.mongodb.com/docs/atlas/setup-cluster-security/) with AES-256 by default, with keys managed by the cloud provider. Dedicated clusters can add encryption with your own keys in AWS KMS, Azure Key Vault or Google Cloud KMS. For background, see [How MongoDB encrypts data](/mongodb/mongodb-encryption).
+
+## Planning backups
+
+What Atlas backs up depends on the tier:
+
+- **Free clusters** have no backups. Export data yourself with `mongodump` and restore it with `mongorestore` (see [MongoDB database tools](/mongodb/mongodb-database-tools)).
+- **Flex clusters** always have backups: one snapshot a day, starting 24 hours after you create the cluster, and Atlas keeps the last eight. You can't change the schedule, take on-demand snapshots or restore to a point in time.
+- **Dedicated clusters** use [Cloud Backup](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/), which you turn on per cluster. It takes snapshots on a schedule and keeps them according to a retention policy you configure. Continuous Cloud Backup adds point-in-time restore by replaying the oplog up to the moment you choose.
+
+Deleting a cluster also deletes its snapshots, unless you choose to keep them when you terminate it in the Atlas UI or a Backup Compliance Policy retains them. Export anything you need to keep before you delete a cluster, and test restores regularly. [Backup considerations](/managing-databases/backup-considerations) covers how to choose a strategy.
+
+## Provisioning a cluster with the Atlas CLI
+
+The [Atlas CLI](https://www.mongodb.com/docs/atlas/cli/current/) manages Atlas from the terminal, so you can script cluster creation and keep it in version control. The commands in this section use Atlas CLI 1.59.0.
+
+### Installing and logging in
+
+With Homebrew on macOS or Linux, this installs the Atlas CLI together with `mongosh`:
+
+```bash
+brew install mongodb-atlas-cli
+```
+
+MongoDB also provides `apt` and `yum` packages, a Chocolatey package for Windows, a Docker image and downloadable binaries; see [Install or Update the Atlas CLI](https://www.mongodb.com/docs/atlas/cli/current/install-atlas-cli/). Then log in:
+
+```bash
+atlas auth login
+```
+
+For interactive use, choose the user account option. The command prints a one-time code and a URL and opens the browser when you press Enter (`--noBrowser` skips that). After you sign in and paste the code, you pick a default organization and project, which the CLI saves in a profile. Later commands act on that project unless you pass `--projectId`. For scripts and CI, log in with a service account or API key instead.
+
+### The quick way: `atlas setup`
+
+For a sandbox, `atlas setup` does everything in one go: it logs you in if needed, creates a Free cluster with a database user, and can connect you with `mongosh` when it's done.
+
+```bash
+atlas setup --clusterName sandbox --provider AWS --region US_EAST_1 --currentIp --skipSampleData
+```
+
+`--currentIp` adds the public IP address of the machine you run the command on to the access list, and `--skipSampleData` skips loading MongoDB's sample datasets. The database user this creates has the `atlasAdmin` role, so don't reuse it in an application.
+
+### Step by step
+
+For clusters that will hold real data, create each piece separately so you choose every setting. `atlas clusters create` creates a Flex cluster unless you pass another `--tier`, such as `M0` for a Free cluster:
+
+```bash
+atlas clusters create dev-cluster --provider AWS --region US_EAST_1 --tier FLEX
+atlas clusters watch dev-cluster
+```
+
+`atlas clusters watch` waits until the cluster is ready. A production cluster needs a few more decisions:
+
+```bash
+atlas clusters create prod-cluster \
+  --provider AWS --region US_EAST_1 \
+  --tier M30 --diskSizeGB 40 --mdbVersion 8.0 \
+  --backup --enableTerminationProtection
+```
+
+- `--tier M30` is the smallest tier MongoDB recommends for production. The CLI creates a three-member replica set by default.
+- `--diskSizeGB` sets the storage for each node. Set it explicitly for dedicated tiers, because the CLI's default is 2 GB.
+- `--mdbVersion 8.0` keeps the cluster on the 8.0 major version.
+- `--backup` turns on Continuous Cloud Backup, so you can restore to a point in time.
+- `--enableTerminationProtection` blocks deletion until someone turns the protection off.
+
+Next, allow your own IP address and your application servers' network to connect. To make an entry temporary, add `--deleteAfter` with an ISO 8601 timestamp in UTC:
+
+```bash
+atlas accessLists create --currentIp --comment "dev laptop"
+atlas accessLists create 203.0.113.0/24 --type cidrBlock --comment "app servers"
+```
+
+Create a database user for the application that can only read and write the `appdb` database, and only on `prod-cluster`. Without `--scope`, the user would get this access on every cluster in the project. When you leave out `--password`, the CLI prompts for it, which keeps the password out of your shell history:
+
+```bash
+atlas dbusers create --username appUser --role readWrite@appdb --scope prod-cluster
+```
+
+Finally, print the cluster's SRV connection string, which starts with `mongodb+srv://`. If you connect through network peering or private endpoints, add `--type private` or `--type privateEndpoint`:
+
+```bash
+atlas clusters connectionStrings describe prod-cluster
+```
+
+## Connecting to the cluster
+
+To open a shell, pass the connection string and user name to `mongosh`, which then prompts for the password:
+
+```bash
+mongosh "mongodb+srv://<cluster-host>/" --username appUser
+```
+
+Replace `<cluster-host>` with the host from the connection string. An SRV connection string doesn't list individual servers: the client looks up the replica set members in DNS, so Atlas can replace nodes without you changing your configuration. If your network's DNS can't resolve these SRV records, the Atlas UI can also show a standard `mongodb://` connection string that lists every host.
+
+Applications use the same host in a connection string that includes the credentials:
+
+```text
+mongodb+srv://appUser:<password>@<cluster-host>/?retryWrites=true&w=majority
+```
+
+Load this string from an environment variable or a secret manager rather than committing it to source control, and percent-encode characters such as `@`, `:` or `/` in the password. [Introduction to MongoDB connection URIs](/mongodb/connection-uris) explains each part of the string.
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
-
-To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+Prisma ORM connects to Atlas with the same `mongodb+srv://` connection string. As of September 2026, the last generally available Prisma ORM release with MongoDB support is Prisma ORM 6 (6.19), which receives security patches until November 19, 2026. It needs a replica set, which every Atlas cluster is, because it uses transactions internally for nested writes. Prisma ORM 7 has no MongoDB connector. Prisma ORM 8, a release candidate with general availability expected in October 2026, supports MongoDB in early access through `@prisma/orm-mongo`, but without transactions so far. See [supported databases](https://www.prisma.io/docs/orm/supported-databases), the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) and the [upgrade guide from Prisma ORM 6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/mongodb).
 
 </PrismaOutlinks>
 
-## How to provision a MongoDB Atlas cluster
+## Developing against a local Atlas deployment
 
-If you do not already have a MongoDB account, to begin setting up your new Atlas cluster you will navigate to the [Atlas registration page](https://www.mongodb.com/cloud/atlas/register) and create a new account. After successful registration, you will be directed to a page where you will create your first cluster.
+For tests and offline work, the Atlas CLI can run a [local Atlas deployment](https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-deploy-local/): a single-node replica set in a container on your machine that also supports MongoDB Search and Vector Search. It needs Docker (Docker Desktop 4.31 or later on macOS and Windows, Docker Engine 27.0 or later on Linux) or, on Red Hat Enterprise Linux, Podman 5.0 or later.
 
-If you already have a MongoDB account registered, you can login from the registration page. Once logged in, you will want to click on the green "+ Create" button pictured below. This will take you to the same page for creating a cluster as if you were creating a cluster for the first time.
+```bash
+atlas local setup dev-local --mdbVersion 8.0
+atlas local connect dev-local --connectWith mongosh
+```
 
-![Create Cluster](../dataguide-images/mdb-atlas-setup/create-cluster-button.png)
+The deployment listens only on `127.0.0.1` unless you pass `--bindIpAll`, and `--port` picks a port other than the default 27017. `atlas local stop dev-local` pauses it, and `atlas local delete dev-local` removes it along with its data. These `atlas local` commands replace the `atlas deployments` commands, which have been deprecated since Atlas CLI 1.52.0.
 
-The first decision you will have to make is what kind of cluster you would like to configure. At the time of this writing, MongoDB offers three options: [Serverless](/serverless/serverless-glossary#serverless-databases) (Preview), Dedicated, and Shared.
+## Pausing and deleting clusters
 
-![Cluster Type](../dataguide-images/mdb-atlas-setup/cluster-type.png)
+Atlas bills paid clusters by the hour, so clean up what you don't need:
 
-The serverless instance is suitable for serverless applications with variable or infrequent traffic. There is minimal configuration and resources scale to meet your workload with the cost matching your actual usage.
+- **Free clusters** can't be paused by hand. Atlas pauses them after 30 days without connections and emails you a week before. You can resume a paused Free cluster unless it runs a version too old for Atlas to restore, so export the data if you won't use it for a while.
+- **Flex clusters** can't be paused, and Atlas doesn't pause them when they're idle. Delete them when you're done.
+- **Dedicated clusters** can be paused for up to 30 days, after which Atlas resumes them. While paused, you pay only for storage and can't read or write data. Backups stop, but existing snapshots are kept until they expire.
 
-The dedicated instance is the selection we will continue walking through for the remainder of the guide. It is for production applications with sophisticated workload requirements. There are advanced configuration controls such as network isolation, end-to-end encryption, and fine-grained access controls. The dedicated cluster also has on-demand performance advice around indexes, data schema, and more.
+```bash
+atlas clusters pause prod-cluster
+atlas clusters start prod-cluster
+```
 
-Lastly, is the shared cluster instance. This cluster type is for learning and exploring MongoDB in a sandbox-like environment. It has basic configuration controls and is best for working with sample datasets and familiarizing yourself with MongoDB.
+To delete a cluster, first turn off termination protection if it's enabled. The command asks for confirmation unless you add `--force`, and it can't be undone. It also deletes the cluster's backup snapshots; to keep them, terminate the cluster in the Atlas UI and choose to keep existing snapshots:
 
-### Global Cluster Configuration
+```bash
+atlas clusters delete dev-cluster
+```
 
-The first section after selecting a Dedicated cluster instance is Global Cluster Configuration. It displays a map that shows the approximate write [latency](/serverless/serverless-glossary#latency) of every region from high to low. Atlas Global Clusters are for sharded cluster zones to support location-aware read and write operations for globally distributed applications.
+Access list entries and database users belong to the project, not the cluster, so remove the ones you no longer need with `atlas accessLists delete` and `atlas dbusers delete`.
 
-![Global Cluster](../dataguide-images/mdb-atlas-setup/global-cluster.png)
+## Conclusion
 
-They are designed for a minimum [cluster tier](https://docs.atlas.mongodb.com/cluster-tier/#cluster-tier) of M30 or greater sharded cluster. A cluster tier in MongoDB dictates the memory, storage, and IOPS specification for each data-bearing server in the cluster. We will speak more about tiers later on, but cluster tier specifications increase as you move up sequentially from the minimum MO cluster upwards. M30 is the recommendation for production clusters. For the purpose of this guide, we will leave this unselected and move forward. If global clusters fit your use case, you can read more about them and how to configure in the official [MongoDB documentation](https://docs.atlas.mongodb.com/global-clusters/).
-
-### Cloud Provider & Region
-
-The next section provides you the option to pick which of the three major cloud providers you would like to use and their respective regions.
-
-![Cloud Provider & Region](../dataguide-images/mdb-atlas-setup/cloud-provider-region.png)
-
-It is up to you which provider is best for you. One consideration is making sure that the region you need is supported and recommended. For example, in the screenshot above, we can see that the desired Frankfurt region is available on AWS and recommended by MongoDB.
-
-**NOTE:** In recommended regions, Atlas replica sets always span 3 availability zone. In other regions only 2 availability zones are used.
-
-3 availability zones are recommended in order to obtain the full benefits of a [3 member replica set](https://docs.mongodb.com/manual/core/replica-set-architecture-three-members/) and maintain high availability of data. To get more information about the region availability of your selected cloud provider, you can click on the 'i' icon at the top of the list of available regions.
-
-#### Multi-Cloud, Multi-Region & Workload Isolation
-
-An additional option within the Cloud Provider & Region section is configuring Multi-Cloud, Multi-Region & Workload Isolation(M10+ clusters). Toggling this option on enables you to distribute data across clouds or regions for improved availability and local read performance, or introduce replicas for workload isolation.
-
-You can configure 3, 5, or 7 nodes across multiple regions and cloud providers to better withstand data center outages. You can also add replicas in additional regions to optimize for local reads or analytics nodes to isolate queries on read-only nodes to achieve workload isolation.
-
-For the purposes of this guide, we will leave this option toggled off, but you can read in more depth in the [MongoDB Documentation](https://docs.atlas.mongodb.com/cluster-config/multi-cloud-distribution/).
-
-### Cluster Tier
-
-After selecting your cloud provider and region, the next step is selecting your cluster tier. MongoDB divides cluster tiers into two categories:
-
-1. Dedicated Clusters for development environments and low-traffic applications
-2. Dedicated Clusters for high-traffic applications and large datasets
-
-The first category includes M10 and M20 clusters while the second category ranges from M30 to M700. Each tier displays its RAM, Storage, vCPU, and its Base Price per hour.
-
-![Cluster Tier](../dataguide-images/mdb-atlas-setup/cluster-tier.png)
-
-When a tier is selected, the configuration options are available to edit if needed. You are able to adjust the storage with a slider. This increases the Base Price per hour which updates at the bottom of the screen.
-
-![Base Price](../dataguide-images/mdb-atlas-setup/base-price.png)
-
-The Auto-scale option has [Cluster Tier Scaling](https://docs.atlas.mongodb.com/cluster-autoscaling/) selected by default. This feature enables you to configure your cluster to auto scale up or down based on traffic. You can set a minimum cluster size and a maximum depending on your limits.
-
-Lastly, there are two sections displaying spec information on IOPS, max connections, and Gigabit network performance.
-
-<PrismaOutlinks>
-
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
-
-to get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
-
-</PrismaOutlinks>
-
-### Additional Settings
-
-Now that you have your cluster tier picked out, there are some additional settings to consider.
-
-![Additional Settings](../dataguide-images/mdb-atlas-setup/additional-settings.png)
-
-#### Version
-
-First will be the MongoDB version. By default, the most up-to-date version will be selected, but you can choose whichever supported version you require.
-
-#### Backups
-
-Next, you will need to decide which backup strategy is best for your organization. There is Cloud Backup where snapshots are taken automatically and stored according to your backup and retention policy.
-
-There is also Continuous Cloud Backup that when toggled on records the full [oplog](https://docs.mongodb.com/manual/core/replica-set-oplog/) for a configured window of time. This permits you to restore to any point in time within that window. Which option is best for you will depend on your organization's [recovery point objective (RPO)](https://www.mongodb.com/backup-and-its-role-disaster-recovery).
-
-#### Sharding
-
-The next option is for configuring [sharding](/intro/database-glossary#shard) to your environment. Sharding is the separation of data into separate database instances. This partitioning can be particularly beneficial in larger datasets and instances where it is beneficial to have data in specific regions. If it is not a requirement to shard your cluster from the beginning, you can always undergo the process later on in your application life cycle.
-
-This option is only able to be toggled on if your cluster tier is an M30+ and your auto-scaling minimum tier is at least an M30. Sharding support high throughput and large datasets, and can be increased as data requirements grow.
-
-#### Business Intelligence Connector
-
-The penultimate additional setting is for [MongoDB's Business Intelligence (BI) Connector](https://docs.mongodb.com/bi-connector/current/). This feature requires a Cluster Tier of M10+. The BI Connector enables you to visualize your data on relational BI tools such as Tableau and Qlik.
-
-#### Encryption
-
-Lastly, there is the ability to toggle on the ability to manage your own encryption keys. Once again, this feature is only available if your cluster tier is an M10+. This feature gives you the ability to employ an additional layer of encryption using your own keys of choice. By default MongoDB Atlas storage and backups are encrypted at rest, but if your organization requires more encryption on top of that then this option achieves that.
-
-### Cluster Name
-
-Now that we have crafted our cluster to our desired configuration, we can name it.
-
-![Create Name](../dataguide-images/mdb-atlas-setup/cluster-name.png)
-
-It is important to make note that a cluster cannot be renamed. Additionally, cluster names can only contain ASCII letters, numbers, and hyphens. You can now click on the Create Cluster button, wait for your replica set to spin up, and get to work with your new MongoDB instance.
-
-## Wrapping up
-
-MongoDB's à la carte menu for setting up a cluster makes it easy to see what options are available for you to mix and match per one's needs. However, this plethora of options can be difficult to wrap one's head around if unsure of the implications.
-
-In this guide, we walked through all of the MongoDB Atlas setup sections. We discussed each selection on its surface and provided further reading if interested in further details. Every option may not be useful for every use case, but it is important to know what is available when provisioning a new Atlas cluster.
-
-<PrismaOutlinks>
-
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
-
-To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
-
-</PrismaOutlinks>
+Provisioning an Atlas cluster comes down to a handful of decisions: a tier that fits the workload (Free to learn, Flex for small projects, `M30` and up for production), a region next to your application, a MongoDB version you can plan upgrades around, and access that is as narrow as possible, with specific IP addresses or private endpoints and one least-privileged database user per application. Making these decisions with the Atlas CLI leaves you with commands you can review, repeat and keep next to your code.
 
 ## FAQ
 
 <details>
-<summary>Is MongoDB Atlas encrypted at rest?</summary>
+<summary>How do I connect BI tools such as Tableau to Atlas?</summary>
 
-[MongoDB Atlas has built-in encryption](https://www.prisma.io/dataguide/mongodb/mongodb-encryption) at rest for disks by default with every node in the cluster.
-
-You can also enable Encryption At Rest from the Wired Tiger storage engine with your preferred cloud provider.
+Use the [MongoDB SQL Interface](https://www.mongodb.com/docs/sql-interface/). The older BI Connector for Atlas is no longer supported after September 2026, and MongoDB recommends the SQL Interface for new projects.
 
 </details>
 
 <details>
-<summary>How can you connect MongoDB Atlas to Tableau?</summary>
+<summary>How do I monitor an Atlas cluster?</summary>
 
-You can [connect MongoDB Atlas to Tableau Desktop](https://www.mongodb.com/docs/atlas/tutorial/connect-bic-tableau/#connect-from-tableau-desktop) with the BI Connector for Atlas. The BI Connector is an additional paid for tool that can only be used for MongoDB M10+ clusters.
-
-The BI Connector provides users SQL-based access to their MongoDB databases. It can be used with most business intelligence tools including Tableau.
-
-</details>
-
-<details>
-<summary>How do you monitor a replica set cluster in MongoDB Atlas?</summary>
-
-MongoDB Atlas has [built-in monitoring for database metrics](https://www.mongodb.com/basics/how-to-monitor-mongodb-and-what-metrics-to-monitor). Within the clusters view of your MongoDB Atlas dashboard, there is a _View Monitoring_ section.
-
-Once in that view, you can click into the metrics tab and can identify any performance issues or deployment stats.
-
-</details>
-
-<details>
-<summary>Does MongoDB Atlas support a multi-database environment?</summary>
-
-MongoDB Atlas supports a global cluster configuration for your databases. You can distribute data globally via cross-region replication, enabling multi-region fault tolerance and responsive read access.
-
-MongoDB Atlas also support multi-cloud database deployments.
-
-</details>
-
-<details>
-<summary>What are the MongoDB Atlas Global Cluster requirements?</summary>
-
-MongoDB Atlas Global Clusters require that you define single or multi-region Zones, where each zone supports write and read operations from geographically local shards.
-
-If you want to enable global writes in your cluster configuration, your clusters must be M30+.
+Atlas collects [metrics](https://www.mongodb.com/docs/atlas/monitor-cluster-metrics/) for every cluster and can alert you on them. Free and Flex clusters show only connections, logical size, network and operation counters. Dedicated clusters add the full set of metrics, the Real-Time Performance Panel and the Performance Advisor, which suggests indexes for slow queries.
 
 </details>
