@@ -1211,13 +1211,29 @@
     {
       "file": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
       "owner": "Comparison experiment maintainer (human assignment pending)",
-      "level": "external-needed",
+      "level": "executed",
       "releaseChannel": "stable",
-      "scope": "Exact reported Prisma pins clarified; comparison source projects, locks, compiler diagnostics and runtime logs absent, so all reported grades and preview/compiler cross-checks remain provisional",
+      "scope": "New independent reproduction of seven checks across eight pinned stable libraries: three compiler versions, unsuppressed diagnostics, exact result-type assertions and disposable PostgreSQL/MongoDB runtime controls. Preview versions and TypedSQL excluded.",
       "reviewer": null,
-      "reviewDate": "2026-09-30",
-      "verificationMethod": "external evidence unavailable; visible scope disclosure",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "reviewDate": "2026-10-01",
+      "verificationMethod": "Locked independent compiler and disposable database experiment",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "fixture": "experiments/orm-type-safety/run.mjs",
+      "evidence": "static/experiments/orm-comparison-2026-10-01.json",
+      "versions": [
+        "Node.js 24.18.0",
+        "PostgreSQL 18.6",
+        "MongoDB 8.0.32",
+        "TypeScript 7.0.2 / 6.0.3 / 5.9.3",
+        "Prisma ORM 7.10.0",
+        "Drizzle 0.45.3",
+        "Kysely 0.29.6",
+        "TypeORM 1.1.1",
+        "Sequelize 6.37.8",
+        "MikroORM 7.2.3",
+        "Mongoose 9.10.3",
+        "Knex 3.3.0"
+      ]
     },
     {
       "file": "content/09-database-tools/03-connection-pooling.mdx",

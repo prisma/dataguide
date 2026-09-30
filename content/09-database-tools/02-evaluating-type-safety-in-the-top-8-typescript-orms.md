@@ -1,14 +1,14 @@
 ---
 title: 'Evaluating type safety in TypeScript ORMs and query builders (2026)'
 metaTitle: 'TypeScript ORM Type Safety Comparison: Prisma, Drizzle, Kysely & More'
-metaDescription: 'Compare the reported type safety results for eight TypeScript database libraries, with an explicit notice about the experiment artifacts still needed for independent reproduction.'
+metaDescription: 'Compare eight TypeScript database libraries with independently executed compiler and runtime checks, exact dependency locks and published reproduction projects.'
 metaImage: '/social/docs-social.png'
-lastUpdated: 2026-09-30
+lastUpdated: 2026-10-01
 ---
 
-<StatusNotice title="Comparison evidence needs an independent reproduction">
+<StatusNotice title="Scope of the independent comparison">
 
-The results below were recorded by the earlier refresh. The eight complete source projects, dependency lockfiles, compiler diagnostics and runtime logs are not present in this checkout, so this review has not independently reproduced the comparison, its preview results or its compiler cross-checks. The version table identifies the reported inputs; it is not a downloadable experiment. Treat the grades as provisional until those artifacts are published and rerun. The separately maintained [library application lab](/managing-databases/library-application-labs) tests different operational questions and does not substantiate these grades.
+This review independently recreated the seven checks for the pinned stable libraries below. The [eight projects and dependency locks](https://github.com/prisma/dataguide/tree/481e57a0042f9a9ab8bfe831eefdac1b2a8d2d92/experiments/orm-type-safety) are published with the runner; this is a new experiment, not a recovery of the earlier refresh's missing artifacts. Release candidates, beta versions and Prisma TypedSQL were not exercised and are excluded from the grades. Results apply to the model declarations and API calls in these fixtures, not every way of configuring a library. The [library application lab](/managing-databases/library-application-labs) tests separate operational questions.
 
 </StatusNotice>
 
@@ -26,24 +26,32 @@ For the popularity, release activity and maintenance of these libraries, see the
 
 ### Versions
 
-Each library was tested at its latest stable release on npm at the end of September 2026:
+The independent run used these exact stable release pins:
 
-| Library     | Version tested | Kind                           | Notes                                                                                                                                                                         |
-| ----------- | -------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Prisma ORM  | 7.10.0         | ORM with a generated client    | The same checks were repeated on the Prisma ORM 8 release candidate (`prisma` `8.0.0-rc.19` with `@prisma/orm-postgres` `8.0.0-rc.13`), with identical results for checks 1–6 |
-| Drizzle ORM | 0.45.3         | ORM and SQL-like query builder | The same checks were repeated on the `1.0.0-rc.4` release candidate, with identical results                                                                                   |
-| Kysely      | 0.29.6         | Query builder                  | `0.30.0-beta.2`, on the `next` tag, wasn't tested                                                                                                                             |
-| TypeORM     | 1.1.1          | ORM                            |                                                                                                                                                                               |
-| Sequelize   | 6.37.8         | ORM                            | Sequelize 7 (`@sequelize/core`) is still in alpha (`7.0.0-alpha.48`) and wasn't tested                                                                                        |
-| MikroORM    | 7.2.2          | ORM                            |                                                                                                                                                                               |
-| Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                                                                                                                                                                   |
-| Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                                                                                                                                                        |
+| Library     | Version tested | Kind                           | Notes                                 |
+| ----------- | -------------- | ------------------------------ | ------------------------------------- |
+| Prisma ORM  | 7.10.0         | ORM with a generated client    | Prisma 8 release candidates excluded  |
+| Drizzle ORM | 0.45.3         | ORM and SQL-like query builder | Drizzle 1 release candidates excluded |
+| Kysely      | 0.29.6         | Query builder                  | Beta versions excluded                |
+| TypeORM     | 1.1.1          | ORM                            |                                       |
+| Sequelize   | 6.37.8         | ORM                            | Sequelize 7 previews excluded         |
+| MikroORM    | 7.2.3          | ORM                            |                                       |
+| Mongoose    | 9.10.3         | Object-document mapper (ODM)   | For MongoDB                           |
+| Knex.js     | 3.3.0          | Query builder                  | Included as a baseline                |
 
-The recorded Prisma ORM 7 package versions are `prisma@7.10.0` and `@prisma/client@7.10.0`. A major tag such as `@7` or a moving `latest` tag does not reproduce that dependency graph. Exact top-level pins alone are also insufficient: reproduction requires the experiment's lockfile, compiler, adapters and database image versions.
+Prisma ORM uses `prisma@7.10.0`, `@prisma/client@7.10.0` and `@prisma/adapter-pg@7.10.0`. A major tag such as `@7` or a moving `latest` tag does not reproduce that dependency graph; the registry's `latest` tag can even point to a release candidate. Each project includes its full npm lockfile, driver and compiler pins. The runner pins the database images by digest and records installed versions, command exits, stdout, stderr, compiler diagnostics, runtime observations, source hashes and cleanup.
 
-The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the results were identical. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24 against PostgreSQL 18.6 and MongoDB 8.0.32 in local Docker containers.
+The compiler was [TypeScript 7.0.2](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), the native compiler. Every check was repeated with TypeScript 6.0.3 and 5.9.3, and the pass/fail outcomes and asserted result types agreed. The SQL libraries used their PostgreSQL drivers. The runtime checks ran on Node.js 24.18.0 against PostgreSQL 18.6 and MongoDB 8.0.32 in local Docker containers.
 
 ### Setup
+
+To reproduce the comparison, check out the linked experiment revision and run this command from the repository root with Node.js 24.18.0 and Docker available:
+
+```bash
+npm run test:orms
+```
+
+The runner creates its own uniquely named containers and loopback URLs, initializes only disposable databases and removes the containers afterwards. Do not run the individual runtime files against an existing database. The report is saved to `experiments/orm-type-safety/.verification-runs/comparison.json`; failed checks remain failed in that report. The [recorded compiler and runtime report](/experiments/orm-comparison-2026-10-01.json) contains the actual output from this independent run. CI repeats the comparison for relevant changes and weekly. A later version requires a new run, not a date bump.
 
 Each library got its own project with exact version pins and this `tsconfig.json`:
 
@@ -93,12 +101,12 @@ Each line that the compiler should reject is preceded by a [`// @ts-expect-error
 Mistakes that the compiler doesn't catch are written without the comment, so the passing build proves that they compile. Result types are pinned with a small helper that only compiles when two types are identical:
 
 ```typescript
-type Equals<A, B> =
+type Equal<A, B> =
   (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false
 function expectType<T extends true>(): void {}
 
 // Compiles only if `subset` is exactly { id: number; email: string }[]
-expectType<Equals<typeof subset, { id: number; email: string }[]>>()
+expectType<Equal<typeof subset, { id: number; email: string }[]>>()
 ```
 
 The checks are about compile time. When a mistake compiled, it was also run against the database, and the section on that library says what happened. Nothing in this article about runtime behavior is inferred from types alone.
@@ -141,13 +149,13 @@ What the compiler caught:
 8. MongoDB has no SQL. The escape hatches tested were `aggregate()`, which returns `any[]`, and the underlying MongoDB driver collection, whose documents have `any` properties.
 9. Caught only when you write the table's insert type by hand with `Knex.CompositeTableType`. If you only declare a row type, `insert()` accepts partial rows.
 10. The object form, `where({ emial: … })`, is caught. The column-name form, `where('emial', …)`, isn't.
-11. Knex has no relation model. A join's rows are typed when you select unqualified column names (`Pick<User & Post, 'email' | 'title'>[]`), but table-qualified names such as `'users.email'`, and misspelled names, give `any[]` without an error.
+11. Knex has no relation model. A join's rows are typed when you select unqualified column names (`Pick<User & Post, 'email' | 'title'>[]`), but table-qualified names such as `'users.email'`, and misspelled qualified names, give `any[]` without an error.
 
 A few patterns stand out:
 
 - **Writes**: every library rejects a wrong value type. They differ on missing fields: TypeORM's `insert()`, `save()` and `create()` and Mongoose's `create()` accept partial objects, so a missing required field is only reported by the database or by Mongoose's validation at runtime.
 - **Reads**: the result type is where the libraries differ most. Prisma ORM, Drizzle, Kysely and, for most cases, MikroORM compute the result type from the query, so selecting fewer columns or loading a relation changes the type. TypeORM, Sequelize and Mongoose return the full model type whatever the query selected or loaded, so the type can disagree with the value. In these tests, properties typed `string | null` held `undefined`, and a populated reference typed `ObjectId` held a document.
-- **Raw SQL**: the TypeScript compiler can't check a SQL string against your database. A result typed `unknown` makes you narrow or validate the rows before you use them, while `any` turns off checking for everything that touches the result. The raw query methods of every library tested also accept a type argument, such as `$queryRaw<T>`, `sql<T>` or `knex.raw<T>`, that is trusted without being checked against the query. Prisma ORM's TypedSQL and MikroORM's Kysely integration go further by deriving the types for you.
+- **Raw SQL**: the TypeScript compiler can't check a SQL string against your database. A result typed `unknown` makes you narrow or validate the rows before you use them, while `any` turns off checking for everything that touches the result. The raw query methods of every library tested also accept a type argument, such as `$queryRaw<T>`, `sql<T>` or `knex.raw<T>`, that is trusted without being checked against the query. MikroORM's Kysely integration derives query types from entity definitions in the tested setup. Prisma TypedSQL is outside this experiment.
 
 ## Prisma ORM
 
@@ -190,20 +198,7 @@ withoutPosts.posts
 
 A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
 
-For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. TypedSQL, a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project during its generation step, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
-
-```typescript
-const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
-// { id: number; email: string; name: string | null }[]
-```
-
-Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For [raw SQL](https://www.prisma.io/docs/orm/reference/raw-queries), a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql) in the Prisma ORM 8 documentation.
-
-<TechnicalNote>
-
-Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Model and result types in Prisma ORM 8](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#model-and-result-types).
-
-</TechnicalNote>
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. TypedSQL and Prisma ORM 8 release candidates are outside this experiment; no grade or runtime guarantee here applies to them. Consult the maintained [Prisma ORM documentation](https://www.prisma.io/docs) for those APIs and select documentation that matches your pinned version.
 
 ## Drizzle ORM
 
@@ -236,7 +231,7 @@ The error messages for inserts are harder to read than the others. Because `valu
 
 For raw SQL, ``db.execute(sql`…`)`` types the rows as `Record<string, unknown>`. The `sql<T>` template tag, which you can also use for a single expression inside a typed `select()`, trusts the type you give it.
 
-Drizzle's documentation now describes the upcoming 1.0 release, which changes how relations are defined (`defineRelations()`) and lets the relational API filter with plain objects (`where: { email: … }`). The same checks against `1.0.0-rc.4` gave identical results, including for a misspelled key in an object filter. See [Upgrade to Drizzle 1.0](https://orm.drizzle.team/docs/upgrade-v1) and the [relational query API](https://orm.drizzle.team/docs/rqb).
+Drizzle's current documentation also describes the upcoming 1.0 API. This comparison uses stable 0.45.3; it does not assert equivalent results for 1.0 release candidates. See [Upgrade to Drizzle 1.0](https://orm.drizzle.team/docs/upgrade-v1) before adopting that separate API.
 
 ## Kysely
 
@@ -307,8 +302,8 @@ await users.insert({ name: 'Alice' })
 
 // QueryBuilder conditions are SQL strings
 await users
-  .createQueryBuilder('user')
-  .where('user.emial = :email', { email: 'alice@example.com' })
+  .createQueryBuilder('account')
+  .where('account.emial = :email', { email: 'alice@example.com' })
   .getMany()
 
 // Partial select: still typed as User[]
@@ -320,7 +315,7 @@ const withoutPosts = await users.findOneOrFail({ where: { id: 1 } })
 withoutPosts.posts.length
 ```
 
-At runtime, PostgreSQL rejected the insert with `null value in column "email" of relation "user" violates not-null constraint`, and the `QueryBuilder` query failed with a database error. `subset[0].name` was `undefined`, not a string or `null`. `withoutPosts.posts` was `undefined`, so reading `.length` threw a `TypeError`.
+At runtime, PostgreSQL rejected the insert with `null value in column "email" of relation "users" violates not-null constraint`, and the `QueryBuilder` query failed with a database error. `subset[0].name` was `undefined`, not a string or `null`. `withoutPosts.posts` was `undefined`, so reading `.length` threw a `TypeError`.
 
 The nullability of `name` depends on your declaration. TypeORM doesn't compare the property type with the column options, so this entity compiles although its `name` column is nullable:
 
@@ -392,6 +387,7 @@ MikroORM 7 recommends [`defineEntity()`](https://mikro-orm.io/docs/define-entity
 ```typescript
 const UserSchema = defineEntity({
   name: 'User',
+  tableName: 'users',
   properties: {
     id: p.integer().primary(),
     email: p.string().unique(),
@@ -421,7 +417,7 @@ withoutPosts.posts.$
 
 Misspelled populate hints were rejected, and a many-to-one reference that wasn't populated only exposed its primary key. The gap is that the `posts` collection itself is in the type whether or not it was populated, and its `getItems()` method compiles either way. At runtime, calling it on the unpopulated collection threw `Collection<Post> of entity User[1] not initialized`. The [type-safe relations guide](https://mikro-orm.io/docs/type-safe-relations) describes the `$` accessor and the `Ref` wrapper.
 
-For raw SQL, `em.execute()` types the rows' properties as `any`, and `em.execute<T>()` trusts the type you pass. MikroORM 7 also exposes a [Kysely instance](https://mikro-orm.io/docs/kysely) through `em.getKysely()`, typed from the entity definitions: `selectFrom('user').select(['id', 'email'])` is typed `{ id: number; email: string }[]`.
+For raw SQL, `em.execute()` types the rows' properties as `any`, and `em.execute<T>()` trusts the type you pass. MikroORM 7 also exposes a [Kysely instance](https://mikro-orm.io/docs/kysely) through `em.getKysely()`, typed from the entity definitions: `selectFrom('users').select(['id', 'email'])` is typed `{ id: number; email: string }[]`.
 
 ## Mongoose
 
@@ -489,7 +485,7 @@ At runtime, the misspelled column failed with `column "emial" does not exist`. T
 
 ## Libraries that weren't tested
 
-The 2022 version of this article also covered three libraries that weren't tested this time. Their latest releases on npm are Objection.js 3.1.5 (September 2024), Bookshelf.js 1.2.0 (June 2020) and Waterline 0.15.2 (December 2022). Objection.js and Bookshelf.js are built on Knex, and Waterline is the ORM of the Sails framework. Check their repositories ([Objection.js](https://github.com/Vincit/objection.js), [Bookshelf.js](https://github.com/bookshelf/bookshelf), [Waterline](https://github.com/balderdashy/waterline)) for their current status before starting a new project with them.
+The 2022 version of this article also covered Objection.js, Bookshelf.js and Waterline. They were not included in this reproduction; their current releases and maintenance are not established by this experiment. Objection.js and Bookshelf.js are built on Knex, and Waterline is the ORM of the Sails framework. Check their repositories ([Objection.js](https://github.com/Vincit/objection.js), [Bookshelf.js](https://github.com/bookshelf/bookshelf), [Waterline](https://github.com/balderdashy/waterline)) for their current status before starting a new project with them.
 
 ## Conclusion
 

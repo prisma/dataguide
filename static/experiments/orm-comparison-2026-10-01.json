@@ -1,0 +1,2739 @@
+{
+  "startedAt": "2026-09-30T19:39:45.517Z",
+  "runtime": "v24.18.0",
+  "postgresImage": "postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722",
+  "mongoImage": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
+  "projects": [
+    {
+      "name": "prisma",
+      "sources": [
+        {
+          "file": "prisma/package-lock.json",
+          "sha256": "ce239c1e0ea202386dc0be6e9b14340292f63e8a04b1bdb2949c5e14d341c43c"
+        },
+        {
+          "file": "prisma/package.json",
+          "sha256": "35930ce27e58b5a4a65632c118fdae810def9667fefdeb5dae04280059203e5a"
+        },
+        {
+          "file": "prisma/prisma.config.ts",
+          "sha256": "31a00867bbefade48f21f18aef161003693162f072c12562f71a3d829669e17c"
+        },
+        {
+          "file": "prisma/schema.prisma",
+          "sha256": "ef1fc23b3ee0fd052858c1e37a3ce2b35217b16ec0540a0c03924a0bf9dfd65b"
+        },
+        {
+          "file": "prisma/src/checks.ts",
+          "sha256": "9f70a4f175b96d4f4712130f486e4fb10f04b540265ccbdde93201585280c184"
+        },
+        {
+          "file": "prisma/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "prisma/src/model.ts",
+          "sha256": "19edbde5f64a4e39471816c40c5c0c24fd3d723b49e6ae3690f913e3040b7172"
+        },
+        {
+          "file": "prisma/src/runtime.ts",
+          "sha256": "32ee30e32651dc1925d2b3ee8502364b9a1416fb89e634c4ce8592e012bb1fb3"
+        },
+        {
+          "file": "prisma/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "prisma/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 162 packages, and audited 163 packages in 6s\n\n15 packages are looking for funding\n  run `npm fund` for details\n\n4 high severity vulnerabilities\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/prisma/build/index.js generate",
+          "exitCode": 0,
+          "stdout": "\n✔ Generated Prisma Client (v7.10.0) to ./node_modules/@prisma/client in 48ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\n\n",
+          "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from schema.prisma.\n"
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"partial select\",\"value\":{\"keys\":[\"id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"relations and nullable\",\"value\":{\"unloadedKeys\":[\"id\",\"email\",\"name\"],\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(7,30): error TS2322: Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'.\n  Type '{ name: string; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput & object'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'UserCreateInput'.\nsrc/unsuppressed.ts(11,54): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,41): error TS2561: Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?\nsrc/unsuppressed.ts(21,13): error TS2339: Property 'name' does not exist on type '{ email: string; id: number; }'.\nsrc/unsuppressed.ts(25,16): error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.\nsrc/unsuppressed.ts(29,43): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(33,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 30,
+              "code": "TS2322",
+              "message": "Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 54,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 41,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 21,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ email: string; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 43,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 33,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(7,30): error TS2322: Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'.\n  Type '{ name: string; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput & object'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'UserCreateInput'.\nsrc/unsuppressed.ts(11,54): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,41): error TS2561: Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?\nsrc/unsuppressed.ts(21,13): error TS2339: Property 'name' does not exist on type '{ email: string; id: number; }'.\nsrc/unsuppressed.ts(25,16): error TS2339: Property 'posts' does not exist on type '{ email: string; name: string | null; id: number; }'.\nsrc/unsuppressed.ts(29,43): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(33,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 30,
+              "code": "TS2322",
+              "message": "Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 54,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 41,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 21,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ email: string; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ email: string; name: string | null; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 43,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 33,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(7,30): error TS2322: Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'.\n  Type '{ name: string; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput & object'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'UserCreateInput'.\nsrc/unsuppressed.ts(11,54): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,41): error TS2561: Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?\nsrc/unsuppressed.ts(21,13): error TS2339: Property 'name' does not exist on type '{ email: string; id: number; }'.\nsrc/unsuppressed.ts(25,16): error TS2339: Property 'posts' does not exist on type '{ email: string; name: string | null; id: number; }'.\nsrc/unsuppressed.ts(29,43): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(33,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 30,
+              "code": "TS2322",
+              "message": "Type '{ name: string; }' is not assignable to type '((Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)) & object'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 54,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 41,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'emial' does not exist in type 'UserWhereInput'. Did you mean to write 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 21,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ email: string; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ email: string; name: string | null; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 43,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 33,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "prisma": "7.10.0",
+        "@prisma/client": "7.10.0",
+        "@prisma/adapter-pg": "7.10.0",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "partial select",
+            "value": {
+              "keys": [
+                "id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "unloadedKeys": [
+                "id",
+                "email",
+                "name"
+              ],
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "drizzle",
+      "sources": [
+        {
+          "file": "drizzle/package-lock.json",
+          "sha256": "18fec6415076faf544cf9f7b43e87525410359507495add10d8e2194dce53a0a"
+        },
+        {
+          "file": "drizzle/package.json",
+          "sha256": "d830caf923da1ad5b2039978978a3ccd4143e6b5224d1f688da035071edec894"
+        },
+        {
+          "file": "drizzle/src/checks.ts",
+          "sha256": "64a53c417a82fcab191acbf253e68ee65b12ca70f07d5149f2ef119247196c41"
+        },
+        {
+          "file": "drizzle/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "drizzle/src/model.ts",
+          "sha256": "187eaea2b52ae38f5928b321ce236141fea4b6ef9713be47844f80886b494e31"
+        },
+        {
+          "file": "drizzle/src/runtime.ts",
+          "sha256": "387ce3f542289c21c8af8d29de025e785e45160cc40022e4df5b4e42c58f20ff"
+        },
+        {
+          "file": "drizzle/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "drizzle/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 22 packages, and audited 23 packages in 1s\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"partial select\",\"value\":{\"keys\":[\"id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"relational select, filter and nullable left join\",\"value\":{\"relationalSubset\":[{\"id\":1,\"email\":\"alice@lab.invalid\"},{\"id\":2,\"email\":\"without-posts@lab.invalid\"}],\"joined\":[{\"users\":{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null},\"posts\":{\"id\":1,\"title\":\"seed\",\"published\":false,\"authorId\":1}},{\"users\":{\"id\":2,\"email\":\"without-posts@lab.invalid\",\"name\":null},\"posts\":null}]}},{\"label\":\"relations and nullable\",\"value\":{\"unloadedKeys\":[\"id\",\"email\",\"name\"],\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null},{\"id\":2,\"email\":\"without-posts@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(8,35): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Object literal may only specify known properties, and 'name' does not exist in type '{ email: string | Placeholder<string, any> | SQL<unknown>; id?: number | Placeholder<string, any> | SQL<unknown> | undefined; name?: string | Placeholder<string, any> | SQL<...> | null | undefined; }[]'.\nsrc/unsuppressed.ts(12,35): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Object literal may only specify known properties, and 'title' does not exist in type '{ authorId: number | Placeholder<string, any> | SQL<unknown>; id?: number | Placeholder<string, any> | SQL<unknown> | undefined; published?: boolean | Placeholder<...> | SQL<...> | undefined; title: string | ... 1 more ... | SQL<...>; }[]'.\nsrc/unsuppressed.ts(16,48): error TS2551: Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?\nsrc/unsuppressed.ts(19,68): error TS2551: Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ id: number; email: string; }'.\nsrc/unsuppressed.ts(31,16): error TS2339: Property 'posts' does not exist on type '{ email: string; id: number; name: string | null; }'.\nsrc/unsuppressed.ts(37,44): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(41,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 35,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 35,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 48,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?"
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 68,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ id: number; email: string; }'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ email: string; id: number; name: string | null; }'."
+            },
+            {
+              "case": "relations",
+              "line": 37,
+              "column": 44,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 41,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,26): error TS2769: No overload matches this call.\n  Overload 1 of 2, '(value: { email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }): PgInsertBase<...>', gave the following error.\n    Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }'.\n      Property 'email' is missing in type '{ name: string; }' but required in type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }'.\n  Overload 2 of 2, '(values: { email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }[]): PgInsertBase<...>', gave the following error.\n    Object literal may only specify known properties, and 'name' does not exist in type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }[]'.\nsrc/unsuppressed.ts(12,26): error TS2769: No overload matches this call.\n  Overload 1 of 2, '(value: { title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<...> | undefined; published?: boolean | ... 2 more ... | undefined; }): PgInsertBase<...>', gave the following error.\n    Type 'string' is not assignable to type 'boolean | SQL<unknown> | Placeholder<string, any> | undefined'.\n  Overload 2 of 2, '(values: { title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<...> | undefined; published?: boolean | ... 2 more ... | undefined; }[]): PgInsertBase<...>', gave the following error.\n    Object literal may only specify known properties, and 'title' does not exist in type '{ title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; published?: boolean | ... 2 more ... | undefined; }[]'.\nsrc/unsuppressed.ts(16,48): error TS2551: Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?\nsrc/unsuppressed.ts(19,68): error TS2551: Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ id: number; email: string; }'.\nsrc/unsuppressed.ts(31,16): error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.\nsrc/unsuppressed.ts(37,44): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(41,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 26,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 26,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 48,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?"
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 68,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ id: number; email: string; }'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'."
+            },
+            {
+              "case": "relations",
+              "line": 37,
+              "column": 44,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 41,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,26): error TS2769: No overload matches this call.\n  Overload 1 of 2, '(value: { email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }): PgInsertBase<...>', gave the following error.\n    Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }'.\n      Property 'email' is missing in type '{ name: string; }' but required in type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }'.\n  Overload 2 of 2, '(values: { email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }[]): PgInsertBase<...>', gave the following error.\n    Object literal may only specify known properties, and 'name' does not exist in type '{ email: string | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; name?: string | SQL<unknown> | Placeholder<...> | null | undefined; }[]'.\nsrc/unsuppressed.ts(12,26): error TS2769: No overload matches this call.\n  Overload 1 of 2, '(value: { title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<...> | undefined; published?: boolean | ... 2 more ... | undefined; }): PgInsertBase<...>', gave the following error.\n    Type 'string' is not assignable to type 'boolean | SQL<unknown> | Placeholder<string, any> | undefined'.\n  Overload 2 of 2, '(values: { title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<...> | undefined; published?: boolean | ... 2 more ... | undefined; }[]): PgInsertBase<...>', gave the following error.\n    Object literal may only specify known properties, and 'title' does not exist in type '{ title: string | SQL<unknown> | Placeholder<string, any>; authorId: number | SQL<unknown> | Placeholder<string, any>; id?: number | SQL<unknown> | Placeholder<string, any> | undefined; published?: boolean | ... 2 more ... | undefined; }[]'.\nsrc/unsuppressed.ts(16,48): error TS2551: Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?\nsrc/unsuppressed.ts(19,68): error TS2551: Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ id: number; email: string; }'.\nsrc/unsuppressed.ts(31,16): error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.\nsrc/unsuppressed.ts(37,44): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(41,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 26,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 26,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 48,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type 'PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; ... 6 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>;...'. Did you mean 'email'?"
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 68,
+              "code": "TS2551",
+              "message": "Property 'emial' does not exist on type '{ id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; ... 4 more ...; generated: undefined; }, {}, {}>; email: PgColumn<...>; name: PgColumn<...>; }'. Did you mean 'email'?"
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ id: number; email: string; }'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'."
+            },
+            {
+              "case": "relations",
+              "line": 37,
+              "column": 44,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type '{ posts?: true | DBQueryConfig<\"many\", false, ExtractTablesWithRelations<{ users: PgTableWithColumns<{ name: \"users\"; schema: undefined; columns: { id: PgColumn<{ name: \"id\"; tableName: \"users\"; dataType: \"number\"; columnType: \"PgSerial\"; data: number; driverParam: number; ... 8 more ...; generated: undefined; }, {}...'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 41,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "drizzle-orm": "0.45.3",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "partial select",
+            "value": {
+              "keys": [
+                "id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "relational select, filter and nullable left join",
+            "value": {
+              "relationalSubset": [
+                {
+                  "id": 1,
+                  "email": "alice@lab.invalid"
+                },
+                {
+                  "id": 2,
+                  "email": "without-posts@lab.invalid"
+                }
+              ],
+              "joined": [
+                {
+                  "users": {
+                    "id": 1,
+                    "email": "alice@lab.invalid",
+                    "name": null
+                  },
+                  "posts": {
+                    "id": 1,
+                    "title": "seed",
+                    "published": false,
+                    "authorId": 1
+                  }
+                },
+                {
+                  "users": {
+                    "id": 2,
+                    "email": "without-posts@lab.invalid",
+                    "name": null
+                  },
+                  "posts": null
+                }
+              ]
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "unloadedKeys": [
+                "id",
+                "email",
+                "name"
+              ],
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              },
+              {
+                "id": 2,
+                "email": "without-posts@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "kysely",
+      "sources": [
+        {
+          "file": "kysely/package-lock.json",
+          "sha256": "4349c71b2d159234d8b2a070c62f98f48a567d19886b0714f832d8dc83e374f4"
+        },
+        {
+          "file": "kysely/package.json",
+          "sha256": "0a766e7b1aaae555e43ba881f2e23187f2fd7f91702d3894d66a0c7c7a619541"
+        },
+        {
+          "file": "kysely/src/checks.ts",
+          "sha256": "b05cde32be0e0d097ad29bd6d6dad3d9efa3b488586b9b4d95a46e08e55bfe01"
+        },
+        {
+          "file": "kysely/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "kysely/src/model.ts",
+          "sha256": "ebe62bc2bf72e239601abbbdc7a1dbc58ee24cdd0c7061b55d17e009cd3652d3"
+        },
+        {
+          "file": "kysely/src/runtime.ts",
+          "sha256": "14d4698331551845d3de8a01fe28bb7ab0ee50c7df5acae30b4b67e2fc47130b"
+        },
+        {
+          "file": "kysely/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "kysely/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 22 packages, and audited 23 packages in 789ms\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"partial select\",\"value\":{\"keys\":[\"id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"relations and nullable\",\"value\":{\"unloadedKeys\":[\"id\",\"email\",\"name\"],\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(8,39): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'.\n  Type '{ name: string; }' is not assignable to type 'InsertObjectOrListFactory<Database, \"users\", never>'.\n    Type '{ name: string; }' provides no match for the signature '(eb: ExpressionBuilder<Database, \"users\">): InsertObjectOrList<Database, \"users\">'.\nsrc/unsuppressed.ts(12,39): error TS2345: Argument of type '{ title: string; published: string; author_id: number; }' is not assignable to parameter of type 'InsertExpression<Database, \"posts\">'.\n  Types of property 'published' are incompatible.\n    Type 'string' is not assignable to type 'ValueExpression<Database, \"posts\", boolean | undefined>'.\nsrc/unsuppressed.ts(19,50): error TS2345: Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'.\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ email: string; id: number; }'.\nsrc/unsuppressed.ts(29,16): error TS2339: Property 'posts' does not exist on type '{ email: string; id: number; name: string | null; }'.\nsrc/unsuppressed.ts(43,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 39,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 39,
+              "code": "TS2345",
+              "message": "Argument of type '{ title: string; published: string; author_id: number; }' is not assignable to parameter of type 'InsertExpression<Database, \"posts\">'."
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 50,
+              "code": "TS2345",
+              "message": "Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'."
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ email: string; id: number; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ email: string; id: number; name: string | null; }'."
+            },
+            {
+              "case": "nullable",
+              "line": 43,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,39): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'.\n  Type '{ name: string; }' is not assignable to type 'InsertObject<Database, \"users\">'.\n    Property 'email' is missing in type '{ name: string; }' but required in type '{ email: ValueExpression<Database, \"users\", string>; }'.\nsrc/unsuppressed.ts(12,57): error TS2322: Type 'string' is not assignable to type 'ValueExpression<Database, \"posts\", boolean | undefined>'.\nsrc/unsuppressed.ts(19,50): error TS2345: Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'.\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ id: number; email: string; }'.\nsrc/unsuppressed.ts(29,16): error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.\nsrc/unsuppressed.ts(43,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 39,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 57,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'ValueExpression<Database, \"posts\", boolean | undefined>'."
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 50,
+              "code": "TS2345",
+              "message": "Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'."
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ id: number; email: string; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'."
+            },
+            {
+              "case": "nullable",
+              "line": 43,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,39): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'.\n  Type '{ name: string; }' is not assignable to type 'InsertObject<Database, \"users\">'.\n    Property 'email' is missing in type '{ name: string; }' but required in type '{ email: ValueExpression<Database, \"users\", string>; }'.\nsrc/unsuppressed.ts(12,57): error TS2322: Type 'string' is not assignable to type 'ValueExpression<Database, \"posts\", boolean | undefined>'.\nsrc/unsuppressed.ts(19,50): error TS2345: Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'.\nsrc/unsuppressed.ts(25,13): error TS2339: Property 'name' does not exist on type '{ id: number; email: string; }'.\nsrc/unsuppressed.ts(29,16): error TS2339: Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'.\nsrc/unsuppressed.ts(43,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 39,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'InsertExpression<Database, \"users\">'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 57,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'ValueExpression<Database, \"posts\", boolean | undefined>'."
+            },
+            {
+              "case": "filter",
+              "line": 19,
+              "column": 50,
+              "code": "TS2345",
+              "message": "Argument of type '\"emial\"' is not assignable to parameter of type 'ReferenceExpression<Database, \"users\">'."
+            },
+            {
+              "case": "select",
+              "line": 25,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type '{ id: number; email: string; }'."
+            },
+            {
+              "case": "relations",
+              "line": 29,
+              "column": 16,
+              "code": "TS2339",
+              "message": "Property 'posts' does not exist on type '{ id: number; email: string; name: string | null; }'."
+            },
+            {
+              "case": "nullable",
+              "line": 43,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "kysely": "0.29.6",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "partial select",
+            "value": {
+              "keys": [
+                "id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "unloadedKeys": [
+                "id",
+                "email",
+                "name"
+              ],
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "typeorm",
+      "sources": [
+        {
+          "file": "typeorm/package-lock.json",
+          "sha256": "506b2d2113a271ffbea327b216f7fe354e44f6f08f204c22c3984ae427d395ea"
+        },
+        {
+          "file": "typeorm/package.json",
+          "sha256": "4a768b5cfcc7b2a0d22a20030885706fe51049c20868a2f3f243155eb01fe44d"
+        },
+        {
+          "file": "typeorm/src/checks.ts",
+          "sha256": "29d3719eef2f871aeffe23f1f16df6c4b1f690cff89036c57773db7b6aba33a1"
+        },
+        {
+          "file": "typeorm/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "typeorm/src/model.ts",
+          "sha256": "c3dc3115159f9cbd16e05ac10b3ace08cbf6754c66e734373883d932d84ed078"
+        },
+        {
+          "file": "typeorm/src/runtime.ts",
+          "sha256": "cc512cd62d3859ae2c91c8245d10172bc506acffcf45fcb8843fad5a937f653f"
+        },
+        {
+          "file": "typeorm/tsconfig.json",
+          "sha256": "1e89ae9eb662727dd2ee31d4a6715eca390a205e9aa03de2593d5ad49af11781"
+        },
+        {
+          "file": "typeorm/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 49 packages, and audited 50 packages in 2s\n\n11 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"QueryFailedError\",\"code\":\"23502\",\"message\":\"null value in column \\\"email\\\" of relation \\\"users\\\" violates not-null constraint\"}},{\"label\":\"save with missing email compiles\",\"rejected\":true,\"error\":{\"name\":\"QueryFailedError\",\"code\":\"23502\",\"message\":\"null value in column \\\"email\\\" of relation \\\"users\\\" violates not-null constraint\"}},{\"label\":\"SQL string filter compiles\",\"rejected\":true,\"error\":{\"name\":\"QueryFailedError\",\"code\":\"42703\",\"message\":\"column account.emial does not exist\"}},{\"label\":\"partial select remains full entity type\",\"value\":{\"keys\":[\"id\",\"email\",\"name\",\"posts\"],\"nameType\":\"undefined\"}},{\"label\":\"unloaded posts access compiles\",\"rejected\":true,\"error\":{\"name\":\"TypeError\",\"message\":\"Cannot read properties of undefined (reading 'length')\"}},{\"label\":\"relations and nullable\",\"value\":{\"unloadedKeys\":[\"id\",\"email\",\"name\",\"posts\"],\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null},{\"id\":4,\"email\":\"positive@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(11,40): error TS2322: Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'.\nsrc/unsuppressed.ts(15,31): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User>[] | FindOptionsWhere<User>'.\nsrc/unsuppressed.ts(31,35): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(35,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 11,
+              "column": 40,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 31,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User>[] | FindOptionsWhere<User>'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 35,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 35,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(11,40): error TS2322: Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'.\nsrc/unsuppressed.ts(15,31): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User> | FindOptionsWhere<User>[]'.\nsrc/unsuppressed.ts(31,35): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(35,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 11,
+              "column": 40,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 31,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User> | FindOptionsWhere<User>[]'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 35,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 35,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(11,40): error TS2322: Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'.\nsrc/unsuppressed.ts(15,31): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User> | FindOptionsWhere<User>[]'.\nsrc/unsuppressed.ts(31,35): error TS2561: Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?\nsrc/unsuppressed.ts(35,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 11,
+              "column": 40,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type '(() => string) | _QueryDeepPartialEntity<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 31,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'FindOptionsWhere<User> | FindOptionsWhere<User>[]'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 35,
+              "code": "TS2561",
+              "message": "Object literal may only specify known properties, but 'postz' does not exist in type 'FindOptionsRelations<User>'. Did you mean to write 'posts'?"
+            },
+            {
+              "case": "nullable",
+              "line": 35,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "typeorm": "1.1.1",
+        "reflect-metadata": "0.2.2",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "missing required email compiles",
+            "rejected": true,
+            "error": {
+              "name": "QueryFailedError",
+              "code": "23502",
+              "message": "null value in column \"email\" of relation \"users\" violates not-null constraint"
+            }
+          },
+          {
+            "label": "save with missing email compiles",
+            "rejected": true,
+            "error": {
+              "name": "QueryFailedError",
+              "code": "23502",
+              "message": "null value in column \"email\" of relation \"users\" violates not-null constraint"
+            }
+          },
+          {
+            "label": "SQL string filter compiles",
+            "rejected": true,
+            "error": {
+              "name": "QueryFailedError",
+              "code": "42703",
+              "message": "column account.emial does not exist"
+            }
+          },
+          {
+            "label": "partial select remains full entity type",
+            "value": {
+              "keys": [
+                "id",
+                "email",
+                "name",
+                "posts"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "unloaded posts access compiles",
+            "rejected": true,
+            "error": {
+              "name": "TypeError",
+              "message": "Cannot read properties of undefined (reading 'length')"
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "unloadedKeys": [
+                "id",
+                "email",
+                "name",
+                "posts"
+              ],
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              },
+              {
+                "id": 4,
+                "email": "positive@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "sequelize",
+      "sources": [
+        {
+          "file": "sequelize/package-lock.json",
+          "sha256": "67b992f1a36233c9ee9e67d4050c2912fceb6a25f62e33376600ecc032c19833"
+        },
+        {
+          "file": "sequelize/package.json",
+          "sha256": "a0eceb9c4ff0f552075d5ef5b14569c9096f0411574a0643e47e4732b3882251"
+        },
+        {
+          "file": "sequelize/src/checks.ts",
+          "sha256": "6bbc3dcb158f598d60a9e640c8b0f2ea10e87127237a678bd6bf7b70f096d223"
+        },
+        {
+          "file": "sequelize/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "sequelize/src/model.ts",
+          "sha256": "43fd89b93ba8e2865fcfbcb68b92a2d10f7beb93b369b3f0cfcc9a2703b2fd56"
+        },
+        {
+          "file": "sequelize/src/runtime.ts",
+          "sha256": "01b96adf87fcc1d6d4564817fff295ef9b190b049c8b7e5f788ed0fb822d55df"
+        },
+        {
+          "file": "sequelize/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "sequelize/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 39 packages, and audited 40 packages in 1s\n\n1 package is looking for funding\n  run `npm fund` for details\n\n2 moderate severity vulnerabilities\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n",
+          "stderr": "npm warn deprecated dottie@2.0.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.\nnpm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\n"
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"partial select remains full entity type\",\"value\":{\"keys\":[\"id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"misspelled selected attribute compiles\",\"rejected\":true,\"error\":{\"name\":\"SequelizeDatabaseError\",\"code\":\"42703\",\"message\":\"column \\\"emial\\\" does not exist\"}},{\"label\":\"misspelled relation alias compiles\",\"rejected\":true,\"error\":{\"name\":\"SequelizeEagerLoadingError\",\"message\":\"Post is associated to User using an alias. You've included an alias (postz), but it does not match the alias(es) defined in your association (posts).\"}},{\"label\":\"relations and nullable\",\"value\":{\"unloadedKeys\":[\"id\",\"email\",\"name\"],\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"nullable schema with nonnullable declaration\",\"value\":{\"value\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(7,21): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\n  Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\nsrc/unsuppressed.ts(11,39): error TS2322: Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'.\nsrc/unsuppressed.ts(15,33): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'.\nsrc/unsuppressed.ts(25,3): error TS18048: 'withoutPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(31,3): error TS18048: 'withPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(37,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 21,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 39,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 33,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withoutPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "nullable",
+              "line": 37,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(7,21): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\n  Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\nsrc/unsuppressed.ts(11,39): error TS2322: Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'.\nsrc/unsuppressed.ts(15,33): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'.\nsrc/unsuppressed.ts(25,3): error TS18048: 'withoutPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(31,3): error TS18048: 'withPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(37,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 21,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 39,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 33,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withoutPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "nullable",
+              "line": 37,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(7,21): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\n  Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'.\nsrc/unsuppressed.ts(11,39): error TS2322: Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'.\nsrc/unsuppressed.ts(15,33): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'.\nsrc/unsuppressed.ts(25,3): error TS18048: 'withoutPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(31,3): error TS18048: 'withPosts.posts' is possibly 'undefined'.\nsrc/unsuppressed.ts(37,3): error TS18047: 'withoutPosts.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 7,
+              "column": 21,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'Optional<InferCreationAttributes<User, { omit: never; }>, NullishPropertiesOf<InferCreationAttributes<User, { omit: never; }>>>'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 39,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'CreationOptional<boolean> | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 33,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'WhereOptions<InferAttributes<User, { omit: never; }>>'."
+            },
+            {
+              "case": "relations",
+              "line": 25,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withoutPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "relations",
+              "line": 31,
+              "column": 3,
+              "code": "TS18048",
+              "message": "'withPosts.posts' is possibly 'undefined'."
+            },
+            {
+              "case": "nullable",
+              "line": 37,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'withoutPosts.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "sequelize": "6.37.8",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "partial select remains full entity type",
+            "value": {
+              "keys": [
+                "id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "misspelled selected attribute compiles",
+            "rejected": true,
+            "error": {
+              "name": "SequelizeDatabaseError",
+              "code": "42703",
+              "message": "column \"emial\" does not exist"
+            }
+          },
+          {
+            "label": "misspelled relation alias compiles",
+            "rejected": true,
+            "error": {
+              "name": "SequelizeEagerLoadingError",
+              "message": "Post is associated to User using an alias. You've included an alias (postz), but it does not match the alias(es) defined in your association (posts)."
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "unloadedKeys": [
+                "id",
+                "email",
+                "name"
+              ],
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "nullable schema with nonnullable declaration",
+            "value": {
+              "value": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "mikroorm",
+      "sources": [
+        {
+          "file": "mikroorm/package-lock.json",
+          "sha256": "6c389bb5c52cde2cf53bc9c6caae1e1658ea1997e2a363740a1c63e5ae9d1af5"
+        },
+        {
+          "file": "mikroorm/package.json",
+          "sha256": "efc0f588f30bf173da5007e5097f14f5da4b12eb7a43d694b2f87b9168eb3229"
+        },
+        {
+          "file": "mikroorm/src/checks.ts",
+          "sha256": "67d3cb4faa438a70bb1adc4127c7480452f378d7d635a040923e2a68f73a1b77"
+        },
+        {
+          "file": "mikroorm/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "mikroorm/src/model.ts",
+          "sha256": "5254e6e02beb63dfd827686ece70b7faf7dd94e6f9d9b726f82d81e488059a01"
+        },
+        {
+          "file": "mikroorm/src/runtime.ts",
+          "sha256": "c4313e3f91f3a3cabdd1a4820b703a728e4a6f9922f9aa3371c13283b683946e"
+        },
+        {
+          "file": "mikroorm/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "mikroorm/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 30 packages, and audited 31 packages in 990ms\n\n1 package is looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"partial select\",\"value\":{\"keys\":[\"id\",\"email\",\"posts\"],\"nameType\":\"undefined\"}},{\"label\":\"uninitialized collection getItems compiles\",\"rejected\":true,\"error\":{\"name\":\"Error\",\"message\":\"Collection<Post> of entity User[1] not initialized\"}},{\"label\":\"relations and nullable\",\"value\":{\"loadedTitles\":[\"seed\"],\"name\":null}},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null}]},{\"label\":\"entity-derived Kysely selection\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\"}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(8,19): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: (EntityDataPropValue<...> | ... 1 more ... | RequiredEntityData<...>)[] | ... 8 more ... | undefined; }'.\n  Property 'email' is missing in type '{ name: string; }' but required in type '{ email: string | RawQueryFragment<string>; }'.\nsrc/unsuppressed.ts(12,37): error TS2322: Type 'string' is not assignable to type 'RawQueryFragment<string> | [string, false & Brand] | [string, true & Brand] | readonly [string, false & Brand] | readonly [string, true & Brand] | Opt<...> | null | undefined'.\nsrc/unsuppressed.ts(16,25): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'FilterQuery<NoInfer<User>>[] | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | ObjectQuery<...>'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Loaded<User, never, \"email\" | \"id\", never>'.\nsrc/unsuppressed.ts(26,22): error TS2339: Property '$' does not exist on type 'Collection<Post, object>'.\nsrc/unsuppressed.ts(32,40): error TS2820: Type '\"postz\"' is not assignable to type '\"$infer\" | \"*\" | \"email\" | \"id\" | \"name\" | \"posts\" | \"posts:ref\"'. Did you mean '\"posts\"'?\nsrc/unsuppressed.ts(36,15): error TS2339: Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'.\nsrc/unsuppressed.ts(40,3): error TS18049: 'withoutPosts.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 19,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: (EntityDataPropValue<...> | ... 1 more ... | RequiredEntityData<...>)[] | ... 8 more ... | undefined; }'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 37,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'RawQueryFragment<string> | [string, false & Brand] | [string, true & Brand] | readonly [string, false & Brand] | readonly [string, true & Brand] | Opt<...> | null | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 25,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'FilterQuery<NoInfer<User>>[] | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | ObjectQuery<...>'."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Loaded<User, never, \"email\" | \"id\", never>'."
+            },
+            {
+              "case": "relations",
+              "line": 26,
+              "column": 22,
+              "code": "TS2339",
+              "message": "Property '$' does not exist on type 'Collection<Post, object>'."
+            },
+            {
+              "case": "relations",
+              "line": 32,
+              "column": 40,
+              "code": "TS2820",
+              "message": "Type '\"postz\"' is not assignable to type '\"$infer\" | \"*\" | \"email\" | \"id\" | \"name\" | \"posts\" | \"posts:ref\"'. Did you mean '\"posts\"'?"
+            },
+            {
+              "case": "relations",
+              "line": 36,
+              "column": 15,
+              "code": "TS2339",
+              "message": "Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'withoutPosts.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,19): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: RawQueryFragment<...> | ... 8 more ... | undefined; }'.\n  Property 'email' is missing in type '{ name: string; }' but required in type '{ email: string | RawQueryFragment<string>; }'.\nsrc/unsuppressed.ts(12,37): error TS2322: Type 'string' is not assignable to type 'RawQueryFragment<string> | Opt<NonNullable<boolean | null | undefined>> | readonly [string, false & Brand] | [string, false & Brand] | readonly [...] | [...] | null | undefined'.\nsrc/unsuppressed.ts(16,25): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'ObjectQuery<NoInfer<User>> | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | FilterQuery<...>[]'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Loaded<User, never, \"id\" | \"email\", never>'.\nsrc/unsuppressed.ts(26,22): error TS2339: Property '$' does not exist on type 'Collection<Post, object>'.\nsrc/unsuppressed.ts(32,40): error TS2820: Type '\"postz\"' is not assignable to type '\"name\" | \"posts\" | \"id\" | \"email\" | \"*\" | \"$infer\" | \"posts:ref\"'. Did you mean '\"posts\"'?\nsrc/unsuppressed.ts(36,15): error TS2339: Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'.\nsrc/unsuppressed.ts(40,3): error TS18049: 'withoutPosts.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 19,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: RawQueryFragment<...> | ... 8 more ... | undefined; }'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 37,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'RawQueryFragment<string> | Opt<NonNullable<boolean | null | undefined>> | readonly [string, false & Brand] | [string, false & Brand] | readonly [...] | [...] | null | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 25,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'ObjectQuery<NoInfer<User>> | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | FilterQuery<...>[]'."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Loaded<User, never, \"id\" | \"email\", never>'."
+            },
+            {
+              "case": "relations",
+              "line": 26,
+              "column": 22,
+              "code": "TS2339",
+              "message": "Property '$' does not exist on type 'Collection<Post, object>'."
+            },
+            {
+              "case": "relations",
+              "line": 32,
+              "column": 40,
+              "code": "TS2820",
+              "message": "Type '\"postz\"' is not assignable to type '\"name\" | \"posts\" | \"id\" | \"email\" | \"*\" | \"$infer\" | \"posts:ref\"'. Did you mean '\"posts\"'?"
+            },
+            {
+              "case": "relations",
+              "line": 36,
+              "column": 15,
+              "code": "TS2339",
+              "message": "Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'withoutPosts.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(8,19): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: RawQueryFragment<...> | ... 8 more ... | undefined; }'.\n  Property 'email' is missing in type '{ name: string; }' but required in type '{ email: string | RawQueryFragment<string>; }'.\nsrc/unsuppressed.ts(12,37): error TS2322: Type 'string' is not assignable to type 'RawQueryFragment<string> | Opt<NonNullable<boolean | null | undefined>> | readonly [string, false & Brand] | [string, false & Brand] | readonly [...] | [...] | null | undefined'.\nsrc/unsuppressed.ts(16,25): error TS2353: Object literal may only specify known properties, and 'emial' does not exist in type 'ObjectQuery<NoInfer<User>> | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | FilterQuery<...>[]'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Loaded<User, never, \"id\" | \"email\", never>'.\nsrc/unsuppressed.ts(26,22): error TS2339: Property '$' does not exist on type 'Collection<Post, object>'.\nsrc/unsuppressed.ts(32,40): error TS2820: Type '\"postz\"' is not assignable to type '\"name\" | \"posts\" | \"id\" | \"email\" | \"*\" | \"$infer\" | \"posts:ref\"'. Did you mean '\"posts\"'?\nsrc/unsuppressed.ts(36,15): error TS2339: Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'.\nsrc/unsuppressed.ts(40,3): error TS18049: 'withoutPosts.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 8,
+              "column": 19,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type '{ email: string | RawQueryFragment<string>; } & { id?: number | RawQueryFragment<string> | null | undefined; name?: string | RawQueryFragment<string> | null | undefined; posts?: RawQueryFragment<...> | ... 8 more ... | undefined; }'."
+            },
+            {
+              "case": "value",
+              "line": 12,
+              "column": 37,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'RawQueryFragment<string> | Opt<NonNullable<boolean | null | undefined>> | readonly [string, false & Brand] | [string, false & Brand] | readonly [...] | [...] | null | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 16,
+              "column": 25,
+              "code": "TS2353",
+              "message": "Object literal may only specify known properties, and 'emial' does not exist in type 'ObjectQuery<NoInfer<User>> | NonNullable<EntityProps<NoInfer<User>> & OperatorMap<NoInfer<User>>> | FilterQuery<...>[]'."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Loaded<User, never, \"id\" | \"email\", never>'."
+            },
+            {
+              "case": "relations",
+              "line": 26,
+              "column": 22,
+              "code": "TS2339",
+              "message": "Property '$' does not exist on type 'Collection<Post, object>'."
+            },
+            {
+              "case": "relations",
+              "line": 32,
+              "column": 40,
+              "code": "TS2820",
+              "message": "Type '\"postz\"' is not assignable to type '\"name\" | \"posts\" | \"id\" | \"email\" | \"*\" | \"$infer\" | \"posts:ref\"'. Did you mean '\"posts\"'?"
+            },
+            {
+              "case": "relations",
+              "line": 36,
+              "column": 15,
+              "code": "TS2339",
+              "message": "Property 'email' does not exist on type '{ id: number; } & Reference<User & object>'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'withoutPosts.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "@mikro-orm/core": "7.2.3",
+        "@mikro-orm/postgresql": "7.2.3",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "partial select",
+            "value": {
+              "keys": [
+                "id",
+                "email",
+                "posts"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "uninitialized collection getItems compiles",
+            "rejected": true,
+            "error": {
+              "name": "Error",
+              "message": "Collection<Post> of entity User[1] not initialized"
+            }
+          },
+          {
+            "label": "relations and nullable",
+            "value": {
+              "loadedTitles": [
+                "seed"
+              ],
+              "name": null
+            }
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              }
+            ]
+          },
+          {
+            "label": "entity-derived Kysely selection",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "mongoose",
+      "sources": [
+        {
+          "file": "mongoose/package-lock.json",
+          "sha256": "d718653c4ac9d1b33af5a4ceaec41fc1e484a5beb0153026304936451cbf8f27"
+        },
+        {
+          "file": "mongoose/package.json",
+          "sha256": "e991af23643a9f3525a8191e74146fabc4302638ef917e7be18bcf69c59f93d9"
+        },
+        {
+          "file": "mongoose/src/checks.ts",
+          "sha256": "7448573fc7f9a86661f6601ff4e98c1f3f5494bd7f8d170a9757c1259d1ae3b3"
+        },
+        {
+          "file": "mongoose/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "mongoose/src/model.ts",
+          "sha256": "1959afa5d9aa6c2b2771b60324d3f1003d1192b9e08e9c6aa88bc90a70f0a04b"
+        },
+        {
+          "file": "mongoose/src/runtime.ts",
+          "sha256": "cc6fa55787abf50e34ed3bd705f5e90b3cab8b3adf8298b55e1dac4e8679b6aa"
+        },
+        {
+          "file": "mongoose/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "mongoose/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 25 packages, and audited 26 packages in 899ms\n\n1 package is looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"ValidationError\",\"message\":\"User validation failed: email: Path `email` is required.\"}},{\"label\":\"misspelled filter silently matches nothing\",\"value\":{\"misspelledCount\":0,\"correctCount\":1}},{\"label\":\"strictQuery positive policy rejects typo\",\"rejected\":true,\"error\":{\"name\":\"StrictModeError\",\"message\":\"Path \\\"emial\\\" is not in schema and strictQuery is 'throw'.\"}},{\"label\":\"partial select retains full inferred document type\",\"value\":{\"keys\":[\"_id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"populated reference differs from inferred ObjectId\",\"value\":{\"unloadedIsObjectId\":true,\"populatedIsObjectId\":false,\"populatedEmail\":\"alice@lab.invalid\",\"name\":null}},{\"label\":\"raw aggregate rows\",\"value\":[{\"_id\":\"6abd65b83f45b81438eedd05\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]},{\"label\":\"raw driver rows\",\"value\":[{\"_id\":\"6abd65b83f45b81438eedd05\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(10,39): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(26,3): error TS18049: 'user.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 10,
+              "column": 39,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "nullable",
+              "line": 26,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'user.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(10,39): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(26,3): error TS18049: 'user.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 10,
+              "column": 39,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "nullable",
+              "line": 26,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'user.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(10,39): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(26,3): error TS18049: 'user.name' is possibly 'null' or 'undefined'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "value",
+              "line": 10,
+              "column": 39,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "nullable",
+              "line": 26,
+              "column": 3,
+              "code": "TS18049",
+              "message": "'user.name' is possibly 'null' or 'undefined'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "mongoose": "9.10.3",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "missing required email compiles",
+            "rejected": true,
+            "error": {
+              "name": "ValidationError",
+              "message": "User validation failed: email: Path `email` is required."
+            }
+          },
+          {
+            "label": "misspelled filter silently matches nothing",
+            "value": {
+              "misspelledCount": 0,
+              "correctCount": 1
+            }
+          },
+          {
+            "label": "strictQuery positive policy rejects typo",
+            "rejected": true,
+            "error": {
+              "name": "StrictModeError",
+              "message": "Path \"emial\" is not in schema and strictQuery is 'throw'."
+            }
+          },
+          {
+            "label": "partial select retains full inferred document type",
+            "value": {
+              "keys": [
+                "_id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "populated reference differs from inferred ObjectId",
+            "value": {
+              "unloadedIsObjectId": true,
+              "populatedIsObjectId": false,
+              "populatedEmail": "alice@lab.invalid",
+              "name": null
+            }
+          },
+          {
+            "label": "raw aggregate rows",
+            "value": [
+              {
+                "_id": "6abd65b83f45b81438eedd05",
+                "email": "alice@lab.invalid",
+                "name": null,
+                "__v": 0
+              }
+            ]
+          },
+          {
+            "label": "raw driver rows",
+            "value": [
+              {
+                "_id": "6abd65b83f45b81438eedd05",
+                "email": "alice@lab.invalid",
+                "name": null,
+                "__v": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "knex",
+      "sources": [
+        {
+          "file": "knex/package-lock.json",
+          "sha256": "b1ed3d47ac9af18c506600b328415b7cd1fa87d27ccc3829841f39a93fa59f09"
+        },
+        {
+          "file": "knex/package.json",
+          "sha256": "e53b6656b7faaee497aa90c145622bef2026b82ff0a2c4c2b990f1efbeef163d"
+        },
+        {
+          "file": "knex/src/checks.ts",
+          "sha256": "b7ef331c6ef8dd2fe4a7d55e34a92deb5f6e83a02b8aca29ddca72d506f56864"
+        },
+        {
+          "file": "knex/src/helper.ts",
+          "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+        },
+        {
+          "file": "knex/src/model.ts",
+          "sha256": "f4c0fa628e8e40d10b4a71d3c20705187d00e1fb5a56fc0cb1777af5b91b6642"
+        },
+        {
+          "file": "knex/src/runtime.ts",
+          "sha256": "576c7101f4737b884c19207a05ef0b71825c587cb5e9a4fd08e0e272b6baf9c3"
+        },
+        {
+          "file": "knex/tsconfig.json",
+          "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+        },
+        {
+          "file": "knex/tsconfig.runtime.json",
+          "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+        }
+      ],
+      "commands": [
+        {
+          "command": "npm ci --ignore-scripts",
+          "exitCode": 0,
+          "stdout": "\nadded 44 packages, and audited 45 packages in 892ms\n\n4 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": "/usr/local/bin/node dist/runtime.js",
+          "exitCode": 0,
+          "stdout": "{\"observations\":[{\"label\":\"row-only insertion type accepts missing email\",\"rejected\":true,\"error\":{\"name\":\"error\",\"code\":\"23502\",\"message\":\"insert into \\\"users_row_only\\\" (\\\"name\\\") values ($1) - null value in column \\\"email\\\" of relation \\\"users\\\" violates not-null constraint\"}},{\"label\":\"misspelled string filter compiles\",\"rejected\":true,\"error\":{\"name\":\"error\",\"code\":\"42703\",\"message\":\"select * from \\\"users\\\" where \\\"emial\\\" = $1 - column \\\"emial\\\" does not exist\"}},{\"label\":\"misspelled qualified select compiles\",\"rejected\":true,\"error\":{\"name\":\"error\",\"code\":\"42703\",\"message\":\"select \\\"users\\\".\\\"emial\\\" from \\\"users\\\" - column users.emial does not exist\"}},{\"label\":\"partial select\",\"value\":{\"keys\":[\"id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"qualified join loses types but not runtime values\",\"value\":{\"unqualified\":[{\"email\":\"alice@lab.invalid\",\"title\":\"seed\"}],\"qualified\":[{\"email\":\"alice@lab.invalid\",\"title\":\"seed\"}]}},{\"label\":\"nullable\",\"value\":null},{\"label\":\"raw rows\",\"value\":[{\"id\":1,\"email\":\"alice@lab.invalid\",\"name\":null},{\"id\":3,\"email\":\"positive@lab.invalid\",\"name\":null}]}]}\n",
+          "stderr": ""
+        }
+      ],
+      "compilers": [
+        {
+          "version": "Version 7.0.2",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 1,
+            "stdout": "src/unsuppressed.ts(6,28): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[] | (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)'.\n  Type '{ name: string; }' is not assignable to type 'Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<User, \"id\" | \"name\">'.\nsrc/unsuppressed.ts(11,46): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,27): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '{ emial: string; }' is not assignable to parameter of type 'string'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Pick<User, \"email\" | \"id\">'.\nsrc/unsuppressed.ts(40,3): error TS18047: 'user.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 6,
+              "column": 28,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type 'readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[] | (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 46,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 27,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Pick<User, \"email\" | \"id\">'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'user.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 6.0.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript6/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(6,28): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type '(Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>) | readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[]'.\n  Type '{ name: string; }' is not assignable to type 'Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<User, \"id\" | \"name\">'.\nsrc/unsuppressed.ts(11,46): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,27): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '{ emial: string; }' is not assignable to parameter of type 'string'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Pick<User, \"id\" | \"email\">'.\nsrc/unsuppressed.ts(40,3): error TS18047: 'user.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 6,
+              "column": 28,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type '(Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>) | readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[]'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 46,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 27,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Pick<User, \"id\" | \"email\">'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'user.name' is possibly 'null'."
+            }
+          ]
+        },
+        {
+          "version": "Version 5.9.3",
+          "baseline": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.json",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "negative": {
+            "command": "/usr/local/bin/node node_modules/typescript5/bin/tsc --pretty false -p tsconfig.unsuppressed.json",
+            "exitCode": 2,
+            "stdout": "src/unsuppressed.ts(6,28): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type '(Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>) | readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[]'.\n  Type '{ name: string; }' is not assignable to type 'Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>'.\n    Property 'email' is missing in type '{ name: string; }' but required in type 'Omit<User, \"id\" | \"name\">'.\nsrc/unsuppressed.ts(11,46): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.\nsrc/unsuppressed.ts(15,27): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '{ emial: string; }' is not assignable to parameter of type 'string'.\nsrc/unsuppressed.ts(22,13): error TS2339: Property 'name' does not exist on type 'Pick<User, \"id\" | \"email\">'.\nsrc/unsuppressed.ts(40,3): error TS18047: 'user.name' is possibly 'null'.\n",
+            "stderr": ""
+          },
+          "diagnostics": [
+            {
+              "case": "required",
+              "line": 6,
+              "column": 28,
+              "code": "TS2345",
+              "message": "Argument of type '{ name: string; }' is not assignable to parameter of type '(Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>) | readonly (Omit<User, \"id\" | \"name\"> & Partial<Pick<User, \"name\">>)[]'."
+            },
+            {
+              "case": "value",
+              "line": 11,
+              "column": 46,
+              "code": "TS2322",
+              "message": "Type 'string' is not assignable to type 'boolean | undefined'."
+            },
+            {
+              "case": "filter",
+              "line": 15,
+              "column": 27,
+              "code": "TS2769",
+              "message": "No overload matches this call."
+            },
+            {
+              "case": "select",
+              "line": 22,
+              "column": 13,
+              "code": "TS2339",
+              "message": "Property 'name' does not exist on type 'Pick<User, \"id\" | \"email\">'."
+            },
+            {
+              "case": "nullable",
+              "line": 40,
+              "column": 3,
+              "code": "TS18047",
+              "message": "'user.name' is possibly 'null'."
+            }
+          ]
+        }
+      ],
+      "status": "passed",
+      "versions": {
+        "knex": "3.3.0",
+        "pg": "8.23.1",
+        "typescript": "7.0.2",
+        "typescript6": "6.0.3",
+        "typescript5": "5.9.3",
+        "@types/node": "24.19.0",
+        "@types/pg": "8.23.1"
+      },
+      "runtime": {
+        "observations": [
+          {
+            "label": "row-only insertion type accepts missing email",
+            "rejected": true,
+            "error": {
+              "name": "error",
+              "code": "23502",
+              "message": "insert into \"users_row_only\" (\"name\") values ($1) - null value in column \"email\" of relation \"users\" violates not-null constraint"
+            }
+          },
+          {
+            "label": "misspelled string filter compiles",
+            "rejected": true,
+            "error": {
+              "name": "error",
+              "code": "42703",
+              "message": "select * from \"users\" where \"emial\" = $1 - column \"emial\" does not exist"
+            }
+          },
+          {
+            "label": "misspelled qualified select compiles",
+            "rejected": true,
+            "error": {
+              "name": "error",
+              "code": "42703",
+              "message": "select \"users\".\"emial\" from \"users\" - column users.emial does not exist"
+            }
+          },
+          {
+            "label": "partial select",
+            "value": {
+              "keys": [
+                "id",
+                "email"
+              ],
+              "nameType": "undefined"
+            }
+          },
+          {
+            "label": "qualified join loses types but not runtime values",
+            "value": {
+              "unqualified": [
+                {
+                  "email": "alice@lab.invalid",
+                  "title": "seed"
+                }
+              ],
+              "qualified": [
+                {
+                  "email": "alice@lab.invalid",
+                  "title": "seed"
+                }
+              ]
+            }
+          },
+          {
+            "label": "nullable",
+            "value": null
+          },
+          {
+            "label": "raw rows",
+            "value": [
+              {
+                "id": 1,
+                "email": "alice@lab.invalid",
+                "name": null
+              },
+              {
+                "id": 3,
+                "email": "positive@lab.invalid",
+                "name": null
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "status": "passed",
+  "fixtureSha256": "c1fb70913cee8a3454c572889c96c79477034557fd243db45525b12eae29ac62",
+  "articles": [
+    {
+      "file": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
+      "sourceSha256": "626e141cf4647a8d0d7b2d543979d88c66eae3ef6be2db7187d9184024eed6a7"
+    }
+  ],
+  "supportingSources": [
+    {
+      "file": "experiments/orm-type-safety/.gitignore",
+      "sha256": "d0ed2a8a0ae8633c6d00ebe0f885551141e558205bef119ab9e8d5b27141886a"
+    },
+    {
+      "file": "experiments/orm-type-safety/README.md",
+      "sha256": "e86423f6ab0fc85e69ad59c7415eb28524c8ac9031e9307ca9cbe636ce85ab59"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/package-lock.json",
+      "sha256": "18fec6415076faf544cf9f7b43e87525410359507495add10d8e2194dce53a0a"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/package.json",
+      "sha256": "d830caf923da1ad5b2039978978a3ccd4143e6b5224d1f688da035071edec894"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/src/checks.ts",
+      "sha256": "64a53c417a82fcab191acbf253e68ee65b12ca70f07d5149f2ef119247196c41"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/src/model.ts",
+      "sha256": "187eaea2b52ae38f5928b321ce236141fea4b6ef9713be47844f80886b494e31"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/src/runtime.ts",
+      "sha256": "387ce3f542289c21c8af8d29de025e785e45160cc40022e4df5b4e42c58f20ff"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/drizzle/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/package-lock.json",
+      "sha256": "b1ed3d47ac9af18c506600b328415b7cd1fa87d27ccc3829841f39a93fa59f09"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/package.json",
+      "sha256": "e53b6656b7faaee497aa90c145622bef2026b82ff0a2c4c2b990f1efbeef163d"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/src/checks.ts",
+      "sha256": "b7ef331c6ef8dd2fe4a7d55e34a92deb5f6e83a02b8aca29ddca72d506f56864"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/src/model.ts",
+      "sha256": "f4c0fa628e8e40d10b4a71d3c20705187d00e1fb5a56fc0cb1777af5b91b6642"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/src/runtime.ts",
+      "sha256": "576c7101f4737b884c19207a05ef0b71825c587cb5e9a4fd08e0e272b6baf9c3"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/knex/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/package-lock.json",
+      "sha256": "4349c71b2d159234d8b2a070c62f98f48a567d19886b0714f832d8dc83e374f4"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/package.json",
+      "sha256": "0a766e7b1aaae555e43ba881f2e23187f2fd7f91702d3894d66a0c7c7a619541"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/src/checks.ts",
+      "sha256": "b05cde32be0e0d097ad29bd6d6dad3d9efa3b488586b9b4d95a46e08e55bfe01"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/src/model.ts",
+      "sha256": "ebe62bc2bf72e239601abbbdc7a1dbc58ee24cdd0c7061b55d17e009cd3652d3"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/src/runtime.ts",
+      "sha256": "14d4698331551845d3de8a01fe28bb7ab0ee50c7df5acae30b4b67e2fc47130b"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/kysely/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/package-lock.json",
+      "sha256": "6c389bb5c52cde2cf53bc9c6caae1e1658ea1997e2a363740a1c63e5ae9d1af5"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/package.json",
+      "sha256": "efc0f588f30bf173da5007e5097f14f5da4b12eb7a43d694b2f87b9168eb3229"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/src/checks.ts",
+      "sha256": "67d3cb4faa438a70bb1adc4127c7480452f378d7d635a040923e2a68f73a1b77"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/src/model.ts",
+      "sha256": "5254e6e02beb63dfd827686ece70b7faf7dd94e6f9d9b726f82d81e488059a01"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/src/runtime.ts",
+      "sha256": "c4313e3f91f3a3cabdd1a4820b703a728e4a6f9922f9aa3371c13283b683946e"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/mikroorm/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/package-lock.json",
+      "sha256": "d718653c4ac9d1b33af5a4ceaec41fc1e484a5beb0153026304936451cbf8f27"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/package.json",
+      "sha256": "e991af23643a9f3525a8191e74146fabc4302638ef917e7be18bcf69c59f93d9"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/src/checks.ts",
+      "sha256": "7448573fc7f9a86661f6601ff4e98c1f3f5494bd7f8d170a9757c1259d1ae3b3"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/src/model.ts",
+      "sha256": "1959afa5d9aa6c2b2771b60324d3f1003d1192b9e08e9c6aa88bc90a70f0a04b"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/src/runtime.ts",
+      "sha256": "cc6fa55787abf50e34ed3bd705f5e90b3cab8b3adf8298b55e1dac4e8679b6aa"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/mongoose/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/package-lock.json",
+      "sha256": "ce239c1e0ea202386dc0be6e9b14340292f63e8a04b1bdb2949c5e14d341c43c"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/package.json",
+      "sha256": "35930ce27e58b5a4a65632c118fdae810def9667fefdeb5dae04280059203e5a"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/prisma.config.ts",
+      "sha256": "31a00867bbefade48f21f18aef161003693162f072c12562f71a3d829669e17c"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/schema.prisma",
+      "sha256": "ef1fc23b3ee0fd052858c1e37a3ce2b35217b16ec0540a0c03924a0bf9dfd65b"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/src/checks.ts",
+      "sha256": "9f70a4f175b96d4f4712130f486e4fb10f04b540265ccbdde93201585280c184"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/src/model.ts",
+      "sha256": "19edbde5f64a4e39471816c40c5c0c24fd3d723b49e6ae3690f913e3040b7172"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/src/runtime.ts",
+      "sha256": "32ee30e32651dc1925d2b3ee8502364b9a1416fb89e634c4ce8592e012bb1fb3"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/prisma/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/projects.json",
+      "sha256": "6a13908f09e0d22cfee89612b473f5200853a0c2242b4c4597c44d1487cdf80b"
+    },
+    {
+      "file": "experiments/orm-type-safety/run.mjs",
+      "sha256": "c1fb70913cee8a3454c572889c96c79477034557fd243db45525b12eae29ac62"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/package-lock.json",
+      "sha256": "67b992f1a36233c9ee9e67d4050c2912fceb6a25f62e33376600ecc032c19833"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/package.json",
+      "sha256": "a0eceb9c4ff0f552075d5ef5b14569c9096f0411574a0643e47e4732b3882251"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/src/checks.ts",
+      "sha256": "6bbc3dcb158f598d60a9e640c8b0f2ea10e87127237a678bd6bf7b70f096d223"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/src/model.ts",
+      "sha256": "43fd89b93ba8e2865fcfbcb68b92a2d10f7beb93b369b3f0cfcc9a2703b2fd56"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/src/runtime.ts",
+      "sha256": "01b96adf87fcc1d6d4564817fff295ef9b190b049c8b7e5f788ed0fb822d55df"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/tsconfig.json",
+      "sha256": "a3d5adbd71620ee78df76491d7524b8bdc577b5b0963ffa86d0d68e222877ac0"
+    },
+    {
+      "file": "experiments/orm-type-safety/sequelize/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/package-lock.json",
+      "sha256": "506b2d2113a271ffbea327b216f7fe354e44f6f08f204c22c3984ae427d395ea"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/package.json",
+      "sha256": "4a768b5cfcc7b2a0d22a20030885706fe51049c20868a2f3f243155eb01fe44d"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/src/checks.ts",
+      "sha256": "29d3719eef2f871aeffe23f1f16df6c4b1f690cff89036c57773db7b6aba33a1"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/src/helper.ts",
+      "sha256": "caa613d2d88b2c13bad8d0dfa8604112829d01cc75f4c00ee014ea8793770050"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/src/model.ts",
+      "sha256": "c3dc3115159f9cbd16e05ac10b3ace08cbf6754c66e734373883d932d84ed078"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/src/runtime.ts",
+      "sha256": "cc512cd62d3859ae2c91c8245d10172bc506acffcf45fcb8843fad5a937f653f"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/tsconfig.json",
+      "sha256": "1e89ae9eb662727dd2ee31d4a6715eca390a205e9aa03de2593d5ad49af11781"
+    },
+    {
+      "file": "experiments/orm-type-safety/typeorm/tsconfig.runtime.json",
+      "sha256": "5e6d6ca6915ab37e07191d52f1c8312b1f87f9c56f0e6b620a509a62dc7aa58a"
+    }
+  ],
+  "postgresVersion": "version                                                          \n--------------------------------------------------------------------------------------------------------------------------\n PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit\n(1 row)",
+  "mongoVersion": "8.0.32",
+  "cleanedUp": true,
+  "completedAt": "2026-09-30T19:40:46.161Z"
+}

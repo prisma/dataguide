@@ -12,7 +12,8 @@ exports.onPostBuild = async ({ reporter }) => {
     const name = path.relative(publicDir, file).split(path.sep).join('/')
     if (!(
       /(?:index\.html|\.md|sitemap[^/]*\.xml|llms\.txt)$/.test(name) ||
-      name.startsWith('social/generated/')
+      name.startsWith('social/generated/') ||
+      name.startsWith('experiments/')
     ))
       continue
     artifacts.push({

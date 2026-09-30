@@ -144,9 +144,9 @@
       "id": "R16",
       "title": "Add database tutorial execution to CI",
       "status": "verified-local",
-      "outcome": "Pinned disposable PostgreSQL/PgBouncer fixtures with actual CI success and retained reports; weekly schedule and relevant-change triggers.",
+      "outcome": "Pinned disposable PostgreSQL/PgBouncer/reference-app checks plus a separate eight-library compiler/runtime job; weekly and relevant-change triggers retain reports on failure.",
       "evidence": ".github/workflows/tutorials.yml",
-      "remaining": "Hosted workflow execution pending; implemented scope is PostgreSQL/reference app.",
+      "remaining": "Database/reference-app job passed hosted checks on 663b9ab; new comparison job must pass the current PR gate before release.",
       "humanReviewer": null
     },
     {
@@ -170,19 +170,19 @@
     {
       "id": "R19",
       "title": "Use exact pins when promising exact reproduction",
-      "status": "partial",
-      "outcome": "Reported Prisma packages use exact 7.10.0 pins, and moving-tag reproduction claim is qualified.",
-      "evidence": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
-      "remaining": "Full comparison graph is unavailable; no independently reproduced grades.",
+      "status": "verified-local",
+      "outcome": "Eight separate projects with exact library/driver/compiler pins and full npm locks; pinned database image digests and recorded installed versions.",
+      "evidence": "experiments/orm-type-safety/README.md",
+      "remaining": "New independent stable comparison only; no claim to recover the earlier refresh artifacts or reproduce preview versions.",
       "humanReviewer": null
     },
     {
       "id": "R20",
       "title": "Publish the comparison experiment, not only its narrative",
-      "status": "external-needed",
-      "outcome": "Visible evidence notice and provisional metadata; no substitute experiment passed off as the original.",
-      "evidence": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
-      "remaining": "Need eight source projects, locks and raw compiler/runtime logs, or a complete new independent comparison.",
+      "status": "verified-local",
+      "outcome": "Seven checks independently recreated for all eight stable libraries; TypeScript 7.0.2/6.0.3/5.9.3, unsuppressed diagnostics, asserted result types and disposable runtime controls pass.",
+      "evidence": "static/experiments/orm-comparison-2026-10-01.json",
+      "remaining": "Prisma 8, Drizzle 1 and TypedSQL preview results were removed from the grades; later releases need separate runs. Human comparison review pending.",
       "humanReviewer": null
     },
     {
@@ -288,7 +288,7 @@
       "id": "R32",
       "title": "Trigger review from upstream lifecycle events",
       "status": "verified-local",
-      "outcome": "Primary lifecycle sources, scoped owner/path/lane tasks and offline simulated change; scheduled workflow.",
+      "outcome": "Primary lifecycle and npm publisher sources, scoped owner/path/lane tasks and simulated changes; scheduled workflow covers the comparison as well as engine/provider lifecycles.",
       "evidence": "lifecycle-sources.json",
       "remaining": "Fingerprints trigger review, not automatic behavioral claims. Human owner assignment and patch-release checks required.",
       "humanReviewer": null
