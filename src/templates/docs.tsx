@@ -85,7 +85,7 @@ export default ArticleLayout
 export const Head = ({
   data,
   location,
-  pageContext: { seoTitle, seoDescription, metaImage },
+  pageContext: { seoTitle, seoDescription, metaImage, socialImage },
 }: ArticleLayoutProps) => {
   const { allMdx } = useAllArticlesQuery()
   const {
@@ -117,6 +117,7 @@ export const Head = ({
       title={seoTitle}
       description={seoDescription}
       image={metaImage || undefined}
+      socialImage={socialImage}
       hasMarkdown={hasMarkdown}
       article={article}
     />
