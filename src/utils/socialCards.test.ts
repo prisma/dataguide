@@ -6,7 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 import { THEMED_TOPICS } from './topicThemes.ts'
-import { escapeMarkup, loadCardThemes, renderSocialCard, writeSocialCard } from './socialCards.ts'
+import { loadCardThemes, renderSocialCard, writeSocialCard } from './socialCards.ts'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 
@@ -21,8 +21,7 @@ test('social cards reuse all registered CSS themes and valid transparent artwork
   }
 })
 
-test('markup is escaped and long article titles render into opaque, full-sized PNGs', async () => {
-  assert.equal(escapeMarkup('Tables <tuples> & "types"'), 'Tables &lt;tuples&gt; &amp; "types"')
+test('punctuation and long article titles render into opaque, full-sized PNGs', async () => {
   const themes = await loadCardThemes(root)
   for (const title of [
     'What are databases?',

@@ -5,6 +5,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { THEMED_TOPICS } from './topicThemes.ts'
 import type { SocialImage } from './socialMetadata.ts'
+import { textImage } from './socialCardText.ts'
 
 export interface CardTheme {
   wash: string
@@ -31,26 +32,6 @@ export const loadCardThemes = async (root: string): Promise<Map<string, CardThem
   return themes
 }
 
-export const escapeMarkup = (text: string) =>
-  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-const textImage = (text: string, size: number, color: string, width: number, fontfile: string) =>
-  sharp({
-    text: {
-      text: `<span foreground="${color}">${escapeMarkup(text)}</span>`,
-      // Pango's unqualified sizes are points and depend on the host's logical DPI.
-      font: `Sora Medium ${size}px`,
-      fontfile,
-      width,
-      rgba: true,
-      wrap: 'word',
-      dpi: 72,
-      spacing: 6,
-    },
-  })
-    .png()
-    .toBuffer({ resolveWithObject: true })
-
 export const renderSocialCard = async ({
   title,
   topicTitle,
@@ -66,14 +47,19 @@ export const renderSocialCard = async ({
   let headline: Awaited<ReturnType<typeof textImage>> | undefined
   for (let size = 64; size >= 32; size -= 2) {
     const candidate = await textImage(title, size, '#141414', 640, fontfile)
-    if (candidate.info.height <= 296 && candidate.info.width <= 640) {
+    if (
+      candidate.info.height <= 296 &&
+      candidate.info.width <= 640 &&
+      (title.length > 30 || candidate.lines === 1)
+    ) {
       headline = candidate
       break
     }
   }
   if (!headline) throw new Error(`Social card title does not fit: ${title}`)
   const label = await textImage(topicTitle, 24, '#5639ef', 640, fontfile)
-  if (label.info.height > 68) throw new Error(`Social card topic label does not fit: ${topicTitle}`)
+  if (label.info.height > 68 || label.info.width > 640)
+    throw new Error(`Social card topic label does not fit: ${topicTitle}`)
   const footer = await textImage('Prisma / dataguide', 23, '#141414', 480, fontfile)
   const artwork = await sharp(theme.scene).resize(420, 315, { fit: 'contain' }).png().toBuffer()
   const logo = await sharp(path.join(root, 'src/images/favicon.svg'))

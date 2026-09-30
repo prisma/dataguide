@@ -289,15 +289,19 @@ The renderer reads `src/styles/topic-themes.css` and checks it against `THEMED_T
 so future sections added through the workflow above also get matching sharing cards.
 There is no second artwork/color registry to maintain. A missing theme or a title
 that cannot fit fails the build instead of publishing a broken or truncated card.
-Long titles wrap and reduce in size, down to 32px. Pango font descriptions use explicit
-`px` sizes, [absolute device units](https://docs.gtk.org/Pango/type_func.FontDescription.from_string.html),
-so the build host's logical DPI does not enlarge the text or change its intended layout.
+Long titles wrap and reduce in size, down to 32px. Short titles (up to 30 characters)
+reduce in size when needed to stay on one line. `src/utils/socialCardText.ts` uses
+[Fontkit](https://github.com/foliojs/fontkit) to shape the bundled Sora font at weight
+500, measure word wrapping, and turn the glyph outlines into SVG paths. Sharp
+rasterizes those paths, so native text engines cannot substitute an installed font
+or apply a different logical DPI. Unsupported characters fail the build explicitly.
 
 Text uses the bundled `src/fonts/Sora.ttf`, so generation does not depend on a system
 font or a network font service. This variable font comes from
 [Google Fonts' Sora directory at commit a926665019d3f7f25c8b1212cecbfa871e70de82](https://github.com/google/fonts/tree/a926665019d3f7f25c8b1212cecbfa871e70de82/ofl/sora),
 where it is named `Sora[wght].ttf`. Its SIL Open Font License is preserved beside it
-in `src/fonts/OFL-Sora.txt`. The PNG renderer uses the installed Sharp dependency.
+in `src/fonts/OFL-Sora.txt`. The renderer uses the installed Fontkit and Sharp
+dependencies; no additional system fonts are required.
 
 Generated files live in `public/social/generated/`, with a filename derived from a
 SHA-256 hash of the PNG contents. They are build outputs, not committed assets. A

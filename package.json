@@ -12,6 +12,7 @@
     "@mdx-js/react": "2.3.0",
     "algoliasearch": "5.59.0",
     "babel-plugin-styled-components": "2.3.0",
+    "fontkit": "2.0.4",
     "gatsby": "5.16.1",
     "gatsby-plugin-algolia": "^1.0.3",
     "gatsby-plugin-catch-links": "5.16.0",
@@ -63,6 +64,7 @@
   },
   "devDependencies": {
     "@mdx-js/mdx": "2.3.0",
+    "@types/fontkit": "2.0.9",
     "@types/node": "24.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
