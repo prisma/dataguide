@@ -405,7 +405,7 @@ Replace the password with one of your own. The statements do the following:
 - `CREATE USER 'app'@'localhost'` creates an account named `app` that can only connect from the same machine. The account uses MySQL's default authentication plugin, `caching_sha2_password`.
 - The `GRANT` statement lets the account read and change data (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) and manage tables and indexes (`CREATE`, `ALTER`, `DROP`, `INDEX`, `REFERENCES`), but only in the `app` database (`app.*`). If a separate account runs your schema migrations, leave out everything after `DELETE`.
 
-If you use Prisma ORM, `prisma migrate dev` also needs a temporary _shadow database_, which this account isn't allowed to create. Prisma's [shadow database documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database) (for Prisma ORM 7 at the time of writing) lists the privileges it needs on MySQL and explains how to use a shadow database you create yourself instead.
+If you use Prisma ORM, `prisma migrate dev` also needs a temporary _shadow database_, which this account isn't allowed to create. Prisma's [shadow database documentation](https://www.prisma.io/docs/orm/v7/prisma-migrate/understanding-prisma-migrate/shadow-database) (for Prisma ORM 7 at the time of writing) lists the privileges it needs on MySQL and explains how to use a shadow database you create yourself instead.
 
 You can check the result with `SHOW GRANTS` (with Docker, `SHOW GRANTS FOR 'app'@'%';`):
 

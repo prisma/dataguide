@@ -184,18 +184,18 @@ withoutPosts.posts
 
 A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
 
-For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. [TypedSQL](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/typedsql), a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project during its generation step, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. TypedSQL, a preview feature in Prisma ORM 7, instead generates a typed function for each `.sql` file in your project during its generation step, which connects to a database that has your schema to work out the types. For a query file that selects `id`, `email` and `name` and takes a string parameter, the generated function typed both, including the nullable `name` column, and rejected a number as the parameter:
 
 ```typescript
 const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
 // { id: number; email: string; name: string | null }[]
 ```
 
-Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For raw SQL, a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data) in the Prisma ORM 8 documentation.
+Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For [raw SQL](https://www.prisma.io/docs/orm/reference/raw-queries), a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data) in the Prisma ORM 8 documentation.
 
 <PrismaOutlinks>
 
-Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Type safety in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/type-safety).
+Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Model and result types in Prisma ORM 8](https://www.prisma.io/docs/orm/reference/orm-client#model-and-result-types).
 
 </PrismaOutlinks>
 
