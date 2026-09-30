@@ -22,15 +22,15 @@ Keep the two kinds of users apart: **Atlas users** sign in to the Atlas UI, CLI 
 
 The tier decides how much hardware your cluster gets, whether it shares that hardware with other customers, and which Atlas features you can use. As of September 2026, Atlas offers three kinds of clusters:
 
-| | Free | Flex | Dedicated (`M10` and up) |
-| :-- | :-- | :-- | :-- |
-| Hardware | Shared | Shared | Each node on its own instance |
-| Storage (data and indexes) | 512 MB | 5 GB | 10 GB to 4 TB, depending on tier |
-| Operations per second | 100 | 500 | Sized by tier (RAM, vCPUs, storage) |
-| Backups | None | One daily snapshot | Configurable snapshots and point-in-time restore |
-| Private networking | No | No | Private endpoints and network peering |
-| MongoDB version | 8.0, managed by Atlas | 8.0, managed by Atlas | Your choice of supported version |
-| Cost | Free, one per project | Billed hourly, capped at $30 per month | Billed hourly by tier, storage and region |
+|                            | Free                  | Flex                                   | Dedicated (`M10` and up)                         |
+| :------------------------- | :-------------------- | :------------------------------------- | :----------------------------------------------- |
+| Hardware                   | Shared                | Shared                                 | Each node on its own instance                    |
+| Storage (data and indexes) | 512 MB                | 5 GB                                   | 10 GB to 4 TB, depending on tier                 |
+| Operations per second      | 100                   | 500                                    | Sized by tier (RAM, vCPUs, storage)              |
+| Backups                    | None                  | One daily snapshot                     | Configurable snapshots and point-in-time restore |
+| Private networking         | No                    | No                                     | Private endpoints and network peering            |
+| MongoDB version            | 8.0, managed by Atlas | 8.0, managed by Atlas                  | Your choice of supported version                 |
+| Cost                       | Free, one per project | Billed hourly, capped at $30 per month | Billed hourly by tier, storage and region        |
 
 These figures come from MongoDB's [Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/), [Flex cluster limits](https://www.mongodb.com/docs/atlas/reference/flex-limitations/) and [Flex pricing](https://www.mongodb.com/docs/atlas/billing/atlas-flex-costs/) pages, and they change over time.
 
