@@ -38,11 +38,11 @@ These figures come from MongoDB's [Free cluster limits](https://www.mongodb.com/
 
 **Flex clusters** are the low-cost option for development, proofs of concept and small or spiky workloads. They replaced the shared `M2` and `M5` tiers and the serverless instances, which you haven't been able to create since February 2025. Since January 22, 2026, Atlas no longer supports them at all: existing `M2` and `M5` clusters became Flex clusters, and serverless instances were migrated to Free, Flex or dedicated clusters depending on their usage.
 
-**Dedicated clusters** give each node its own instance and unlock the full Atlas feature set. `M10` and `M20` suit development and low-traffic production, but they run on burstable instances whose CPU can be throttled under sustained load. MongoDB recommends `M30` and larger for production, and `M30` is also the smallest tier that can be sharded.
+**Dedicated clusters** give each node its own instance and unlock the full Atlas feature set. `M10` and `M20` suit development and low-traffic production, but they use burstable infrastructure: after a burst, the cloud provider caps their CPU, which can throttle a heavy workload. MongoDB recommends `M30` and larger for production, and `M30` is also the smallest tier that can be sharded.
 
 You aren't locked in: you can later scale a Free cluster to Flex or dedicated, and a Flex cluster to dedicated. Dedicated clusters can also change tier automatically: cluster-tier auto-scaling is on by default when you create a cluster in the Atlas UI, but off by default through the Administration API, which the Atlas CLI uses.
 
-The UI may also offer **Atlas Infinite**, a new edition of dedicated clusters that separates compute from storage. It's in public preview, limited to selected AWS regions and doesn't support sharding yet. This guide uses the default edition, Atlas Core, which is also what `atlas clusters create` always creates.
+The UI may also offer **Atlas Infinite**, a new edition of dedicated clusters that separates compute from storage. It's in public preview, limited to selected AWS regions and doesn't support sharding yet. This guide uses the default edition, Atlas Core; the commands below create Atlas Core clusters.
 
 ## Choosing a cloud provider and region
 
@@ -85,13 +85,13 @@ Dedicated clusters can avoid the public internet altogether. [Private endpoints]
 
 [Database users](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/) can authenticate with a password (SCRAM, the default), an X.509 client certificate, OIDC (workforce identity federation for people, workload identity federation for applications on Azure or Google Cloud; MongoDB 7.0 and later) or AWS IAM. Free and Flex clusters support only passwords, X.509 and AWS IAM. Where your platform supports them, MongoDB recommends the federated options and AWS IAM over passwords, because they avoid long-lived secrets.
 
-Give each user only the access it needs. Besides built-in roles such as `atlasAdmin`, `readWriteAnyDatabase` and `readAnyDatabase`, Atlas lets you grant specific privileges on one database or collection, such as `readWrite` on `appdb`, and define custom roles. Note that the first database user you create while connecting in the Atlas UI, and the user that `atlas setup` creates, get `atlasAdmin`. That's fine for a sandbox, but an application should have its own user with `readWrite` on its own database. For short-lived access, Atlas can create temporary users that it deletes automatically within a week.
+Give each user only the access it needs. Besides built-in roles such as `atlasAdmin`, `readWriteAnyDatabase` and `readAnyDatabase`, Atlas lets you grant specific privileges on one database or collection, such as `readWrite` on `appdb`, and define custom roles. The user that `atlas setup` creates gets `atlasAdmin`, and MongoDB's docs say the Atlas UI's connect dialog offers to create an Atlas Admin user when a project has none, so check the roles of any user the Atlas UI created for you. Admin rights are fine for a sandbox, but an application should have its own user with `readWrite` on its own database. For short-lived access, Atlas can create temporary users that it deletes automatically within a week.
 
 Manage database users only through the Atlas UI, the Atlas CLI or the Administration API: Atlas rolls back user changes made any other way, so the `db.createUser()` approach from [How to manage users and authentication in MongoDB](/mongodb/configuring-mongodb-user-accounts-and-authentication) is for self-managed servers. The role concepts in [How to manage authorization and privileges in MongoDB](/mongodb/authorization-and-privileges) apply to Atlas too.
 
 ### Encryption
 
-Atlas requires TLS for every connection. New clusters use TLS 1.3 by default and accept 1.2 if you configure it, and all clusters reject TLS 1.0 and 1.1. Free and Flex clusters also require clients that support the TLS SNI extension, as `mongosh` does. You don't need to turn anything on: connection strings that start with `mongodb+srv://` enable TLS automatically.
+Atlas requires TLS for every connection. It supports TLS 1.2 and 1.3 and rejects 1.0 and 1.1. On dedicated clusters, you can raise the minimum TLS version the cluster accepts; before you require 1.3, check that your drivers, language runtime and operating system support it. Free and Flex clusters also require clients that support the TLS SNI extension, as `mongosh` does. You don't need to turn anything on: connection strings that start with `mongodb+srv://` enable TLS automatically.
 
 Atlas also [encrypts cluster storage and snapshot volumes at rest](https://www.mongodb.com/docs/atlas/setup-cluster-security/) with AES-256 by default, with keys managed by the cloud provider. Dedicated clusters can add encryption with your own keys in AWS KMS, Azure Key Vault or Google Cloud KMS. For background, see [How MongoDB encrypts data](/mongodb/mongodb-encryption).
 
@@ -100,10 +100,10 @@ Atlas also [encrypts cluster storage and snapshot volumes at rest](https://www.m
 What Atlas backs up depends on the tier:
 
 - **Free clusters** have no backups. Export data yourself with `mongodump` and restore it with `mongorestore` (see [MongoDB database tools](/mongodb/mongodb-database-tools)).
-- **Flex clusters** always have backups: one snapshot a day, starting 24 hours after you create the cluster. You can't change the schedule, take on-demand snapshots or restore to a point in time.
+- **Flex clusters** always have backups: one snapshot a day, starting 24 hours after you create the cluster, and Atlas keeps the last eight. You can't change the schedule, take on-demand snapshots or restore to a point in time.
 - **Dedicated clusters** use [Cloud Backup](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/), which you turn on per cluster. It takes snapshots on a schedule and keeps them according to a retention policy you configure. Continuous Cloud Backup adds point-in-time restore by replaying the oplog up to the moment you choose.
 
-Deleting a cluster also deletes its snapshots, so export anything you need to keep first, and test restores regularly. [Backup considerations](/managing-databases/backup-considerations) covers how to choose a strategy.
+Deleting a cluster also deletes its snapshots, unless you choose to keep them when you terminate it in the Atlas UI or a Backup Compliance Policy retains them. Export anything you need to keep before you delete a cluster, and test restores regularly. [Backup considerations](/managing-databases/backup-considerations) covers how to choose a strategy.
 
 ## Provisioning a cluster with the Atlas CLI
 
@@ -123,7 +123,7 @@ MongoDB also provides `apt` and `yum` packages, a Chocolatey package for Windows
 atlas auth login
 ```
 
-For interactive use, choose the user account option: the command opens a browser window where you sign in and confirm a one-time code, and then saves a profile with your default organization and project. Later commands act on that project unless you pass `--projectId`. For scripts and CI, log in with a service account or API key instead.
+For interactive use, choose the user account option. The command prints a one-time code and a URL and opens the browser when you press Enter (`--noBrowser` skips that). After you sign in and paste the code, you pick a default organization and project, which the CLI saves in a profile. Later commands act on that project unless you pass `--projectId`. For scripts and CI, log in with a service account or API key instead.
 
 ### The quick way: `atlas setup`
 
@@ -166,16 +166,16 @@ atlas accessLists create --currentIp --comment "dev laptop"
 atlas accessLists create 203.0.113.0/24 --type cidrBlock --comment "app servers"
 ```
 
-Create a database user for the application that can only read and write the `appdb` database. When you leave out `--password`, the CLI prompts for it, which keeps the password out of your shell history:
+Create a database user for the application that can only read and write the `appdb` database, and only on `prod-cluster`. Without `--scope`, the user would get this access on every cluster in the project. When you leave out `--password`, the CLI prompts for it, which keeps the password out of your shell history:
 
 ```bash
-atlas dbusers create --username appUser --role readWrite@appdb
+atlas dbusers create --username appUser --role readWrite@appdb --scope prod-cluster
 ```
 
 Finally, print the cluster's SRV connection string, which starts with `mongodb+srv://`. If you connect through network peering or private endpoints, add `--type private` or `--type privateEndpoint`:
 
 ```bash
-atlas clusters connectionStrings describe dev-cluster
+atlas clusters connectionStrings describe prod-cluster
 ```
 
 ## Connecting to the cluster
@@ -198,7 +198,7 @@ Load this string from an environment variable or a secret manager rather than co
 
 <PrismaOutlinks>
 
-Prisma ORM connects to Atlas with the same `mongodb+srv://` connection string, and Atlas clusters are replica sets, which Prisma's MongoDB connector needs for transactions. At the time of writing, Prisma recommends Prisma ORM 6.19 for MongoDB while support in Prisma ORM 7 is in progress. See [MongoDB in Prisma ORM](https://www.prisma.io/docs/orm/core-concepts/supported-databases/mongodb) and the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb).
+Prisma ORM connects to Atlas with the same `mongodb+srv://` connection string. As of September 2026, the last generally available Prisma ORM release with MongoDB support is Prisma ORM 6 (6.19), which receives security patches until November 19, 2026. It needs a replica set, which every Atlas cluster is, because it uses transactions internally for nested writes. Prisma ORM 7 has no MongoDB connector. Prisma ORM 8, a release candidate with general availability expected in October 2026, supports MongoDB in early access through `@prisma/orm-mongo`, but without transactions so far. See [supported databases](https://www.prisma.io/docs/orm/supported-databases), the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) and the [upgrade guide from Prisma ORM 6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/mongodb).
 
 </PrismaOutlinks>
 
@@ -226,7 +226,7 @@ atlas clusters pause prod-cluster
 atlas clusters start prod-cluster
 ```
 
-To delete a cluster, first turn off termination protection if it's enabled. The command asks for confirmation unless you add `--force`, and it can't be undone:
+To delete a cluster, first turn off termination protection if it's enabled. The command asks for confirmation unless you add `--force`, and it can't be undone. It also deletes the cluster's backup snapshots; to keep them, terminate the cluster in the Atlas UI and choose to keep existing snapshots:
 
 ```bash
 atlas clusters delete dev-cluster
@@ -243,7 +243,7 @@ Provisioning an Atlas cluster comes down to a handful of decisions: a tier that 
 <details>
 <summary>How do I connect BI tools such as Tableau to Atlas?</summary>
 
-Use the [MongoDB SQL Interface](https://www.mongodb.com/docs/sql-interface/). The older BI Connector for Atlas reaches end of life after September 2026, and MongoDB recommends the SQL Interface for new projects.
+Use the [MongoDB SQL Interface](https://www.mongodb.com/docs/sql-interface/). The older BI Connector for Atlas is no longer supported after September 2026, and MongoDB recommends the SQL Interface for new projects.
 
 </details>
 
