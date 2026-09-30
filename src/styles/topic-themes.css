@@ -1,0 +1,93 @@
+/* Topic artwork is decorative and stays in the header area, away from reading content. */
+.topic-home > section:has(> h2#introduction-to-databases),
+.top-section[data-topic='intro'] {
+  --topic-wash: #effbfd;
+  --topic-border: #d0e9ed;
+  --topic-diagram: url('../images/topic-themes/database-stacks.svg');
+  --topic-mascot: url('../images/topic-themes/prismo-salute.webp');
+}
+
+.topic-home > section:has(> h2#data-modeling),
+.top-section[data-topic='datamodeling'] {
+  --topic-wash: #fff5f5;
+  --topic-border: #efdddd;
+  --topic-diagram: url('../images/topic-themes/connected-tables.svg');
+  --topic-mascot: url('../images/topic-themes/prismo-thinking.webp');
+}
+
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)),
+article > section.top-section[data-topic] {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(115deg, #ffffff 25%, var(--topic-wash));
+  border-color: var(--topic-border);
+}
+
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::before,
+article > section.top-section[data-topic]::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 240px;
+  border-top-right-radius: inherit;
+  background: var(--topic-diagram) right top / contain no-repeat;
+  pointer-events: none;
+}
+
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::after,
+article > section.top-section[data-topic]::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 40px;
+  right: 30px;
+  width: 160px;
+  height: 160px;
+  background: var(--topic-mascot) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > h2,
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p,
+article > section.top-section[data-topic] > div:first-child {
+  padding-right: 260px;
+}
+
+.topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p {
+  min-height: 130px;
+}
+
+article > section.top-section[data-topic] > div:first-child {
+  min-height: 144px;
+}
+
+@media (max-width: 767px) {
+  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)),
+  article > section.top-section[data-topic] {
+    padding-top: 156px;
+  }
+
+  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::before,
+  article > section.top-section[data-topic]::before {
+    width: 220px;
+    height: 156px;
+  }
+
+  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling))::after,
+  article > section.top-section[data-topic]::after {
+    top: 12px;
+    right: 24px;
+    width: 130px;
+    height: 130px;
+  }
+
+  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > h2,
+  .topic-home > section:has(> h2:is(#introduction-to-databases, #data-modeling)) > p,
+  article > section.top-section[data-topic] > div:first-child {
+    padding-right: 0;
+    min-height: 0;
+  }
+}

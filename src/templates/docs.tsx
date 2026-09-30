@@ -40,6 +40,8 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
   } = data
 
   const isHomePage = slug === '/'
+  const topic = urlGenerator(modSlug).split('/')[1]
+  const themedTopic = topic === 'intro' || topic === 'datamodeling' ? topic : undefined
   const tocItems = toc || toc == null ? tableOfContents?.items : undefined
 
   return (
@@ -50,7 +52,7 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
       {...props}
     >
       {!isHomePage && (
-        <section className="top-section">
+        <section className="top-section" data-topic={themedTopic}>
           <TopSection
             title={title}
             slug={modSlug}

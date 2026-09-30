@@ -10,6 +10,7 @@ import '@fontsource-variable/inter'
 import '@fontsource-variable/sora'
 import '@fontsource-variable/geist-mono'
 import '../styles/layout.css'
+import '../styles/topic-themes.css'
 import Sidebar from './sidebar'
 import { LocationProvider, PageLocation } from '../hooks/useLocation'
 import { isIndexSlug } from '../utils/navigation'
@@ -142,7 +143,9 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
             </NotMobile>
           )}
           <Content $moveUp={isHomePage} id="main-content" tabIndex={-1}>
-            <MaxWidth $noIndex={!isIndexPage}>{children}</MaxWidth>
+            <MaxWidth $noIndex={!isIndexPage} className={isHomePage ? 'topic-home' : undefined}>
+              {children}
+            </MaxWidth>
           </Content>
           {!isHomePage && <AsideColumn>{aside}</AsideColumn>}
         </Wrapper>
