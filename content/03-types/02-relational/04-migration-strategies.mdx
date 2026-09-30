@@ -22,7 +22,7 @@ In other cases, like splitting or combining [columns](/intro/database-glossary#c
 
 <PrismaOutlinks>
 
-To perform migrations with [Prisma](https://github.com/prisma/prisma), you can use the [Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate). [Developing with Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate/workflows) generates migration files based on the declarative [Prisma schema](https://www.prisma.io/docs/orm/prisma-schema/overview) and applies them to your database.
+To perform migrations with [Prisma](https://github.com/prisma/prisma), you can use [Prisma ORM's migrations](https://www.prisma.io/docs/orm/migrations/how-migrations-work). [Generating a migration](https://www.prisma.io/docs/orm/migrations/generating-a-migration) plans migration files from changes to your [Prisma contract](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql), and `prisma db migrate` applies them to your database.
 
 </PrismaOutlinks>
 
@@ -199,6 +199,6 @@ While there are many deployment and migration strategies you can use to implemen
 
 <PrismaOutlinks>
 
-To perform migrations with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), use the [Prisma Migrate tool](https://www.prisma.io/docs/orm/prisma-migrate). Prisma Migrate analyzes your schema files, generates migration files, and applies them to target databases.
+To perform migrations with [Prisma ORM](https://www.prisma.io/docs/orm), use its [migration commands](https://www.prisma.io/docs/orm/migrations/how-migrations-work). Prisma ORM plans migration files from changes to your contract and applies them to target databases.
 
 </PrismaOutlinks>

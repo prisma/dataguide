@@ -14,7 +14,7 @@ In this guide, we'll discuss some of the tools that MongoDB provides to work eff
 
 <PrismaOutlinks>
 
-If you are using [MongoDB with Prisma](https://www.prisma.io/mongodb), you can use the [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb) to connect to and manage your database. Prisma's `date` type [maps directly](https://www.prisma.io/docs/orm/overview/databases/mongodb#mapping-from-prisma-to-mongodb-types-on-migration) to MongoDB's `Date` type.
+If you are using [MongoDB with Prisma](https://www.prisma.io/mongodb), you can use Prisma ORM's [MongoDB library](https://www.prisma.io/docs/orm/supported-databases) to connect to and manage your database. In Prisma ORM 8, a `Date` field [maps directly](https://www.prisma.io/docs/orm/data-modeling/mongodb#field-types) to MongoDB's `Date` type.
 
 </PrismaOutlinks>
 
@@ -51,7 +51,7 @@ Because this is mainly implemented to help coordinate internal processes like re
 
 <PrismaOutlinks>
 
-When managing a MongoDB database with Prisma, the MongoDB `Date` type [maps directly](https://www.prisma.io/docs/orm/overview/databases/mongodb#mapping-from-prisma-to-mongodb-types-on-migration) to the `date` type within Prisma.
+When managing a MongoDB database with Prisma, the MongoDB `Date` type [maps directly](https://www.prisma.io/docs/orm/data-modeling/mongodb#field-types) to the `Date` field type in Prisma ORM 8, which gives you a JavaScript `Date`.
 
 </PrismaOutlinks>
 
@@ -452,8 +452,8 @@ Getting familiar with how date and time data is stored internally, how to coerce
 
 <PrismaOutlinks>
 
-If you're using MongoDB, checkout Prisma's [MongoDB connector](https://www.prisma.io/docs/orm/overview/databases/mongodb)! You can use the [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage production MongoDB databases with confidence.
+If you're using MongoDB, check out Prisma ORM's [MongoDB support](https://www.prisma.io/docs/orm/supported-databases#what-each-database-supports), in early access in Prisma ORM 8. You can use [Prisma ORM's client](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=mongodb) to work with your MongoDB databases from TypeScript.
 
-To get started working with MongoDB and Prisma, checkout our [getting started from scratch guide](https://www.prisma.io/docs/getting-started) or how to [add to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/mongodb-typescript-mongodb).
+To get started working with MongoDB and Prisma, check out the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) or how to [add Prisma ORM to an existing MongoDB project](https://www.prisma.io/docs/prisma-orm/add-to-existing-project/mongodb).
 
 </PrismaOutlinks>

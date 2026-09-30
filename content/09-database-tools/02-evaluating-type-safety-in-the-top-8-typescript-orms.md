@@ -191,11 +191,11 @@ const rows = await prisma.$queryRawTyped(getUserEmails('example.com'))
 // { id: number; email: string; name: string | null }[]
 ```
 
-Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For [raw SQL](https://www.prisma.io/docs/orm/reference/raw-queries), a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data) in the Prisma ORM 8 documentation.
+Prisma ORM 8, a release candidate at the time of writing, keeps the schema file and a generate step but replaces Prisma Client with a chained query API: `db.orm.public.User.select('id', 'email').all()` is typed `{ id: number; email: string }[]`, and `.include('posts')` adds a typed `posts` array. Against `8.0.0-rc.19`, checks 1 to 6 gave the same results as Prisma ORM 7. For [raw SQL](https://www.prisma.io/docs/orm/reference/raw-queries), a whole statement declares its row type with `returnsRow()`, one type per column. That declaration isn't checked against the SQL when you compile, but a declared column that the query didn't return threw `RUNTIME.RAW_ROW_COLUMN_MISSING` at runtime. See [Reading data](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql) in the Prisma ORM 8 documentation.
 
 <PrismaOutlinks>
 
-Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Model and result types in Prisma ORM 8](https://www.prisma.io/docs/orm/reference/orm-client#model-and-result-types).
+Prisma ORM's documentation explains how to reuse the generated types in your own functions: [Model and result types in Prisma ORM 8](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#model-and-result-types).
 
 </PrismaOutlinks>
 

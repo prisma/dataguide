@@ -16,12 +16,6 @@ This glossary aims to house the common terminology used in the serverless commun
 
 This glossary is a living document and a work in progress. We intend to update it with new topics while also refining existing entries over time. We have an initial starting point of terms we are going to cover, but if you have anything you'd like us to talk about, please open a GitHub issue to add your suggestions.
 
-<PrismaOutlinks>
-
-Checkout the [Prisma Data Platform](https://pris.ly/dg/pdp) to manage all of your application data in a single place.
-
-</PrismaOutlinks>
-
 <PostgresCallout />
 
 ## Terminology
@@ -99,13 +93,6 @@ Checkout the [Prisma Data Platform](https://pris.ly/dg/pdp) to manage all of you
   functionality into discrete actions.
 </AnchorItem>
 
-<AnchorItem id="prisma-accelerate" title="Prisma Accelerate">
-  The [Prisma Accelerate](https://pris.ly/dg/pdp/ 'Prisma Accelerate') is an
-  intermediary between an application and a database. It maintains a database
-  connection pool, so that traditional databases can be reliably used in
-  serverless environments.
-</AnchorItem>
-
 <AnchorItem id="serverless-computing" title="Serverless computing">
   [Serverless
   computing](https://www.prisma.io/dataguide/serverless/serverless-comparison
@@ -125,6 +112,16 @@ A serverless database is any database that embodies the key principles of the se
 
 The concept behind them is the separation of the data storage responsibility from the data processing tasks.
 
+</AnchorItem>
+
+<AnchorItem id="serverless-drivers" title="Serverless drivers">
+  A serverless driver sends database queries over HTTP or WebSockets instead of
+  holding a TCP connection open, so that functions on platforms that can't keep
+  TCP connections between requests can still reach a database. The [Prisma
+  Postgres serverless
+  driver](https://www.prisma.io/docs/postgres/database/serverless-driver) and
+  the [Neon serverless
+  driver](https://neon.com/docs/serverless/serverless-driver) are examples.
 </AnchorItem>
 
 <AnchorItem
@@ -153,9 +150,3 @@ The concept behind them is the separation of the data storage responsibility fro
 </AnchorItem>
 
 </dl>
-
-<PrismaOutlinks>
-
-Checkout the [Prisma Data Platform](https://pris.ly/dg/pdp) to manage all of your application data in a single place.
-
-</PrismaOutlinks>

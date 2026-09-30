@@ -502,10 +502,10 @@ We've covered many of the most common data types used in PostgreSQL in this guid
 
 Understanding data types is essential when [designing schemas and tables](/postgresql/create-and-delete-databases-and-tables#create-tables-within-databases) in PostgreSQL. It also affects how to interact with the database from your applications, as the type system influences how data must be formatted and how it may be expressed when outputted. Learning about the options available within PostgreSQL and the side effects your choices might have is the best way to plan ahead when designing your data structures.
 
-If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to work with your PostgreSQL databases, you can find a mapping between some of the common PostgreSQL and Prisma types in [Prisma's PostgreSQL data connectors docs](https://www.prisma.io/docs/orm/overview/databases/postgresql#type-mapping-between-postgresql-to-prisma-schema).
+If you are using [Prisma ORM](https://www.prisma.io/docs/orm) to work with your PostgreSQL databases, you can find the types a field can have in the [scalar fields section](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#scalar-fields) of Prisma's data modeling docs.
 
 <PrismaOutlinks>
 
-In the data model used by Prisma schema, data types are represented by [field types](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-fields). You might also want to take a look at our guide on [mapping fields to a specific native type](https://www.prisma.io/docs/orm/prisma-migrate/workflows/native-database-types#mapping-fields-to-a-specific-native-type).
+In a Prisma contract, data types are represented by [field types](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields). In Prisma ORM 8, a field that needs a specific PostgreSQL type, such as `VarChar(255)`, uses that type as its field type instead of a `@db.` attribute.
 
 </PrismaOutlinks>

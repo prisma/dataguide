@@ -3,43 +3,10 @@ const siteConfig = {
     pathPrefix: '/dataguide',
     siteUrl: 'https://www.prisma.io',
   },
-  redirects: [
-    {
-      fromPath: '/postgresql/setting-up-a-local-postgresql-database',
-      toPath:
-        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database',
-      isPermanent: false,
-    },
-    {
-      fromPath: '/postgresql/introduction-to-data-types',
-      toPath:
-        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types',
-      isPermanent: false,
-    },
-    {
-      fromPath: '/postgresql/date-types',
-      toPath: 'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types',
-      isPermanent: false,
-    },
-    {
-      fromPath: '/postgresql/connecting-to-postgresql-databases',
-      toPath:
-        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases',
-      isPermanent: false,
-    },
-    {
-      fromPath: '/postgresql/short-guides/connection-uris',
-      toPath:
-        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris',
-      isPermanent: false,
-    },
-    {
-      fromPath: '/intro/database-glossary',
-      toPath:
-        'https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary',
-      isPermanent: false,
-    },
-  ],
+  // Articles that moved off this site, as { fromPath, toPath, isPermanent }. The six PostgreSQL and
+  // glossary articles that once redirected to copies in Prisma's docs are served here again, because
+  // those copies now redirect to unrelated pages.
+  redirects: [] as { fromPath: string; toPath: string; isPermanent: boolean }[],
   header: {
     logoLink: '/',
     title: "Prisma's Data Guide - Educational articles to make databases more approachable",

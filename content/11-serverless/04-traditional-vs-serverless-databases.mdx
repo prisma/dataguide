@@ -16,12 +16,6 @@ More recently, this idea has evolved to _serverless databases_, where the entire
 
 In this guide, we'll talk about the differences between traditionally deployed databases and their serverless counterparts. We will discuss managed database offerings where appropriate to help distinguish between the different options providers offer. Learning about these different concepts can help you understand the trade-offs between different offerings and make an informed decision about what type of database management would make sense for your own projects.
 
-<PrismaOutlinks>
-
-Checkout the [Prisma Data Platform](https://pris.ly/dg/pdp) to manage all of your application data in a single place.
-
-</PrismaOutlinks>
-
 ## Traditional databases vs managed databases vs serverless databases
 
 Before we dive into the advantages and disadvantages of various strategies, let's take a moment to review how the general idea behind how each system works.
@@ -150,6 +144,6 @@ While serverless databases are not suitable for every type of application, they 
 
 <PrismaOutlinks>
 
-[Prisma Accelerate](https://www.prisma.io/docs/accelerate) provides one way to handle connection issues between your serverless applications and backend databases. It can help manage ephemeral connections from your serverless functions to avoid exhausting your database connection pool. Check it out now!
+If you use [Prisma Postgres](https://www.prisma.io/docs/postgres), its [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) connects from serverless and edge functions over HTTP and WebSockets instead of TCP, and its built-in [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling) shares a smaller number of database connections between many short-lived function instances.
 
 </PrismaOutlinks>

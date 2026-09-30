@@ -14,7 +14,7 @@ In this guide, we are going to discuss storing `DATE` types in PostgreSQL and th
 
 ## PostgreSQL `DATE` data type
 
-The [`DATE` type in PostgreSQL](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types#dates-and-time) can store a date without an associated time value:
+The [`DATE` type in PostgreSQL](/postgresql/introduction-to-data-types#dates-and-time) can store a date without an associated time value:
 
 ```sql
 DATE
@@ -227,7 +227,7 @@ In this guide, we covered the basics of what you can do with the `DATE` data typ
 
 <PrismaOutlinks>
 
-If you are using [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) with PostgreSQL, here's some information about how Prisma Client translates [PostgreSQL's date type](https://www.prisma.io/docs/orm/reference/prisma-schema-reference#postgresql-6).
+If you are using [Prisma ORM](https://www.prisma.io/docs/orm) with PostgreSQL, a field of type `Date` stores [PostgreSQL's date type](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields), and Prisma ORM 8 returns its values as `Temporal.PlainDate` objects.
 
 </PrismaOutlinks>
 

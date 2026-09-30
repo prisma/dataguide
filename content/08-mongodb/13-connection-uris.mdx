@@ -185,6 +185,6 @@ In this guide, we discussed what a MongoDB connection URI is, how to interpret t
 
 <PrismaOutlinks>
 
-If you are using [Prisma to manage your MongoDB database](https://www.prisma.io/docs/orm/overview/databases/mongodb), you need to set a connection URI within a 'datasource' block in your [Prisma schema file](https://www.prisma.io/docs/orm/prisma-schema/overview). You must provide a [connection URI for the 'url' field](https://www.prisma.io/docs/orm/overview/databases/mongodb#example) so that Prisma can connect to your database.
+If you are using [Prisma to manage your MongoDB database](https://www.prisma.io/docs/orm/data-modeling/mongodb), you give Prisma ORM 8 the connection URI in your configuration, not in the [contract](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=mongodb) (the file that Prisma ORM 7 called the schema). The [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb#1-set-the-database-connection) shows where to set it so that Prisma can connect to your database.
 
 </PrismaOutlinks>

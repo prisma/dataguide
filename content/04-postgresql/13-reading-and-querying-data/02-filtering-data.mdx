@@ -53,7 +53,7 @@ While the above list represents some of the most common test constructs, there a
 
 <PrismaOutlinks>
 
-Prisma Client supports filtering by multiple criteria. Check out our [documentation on filtering](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting) to learn more.
+Prisma ORM supports filtering by multiple criteria. Check out our [documentation on filtering](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql#filter-records) to learn more.
 
 </PrismaOutlinks>
 
@@ -128,7 +128,7 @@ Practically speaking, this means that any columns in the `SELECT` list not inclu
 
 <PrismaOutlinks>
 
-If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), you can use [aggregations](https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing) to compute over and summarize values.
+If you are connecting to your database with [Prisma ORM](https://www.prisma.io/docs/orm), you can use [aggregations](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#aggregate) to compute over and summarize values.
 
 </PrismaOutlinks>
 
@@ -304,7 +304,7 @@ While `LIMIT` counts from the top of the results by default, the optional `OFFSE
 
 <PrismaOutlinks>
 
-If you are connecting to your database with [Prisma Client](https://www.prisma.io/docs/orm/prisma-client), you can use [pagination](https://www.prisma.io/docs/orm/prisma-client/queries/pagination) to iterate through results.
+If you are connecting to your database with [Prisma ORM](https://www.prisma.io/docs/orm), you can use [pagination](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql#sort-and-paginate) to iterate through results.
 
 </PrismaOutlinks>
 
@@ -446,6 +446,6 @@ PostgreSQL's `array_agg()` is a [user-defined aggregate function](https://www.po
 
 Yes, you can `GROUP BY` a timestamp value in PostgreSQL. However, this value includes a time element that would need timestamps to be identical to the millisecond to get grouped together.
 
-Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PostgreSQL's `DATE` data type](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types#postgresql-date-data-type) which has no associated time value.
+Grouping timestamps together by day, month, or year is best accomplished by casting the timestamp value into [PostgreSQL's `DATE` data type](/postgresql/date-types#postgresql-date-data-type) which has no associated time value.
 
 </details>

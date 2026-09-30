@@ -1,469 +1,673 @@
 ---
 title: 'Setting up a local PostgreSQL database'
-metaTitle: 'How to Run and Setup a Local PostgreSQL Database | Prisma'
-metaDescription: 'Learn how to set up a PostgreSQL database on Windows, macOS, and Linux by following the step-by-step instructions in this practical guide.'
+metaTitle: 'Set up a local PostgreSQL database with Docker, Linux, macOS or Windows'
+metaDescription: 'Install PostgreSQL 18 for local development with Docker, the PostgreSQL APT or Yum repository, Homebrew, Postgres.app or the EDB installer, then lock it down and create a least-privilege role for your application.'
 metaImage: '/social/generic-postgresql.png'
-authors: ['justinellingwood']
+lastUpdated: 2026-09-30
 toc: false
 ---
 
-## Overview
+## Introduction
 
-This page explains how to install and configure a [PostgreSQL database server](https://www.postgresql.org/docs/current/intro-whatis.html) and the [`psql` command line client](https://www.postgresql.org/docs/current/app-psql.html). This guide will cover how to install and set up these components on your computer for local access.
+A working PostgreSQL setup has two parts: the [PostgreSQL server](https://www.postgresql.org/docs/18/app-postgres.html) (`postgres`), which stores your data and accepts connections, and a client that talks to it. This guide uses [`psql`](https://www.postgresql.org/docs/18/app-psql.html), PostgreSQL's command-line client, which every installation method below includes.
 
-This guide will cover the following platforms:
+There are two broad ways to run the server on your own computer:
 
-- [Setting up PostgreSQL on Windows](#setting-up-postgresql-on-windows)
-- [Setting up PostgreSQL on macOS](#setting-up-postgresql-on-macos)
-- [Setting up PostgreSQL on Linux](#setting-up-postgresql-on-linux)
-  - [Debian and Ubuntu](#debian-and-ubuntu)
-  - [CentOS and Fedora](#centos-and-fedora)
+- **In a container.** The official `postgres` Docker image is the quickest option on any operating system. The server is isolated from the rest of your system, you can run several versions side by side, and removing it leaves nothing behind. For most development work, this is the option we recommend.
+- **As a native installation.** PostgreSQL's package repositories, your Linux distribution, Homebrew, Postgres.app and the EDB installer install PostgreSQL directly on your operating system, usually as a service that starts with your computer. Choose this if you can't or don't want to use Docker.
 
-Navigate to the sections that match the platforms you will be working with.
+After the installation, the guide shows how to lock the server down, create a database and a role for your application, manage the service, and remove PostgreSQL again. Jump to the part you need:
 
-<PrismaOutlinks>
+- [Choosing a PostgreSQL version](#choosing-a-postgresql-version)
+- [Running PostgreSQL in Docker](#running-postgresql-in-docker)
+- [Installing PostgreSQL on Linux](#installing-postgresql-on-linux)
+- [Installing PostgreSQL on macOS](#installing-postgresql-on-macos)
+- [Installing PostgreSQL on Windows](#installing-postgresql-on-windows)
+- [Securing the installation](#securing-the-installation)
+- [Creating a role and a database for your application](#creating-a-role-and-a-database-for-your-application)
+- [Managing the server and finding its files](#managing-the-server-and-finding-its-files)
+- [Removing PostgreSQL](#removing-postgresql)
 
-Once you have a PostgreSQL database, you can use [Prisma Client](https://www.prisma.io/docs/orm/prisma-client) to manage it from within your JavaScript or TypeScript applications. Try our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql) to get started.
+## Choosing a PostgreSQL version
 
-</PrismaOutlinks>
+The PostgreSQL project releases a new major version about once a year and [supports each one for five years](https://www.postgresql.org/support/versioning/). Within a major version, minor releases with bug and security fixes come out at least every three months, and the project recommends always running the current minor release. These major versions are supported:
 
-## Setting up PostgreSQL on Windows
+| Version | Supported until   |
+| ------- | ----------------- |
+| 18      | November 14, 2030 |
+| 17      | November 8, 2029  |
+| 16      | November 9, 2028  |
+| 15      | November 11, 2027 |
+| 14      | November 12, 2026 |
 
-The PostgreSQL project provides a native Windows installer to install and configure your database.
+PostgreSQL 13 reached its end of life on November 13, 2025, and PostgreSQL 12 on November 21, 2024.
 
-Visit the [PostgreSQL Windows installation page](https://www.postgresql.org/download/windows/) to find a link to the installer. Click **Download the installer** at the start of the page:
+This guide installs **PostgreSQL 18**, the newest major version, which gives a new project the longest support window. At the time of writing, its current release is 18.6. If you are matching an existing server, install the major version it runs instead; the sections below point out where the version number goes.
 
-![PostgreSQL initial download page](../dataguide-images/postgresql/setting-up-a-local-database/windows/initial_download_page.png)
+Always name the major version when you install PostgreSQL. Names without a version, such as the Docker tag `postgres:latest`, Homebrew's `postgresql` and the `postgresql` package in PostgreSQL's APT repository, stand for the newest major version. That is 18 at the time of writing, but PostgreSQL 19 is in beta testing, and once it's released, a routine update can move you to it. A new major version can't simply take over an older version's data directory: moving your databases to it takes a dump and restore or [`pg_upgrade`](https://www.postgresql.org/docs/18/pgupgrade.html).
 
-On the page that follows, in the Windows x86-64 or Windows x86-32 columns (depending on your computer's architecture), choose the PostgreSQL version you'd like to install:
+## Running PostgreSQL in Docker
 
-![PostgreSQL available versions](../dataguide-images/postgresql/setting-up-a-local-database/windows/installer_download.png)
+You need Docker installed: [Docker Desktop](https://docs.docker.com/desktop/) on macOS and Windows, or Docker Engine on Linux. The commands below are for a Unix shell such as bash or zsh (on Windows, use WSL).
 
-Click **Download** on your chosen version and save the file to a convenient location.
+First, generate a random password for PostgreSQL's administrative `postgres` role and store it in a file that only you can read:
 
-Once the download completes, double click on the file to run the installer (you may have to confirm that you wish to allow the program to make changes to your computer):
-
-![PostgreSQL installer greeting](../dataguide-images/postgresql/setting-up-a-local-database/windows/installer_greeting.png)
-
-Click **Next** on the initial page to begin configuring your installation.
-
-On the next page, choose your installation directory:
-
-![PostgreSQL installation directory](../dataguide-images/postgresql/setting-up-a-local-database/windows/installation_directory.png)
-
-Click **Next** to accept the default location.
-
-The next page allows you to choose which components you wish to install. You need the **PostgreSQL Server** and **Command Line Tools** selected at a minimum:
-
-![PostgreSQL choose components](../dataguide-images/postgresql/setting-up-a-local-database/windows/choose_components.png)
-
-Click **Next** to continue.
-
-Now, choose the location where the database data files will be stored:
-
-![PostgreSQL data directory](../dataguide-images/postgresql/setting-up-a-local-database/windows/data_directory.png)
-
-Click **Next** to accept the default location.
-
-Next, select and confirm an administrative password for the PostgreSQL superuser (called `postgres`):
-
-![PostgreSQL set password](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_password.png)
-
-Click **Next** when you are finished.
-
-Choose the port that the server will listen to:
-
-![PostgreSQL set port](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_port.png)
-
-Click **Next** to accept the default 5432 port.
-
-Now, pick the locale that your database will use:
-
-![PostgreSQL locale](../dataguide-images/postgresql/setting-up-a-local-database/windows/set_locale.png)
-
-Click **Next** to use the default locale of your computer.
-
-The configuration portion of the installation is now complete. You can review a summary of the choices you've made:
-
-![PostgreSQL installation summary](../dataguide-images/postgresql/setting-up-a-local-database/windows/installation_summary.png)
-
-If everything looks correct, click **Next**.
-
-Finally, PostgreSQL is ready to be installed:
-
-![PostgreSQL ready to install](../dataguide-images/postgresql/setting-up-a-local-database/windows/ready_to_install.png)
-
-Click **Next** to begin the installation process.
-
-Once the installation is complete, you can verify the installation using the `psql` command line tool.
-
-In your start menu, type `psql` and click on the tool to launch the program. You will be prompted to enter the connection details that you wish to use.
-
-![Running psql client](../dataguide-images/postgresql/setting-up-a-local-database/windows/psql.png)
-
-Press **Enter** to accept the default choices given in the square brackets. The final prompt will be for the password for the `postgres` user that you configured during setup.
-
-Upon successfully authenticating, you will be dropped into an interactive `psql` session with your database.
-
-When you are finished, exit the session by typing:
-
-```
-\quit
+```bash
+(umask 077; openssl rand -base64 24 > postgres-password.txt)
 ```
 
-<PostgresCallout />
+The `umask` in the subshell makes sure the file is created readable only by you, without a moment where others could read it. Keep this file out of version control. Then start the server:
 
-## Setting up PostgreSQL on macOS
-
-The PostgreSQL project provides a native macOS installer to install and configure your database.
-
-Visit the [PostgreSQL macOS installation page](https://www.postgresql.org/download/macosx/) to find a link to the installer. Click **Download the installer** at the start of the **Interactive Installer by EnterpriseDB** section:
-
-![PostgreSQL initial download page](../dataguide-images/postgresql/setting-up-a-local-database/macos/initial_download_page.png)
-
-On the page that follows, in the Mac OS X column, choose the PostgreSQL version you'd like to install:
-
-![PostgreSQL available versions](../dataguide-images/postgresql/setting-up-a-local-database/macos/installer_download.png)
-
-Click **Download** on your chosen version and save the file to a convenient location.
-
-Once the download completes, find the PostgreSQL installer DMG in the Downloads folder. Double click on the downloaded DMG file to mount the installer archive:
-
-![PostgreSQL DMG file](../dataguide-images/postgresql/setting-up-a-local-database/macos/dmg_file.png)
-
-In the mounted archive, click on the PostgreSQL installer package (you may be prompted to confirm that you want the package to be able to make changes to your computer):
-
-![PostgreSQL installer package](../dataguide-images/postgresql/setting-up-a-local-database/macos/installer_package.png)
-
-The PostgreSQL installer will open to the welcome screen:
-
-![PostgreSQL installer welcome](../dataguide-images/postgresql/setting-up-a-local-database/macos/welcome.png)
-
-Click **Next** on the initial page to begin configuring your installation.
-
-On the next page, choose your installation directory:
-
-![PostgreSQL installation directory](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_directory.png)
-
-Click **Next** to accept the default location.
-
-The next page allows you to choose which components you wish to install. You need the **PostgreSQL Server** and **Command Line Tools** selected at a minimum:
-
-![PostgreSQL choose components](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_components.png)
-
-Click **Next** to continue.
-
-Now, choose the location where the database data files will be stored:
-
-![PostgreSQL data directory](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_data_directory.png)
-
-Click **Next** to accept the default location.
-
-On the next page, select and confirm an administrative password for the PostgreSQL superuser (called `postgres`):
-
-![PostgreSQL set password](../dataguide-images/postgresql/setting-up-a-local-database/macos/set_password.png)
-
-Click **Next** when you are finished.
-
-The following page lets you choose the port that the server will listen to:
-
-![PostgreSQL set port](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_port.png)
-
-Click **Next** to accept the default 5432 port.
-
-Now, pick the locale that your database will use:
-
-![PostgreSQL locale](../dataguide-images/postgresql/setting-up-a-local-database/macos/choose_locale.png)
-
-Click **Next** to use the default locale of your computer.
-
-The configuration portion of the installation is now complete. You can review a summary of the choices you've made:
-
-![PostgreSQL installation summary](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_summary.png)
-
-If everything looks correct, click **Next**.
-
-PostgreSQL is ready to be installed:
-
-![PostgreSQL ready to install](../dataguide-images/postgresql/setting-up-a-local-database/macos/ready_to_install.png)
-
-Click **Next** to begin the installation process.
-
-The installer will confirm completion when the process completes:
-
-![PostgreSQL installation complete](../dataguide-images/postgresql/setting-up-a-local-database/macos/installation_complete.png)
-
-Now that PostgreSQL is installed, you can verify the installation using the `psql` command line tool. While this client is installed, we need to modify our terminal's `PATH` variable to access it easily.
-
-Open a new terminal window to begin. First, find the PostgreSQL `bin` directory by typing:
-
-```
-ls -d /Library/PostgreSQL/*/bin
+```bash
+docker run --name postgres -d \
+  -p 127.0.0.1:5432:5432 \
+  -v postgres-data:/var/lib/postgresql \
+  -v "$PWD/postgres-password.txt:/run/secrets/postgres-password:ro" \
+  -e POSTGRES_PASSWORD_FILE=/run/secrets/postgres-password \
+  postgres:18
 ```
 
-The response will be the directory of your PostgreSQL `bin` directory. For example:
+Each option has a job:
 
+- `-p 127.0.0.1:5432:5432` makes the server reachable on port 5432 of your computer, but only from your computer. Without the `127.0.0.1` part, [Docker publishes the port on all of the host's addresses](https://docs.docker.com/engine/network/port-publishing/), which makes your database reachable from the network. (Before Docker Engine 28, other hosts on the same local network segment could reach even ports published to `127.0.0.1`; Docker's page has the details.) If port 5432 is already in use, for example by a PostgreSQL server installed on your computer, pick another host port, such as `127.0.0.1:5433:5432`, and connect to that port.
+- `-v postgres-data:/var/lib/postgresql` keeps the data in a named volume, so your databases survive when you remove or recreate the container. The PostgreSQL 18 image changed where it keeps its data: the volume belongs on `/var/lib/postgresql`, and the data directory is `/var/lib/postgresql/18/docker` inside it. Guides written for older versions mount the volume on `/var/lib/postgresql/data` instead. The `postgres:18` container then stops right away with an error that starts with `Error: in 18+, these Docker images are configured to store database data in a format which is compatible with "pg_ctlcluster"`.
+- `POSTGRES_PASSWORD_FILE` tells the image to read the password for the `postgres` superuser from the mounted file. Unlike `-e POSTGRES_PASSWORD=...`, this keeps the password out of your shell history and out of the output of `docker inspect`. The image only uses the password to initialize an empty data directory; after that, it is stored in the database, and changing the file has no effect.
+- `postgres:18` follows PostgreSQL 18: pulling it again gets you the latest 18.x release, never a new major version. Use `postgres:17` for PostgreSQL 17.
+
+On the first start, the container initializes the data directory and sets the password, runs a temporary server for any setup scripts, and then starts the real server. Wait until `docker logs postgres` shows `database system is ready to accept connections` after `PostgreSQL init process complete`:
+
+```bash
+docker logs postgres
 ```
-/Library/PostgreSQL/12/bin
+
+```text
+...
+PostgreSQL init process complete; ready for start up.
+
+2026-09-30 12:38:21.719 UTC [1] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-09-30 12:38:21.719 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-09-30 12:38:21.719 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-09-30 12:38:21.731 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-09-30 12:38:21.739 UTC [73] LOG:  database system was shut down at 2026-09-30 12:38:21 UTC
+2026-09-30 12:38:21.745 UTC [1] LOG:  database system is ready to accept connections
 ```
 
-Now that you know the directory to use, edit the `/etc/paths` file by typing:
+The addresses `0.0.0.0` and `::` belong to the container's own network interfaces. Which of your computer's addresses can reach the server is decided by the `-p` option.
 
+Now connect with `psql` inside the container:
+
+```bash
+docker exec -it postgres psql -U postgres
 ```
-sudo nano /etc/paths
+
+```text
+psql (18.6 (Debian 18.6-1.pgdg13+2))
+Type "help" for help.
+
+postgres=#
 ```
 
-You will be prompted for your computer's administrative password to continue:
+`psql` doesn't ask for a password here, because the image trusts connections made inside the container. That's only open to someone who can run `docker exec`, and they can do anything in the container anyway.
 
-![PostgreSQL open paths file](../dataguide-images/postgresql/setting-up-a-local-database/macos/open_paths_file.png)
+If you have `psql` installed on your computer, you can also connect through the published port, and enter the password from `postgres-password.txt` when you're asked for it:
 
-Add the path to `bin` directory that you found to the bottom of the file:
-
-![PostgreSQL edit paths file](../dataguide-images/postgresql/setting-up-a-local-database/macos/edit_paths_file.png)
-
-When you are finished, save and close the file by typing <kbd>CTL-X</kbd>, <kbd>Y</kbd>, and hitting <kbd>ENTER</kbd>.
-
-To use the new `PATH` settings, open a new terminal window. In the new window, type:
-
+```bash
+psql -h 127.0.0.1 -p 5432 -U postgres
 ```
+
+The `-h` option matters: without it, `psql` looks for a server socket file on your computer instead of connecting over TCP, and the container's socket file only exists inside the container. Connections through the published port always need the password: the image requires `scram-sha-256` password authentication for connections from outside the container, and your computer's connections reach the container from the address of Docker's network gateway.
+
+The image can also create a role and a database on the first start, through the `POSTGRES_USER` and `POSTGRES_DB` variables, but the role it creates is a superuser. This guide creates them by hand instead, in [Creating a role and a database for your application](#creating-a-role-and-a-database-for-your-application), so that you can see and choose the privileges. The [image's documentation](https://hub.docker.com/_/postgres) lists all of its options.
+
+## Installing PostgreSQL on Linux
+
+The PostgreSQL project publishes its own package repositories for Debian and Ubuntu (APT) and for Red Hat Enterprise Linux and compatible distributions (Yum), with packages for every supported major version. Distributions also ship their own packages, but each distribution release has one default major version for its whole life. Here is what `postgresql-server` (`postgresql` on Debian and Ubuntu) gets you from some current distributions' own repositories:
+
+| Distribution                      | Distribution package                                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Ubuntu 26.04 LTS                  | PostgreSQL 18 (18.6 at the time of writing)                                                                   |
+| Ubuntu 24.04 LTS                  | PostgreSQL 16 (16.15)                                                                                         |
+| Debian 13                         | PostgreSQL 17 (17.11)                                                                                         |
+| AlmaLinux 10 (RHEL 10 compatible) | PostgreSQL 16 (16.15); PostgreSQL 18 as a separate `postgresql18-server` package                              |
+| AlmaLinux 9 (RHEL 9 compatible)   | PostgreSQL 13 (13.23), which is no longer supported; PostgreSQL 15, 16 and 18 are available as module streams |
+| Fedora 43 and 44                  | PostgreSQL 18 (18.6)                                                                                          |
+
+### Ubuntu and Debian: the PostgreSQL APT repository
+
+PostgreSQL's APT repository has packages for the current Debian and Ubuntu releases, for the `amd64` and `arm64` architectures (on Ubuntu, `arm64` only for LTS releases). The easiest way to set it up is the script from the `postgresql-common` package, which both distributions include:
+
+```bash
+sudo apt-get install postgresql-common
+sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+```
+
+The script asks you to press Enter, writes the repository to `/etc/apt/sources.list.d/pgdg.sources`, and runs `apt-get update`. The file tells APT to trust only the repository's own signing key, which `postgresql-common` ships. On Ubuntu 24.04, it contains:
+
+```text
+Types: deb
+URIs: https://apt.postgresql.org/pub/repos/apt
+Suites: noble-pgdg
+Components: main
+Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
+```
+
+Older guides add the repository's key with `apt-key`, which Debian 13 and Ubuntu 26.04 no longer include. To set up the repository by hand instead, follow the manual steps on PostgreSQL's download page for [Ubuntu](https://www.postgresql.org/download/linux/ubuntu/) or [Debian](https://www.postgresql.org/download/linux/debian/).
+
+Now install the server. Name the version: in this repository, the unversioned `postgresql` package always pulls in the newest major version.
+
+```bash
+sudo apt-get install postgresql-18
+```
+
+The package creates a database cluster (a data directory with its configuration) named `main` and sets up authentication for it:
+
+```text
+...
+Creating new PostgreSQL cluster 18/main ...
+/usr/lib/postgresql/18/bin/initdb -D /var/lib/postgresql/18/main --auth-local peer --auth-host scram-sha-256 --no-instructions
+...
+```
+
+The package then starts the cluster through systemd. Debian and Ubuntu can run several clusters side by side, and `pg_lsclusters` lists them:
+
+```bash
+pg_lsclusters
+```
+
+```text
+Ver Cluster Port Status Owner    Data directory              Log file
+18  main    5432 online postgres /var/lib/postgresql/18/main /var/log/postgresql/postgresql-18-main.log
+```
+
+If the status is `down`, start the cluster with `sudo systemctl start postgresql@18-main`. The installation also created an operating system user named `postgres`, which is the only user that can log in as the `postgres` superuser role for now. Connect as that user:
+
+```bash
+sudo -u postgres psql
+```
+
+```text
+psql (18.6 (Ubuntu 18.6-1.pgdg24.04+2))
+Type "help" for help.
+
+postgres=#
+```
+
+[Securing the installation](#securing-the-installation) explains how this works. PostgreSQL's [APT repository wiki page](https://wiki.postgresql.org/wiki/Apt) answers common questions about the repository.
+
+### Ubuntu and Debian: the distribution's own packages
+
+On Ubuntu 26.04, the distribution's own package is PostgreSQL 18, so you don't need PostgreSQL's repository:
+
+```bash
+sudo apt-get update
+sudo apt-get install postgresql-18
+```
+
+The package creates and starts a cluster named `18/main` with the same settings as the packages from PostgreSQL's repository, so the rest of the section above applies.
+
+On Ubuntu 24.04, the distribution's `postgresql` package installs PostgreSQL 16, and on Debian 13, PostgreSQL 17. Both are still supported, until November 2028 and November 2029, but the commands and paths in this guide use PostgreSQL 18. To get PostgreSQL 18 on these releases, use [PostgreSQL's APT repository](#ubuntu-and-debian-the-postgresql-apt-repository) or [Docker](#running-postgresql-in-docker).
+
+### RHEL, Rocky Linux and AlmaLinux: the PostgreSQL Yum repository
+
+PostgreSQL's Yum repository serves Red Hat Enterprise Linux and compatible distributions, on architectures including `x86_64` and `aarch64`. It is set up by a release package:
+
+```bash
+sudo dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(rpm -E %{rhel})-$(uname -m)/pgdg-redhat-repo-latest.noarch.rpm
+```
+
+`$(rpm -E %{rhel})` expands to your distribution's major version, such as `9` or `10`, and `$(uname -m)` to your architecture, so the same command works on all of them. PostgreSQL's [Red Hat download page](https://www.postgresql.org/download/linux/redhat/) generates the same commands for the distribution, version and architecture you select. On version 8 of these distributions, first disable the system's own PostgreSQL module, as that page's instructions do:
+
+```bash
+sudo dnf -qy module disable postgresql
+```
+
+Install the server, initialize its data directory, and start it now and on every boot:
+
+```bash
+sudo dnf install postgresql18-server
+sudo /usr/pgsql-18/bin/postgresql-18-setup initdb
+sudo systemctl enable --now postgresql-18
+```
+
+RHEL 10 and compatible distributions have a `postgresql18-server` package of their own, with a different layout: it has no `/usr/pgsql-18` directory or `postgresql-18-setup` script. Set up PostgreSQL's repository first, because its packages take priority: with the repository set up, `dnf` installs the one whose release contains `PGDG`, such as `postgresql18-server-18.6-4PGDG.rhel10.2`.
+
+When `dnf` installs the first package from the repository, it asks you to import the repository's signing key, whose user ID is `PostgreSQL RPM Repository <pgsql-pkg-yum@lists.postgresql.org>`. The packages don't initialize or start the server on their own, which is why the second and third commands are needed. The setup script creates the data directory in `/var/lib/pgsql/18/data` and configures the same authentication as the Debian and Ubuntu packages: peer authentication for local connections and `scram-sha-256` passwords for connections over TCP. Log in as the administrator with:
+
+```bash
+sudo -u postgres psql
+```
+
+### Fedora
+
+Fedora 43 and 44 include PostgreSQL 18, and PostgreSQL's own Yum repository only has Fedora packages for `x86_64`, so use Fedora's packages. As on RHEL, they don't initialize or start the server by themselves:
+
+```bash
+sudo dnf install postgresql-server
+sudo postgresql-setup --initdb
+sudo systemctl enable --now postgresql
+```
+
+Fedora's `postgresql-setup` configures `ident` authentication for connections over TCP, even from your own machine. With `ident`, PostgreSQL asks an ident server on the client's machine which operating system user opened the connection, and most computers don't run one. An application role like the one [created below](#creating-a-role-and-a-database-for-your-application) can't log in with its password until you change that:
+
+```text
+psql: error: connection to server at "localhost" (::1), port 5432 failed: FATAL:  Ident authentication failed for user "app"
+```
+
+Switch the four lines that use `ident` to `scram-sha-256`, and tell the server to reload its configuration:
+
+```bash
+sudo sed -i 's/ident$/scram-sha-256/' /var/lib/pgsql/data/pg_hba.conf
+sudo systemctl reload postgresql
+```
+
+Log in as the administrator with `sudo -u postgres psql`.
+
+## Installing PostgreSQL on macOS
+
+The [PostgreSQL project lists several options](https://www.postgresql.org/download/macosx/) for macOS. This section covers three: the [Homebrew](https://brew.sh/) package manager, Postgres.app and the installer by EDB. Pick one: all of them run a server on port 5432, and they don't know about each other.
+
+### Homebrew
+
+Install the formula for PostgreSQL 18 and start it as a background service:
+
+```bash
+brew install postgresql@18
+brew services start postgresql@18
+```
+
+Versioned formulas like `postgresql@18` aren't linked into Homebrew's `bin` directory, so add their programs to your `PATH`. For zsh, the default shell on macOS, run the following and then open a new terminal:
+
+```bash
+echo 'export PATH="$(brew --prefix postgresql@18)/bin:$PATH"' >> ~/.zshrc
+```
+
+According to the [formula's notes](https://formulae.brew.sh/formula/postgresql@18), installing it creates a database cluster in `$(brew --prefix)/var/postgresql@18` by running `initdb` without any authentication options. That has two consequences:
+
+- The superuser role has the name of your macOS account, not `postgres`, and there is no database with that name. Connect to the `postgres` database instead:
+
+  ```bash
+  psql postgres
+  ```
+
+- The cluster uses `trust` authentication, which accepts every connection from your own machine without a password. Anyone with an account on your Mac, and any program running on it, can connect as any role, including your superuser role. [Requiring passwords with Homebrew and Postgres.app](#requiring-passwords-with-homebrew-and-postgresapp) shows how to change that.
+
+The server only accepts connections from your own machine.
+
+### Postgres.app
+
+[Postgres.app](https://postgresapp.com/) packages PostgreSQL as a Mac app that runs the server while the app is running:
+
+1. On the [downloads page](https://postgresapp.com/downloads.html), download **Postgres.app with PostgreSQL 18**.
+2. Move Postgres.app to your Applications folder and open it.
+3. Select **Initialize** to create a server with PostgreSQL 18.
+
+To use `psql` and the other command-line tools in your terminal, add them to your `PATH` as the [Postgres.app documentation](https://postgresapp.com/documentation/install.html) describes, and then open a new terminal:
+
+```bash
+sudo mkdir -p /etc/paths.d && echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp
+```
+
+According to its documentation, Postgres.app creates a superuser role and a database named after your macOS account, so `psql` on its own connects you. It also creates a `postgres` superuser role. Like Homebrew, it uses `trust` authentication, but since version 2.7, Postgres.app asks you before it lets an app connect without a password. The documentation recommends switching to password authentication; see [Requiring passwords with Homebrew and Postgres.app](#requiring-passwords-with-homebrew-and-postgresapp).
+
+### The EDB installer
+
+The interactive installer that the PostgreSQL project links to is built and hosted by EDB:
+
+1. On PostgreSQL's [macOS download page](https://www.postgresql.org/download/macosx/), select **Download the installer**. On EDB's download page, download PostgreSQL 18 for macOS.
+2. Open the disk image and run the installer. Of the components, you need **PostgreSQL Server** and **Command Line Tools**. **pgAdmin 4** is a graphical client that you can leave out, and you don't need **Stack Builder**, a tool for installing add-ons.
+3. Set a password for the `postgres` superuser role. Keep the default installation and data directories, port 5432 and locale.
+4. At the end, clear the option to launch Stack Builder.
+
+PostgreSQL is installed in `/Library/PostgreSQL/18`, with the data directory in `/Library/PostgreSQL/18/data`, and a launch daemon starts it at boot. Add its programs to your `PATH`, then open a new terminal and log in with the password you chose:
+
+```bash
+echo 'export PATH="/Library/PostgreSQL/18/bin:$PATH"' >> ~/.zshrc
+```
+
+```bash
 psql -U postgres
 ```
 
-You will be prompted for the `postgres` user's administrative password that you set during the PostgreSQL configuration process:
+According to the [installer's source](https://github.com/EnterpriseDB/edb-installers/blob/REL-18/server/scripts/osx/initcluster.sh), it configures the server to listen on all of your Mac's network addresses. Continue with [Listening only on your own machine](#listening-only-on-your-own-machine). EDB's documentation describes the [installation steps](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/macos/) in more detail.
 
-![PostgreSQL psql authentication](../dataguide-images/postgresql/setting-up-a-local-database/macos/psql_authentication.png)
+## Installing PostgreSQL on Windows
 
-Upon successfully authenticating, you will be dropped into an interactive `psql` session with your database.
+On Windows, PostgreSQL's [download page](https://www.postgresql.org/download/windows/) links to the installer by EDB. EDB's download page has Windows installers for x86-64 only. On an ARM-based Windows PC, consider [running PostgreSQL in Docker](#running-postgresql-in-docker) instead: the official image includes an `arm64` variant, and Docker Desktop for Windows on Arm is in early access at the time of writing.
 
-To exit the session when you are finished, type:
+1. On PostgreSQL's [Windows download page](https://www.postgresql.org/download/windows/), select **Download the installer**. On EDB's download page, download PostgreSQL 18 for **Windows x86-64**.
+2. Run the installer. The choices that matter for a local database are:
+   - **Select Components**: you need **PostgreSQL Server** and **Command Line Tools**. **pgAdmin 4** is a graphical client that you can leave out, and you don't need **Stack Builder**, a tool for installing add-ons.
+   - **Password**: set the password for the `postgres` superuser role.
+   - Keep the defaults for the installation directory (`C:\Program Files\PostgreSQL\18`), the data directory (`C:\Program Files\PostgreSQL\18\data`), the port (5432) and the locale.
+3. At the end, clear the option to launch Stack Builder.
 
-```
-\quit
-```
+PostgreSQL runs as a Windows service named `postgresql-x64-18`. To connect, open **SQL Shell (psql)** from the Start menu, which asks for the connection details (press Enter to accept the defaults in square brackets) and then for your password. Or call `psql` by its full path in PowerShell:
 
-## Setting up PostgreSQL on Linux
-
-Installation methods differ depending on the Linux distribution you are using. Follow the section below that matches your Linux distribution.
-
-- [Debian and Ubuntu](#debian-and-ubuntu)
-  - [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-  - [Install using the PostgreSQL project's Debian and Ubuntu repositories](#install-using-the-postgresql-projects-debian-and-ubuntu-repositories)
-- [CentOS and Fedora](#centos-and-fedora)
-  - [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-  - [Install using the PostgreSQL project's CentOS and Fedora repositories](#install-using-the-postgresql-projects-centos-and-fedora-repositories)
-
-### Debian and Ubuntu
-
-You can either choose to use the version of PostgreSQL available in your distribution's default repositories or use repositories provided by the PostgreSQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the PostgreSQL project will be more up-to-date but may require extra configuration.
-
-- [Install using Debian or Ubuntu's default repositories](#install-using-debian-or-ubuntus-default-repositories)
-- [Install using the PostgreSQL project's Debian and Ubuntu repositories](#install-using-the-postgresql-projects-debian-and-ubuntu-repositories)
-
-#### Install using Debian or Ubuntu's default repositories
-
-Both Ubuntu and Debian provide versions of PostgreSQL server as packages within their default repositories. The PostgreSQL version may be older than those found on the PostgreSQL website, but this is the simplest way to install on these distributions.
-
-To install PostgreSQL server, update your computer's local package cache with the latest set of packages. Afterwards, install the `postgresql` package:
-
-```
-sudo apt update
-sudo apt install postgresql
+```powershell
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres
 ```
 
-By default, PostgreSQL is configured to use [peer authentication](https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PEER), which allows users to log in if their operating system user name matches a PostgreSQL internal name.
+As on macOS, according to the [installer's source](https://github.com/EnterpriseDB/edb-installers/blob/REL-18/server/scripts/windows/initcluster.ps1), it configures the server to listen on all of your computer's network addresses. Continue with [Listening only on your own machine](#listening-only-on-your-own-machine). EDB's documentation describes the [installation steps](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/windows/) in more detail.
 
-The installation process created an operating system user called `postgres` to match the `postgres` database administrative account. To log into PostgreSQL with the `psql` client, use `sudo` to run the command as the `postgres` user:
+<PostgresCallout />
 
-```
-sudo -u postgres psql
-```
+## Securing the installation
 
-When you are finished, you can exit the `psql` session by typing:
+A local database often ends up holding copies of real data, so it's worth a few minutes to make sure only you can get into it.
 
-```
-\quit
-```
+### How the superuser logs in
 
-#### Install using the PostgreSQL project's Debian and Ubuntu repositories
+A superuser role can do anything on the server, including reading every table and running programs on the server's machine. Each installation method sets up its superuser differently:
 
-If you need a more up-to-date version of PostgreSQL, you can use the repositories maintained by the PostgreSQL project instead of those provided by your Linux distribution.
+| Installation method                                 | Superuser role                                | How it logs in                                                                                                      |
+| --------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Docker image                                        | `postgres`                                    | With the password from `POSTGRES_PASSWORD_FILE` through the published port; without a password inside the container |
+| Debian, Ubuntu, RHEL-compatible and Fedora packages | `postgres`                                    | Peer authentication for the `postgres` operating system user; the role has no password                              |
+| Homebrew                                            | The name of your macOS account                | Without a password (`trust`) until you change it                                                                    |
+| Postgres.app                                        | `postgres` and the name of your macOS account | Without a password (`trust`), after Postgres.app asks whether to allow the app that connects                        |
+| EDB installer (macOS and Windows)                   | `postgres`                                    | The password you set in the installer (`scram-sha-256`)                                                             |
 
-First, add a new repository definition to your system by typing:
+With [`trust` authentication](https://www.postgresql.org/docs/18/auth-trust.html), PostgreSQL doesn't check anything: whoever can reach the server can log in as any role.
 
-```
-echo "deb http://apt.postgresql.org/pub/repos/apt/ $(. /etc/os-release; echo $VERSION_CODENAME)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
-```
+### Peer authentication on Linux
 
-Next, add the PostgreSQL package signing key to `apt` so that it trusts the packages in the new repository:
+With [peer authentication](https://www.postgresql.org/docs/18/auth-peer.html), PostgreSQL doesn't check a password. Instead, it asks the operating system which user opened the connection through the server's local socket file, and only lets that user log in to the role with the same name. That's why the administrator logs in with `sudo -u postgres psql`, while a regular user can't log in as `postgres`:
 
-```
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-```
-
-With the repository set up, you can update your local package index and then install PostgreSQL by typing:
-
-```
-sudo apt update
-sudo apt install postgresql
+```bash
+psql -U postgres
 ```
 
-By default, PostgreSQL is configured to use [peer authentication](https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PEER), which allows users to log in if their operating system user name matches a PostgreSQL internal name.
-
-The installation process created an operating system user called `postgres` to match the `postgres` database administrative account. To log into PostgreSQL with the `psql` client, use `sudo` to run the command as the `postgres` user:
-
-```
-sudo -u postgres psql
+```text
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  Peer authentication failed for user "postgres"
 ```
 
-When you are finished, you can exit the `psql` session by typing:
+The rules that decide which authentication method applies are in the server's [`pg_hba.conf` file](https://www.postgresql.org/docs/18/auth-pg-hba-conf.html). As a superuser, you can read them with SQL:
 
-```
-\quit
-```
-
-### CentOS and Fedora
-
-You can either choose to use the version of PostgreSQL available in your distribution's default repositories or use repositories provided by the PostgreSQL project. Packages in the default repository are tested to work with all other software provided for your distribution, but may be older. Packages from the PostgreSQL project will be more up-to-date but may require extra configuration.
-
-- [Install using CentOS or Fedora's default repositories](#install-using-centos-or-fedoras-default-repositories)
-- [Install using the PostgreSQL project's CentOS and Fedora repositories](#install-using-the-postgresql-projects-centos-and-fedora-repositories)
-
-#### Install using CentOS or Fedora's default repositories
-
-Both CentOS and Fedora provide versions of PostgreSQL server as packages within their default repositories. The PostgreSQL version may be older than those found on the PostgreSQL website, but this is the simplest way to install on these distributions.
-
-To install PostgreSQL server, use your distribution's package manager to install the `mysql-server` package:
-
-For **CentOS** use the `yum` package manager:
-
-```
-sudo yum install postgresql-server
+```sql
+SELECT type, database, user_name, address, auth_method FROM pg_hba_file_rules;
 ```
 
-For **Fedora** use the `dnf` package manager:
-
-```
-sudo dnf install postgresql-server
-```
-
-Once the MySQL package is installed, initialize the database by typing:
-
-```
-sudo postgresql-setup initdb
-```
-
-Afterwards, start up the service by typing:
-
-```
-sudo systemctl start postgresql.service
+```text
+ type  |   database    | user_name  |  address  |  auth_method
+-------+---------------+------------+-----------+---------------
+ local | {all}         | {postgres} |           | peer
+ local | {all}         | {all}      |           | peer
+ host  | {all}         | {all}      | 127.0.0.1 | scram-sha-256
+ host  | {all}         | {all}      | ::1       | scram-sha-256
+ local | {replication} | {all}      |           | peer
+ host  | {replication} | {all}      | 127.0.0.1 | scram-sha-256
+ host  | {replication} | {all}      | ::1       | scram-sha-256
+(7 rows)
 ```
 
-Optionally, you can automatically start PostgreSQL on boot by typing:
+This output is from Ubuntu 24.04 with the package from PostgreSQL's APT repository. `local` rules apply to connections through the socket file, and `host` rules to TCP connections. Connections from your own machine over TCP need a password (`scram-sha-256`), and since there are no rules for other addresses, connections from other computers are refused. The PostgreSQL Yum repository's packages set up the same rules, without the separate first rule for `postgres`. Fedora's use `ident` instead of `scram-sha-256` until you [change them](#fedora).
 
-```
-sudo systemctl enable postgresql.service
-```
+The `postgres` role has no password on these systems, so nobody can log in as `postgres` over TCP, whatever password they try. Keep it that way: administering the server then requires `sudo`, and there is no superuser password to leak. The Data Guide's article on [configuring user authentication](/postgresql/authentication-and-authorization/configuring-user-authentication) explains the `pg_hba.conf` format in more detail.
 
-By default, PostgreSQL is configured to use [peer authentication](https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PEER), which allows users to log in if their operating system user name matches a PostgreSQL internal name.
+### Setting passwords safely
 
-The installation process created an operating system user called `postgres` to match the `postgres` database administrative account. To log into PostgreSQL with the `psql` client, use `sudo` to run the command as the `postgres` user:
+When a role needs a password, as the application role in [the next section](#creating-a-role-and-a-database-for-your-application) will, set it with the `\password` command in `psql`, followed by the role's name:
 
-```
-sudo -u postgres psql
+```sql
+\password app
 ```
 
-When you are finished, you can exit the `psql` session by typing:
-
-```
-\quit
-```
-
-#### Install using the PostgreSQL project's CentOS and Fedora repositories
-
-If you need a more up-to-date version of PostgreSQL, you can use the repositories maintained by the PostgreSQL project instead of those provided by your Linux distribution.
-
-To configure the PostgreSQL project's repository, download and install the repository setup package with in your terminal.
-
-For **CentOS** execute the following command:
-
-```
-sudo yum install "https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(. /etc/os-release; echo $VERSION_ID)-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+```text
+Enter new password for user "app":
+Enter it again:
 ```
 
-For **Fedora** use this command:
+According to the [`psql` documentation](https://www.postgresql.org/docs/18/app-psql.html), `\password` encrypts the password before it sends it to the server, so the password doesn't appear in cleartext in the command history, the server log, or elsewhere. `psql` saves the commands you type in its history file, `~/.psql_history`, and after `\password`, the file only contains `\password app`. An `ALTER ROLE app PASSWORD '...'` statement, on the other hand, is saved there as you typed it, password included.
 
-```
-sudo dnf install "https://download.postgresql.org/pub/repos/yum/reporpms/F-$(. /etc/os-release; echo $VERSION_ID)-x86_64/pgdg-fedora-repo-latest.noarch.rpm"
-```
+PostgreSQL stores passwords as `scram-sha-256` hashes by default. If older instructions tell you to use `md5` as the password type or authentication method, use `scram-sha-256` instead. PostgreSQL 18 warns when a role gets an MD5-encrypted password:
 
-If you are using **CentOS 8**, you must also disable the system's PostgreSQL module to prevent it from interfering with the repository's PostgreSQL version. To do so, type:
-
-```
-sudo yum module disable postgresql
+```text
+WARNING:  setting an MD5-encrypted password
+DETAIL:  MD5 password support is deprecated and will be removed in a future release of PostgreSQL.
+HINT:  Refer to the PostgreSQL documentation for details about migrating to another password type.
 ```
 
-Next, choose the version of PostgreSQL that you wish to target.
+### Requiring passwords with Homebrew and Postgres.app
 
-For **CentOS**, check which versions of PostgreSQL are available by typing:
+To make Homebrew's PostgreSQL ask for passwords, first give your superuser role one. Connect with `psql postgres`, and run `\password` without a role name to set the password of the role you're logged in as:
 
-```
-yum list postgresql*-server
-```
-
-For **Fedora** use the `dnf` package manager:
-
-```
-dnf list postgresql*-server
+```sql
+\password
 ```
 
-After deciding which version to use, you can install it using your package manager.
+Then replace `trust` with `scram-sha-256` in the server's `pg_hba.conf` file, and restart the service:
 
-For **CentOS** use the `yum` package manager. For example, to install PostgreSQL 12, type:
-
-```
-sudo yum install postgresql12-server
-```
-
-For **Fedora** use the `dnf` package manager. For example, to install PostgreSQL 12, type:
-
-```
-sudo dnf install postgresql12-server
+```bash
+sed -i '' 's/trust$/scram-sha-256/' "$(brew --prefix)/var/postgresql@18/pg_hba.conf"
+brew services restart postgresql@18
 ```
 
-Once the PostgreSQL package is installed, initialize the database:
+Set the password first: once the change is active, a role without a password can't log in at all. From now on, `psql` asks for your password. If you'd rather not type it every time, you can store it in a [password file](https://www.postgresql.org/docs/18/libpq-pgpass.html).
 
-```
-sudo /usr/pgsql-*/bin/postgresql-*-setup initdb
-```
+Postgres.app shows its configuration files in its **Server Settings**. Follow the steps under [Protecting PostgreSQL with a password](https://postgresapp.com/documentation/install.html#protecting-postgresql-with-a-password) in its documentation.
 
-Find the name of the systemd unit file for your version of PostgreSQL:
+### Listening only on your own machine
 
-```
-systemctl list-unit-files | grep postgresql
-```
+The [`listen_addresses`](https://www.postgresql.org/docs/18/runtime-config-connection.html#GUC-LISTEN-ADDRESSES) setting decides on which of your computer's network addresses the server accepts connections. Its default is `localhost`, which only accepts connections from your own machine, and most installation methods keep that default:
 
-Start up the service using the unit file you found. For example, for PostgreSQL 12, it would be:
+- The Debian and Ubuntu packages, the PostgreSQL Yum repository, Fedora, Homebrew and Postgres.app use `localhost`.
+- The Docker image sets it to `*`, all addresses, inside the container, and the `-p 127.0.0.1:5432:5432` option only publishes the port on your own machine.
+- The EDB installer on macOS and Windows sets it to `*`.
 
-```
-sudo systemctl start postgresql-12.service
-```
+With the EDB installer, `pg_hba.conf` only accepts connections from `127.0.0.1` and `::1`, so another computer that tries to log in gets an error like `no pg_hba.conf entry for host "192.168.215.3", user "postgres", database "postgres", no encryption`. But the server still accepts connections from the network before it turns them down. To stop listening on the network, log in as `postgres` and change the setting:
 
-Optionally, you can also automatically start PostgreSQL on boot with the `enable`:
-
-```
-sudo systemctl enable postgresql-12.service
+```sql
+ALTER SYSTEM SET listen_addresses = 'localhost';
 ```
 
-By default, PostgreSQL is configured to use [peer authentication](https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PEER), which allows users to log in if their operating system user name matches a PostgreSQL internal name.
+[`ALTER SYSTEM`](https://www.postgresql.org/docs/18/sql-altersystem.html) writes the setting to the `postgresql.auto.conf` file in the data directory, which overrides `postgresql.conf`. The new value takes effect when you restart the server:
 
-The installation process created an operating system user called `postgres` to match the `postgres` database administrative account. To log into PostgreSQL with the `psql` client, use `sudo` to run the command as the `postgres` user:
+- **macOS**: `sudo launchctl unload /Library/LaunchDaemons/postgresql-18.plist`, and then `sudo launchctl load /Library/LaunchDaemons/postgresql-18.plist`.
+- **Windows**: in an administrator terminal, `net stop postgresql-x64-18`, and then `net start postgresql-x64-18`.
 
-```
-sudo -u postgres psql
+Then check the setting:
+
+```sql
+SHOW listen_addresses;
 ```
 
-When you are finished, you can exit the `psql` session by typing:
+```text
+ listen_addresses
+------------------
+ localhost
+(1 row)
+```
 
+## Creating a role and a database for your application
+
+Your applications shouldn't connect as a superuser. Instead, give each application its own database and a role that can only work with that database. If the application's credentials leak, or a bug runs the wrong statement, the damage stays inside that one database.
+
+In PostgreSQL, users and groups are both [roles](https://www.postgresql.org/docs/18/database-roles.html); a user is a role that is allowed to log in. Log in as the superuser with the method from your installation:
+
+- **Docker**: `docker exec -it postgres psql -U postgres`
+- **Debian, Ubuntu, RHEL-compatible and Fedora packages**: `sudo -u postgres psql`
+- **Homebrew and Postgres.app**: `psql postgres`
+- **EDB installer**: `psql -U postgres` on macOS, or **SQL Shell (psql)** on Windows
+
+Create the role, give it a password, and create a database that it owns:
+
+```sql
+CREATE ROLE app LOGIN;
+\password app
+CREATE DATABASE app OWNER app;
 ```
-\quit
+
+```text
+postgres=# CREATE ROLE app LOGIN;
+CREATE ROLE
+postgres=# \password app
+Enter new password for user "app":
+Enter it again:
+postgres=# CREATE DATABASE app OWNER app;
+CREATE DATABASE
 ```
+
+The statements do the following:
+
+- [`CREATE ROLE app LOGIN`](https://www.postgresql.org/docs/18/sql-createrole.html) creates a role named `app` that can log in. By default, a new role isn't a superuser and can't create databases or other roles.
+- `\password app` sets its password, as described in [Setting passwords safely](#setting-passwords-safely).
+- [`CREATE DATABASE app OWNER app`](https://www.postgresql.org/docs/18/sql-createdatabase.html) creates an empty database named `app` and makes the `app` role its owner.
+
+The owner matters because of how PostgreSQL handles the `public` schema, where tables go by default. Since [PostgreSQL 15](https://www.postgresql.org/docs/release/15.0/), only the database's owner (and superusers) can create objects in the `public` schema of a new database, where earlier versions let every role do that. If you create the database with the superuser as its owner and only grant the application privileges on it, for example with `GRANT ALL PRIVILEGES ON DATABASE app TO app`, the application can connect, but its first `CREATE TABLE` fails with `ERROR:  permission denied for schema public`. The [schema documentation](https://www.postgresql.org/docs/18/ddl-schemas.html#DDL-SCHEMAS-PATTERNS) describes the other ways to set this up, for example if a separate role runs your schema migrations.
+
+You can check the new role's attributes with `\du`:
+
+```sql
+\du app
+```
+
+```text
+     List of roles
+ Role name | Attributes
+-----------+------------
+ app       |
+```
+
+An empty **Attributes** column means that the role has none of the special attributes, such as `Superuser` or `Create DB`.
+
+Now log in as the new role. How you connect depends on your installation:
+
+- **Debian, Ubuntu, RHEL-compatible and Fedora packages**: `psql -h localhost -U app app`. The `-h localhost` option makes `psql` connect over TCP, where the server asks for the password. Without it, `psql` connects through the socket file, where peer authentication refuses the login with `FATAL:  Peer authentication failed for user "app"`, because your operating system user isn't called `app`.
+- **Docker**: `psql -h 127.0.0.1 -U app app` from your computer, or `docker exec -it postgres psql -U app app`, which doesn't ask for the password.
+- **macOS**: `psql -h localhost -U app app`. With Homebrew and Postgres.app, you're only asked for a password after you've [switched to password authentication](#requiring-passwords-with-homebrew-and-postgresapp).
+- **Windows**: `& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -U app app` in PowerShell. In **SQL Shell (psql)**, enter `app` as the database and the username.
+
+Create a table, and check that the role can use it, but can't read the stored password hashes, create databases or roles, or create tables in another database:
+
+```sql
+CREATE TABLE notes (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, body text NOT NULL);
+INSERT INTO notes (body) VALUES ('hello');
+SELECT * FROM notes;
+SELECT rolname, rolpassword FROM pg_authid;
+CREATE DATABASE other;
+CREATE ROLE other;
+\c postgres
+CREATE TABLE notes (id int);
+```
+
+```text
+app=> CREATE TABLE notes (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, body text NOT NULL);
+CREATE TABLE
+app=> INSERT INTO notes (body) VALUES ('hello');
+INSERT 0 1
+app=> SELECT * FROM notes;
+ id | body
+----+-------
+  1 | hello
+(1 row)
+
+app=> SELECT rolname, rolpassword FROM pg_authid;
+ERROR:  permission denied for table pg_authid
+app=> CREATE DATABASE other;
+ERROR:  permission denied to create database
+app=> CREATE ROLE other;
+ERROR:  permission denied to create role
+DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+app=> \c postgres
+You are now connected to database "postgres" as user "app".
+postgres=> CREATE TABLE notes (id int);
+ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE notes (id int);
+                     ^
+```
+
+The errors are what you want to see. The role can still connect to the `postgres` database, as every role can by default, but it can't create anything there.
+
+Applications usually connect with a connection URI, which for this role looks like `postgresql://app:YOUR_PASSWORD@localhost:5432/app`. If your password contains characters such as `/`, `@` or `:`, they must be percent-encoded; the [guide to connection URIs](/postgresql/short-guides/connection-uris) explains how. To learn more about roles and privileges, read [how to manage roles](/postgresql/authentication-and-authorization/role-management) and [how to manage privileges](/postgresql/authentication-and-authorization/managing-privileges). To connect from other tools, see [connecting to PostgreSQL databases](/postgresql/connecting-to-postgresql-databases).
+
+<PrismaOutlinks>
+
+Once you have a PostgreSQL database, you can use [Prisma ORM](https://www.prisma.io/docs/orm) to manage it from within your TypeScript applications. Try the [PostgreSQL quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/postgresql) to get started.
+
+</PrismaOutlinks>
+
+## Managing the server and finding its files
+
+Where PostgreSQL keeps its configuration, data and log depends on how you installed it:
+
+| Installation method       | Start and stop                                                                                         | Configuration files                                   | Data directory                                                                | Server log                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------- |
+| Docker                    | `docker start postgres`, `docker stop postgres`                                                        | In the data directory                                 | The `postgres-data` volume (`/var/lib/postgresql/18/docker` in the container) | `docker logs postgres`                       |
+| Debian and Ubuntu         | `sudo systemctl start postgresql`, `sudo systemctl stop postgresql`                                    | `/etc/postgresql/18/main`                             | `/var/lib/postgresql/18/main`                                                 | `/var/log/postgresql/postgresql-18-main.log` |
+| PostgreSQL Yum repository | `sudo systemctl start postgresql-18`, `sudo systemctl stop postgresql-18`                              | In the data directory                                 | `/var/lib/pgsql/18/data`                                                      | The `log` directory in the data directory    |
+| Fedora                    | `sudo systemctl start postgresql`, `sudo systemctl stop postgresql`                                    | In the data directory                                 | `/var/lib/pgsql/data`                                                         | The `log` directory in the data directory    |
+| Homebrew                  | `brew services start postgresql@18`, `brew services stop postgresql@18`                                | In the data directory                                 | `$(brew --prefix)/var/postgresql@18`                                          | `$(brew --prefix)/var/log/postgresql@18.log` |
+| Postgres.app              | The **Start** and **Stop** buttons in Postgres.app                                                     | In the data directory; **Server Settings** shows them | `~/Library/Application Support/Postgres/var-18`                               | `postgres-server.log` in the data directory  |
+| EDB installer on macOS    | `sudo launchctl load` or `unload` with `/Library/LaunchDaemons/postgresql-18.plist`                    | In the data directory                                 | `/Library/PostgreSQL/18/data`                                                 | The `log` directory in the data directory    |
+| EDB installer on Windows  | The `postgresql-x64-18` service, for example `net stop postgresql-x64-18` in an administrator terminal | In the data directory                                 | `C:\Program Files\PostgreSQL\18\data`                                         | The `log` directory in the data directory    |
+
+The configuration files are `postgresql.conf` for the server's settings and `pg_hba.conf` for its authentication rules. Wherever PostgreSQL came from, a superuser can ask the server where they are:
+
+```sql
+SHOW config_file;
+SHOW hba_file;
+SHOW data_directory;
+```
+
+```text
+                  config_file
+-----------------------------------------------
+ /var/lib/postgresql/18/docker/postgresql.conf
+(1 row)
+
+                 hba_file
+-------------------------------------------
+ /var/lib/postgresql/18/docker/pg_hba.conf
+(1 row)
+
+        data_directory
+-------------------------------
+ /var/lib/postgresql/18/docker
+(1 row)
+```
+
+This output is from the Docker image. After you change `pg_hba.conf`, reload the server's configuration (for example, `sudo systemctl reload postgresql`). Some settings in `postgresql.conf`, including `listen_addresses`, only take effect when you restart the server.
+
+On Linux, `sudo systemctl disable postgresql` (`postgresql-18` with PostgreSQL's Yum repository) stops the server from starting at boot, if you'd rather start it only when you need it.
+
+## Removing PostgreSQL
+
+Removing PostgreSQL's programs generally leaves your data in place, so you can reinstall without losing it. Delete the data directory yourself once you're sure you don't need it; if you might, [export your data](/postgresql/inserting-and-modifying-data/importing-and-exporting-data-in-postgresql) first.
+
+- **Docker**: remove the container, then the volume. Removing the volume deletes all of your databases. Delete `postgres-password.txt` too.
+
+  ```bash
+  docker rm -f postgres
+  docker volume rm postgres-data
+  ```
+
+- **Debian and Ubuntu**: remove the server and the packages that were installed with it. The cluster's data directory, `/var/lib/postgresql/18/main`, and its configuration in `/etc/postgresql/18/main` stay.
+
+  ```bash
+  sudo apt-get remove postgresql-18
+  sudo apt-get autoremove
+  ```
+
+  `sudo apt-get purge postgresql-18` asks whether to delete the cluster too. The default answer, Yes, deletes all of your databases along with their configuration and logs. To stop using PostgreSQL's repository, also delete `/etc/apt/sources.list.d/pgdg.sources`.
+
+- **RHEL and compatible**: remove the server and the repository's release package. `dnf` also removes the client and libraries that were installed with the server. `/var/lib/pgsql/18` stays.
+
+  ```bash
+  sudo dnf remove postgresql18-server pgdg-redhat-repo
+  ```
+
+- **Fedora**: remove the server. `/var/lib/pgsql/data` stays.
+
+  ```bash
+  sudo dnf remove postgresql-server
+  ```
+
+- **Homebrew**: stop the service and uninstall the formula. The data directory in `$(brew --prefix)/var/postgresql@18` isn't part of the formula and stays.
+
+  ```bash
+  brew services stop postgresql@18
+  brew uninstall postgresql@18
+  ```
+
+- **Postgres.app**: quit Postgres.app and move it to the Trash. Your data stays in `~/Library/Application Support/Postgres`. The [Postgres.app documentation](https://postgresapp.com/documentation/install.html) lists what else to remove, including the `/etc/paths.d/postgresapp` file.
+- **EDB installer**: on macOS, open `/Library/PostgreSQL/18/uninstall-postgresql.app`. On Windows, uninstall PostgreSQL 18 from the list of installed apps in Windows' settings. According to [EDB's documentation](https://www.enterprisedb.com/docs/supported-open-source/postgresql/uninstalling/), the uninstaller leaves the data directory in place, and on macOS also the `postgres` user it created.

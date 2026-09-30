@@ -13,7 +13,7 @@ But databases are, by definition, very good at processing and manipulating infor
 
 <PrismaOutlinks>
 
-Find out [how to use functions with Prisma](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#using-functions) in the Prisma documentation.
+Find out [how to use functions in default values with Prisma](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#default-values) in the Prisma documentation.
 
 </PrismaOutlinks>
 
@@ -94,7 +94,7 @@ CREATE TABLE lots (
 
 <PrismaOutlinks>
 
-If you're using Prisma, our documentation covers the equivalent method of [defining default values for your fields](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-a-default-value). Prisma Client also supports [aggregation](https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing), which allows you to perform count, average, and similar operations on data without separate storage.
+If you're using Prisma, our documentation covers the equivalent method of [defining default values for your fields](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#default-values). Prisma ORM also supports [aggregation](https://www.prisma.io/docs/orm/reference/orm-client?db=postgresql#aggregate), which allows you to perform count, average, and similar operations on data without separate storage.
 
 </PrismaOutlinks>
 
@@ -180,7 +180,7 @@ The trigger-action-trigger-action call stack can become arbitrarily long, althou
 
 <PrismaOutlinks>
 
-In Prisma Client, you can achieve similar results with TypeScript at the client level instead of SQL by using [middleware](https://www.prisma.io/docs/orm/prisma-client/client-extensions/middleware). Middleware allows you to perform an action before and after every query (e.g., turn a `delete` query into a "soft" delete which toggles a record's visibility instead).
+In Prisma ORM, you can achieve similar results with TypeScript at the client level instead of SQL by using [middleware](https://www.prisma.io/docs/orm/middleware/how-middleware-works). Middleware runs your code before and after every query (e.g., to block a `DELETE` that has no `WHERE` clause before it reaches the database).
 
 </PrismaOutlinks>
 
@@ -192,9 +192,9 @@ Programmability is an unjustly overlooked feature of relational databases. There
 
 <PrismaOutlinks>
 
-If you want to learn more about what data modeling means in the context of Prisma, visit our conceptual page on [data modeling](https://www.prisma.io/docs/orm/overview/introduction/data-modeling).
+If you want to learn more about what data modeling means in the context of Prisma, visit the [data modeling overview](https://www.prisma.io/docs/orm/data-modeling?db=postgresql) in the Prisma documentation.
 
-You can also learn about the specific data model component of a Prisma schema in the [data model](https://www.prisma.io/docs/orm/prisma-schema/data-model) section of the Prisma documentation.
+You can also learn how to describe models in a Prisma contract (the file that Prisma ORM 7 called the schema) in the [models and fields](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) section of the Prisma documentation.
 
 </PrismaOutlinks>
 
