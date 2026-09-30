@@ -5,7 +5,7 @@ import Clear from '../icons/Clear'
 import Search from '../components/search'
 import Sidebar from '../components/sidebar'
 import { HeaderProps } from '../interfaces/Layout.interface'
-import { withPrefix } from 'gatsby'
+import { Link } from 'gatsby'
 import { useLocation } from '../hooks/useLocation'
 import { headerCtaUrl } from '../cta'
 
@@ -211,9 +211,9 @@ const Header = ({ headerProps }: HeaderViewProps) => {
             <span className="separator" aria-hidden="true">
               /
             </span>
-            <a className="product" href={withPrefix(headerProps.logoLink).replace(/\/$/, '')}>
+            <Link className="product" to={headerProps.logoLink}>
               dataguide
-            </a>
+            </Link>
           </Wordmark>
         </HeaderNav>
         <SearchContainer>
