@@ -57,10 +57,11 @@ We'll also briefly cover some serverless computing adjacent technologies like se
 - Fauna
 - Neon
 
+After that, we'll look at the serverless drivers and connection poolers that help functions connect to those databases.
+
 At the end, we'll introduce a few newer tools and services that you might want to keep an eye out for if you are building serverless applications. While they may not be ready for production at this time, they may be able to provide value soon:
 
 - Deno Deploy
-- Prisma Accelerate
 
 With those categories in mind, we can start to look at the available services.
 
@@ -309,7 +310,7 @@ Cloudflare Workers are capable of delivering high performance at a lower cost to
 
 <PrismaOutlinks>
 
-You can learn how to deploy a Cloudflare Worker that uses Prisma to save every request to a MongoDB database for inspection later in the [Prisma docs](https://www.prisma.io/docs/orm/prisma-client/deployment/edge/deploy-to-cloudflare).
+You can learn how to deploy a Cloudflare Worker that queries a PostgreSQL database with Prisma ORM in the [Prisma docs](https://www.prisma.io/docs/guides/deployment/cloudflare-workers).
 
 </PrismaOutlinks>
 
@@ -400,7 +401,7 @@ While different from some of the other offerings because of this positioning, Ne
 
 <PrismaOutlinks>
 
-You can easily deploy Node.JS applications built with Prisma to Netlify. This [deployment guide](https://www.prisma.io/docs/orm/prisma-client/deployment/serverless/deploy-to-netlify) covers the process in greater detail.
+You can deploy Node.js applications built with Prisma to Netlify. Netlify's [Prisma Postgres integration](https://www.netlify.com/integrations/prisma/) sets up a Prisma Postgres database and adds it to your Netlify sites.
 
 </PrismaOutlinks>
 
@@ -596,6 +597,22 @@ MongoDB Atlas is a hosted, multi-cloud version of MongoDB. They are now offering
 
 [Neon](https://neon.tech) is a fully managed serverless PostgreSQL. Neon separates storage and compute to offer modern developer features such as serverless, branching, bottomless storage, and more.
 
+## Connecting to databases from serverless functions
+
+Because the instances used by serverless providers to execute functions are, by nature, ephemeral, it is easy to exhaust the connection pool of a backing database if too many function instances are active at once. Two kinds of tools help.
+
+### Serverless drivers
+
+A serverless driver sends queries over HTTP or WebSockets instead of holding a TCP connection open, which suits platforms that can't keep TCP connections or a connection pool between requests:
+
+- The [Prisma Postgres serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) connects to Prisma Postgres over HTTP and WebSockets.
+- The [Neon serverless driver](https://neon.com/docs/serverless/serverless-driver) queries Neon over HTTP or WebSockets.
+- The [PlanetScale serverless driver](https://planetscale.com/docs/vitess/tutorials/planetscale-serverless-driver) queries PlanetScale's Vitess (MySQL) databases over HTTP. PlanetScale's Postgres databases [support the Neon serverless driver](https://planetscale.com/docs/postgres/connecting/neon-serverless-driver).
+
+### Connection poolers
+
+A connection pooler keeps a pool of database connections that many function instances share. [Cloudflare Hyperdrive](https://developers.cloudflare.com/hyperdrive/) does this for Cloudflare Workers and any PostgreSQL or MySQL database: it sets up new connections near your Workers, pools connections near your database, and caches query results. [Prisma Postgres](https://www.prisma.io/docs/postgres/database/connection-pooling) includes connection pooling as well.
+
 ## Newer options to keep an eye out for
 
 Finally, we'll introduce a few tools and services that you might want to keep in mind for the future. These are just getting their start, but have potential to help with many serverless projects.
@@ -605,12 +622,6 @@ Finally, we'll introduce a few tools and services that you might want to keep in
 [Deno Deploy](https://deno.com/deploy/) is a new serverless compute offering being introduced by Deno. Similar to Cloudflare Workers, Deno Deploy allows you to deploy code to edge servers running Chrome's V8. Because of this runtime choice, it has many of the same benefits and limitations of Cloudflare Workers (high density and performance, no support for opening TCP connections or using full Node.js libraries).
 
 Deno Deploy hopes to provide you with a unified developing experience by using the same technology as the Deno CLI. Deno Deploy is currently in beta, so it is worth taking a look at its current progress and checking back in often.
-
-### Prisma Accelerate
-
-[Prisma Accelerate](https://www.prisma.io/docs/accelerate) is a tool designed to make connecting to databases simpler in a serverless context. Because the instances used by serverless providers to execute functions are, by nature, ephemeral, it is easy to exhaust the connection pool to any backing databases if too many function instances are active at once.
-
-Prisma Accelerate provides a solution for this problem by acting as an intermediary to a database. Serverless instances can instead connect to Prisma Accelerate which manages the connection pooling automatically to avoid failed or delayed serverless evocations due to resource contention.
 
 <PostgresCallout />
 

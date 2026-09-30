@@ -380,25 +380,25 @@ With this design, each row in a column family defines its own schema. That schem
 [comment]: # ( '  package "Columns" { )
 [comment]: # '   together { '
 [comment]: # '     together { '
-[comment]: # '       apple - [color\\n---\nred] '
-[comment]: # '       [color\\n---\nred] - [price\n---\n1] '
-[comment]: # '       [price\\n---\n1] - [On sale\n---\nfalse] '
+[comment]: # '       apple - [color\\n---\\nred] '
+[comment]: # '       [color\\n---\\nred] - [price\\n---\\n1] '
+[comment]: # '       [price\\n---\\n1] - [On sale\\n---\\nfalse] '
 [comment]: # '     } '
 [comment]: # '     together { '
-[comment]: # '       banana - [color\\n---\nyellow] '
-[comment]: # '       [color\\n---\nyellow] - [ripe\n---\ntrue] '
-[comment]: # '       [ripe\\n---\ntrue] - [number per bunch\n---\n6] '
+[comment]: # '       banana - [color\\n---\\nyellow] '
+[comment]: # '       [color\\n---\\nyellow] - [ripe\\n---\\ntrue] '
+[comment]: # '       [ripe\\n---\\ntrue] - [number per bunch\\n---\\n6] '
 [comment]: # '     } '
 [comment]: # '     together { '
-[comment]: # '       grape - [color\\n---\ngreen] '
-[comment]: # '       [color\\n---\ngreen] - [price\n---\n3] '
-[comment]: # '       [price\\n---\n3] - [number per bunch\n---\n40] '
-[comment]: # '       [number per bunch\\n---\n40] - [imported\n---\ntrue] '
+[comment]: # '       grape - [color\\n---\\ngreen] '
+[comment]: # '       [color\\n---\\ngreen] - [price\\n---\\n3] '
+[comment]: # '       [price\\n---\\n3] - [number per bunch\\n---\\n40] '
+[comment]: # '       [number per bunch\\n---\\n40] - [imported\\n---\\ntrue] '
 [comment]: # '     } '
 [comment]: # " '  } "
-[comment]: # '   [color\\n---\nred] -[hidden]- [color\n---\ngreen] '
-[comment]: # '   [color\\n---\ngreen] -[hidden]- [color\n---\nyellow] '
-[comment]: # '   Keys -[hidden]- [color\\n---\nred] '
+[comment]: # '   [color\\n---\\nred] -[hidden]- [color\\n---\\ngreen] '
+[comment]: # '   [color\\n---\\ngreen] -[hidden]- [color\\n---\\nyellow] '
+[comment]: # '   Keys -[hidden]- [color\\n---\\nred] '
 [comment]: # " '  Keys -[hidden]- Columns "
 [comment]: # ' } '
 [comment]: # ' @enduml '
@@ -539,6 +539,6 @@ Many times, using a mixture of different database types is the best approach for
 
 <PrismaOutlinks>
 
-You can use Prisma work more easily with databases from within your application code. Check out our [database connectors page](https://www.prisma.io/docs/orm/overview/databases) to see all of the databases Prisma supports.
+You can use Prisma to work more easily with databases from within your application code. Check out the [supported databases page](https://www.prisma.io/docs/orm/supported-databases) to see all of the databases Prisma ORM supports.
 
 </PrismaOutlinks>

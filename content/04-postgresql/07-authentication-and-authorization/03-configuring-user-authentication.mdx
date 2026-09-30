@@ -13,7 +13,7 @@ One of the first things you'll need to think about when working with a [PostgreS
 
 To manage this successfully, you need to know how to configure a PostgreSQL instance to allow the type of access and [authentication](/intro/database-glossary#authentication) methods you require. In this guide, we'll cover how to modify your database server's authentication mechanisms to match your environment's requirements.
 
-In a companion guide, we cover [how to connect to a PostgreSQL instance using a database client](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases). Consider reading both guides for a more complete picture of how authentication works in PostgreSQL.
+In a companion guide, we cover [how to connect to a PostgreSQL instance using a database client](/postgresql/connecting-to-postgresql-databases). Consider reading both guides for a more complete picture of how authentication works in PostgreSQL.
 
 ## Understanding PostgreSQL's authentication file
 
@@ -426,4 +426,4 @@ Then reload the configuration with `SELECT pg_reload_conf();` and check the `pg_
 
 In this guide, we covered PostgreSQL authentication from the server side. We demonstrated how to modify a PostgreSQL instance's configuration to change how clients are allowed to authenticate. After discussing the different options available in the authentication file, we covered how to implement some common authentication strategies using what we learned earlier.
 
-Knowing how to configure authentication, combined with [an understanding of how to connect with a PostgreSQL client](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases), allow you to grant access to legitimate clients while guarding against unwanted connections. This configuration is an important part of securing your database instances and preventing disruptive login problems that might hinder your operations.
+Knowing how to configure authentication, combined with [an understanding of how to connect with a PostgreSQL client](/postgresql/connecting-to-postgresql-databases), allow you to grant access to legitimate clients while guarding against unwanted connections. This configuration is an important part of securing your database instances and preventing disruptive login problems that might hinder your operations.

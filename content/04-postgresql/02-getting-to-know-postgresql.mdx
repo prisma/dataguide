@@ -16,7 +16,7 @@ This guide will go over PostgreSQL's architecture and attributes to give you a g
 
 Like many relational database systems, PostgreSQL's basic architecture follows the client-server model.
 
-The main PostgreSQL program runs as a [service](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database) that is responsible for defining data structures, storing data, and responding to queries. This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server. The server responds with messages indicating success, failure, query results, or other appropriate information.
+The main PostgreSQL program runs as a [service](/postgresql/setting-up-a-local-postgresql-database) that is responsible for defining data structures, storing data, and responding to queries. This daemon listens for connections from clients, who can authenticate themselves and then send instructions to the server. The server responds with messages indicating success, failure, query results, or other appropriate information.
 
 This architecture allows a PostgreSQL system to serve many different clients who can connect locally or over the network. The master PostgreSQL process forks a new process for each client connection it receives. Because of this, each fork is dedicated to a single client connection, so the number of connections, forks, and database sessions align with one another.
 
@@ -33,7 +33,7 @@ Concepts:
 
 Users can connect to PostgreSQL servers using a variety of clients. The default command line client that is implemented as part of the PostgreSQL distribution is called `psql`.
 
-The [`psql` client](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases) operates can connect to local or remote databases and either process queries as a batch or interactively. For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
+The [`psql` client](/postgresql/connecting-to-postgresql-databases) operates can connect to local or remote databases and either process queries as a batch or interactively. For automated use cases, authentication credentials can be stored in a [dedicated authentication file](https://www.postgresql.org/docs/current/libpq-pgpass.html) and queries can be read by the client from a file.
 
 Interactive `psql` sessions drop the user at a PostgreSQL command prompt upon authenticating. From there, you can send SQL to the client and either view the results in your terminal window or pipe them to an output file.
 
@@ -49,7 +49,7 @@ Concepts:
 
 <PrismaOutlinks>
 
-[Prisma Client](https://www.prisma.io/docs/orm/prisma-client) is another powerful way to work with your PostgreSQL databases using the [PostgreSQL connector](https://www.prisma.io/docs/orm/overview/databases/postgresql). You can try it out be following along with our [PostgreSQL getting started guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql)
+[Prisma ORM](https://www.prisma.io/docs/orm) is another powerful way to work with your PostgreSQL databases. You can try it out by following along with the [PostgreSQL quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/postgresql).
 
 </PrismaOutlinks>
 
@@ -92,7 +92,7 @@ Concepts:
 
 <PrismaOutlinks>
 
-When working with Prisma Client, [data models](https://www.prisma.io/docs/orm/prisma-schema/data-model) in the Prisma schema are equivalent to tables in PostgreSQL.
+When working with Prisma ORM, [models](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#models) in the Prisma contract are equivalent to tables in PostgreSQL.
 
 </PrismaOutlinks>
 

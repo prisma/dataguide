@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 ## What are PostgreSQL column and table constraints?
 
-[Constraints](/intro/database-glossary#constraint) are _additional_ requirements for acceptable values in addition to those provided by [data types](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types). They allow you to define narrower conditions for your data than those found in the general purpose data types.
+[Constraints](/intro/database-glossary#constraint) are _additional_ requirements for acceptable values in addition to those provided by [data types](/postgresql/introduction-to-data-types). They allow you to define narrower conditions for your data than those found in the general purpose data types.
 
 These are often reflections on the specific characteristics of a field based on additional context provided by your applications. For example, an `age` field might use the `int` data type to store whole numbers. However, certain ranges of acceptable integers do not make sense as valid ages. For instance, negative integers would not be reasonable in this scenario. We can express this logical requirement in PostgreSQL using constraints.
 
@@ -246,7 +246,7 @@ CREATE TABLE national_capitals (
 
 <PrismaOutlinks>
 
-When working with Prisma Client, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#optional-and-mandatory-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
+When working with Prisma ORM, you can control whether each field is [optional or mandatory](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) to get equivalent functionality to the `NOT NULL` constraint in PostgreSQL.
 
 </PrismaOutlinks>
 
@@ -365,7 +365,7 @@ DETAIL:  Key (country, capital)=(Bolivia, Sucre) already exists.
 
 <PrismaOutlinks>
 
-If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-a-unique-field) in your Prisma schema.
+If you are using Prisma, you can define a [unique field](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) in your Prisma contract.
 
 </PrismaOutlinks>
 
@@ -425,7 +425,7 @@ CREATE TABLE national_capitals (
 
 <PrismaOutlinks>
 
-When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/orm/prisma-schema/data-model/models#defining-an-id-field).
+When using Prisma, a primary key is synonymous with an [id field](https://www.prisma.io/docs/orm/data-modeling?db=postgresql#primary-keys).
 
 </PrismaOutlinks>
 
@@ -524,7 +524,7 @@ CREATE TABLE example (
 
 <PrismaOutlinks>
 
-We cover how to define [relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations) in the Prisma schema in our documentation.
+We cover how to define [relations](https://www.prisma.io/docs/orm/data-modeling/relational-databases) in the Prisma contract in our documentation.
 
 </PrismaOutlinks>
 
