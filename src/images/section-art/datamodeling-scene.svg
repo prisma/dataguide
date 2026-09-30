@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="296" height="220" viewBox="64 0 296 220">
+  <!-- Prismo placing a tuple (a row) into a table. Brand style: chrome, glass and the prism
+       colours cyan #01D7E4, yellow #F3C306 and red #F34A60. -->
+  <defs>
+    <!-- chrome -->
+    <radialGradient id="chrome" cx="35%" cy="28%" r="78%">
+      <stop offset="0" stop-color="#fbfcfe"/>
+      <stop offset=".35" stop-color="#dfe5ec"/>
+      <stop offset=".62" stop-color="#aeb8c6"/>
+      <stop offset=".85" stop-color="#7c8797"/>
+      <stop offset="1" stop-color="#5f6a79"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef1f5"/>
+      <stop offset=".55" stop-color="#b3bcc8"/>
+      <stop offset="1" stop-color="#7f8a99"/>
+    </linearGradient>
+    <linearGradient id="foot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8f9aa8"/>
+      <stop offset=".35" stop-color="#e6eaf0"/>
+      <stop offset="1" stop-color="#7c8797"/>
+    </linearGradient>
+    <linearGradient id="mitt" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#fdfdfe"/>
+      <stop offset=".55" stop-color="#cfd6df"/>
+      <stop offset="1" stop-color="#8f9aa8"/>
+    </linearGradient>
+    <!-- the visor: three flat prism bands (never recoloured) -->
+    <linearGradient id="visor" gradientUnits="userSpaceOnUse" x1="0" y1="-12" x2="0" y2="15">
+      <stop offset="0" stop-color="#01D7E4"/><stop offset=".3333" stop-color="#01D7E4"/>
+      <stop offset=".3333" stop-color="#F3C306"/><stop offset=".6667" stop-color="#F3C306"/>
+      <stop offset=".6667" stop-color="#F34A60"/><stop offset="1" stop-color="#F34A60"/>
+    </linearGradient>
+    <linearGradient id="visorShade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#121212" stop-opacity=".3"/>
+      <stop offset=".22" stop-color="#121212" stop-opacity="0"/>
+      <stop offset=".78" stop-color="#121212" stop-opacity="0"/>
+      <stop offset="1" stop-color="#121212" stop-opacity=".3"/>
+    </linearGradient>
+    <!-- glass -->
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f1f4f8"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#01D7E4"/>
+      <stop offset=".5" stop-color="#F3C306"/>
+      <stop offset="1" stop-color="#F34A60"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2=".7" y2=".7">
+      <stop offset="0" stop-color="#fff" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="prismEdge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#01D7E4"/>
+      <stop offset=".5" stop-color="#F3C306"/>
+      <stop offset="1" stop-color="#F34A60"/>
+    </linearGradient>
+    <clipPath id="headClip"><circle cx="0" cy="0" r="35"/></clipPath>
+    <clipPath id="visorClip"><path d="M-36 -12 Q0 -9 36 -12 L36 13 Q0 16 -36 13 Z"/></clipPath>
+    <filter id="blur6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <filter id="soft" x="-80%" y="-80%" width="260%" height="280%">
+      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#121212" flood-opacity=".14"/>
+    </filter>
+  </defs>
+
+  <!-- The table: a glass panel with a header row, rows and an empty slot -->
+  <g filter="url(#soft)">
+    <rect x="150" y="-11" width="240" height="222" rx="18" fill="#d9dee6"/>
+    <rect x="150" y="-14" width="240" height="222" rx="18" fill="url(#glass)" stroke="#e3e8ef"/>
+  </g>
+  <rect x="150" y="-14" width="240" height="222" rx="18" fill="url(#sweep)" fill-opacity=".07"/>
+  <rect x="150.75" y="-13.25" width="238.5" height="220.5" rx="17.25" fill="none" stroke="url(#rim)" stroke-width="1.5"/>
+  <!-- header row -->
+  <rect x="164" y="18" width="212" height="24" rx="7" fill="#eef1f6"/>
+  <rect x="178" y="26" width="14" height="8" rx="4" fill="#9aa3b1"/>
+  <rect x="228" y="26" width="40" height="8" rx="4" fill="#9aa3b1"/>
+  <rect x="288" y="26" width="56" height="8" rx="4" fill="#9aa3b1"/>
+  <!-- grid -->
+  <path d="M222 48V196M282 48V196" stroke="#e1e6ee" stroke-width="1.5"/>
+  <path d="M164 73H376M164 99H376M164 125H376M164 151H376M164 177H376" stroke="#e1e6ee" stroke-width="1.5"/>
+  <circle cx="184" cy="60" r="4.3" fill="#F3C306"/><rect x="228" y="56" width="34" height="8" rx="4" fill="#c6ccd6"/><rect x="288" y="56" width="58" height="8" rx="4" fill="#c6ccd6"/><circle cx="184" cy="86" r="4.3" fill="#F3C306"/><rect x="228" y="82" width="42" height="8" rx="4" fill="#c6ccd6"/><rect x="288" y="82" width="50" height="8" rx="4" fill="#c6ccd6"/><circle cx="184" cy="112" r="4.3" fill="#F3C306"/><rect x="228" y="108" width="30" height="8" rx="4" fill="#c6ccd6"/><rect x="288" y="108" width="62" height="8" rx="4" fill="#c6ccd6"/><circle cx="184" cy="164" r="4.3" fill="#F3C306"/><rect x="228" y="160" width="28" height="8" rx="4" fill="#c6ccd6"/><rect x="288" y="160" width="60" height="8" rx="4" fill="#c6ccd6"/><circle cx="184" cy="190" r="4.3" fill="#F3C306"/><rect x="228" y="186" width="38" height="8" rx="4" fill="#c6ccd6"/><rect x="288" y="186" width="48" height="8" rx="4" fill="#c6ccd6"/>
+  <!-- the empty slot, with a faint ghost of the row that belongs there -->
+  <rect x="162" y="127" width="216" height="22" rx="7" fill="#01D7E4" fill-opacity=".06" stroke="#01D7E4" stroke-opacity=".75" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <g opacity=".12" transform="translate(172 127)"><circle cx="14" cy="11" r="4.3" fill="#F3C306"/><rect x="28" y="7" width="30" height="8" rx="4" fill="#01D7E4" fill-opacity=".8"/><rect x="66" y="7" width="40" height="8" rx="4" fill="#F34A60" fill-opacity=".7"/></g>
+
+  <g transform="translate(112 88) rotate(5)" filter="url(#soft)">
+    <!-- foot -->
+    <path d="M-9 32 h18 l2.5 6 h-23 z" fill="url(#foot)"/>
+    <ellipse cx="0" cy="38" rx="11.5" ry="1.6" fill="#6f7a89"/>
+    <!-- ear cups -->
+    <g>
+      <ellipse cx="-35" cy="1" rx="8" ry="12" fill="url(#ear)" stroke="#fff" stroke-opacity=".8" stroke-width="1"/>
+      <ellipse cx="-35" cy="1" rx="4.48" ry="9" fill="#c3cad4"/>
+      <ellipse cx="35" cy="1" rx="5" ry="12" fill="url(#ear)" stroke="#fff" stroke-opacity=".8" stroke-width="1"/>
+      <ellipse cx="35" cy="1" rx="2.8" ry="9" fill="#c3cad4"/>
+    </g>
+    <!-- head: chrome with cool and warm reflections -->
+    <circle cx="0" cy="0" r="35" fill="url(#chrome)"/>
+    <g clip-path="url(#headClip)"><g filter="url(#blur6)">
+          <ellipse cx="-16" cy="-12" rx="22" ry="20" fill="#9fd6ff" fill-opacity=".28"/>
+          <ellipse cx="20" cy="-8" rx="18" ry="22" fill="#f6c86a" fill-opacity=".32"/>
+          <ellipse cx="0" cy="30" rx="26" ry="8" fill="#f2c66d" fill-opacity=".18"/>
+    </g></g>
+    <!-- visor -->
+    <path d="M-36 -12 Q0 -9 36 -12 L36 13 Q0 16 -36 13 Z" fill="url(#visor)" clip-path="url(#headClip)"/>
+    <path d="M-36 -12 Q0 -9 36 -12 L36 13 Q0 16 -36 13 Z" fill="url(#visorShade)" clip-path="url(#headClip)"/>
+    <g clip-path="url(#visorClip)" opacity=".5"><g filter="url(#blur6)">
+          <ellipse cx="-16" cy="-12" rx="22" ry="20" fill="#9fd6ff" fill-opacity=".28"/>
+          <ellipse cx="20" cy="-8" rx="18" ry="22" fill="#f6c86a" fill-opacity=".32"/>
+          <ellipse cx="0" cy="30" rx="26" ry="8" fill="#f2c66d" fill-opacity=".18"/>
+    </g></g>
+    <!-- hatch seam -->
+    <path d="M-25 -26 L-21 -16 Q0 -10 21 -16 L25 -26" fill="none" stroke="#6d7787" stroke-width="1.2" stroke-linejoin="round" clip-path="url(#headClip)"/>
+    <path d="M-24 -25 L-20.4 -15 Q0 -9 20.4 -15 L24 -25" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" clip-path="url(#headClip)"/>
+    <!-- face -->
+    <g transform="translate(5 0)">
+      <path d="M-16 -5 q4 -3 8 -1" fill="none" stroke="#0e1014" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M16 -8 q-4 -3 -8 -1" fill="none" stroke="#0e1014" stroke-width="1.6" stroke-linecap="round"/>
+      <ellipse cx="-12" cy="4" rx="3.5" ry="5.6" fill="#0e1014"/>
+      <ellipse cx="12" cy="4" rx="3.5" ry="5.6" fill="#0e1014"/>
+      <ellipse cx="-13.2" cy="2" rx="1.1" ry="2" fill="#fff" fill-opacity=".5"/>
+      <ellipse cx="10.8" cy="2" rx="1.1" ry="2" fill="#fff" fill-opacity=".5"/>
+      <path d="M-7 16 Q0 22 8 16" fill="none" stroke="#1c1f26" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <!-- soft highlight and grain -->
+    <ellipse cx="-14" cy="-18" rx="9" ry="6" fill="url(#shine)"/>
+    <rect x="-35" y="-35" width="70" height="70" filter="url(#grain)" opacity=".06" clip-path="url(#headClip)"/>
+  </g>
+
+  <!-- the tuple, sliding into the slot -->
+  <path d="M96 138 l-10 0" stroke="#01D7E4" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+  <path d="M96 143 l-16 0" stroke="#F3C306" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+  <path d="M96 148 l-10 0" stroke="#F34A60" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="200" cy="149" rx="32" ry="3.5" fill="#121212" fill-opacity=".1" filter="url(#blur2)"/>
+  <!-- back hand supports the tuple from below; its thumb wraps over the tail -->
+  <g transform="translate(108 158) rotate(-80) scale(1.3)" filter="url(#soft)"><rect x="3" y="-5.6" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 -5.199999999999999v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><rect x="3" y="-1.9" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 -1.5v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><rect x="3" y="1.8" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 2.2v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><ellipse cx="0" cy="0" rx="7.5" ry="6.8" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".7"/></g>
+  <g transform="translate(102 128) rotate(2)" filter="url(#soft)">
+    <rect x="0" y="2" width="118" height="22" rx="7" fill="#e4e9f0"/>
+    <rect x="0" y="0" width="118" height="22" rx="7" fill="url(#glass)"/>
+    <rect x="0" y="0" width="118" height="22" rx="7" fill="url(#sweep)" fill-opacity=".2"/>
+    <rect x=".75" y=".75" width="116.5" height="20.5" rx="6.25" fill="none" stroke="url(#prismEdge)" stroke-width="1.5"/>
+    <circle cx="14" cy="11" r="4.3" fill="#F3C306"/><rect x="28" y="7" width="30" height="8" rx="4" fill="#01D7E4" fill-opacity=".8"/><rect x="66" y="7" width="40" height="8" rx="4" fill="#F34A60" fill-opacity=".7"/>
+  </g>
+  <g transform="translate(108 158) rotate(-80) scale(1.3)" filter="url(#soft)"><ellipse cx="-.5" cy="-6.8" rx="3.3" ry="2.4" transform="rotate(-30 -.5 -6.8)" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/></g>
+  <!-- front hand pushes the tuple towards the slot -->
+  <g transform="translate(146 130) rotate(4) scale(1.3)" filter="url(#soft)"><rect x="3" y="-5.6" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 -5.199999999999999v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><rect x="3" y="-1.9" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 -1.5v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><rect x="3" y="1.8" width="10.5" height="3.8" rx="1.9" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/><path d="M8.6 2.2v3" stroke="#121212" stroke-opacity=".3" stroke-width=".6"/><ellipse cx="0" cy="0" rx="7.5" ry="6.8" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".7"/><ellipse cx="-.5" cy="-6.8" rx="3.3" ry="2.4" transform="rotate(-30 -.5 -6.8)" fill="url(#mitt)" stroke="#8f9aa8" stroke-width=".6"/></g>
+</svg>

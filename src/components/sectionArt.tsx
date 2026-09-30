@@ -1,40 +1,33 @@
 import React from 'react'
 import styled from 'styled-components'
-import prismoSalute from '../images/section-art/prismo-salute.webp'
-import prismoThinking from '../images/section-art/prismo-thinking.webp'
-import glassDatabase from '../images/section-art/glass-database.webp'
-import glassLayers from '../images/section-art/glass-layers.webp'
+import introScene from '../images/section-art/intro-scene.svg'
+import datamodelingScene from '../images/section-art/datamodeling-scene.svg'
 import cubeGrid from '../images/section-art/cube-grid.svg'
 
-// Decorative artwork for a section's card on the homepage and for the top of its pages, built
-// from the Prisma brand kit (https://www.prisma.io/brand-kit): a colour wash with grain, glass
-// shapes cropped by the card edge, the cube grid, and Prismo, the mascot. Following the kit,
-// Prismo is shown whole and level, and at most once per page.
+// Decorative artwork for a section's card on the homepage and for the top of its pages, in the
+// style of the Prisma brand kit (https://www.prisma.io/brand-kit): a scene in which Prismo, the
+// mascot, works with the section's subject, over a colour wash with grain.
 
 type ThemeName = 'intro' | 'datamodeling'
 
 interface Theme {
-  mascot: string
-  glass: { src: string; width: number }
+  scene: string
   cubes?: boolean
   wash: string
 }
 
 const themes: Record<ThemeName, Theme> = {
-  // Introduction to databases: Prismo saluting (the kit's face for welcomes and onboarding)
-  // next to a glass database
+  // Introduction to databases: Prismo storing a record in a database
   intro: {
-    mascot: prismoSalute,
-    glass: { src: glassDatabase, width: 150 },
+    scene: introScene,
     wash: `radial-gradient(circle at 78% 34%, rgba(1, 215, 228, 0.2), transparent 55%),
       radial-gradient(circle at 100% 0%, rgba(243, 195, 6, 0.16), transparent 45%),
       radial-gradient(circle at 60% 90%, rgba(243, 74, 96, 0.08), transparent 50%)`,
   },
-  // Data modeling: the cube grid (the kit's element for the structured data layer), stacked
-  // glass layers like tables, and Prismo thinking
+  // Data modeling: Prismo placing a tuple into a table, over the cube grid (the kit's element
+  // for the structured data layer)
   datamodeling: {
-    mascot: prismoThinking,
-    glass: { src: glassLayers, width: 190 },
+    scene: datamodelingScene,
     cubes: true,
     wash: `radial-gradient(circle at 80% 30%, rgba(243, 195, 6, 0.18), transparent 55%),
       radial-gradient(circle at 100% 0%, rgba(243, 74, 96, 0.12), transparent 45%),
@@ -55,25 +48,17 @@ interface SectionArtProps {
   theme: ThemeName
   // `card` for a homepage section card, `page` for the top of a section's pages
   variant?: 'card' | 'page'
-  // Leave Prismo out, e.g. when he already appears elsewhere on the page
-  mascot?: boolean
 }
 
-const SectionArt = ({ theme, variant = 'card', mascot = true }: SectionArtProps) => {
+const SectionArt = ({ theme, variant = 'card' }: SectionArtProps) => {
   const art = themes[theme]
   if (!art) return null
   return (
-    <Art
-      className="section-art"
-      data-variant={variant}
-      aria-hidden="true"
-      style={{ '--glass-width': `${art.glass.width}px` } as React.CSSProperties}
-    >
+    <Art className="section-art" data-theme={theme} data-variant={variant} aria-hidden="true">
       <div className="wash" style={{ backgroundImage: art.wash }} />
       {art.cubes && <div className="cubes" style={{ backgroundImage: `url(${cubeGrid})` }} />}
       <div className="grain" />
-      <img className="glass" src={art.glass.src} alt="" loading="lazy" decoding="async" />
-      {mascot && <img className="mascot" src={art.mascot} alt="" loading="lazy" decoding="async" />}
+      <img className="scene" src={art.scene} alt="" loading="lazy" decoding="async" />
     </Art>
   )
 }
@@ -111,37 +96,34 @@ const Art = styled.div`
     mix-blend-mode: multiply;
   }
 
-  /* Glass sits in the background, cropped by the card's edge */
-  .glass {
+  /* Sized by height, flush with the card's right edge so that the glass objects that bleed off
+     the scene are cropped by the card; the card reserves room for each scene (see layout.tsx) */
+  .scene {
     position: absolute;
-    top: 12px;
-    right: -34px;
-    width: var(--glass-width);
-    height: auto;
-    opacity: 0.92;
+    right: 0;
+    width: auto;
+    top: var(--scene-top);
+    height: var(--scene-height);
   }
-
-  /* Prismo stays whole and level, standing just clear of the glass */
-  .mascot {
-    position: absolute;
-    top: 36px;
-    right: calc(var(--glass-width) - 18px);
-    width: 128px;
-    height: auto;
-    filter: drop-shadow(0 12px 18px rgba(18, 18, 18, 0.12));
+  &[data-theme='intro'] {
+    --scene-top: 16px;
+    --scene-height: 180px;
+  }
+  &[data-theme='datamodeling'] {
+    --scene-top: 0px;
+    --scene-height: 190px;
   }
 
   &[data-variant='page'] {
     width: 360px;
     height: 240px;
-    .glass {
-      top: 12px;
-      width: calc(var(--glass-width) * 0.85);
+    &[data-theme='intro'] {
+      --scene-top: 12px;
+      --scene-height: 150px;
     }
-    .mascot {
-      top: 40px;
-      right: calc(var(--glass-width) * 0.85 - 18px);
-      width: 104px;
+    &[data-theme='datamodeling'] {
+      --scene-top: 0px;
+      --scene-height: 160px;
     }
   }
 

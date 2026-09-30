@@ -72,7 +72,7 @@ const SocialShareSection = ({ homePage, hnPostId, slug, lastUpdated, lastUpdated
       ? `https://www.prisma.io/dataguide${urlGenerator(slug)}`
       : 'https://www.prisma.io/dataguide'
   return (
-    <SocialWrapper>
+    <SocialWrapper className="social-share">
       {homePage && (
         <a
           className="homepage-link"

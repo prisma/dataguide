@@ -89,13 +89,26 @@ const MaxWidth = styled.article<{ $noIndex: boolean }>`
       @media (min-width: 768px) {
         > h2,
         > p:first-of-type {
-          padding-right: 240px;
+          padding-right: var(--art-space);
         }
         h1,
         nav[aria-label='Breadcrumb'] {
-          padding-right: 200px;
+          padding-right: var(--art-space-page);
+        }
+        /* The divider above "Share on" fades out before it reaches the artwork */
+        .social-share {
+          border-image: linear-gradient(90deg, var(--border) 55%, transparent 80%) 1;
         }
       }
+    }
+    /* Room for each theme's scene (its width at the sizes set in sectionArt.tsx, plus a gap) */
+    &:has(> .section-art[data-theme='intro']) {
+      --art-space: 200px;
+      --art-space-page: 170px;
+    }
+    &:has(> .section-art[data-theme='datamodeling']) {
+      --art-space: 250px;
+      --art-space-page: 210px;
     }
   }
 `
