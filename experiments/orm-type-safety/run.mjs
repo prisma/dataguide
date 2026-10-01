@@ -298,13 +298,22 @@ try {
     )
   report.status = 'passed'
 } finally {
-  for (const name of resources.reverse()) docker(['rm', '-f', name])
-  for (const name of Object.values(names))
-    assert.equal(
-      docker(['ps', '-a', '--filter', `name=${name}`, '--format', '{{.Names}}']).trim(),
-      ''
-    )
-  report.cleanedUp = true
+  // The report is written even when cleanup fails, so a failed run keeps its evidence
+  try {
+    for (const name of resources.reverse()) docker(['rm', '-f', name])
+    for (const name of Object.values(names))
+      assert.equal(
+        docker(['ps', '-a', '--filter', `name=${name}`, '--format', '{{.Names}}']).trim(),
+        ''
+      )
+    report.cleanedUp = true
+  } catch (error) {
+    console.error(`FAIL container cleanup: ${error.message}`)
+    report.cleanedUp = false
+    report.status = 'failed'
+    report.cleanupError = error.message
+    process.exitCode = 1
+  }
   report.completedAt = new Date().toISOString()
   mkdirSync(path.join(root, '.verification-runs'), { recursive: true })
   writeFileSync(
