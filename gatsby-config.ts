@@ -169,8 +169,20 @@ let plugins: any = [
   { resolve: 'gatsby-plugin-content-manifest', options: { configErrors } },
 ]
 
-if (process.env.INDEX_ALGOLIA === 'true') {
-  if (process.env.GATSBY_ALGOLIA_APP_ID) {
+// Only production deployments publish search. A Vercel preview shares the production index name
+// (the search box needs it), so indexing from a preview would overwrite production records.
+const isVercelPreview = !!process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
+if (process.env.INDEX_ALGOLIA === 'true' && isVercelPreview) {
+  console.warn(
+    `INDEX_ALGOLIA=true is ignored in a ${process.env.VERCEL_ENV} deployment; only production publishes search.`
+  )
+} else if (process.env.INDEX_ALGOLIA === 'true') {
+  const missing = [
+    'GATSBY_ALGOLIA_APP_ID',
+    'GATSBY_ALGOLIA_ADMIN_API_KEY',
+    'GATSBY_ALGOLIA_INDEX_NAME',
+  ].filter((name) => !process.env[name])
+  if (missing.length === 0) {
     // only set this up when we actually need it
     const algoliaPlugin = {
       resolve: 'gatsby-algolia-indexer',
@@ -187,15 +199,10 @@ if (process.env.INDEX_ALGOLIA === 'true') {
     plugins.push(algoliaPlugin)
 
     console.log(
-      'INDEX_ALGOLIA is `true`, and GATSBY_ALGOLIA_APP_ID is set, so pushing algoliaPlugin to list of plugins to trigger search indexing.'
-    )
-  } else if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
-    // Previews never publish search, so missing credentials only skip indexing there
-    console.warn(
-      'INDEX_ALGOLIA=true, but GATSBY_ALGOLIA_APP_ID is undefined. Skipping search indexing in this preview.'
+      'INDEX_ALGOLIA is `true` and the indexing credentials are set, so search indexing runs.'
     )
   } else {
-    configErrors.push('INDEX_ALGOLIA=true requires GATSBY_ALGOLIA_APP_ID and indexing credentials')
+    configErrors.push(`INDEX_ALGOLIA=true requires ${missing.join(', ')}`)
   }
 } else {
   console.log('INDEX_ALGOLIA not `true`, not pushing algoliaPlugin to skip any search indexing.')

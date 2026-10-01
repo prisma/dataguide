@@ -19,7 +19,8 @@ test('incremental Markdown builds prune renamed, removed and unpublished owned e
   await writeFile(path.join(publicDir, 'static.md'), '# Static asset\n')
   await writeFile(
     path.join(publicDir, 'legacy.md'),
-    `# Old\n\n> Part of Guide. The complete index is at https://example.test/dataguide/llms.txt.\n\nCanonical URL: https://example.test/dataguide/legacy\nContent revision: ${'a'.repeat(64)}\n`
+    // The header that main's exporter writes, which has no Content revision line
+    `# Old\n\n> Part of Guide. The complete index is at https://example.test/dataguide/llms.txt.\n\nCanonical URL: https://example.test/dataguide/legacy\n`
   )
   const page = (slug, flags = {}) => ({
     body: 'Use PostgreSQL dates.',

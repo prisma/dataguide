@@ -165,7 +165,13 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
         metaImage: node.frontmatter.metaImage || '',
         socialImage: socialImages.get(node.id),
         publication: publicationPolicy(node.frontmatter),
-        verification,
+        // Only what the page shows: owners, policies and evidence paths stay out of page data
+        verification: verification && {
+          level: verification.level,
+          scope: verification.scope,
+          versions: verification.versions,
+          reviewDate: verification.reviewDate,
+        },
       },
     })
   })

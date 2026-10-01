@@ -1,5 +1,8 @@
-const { init: initPostHog, trackPage: trackPostHogPage } = require('./src/utils/posthog')
-const { trackEvent } = require('./src/utils/posthog')
+const {
+  init: initPostHog,
+  trackPage: trackPostHogPage,
+  trackEvent,
+} = require('./src/utils/posthog')
 const { installCtaTracking } = require('./src/utils/readerEvents')
 const { goToNav } = require('./src/utils/goToNavItem')
 

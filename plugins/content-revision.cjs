@@ -1,6 +1,6 @@
 const { execFileSync } = require('node:child_process')
 const { readFileSync, readdirSync } = require('node:fs')
-const { join, relative } = require('node:path')
+const { join, relative, sep } = require('node:path')
 const { createHash } = require('node:crypto')
 let cached
 module.exports = () => {
@@ -9,12 +9,17 @@ module.exports = () => {
   const hash = createHash('sha256')
   const walk = (dir) =>
     readdirSync(dir, { withFileTypes: true })
-      .sort((a, b) => a.name.localeCompare(b.name))
+      // Code-unit order and POSIX paths keep the hash the same on every machine
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
       .forEach((entry) => {
         const file = join(dir, entry.name)
         if (entry.isDirectory()) walk(file)
         else if (/\.mdx?$/.test(file))
-          hash.update(relative(root, file)).update('\0').update(readFileSync(file)).update('\0')
+          hash
+            .update(relative(root, file).split(sep).join('/'))
+            .update('\0')
+            .update(readFileSync(file))
+            .update('\0')
       })
   walk(join(root, 'content'))
   let sourceRevision

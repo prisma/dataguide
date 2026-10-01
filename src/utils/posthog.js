@@ -23,6 +23,19 @@ module.exports = {
       // With manual capture this must be false, otherwise only the initial load is counted.
       capture_pageview: false,
       defaults: '2025-11-30',
+      // The search box writes what the reader typed into `?query=`; drop it from every event
+      before_send: (event) => {
+        for (const key of ['$current_url', '$referrer', '$initial_current_url']) {
+          const value = event?.properties?.[key]
+          if (typeof value !== 'string') continue
+          try {
+            const url = new URL(value)
+            url.searchParams.delete('query')
+            event.properties[key] = url.toString()
+          } catch {}
+        }
+        return event
+      },
     })
 
     // Tag every event so dataguide is distinguishable from other Prisma properties

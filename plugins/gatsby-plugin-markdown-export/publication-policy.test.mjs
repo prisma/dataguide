@@ -24,4 +24,6 @@ test('publication flags have explicit independent contracts', () => {
   assert.equal(policy({ index: false }).indexed, false)
   assert.equal(policy({ index: false }).searchable, false)
   assert.equal(policy({ export: false }).exported, false)
+  // A noindex page has no crawlable Markdown copy
+  assert.equal(policy({ index: false }).exported, false)
 })

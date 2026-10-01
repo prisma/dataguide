@@ -6,6 +6,7 @@ module.exports = (frontmatter = {}) => {
     indexed: published && frontmatter.index !== false,
     searchable: published && frontmatter.search !== false && frontmatter.index !== false,
     navigable: published && frontmatter.hidePage !== true,
-    exported: published && frontmatter.export !== false,
+    // A noindex page's Markdown copy would be crawlable without its noindex signal
+    exported: published && frontmatter.index !== false && frontmatter.export !== false,
   }
 }

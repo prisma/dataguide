@@ -33,8 +33,7 @@ exports.previousExports = async (publicDir, siteName) => {
     const body = await fs.readFile(file, 'utf8')
     if (
       body.split('\n').some((line) => line.startsWith(prefix) && line.endsWith('/llms.txt.')) &&
-      /^Canonical URL: https?:\/\//m.test(body) &&
-      /^Content revision: [a-f0-9]{64}$/m.test(body)
+      /^Canonical URL: https?:\/\//m.test(body)
     )
       files.push(path.relative(publicDir, file).split(path.sep).join('/'))
   }
