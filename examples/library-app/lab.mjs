@@ -2,6 +2,7 @@ import pg from 'pg'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { createServer } from 'node:http'
 import { randomUUID, createHash } from 'node:crypto'
 import { performance } from 'node:perf_hooks'
 import {
@@ -20,8 +21,16 @@ const id = randomUUID().slice(0, 8)
 const databaseName = `dg-library-${id}`
 const poolerName = `dg-pooler-${id}`
 const network = `dg-library-net-${id}`
+// Labels find this run's resources during cleanup, and stale ones after a killed run.
+const runLabel = `dataguide.run=${id}`
+const labels = ['--label', 'dataguide.fixture=library', '--label', runLabel]
 const docker = (args, input) =>
   execFileSync('docker', args, { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+let stopping = false
+const createResource = (args) => {
+  if (stopping) throw new Error('Lab is stopping; not creating more Docker resources')
+  return docker(args)
+}
 const report = {
   startedAt: new Date().toISOString(),
   postgresImage,
@@ -44,7 +53,8 @@ const report = {
 }
 const resources = []
 const pools = []
-let server
+const servers = []
+const connectionErrors = new Set()
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const test = async (name, fn) => {
   await fn()
@@ -52,6 +62,13 @@ const test = async (name, fn) => {
   console.log(`PASS ${name}`)
 }
 const expectState = async (promise, code) => assert.rejects(promise, (error) => error.code === code)
+// A terminated backend emits 'error' on idle and checked-out clients; without a
+// listener, that event would crash the runner before cleanup.
+const recordConnectionError = (error) => {
+  if (connectionErrors.has(error)) return
+  connectionErrors.add(error)
+  console.warn(`Connection error: ${error.message}`)
+}
 const makePool = (config) => {
   const pool = new pg.Pool({
     host: '127.0.0.1',
@@ -64,18 +81,147 @@ const makePool = (config) => {
     query_timeout: 3000,
     ...config,
   })
+  pool.on('error', recordConnectionError)
+  pool.on('connect', (client) => client.on('error', recordConnectionError))
   pools.push(pool)
   return pool
 }
+// Return clients even when ROLLBACK fails; a client that cannot roll back is discarded.
+const rollbackAndRelease = async (...clients) => {
+  for (const client of clients) {
+    let failure
+    try {
+      await client.query('ROLLBACK')
+    } catch (error) {
+      failure = error
+    }
+    client.release(failure)
+  }
+}
+const within = (ms, label, work) =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} took longer than ${ms} ms`)), ms)
+    Promise.resolve()
+      .then(work)
+      .then(
+        (value) => {
+          clearTimeout(timer)
+          resolve(value)
+        },
+        (error) => {
+          clearTimeout(timer)
+          reject(error)
+        }
+      )
+  })
+const lines = (output) => output.split('\n').filter(Boolean)
+let cleanupPromise
+// Shared by normal completion, failed checks, crashes and signals. Every step is
+// bounded or independent, so a stuck client cannot keep containers running.
+const cleanup = () =>
+  (cleanupPromise ??= (async () => {
+    stopping = true
+    // Let a pending signal handler run first, so the report records the interruption.
+    await new Promise((resolve) => setImmediate(resolve))
+    const errors = []
+    const attempt = async (label, work) => {
+      try {
+        await work()
+      } catch (error) {
+        errors.push(`${label}: ${error.message}`)
+      }
+    }
+    for (const server of servers)
+      await attempt('close HTTP server', () =>
+        within(2000, 'HTTP server close', () => {
+          const closed = new Promise((resolve) => server.close(() => resolve()))
+          server.closeAllConnections()
+          return closed
+        })
+      )
+    await attempt('end database pools', () =>
+      within(3000, 'database pool shutdown', () => Promise.all(pools.map((pool) => pool.end())))
+    )
+    for (const command of resources.reverse())
+      await attempt(`docker ${command.join(' ')}`, () => docker(command))
+    await attempt('remove labeled containers', () => {
+      const containers = lines(docker(['ps', '-aq', '--filter', `label=${runLabel}`]))
+      if (containers.length) docker(['rm', '-f', ...containers])
+    })
+    await attempt('remove labeled networks', () => {
+      for (const name of lines(docker(['network', 'ls', '-q', '--filter', `label=${runLabel}`])))
+        docker(['network', 'rm', name])
+    })
+    let leftovers = ['cleanup verification did not run']
+    await attempt('verify cleanup', () => {
+      leftovers = [
+        ...lines(docker(['ps', '-a', '--filter', `label=${runLabel}`, '--format', '{{.Names}}'])),
+        ...lines(
+          docker(['ps', '-a', '--filter', `name=dg-library-${id}`, '--format', '{{.Names}}'])
+        ),
+        ...lines(
+          docker(['ps', '-a', '--filter', `name=dg-pooler-${id}`, '--format', '{{.Names}}'])
+        ),
+        ...lines(
+          docker(['network', 'ls', '--filter', `label=${runLabel}`, '--format', '{{.Name}}'])
+        ),
+        ...lines(docker(['network', 'ls', '--filter', `name=${network}`, '--format', '{{.Name}}'])),
+      ]
+    })
+    report.cleanedUp = leftovers.length === 0
+    report.cleanupErrors = errors
+    report.connectionErrors = [...connectionErrors].map((error) => error.message)
+    report.completedAt = new Date().toISOString()
+    if (!report.cleanedUp) {
+      process.exitCode = 1
+      console.error(`Cleanup left Docker resources: ${[...new Set(leftovers)].join(', ')}`)
+    }
+    for (const error of errors) console.error(`Cleanup step failed: ${error}`)
+    try {
+      mkdirSync(new URL('./.verification-runs/', import.meta.url), { recursive: true })
+      writeFileSync(
+        new URL('./.verification-runs/library.json', import.meta.url),
+        `${JSON.stringify(report, null, 2)}\n`
+      )
+    } catch (error) {
+      process.exitCode = 1
+      console.error(`Could not write the run report: ${error.message}`)
+    }
+  })())
+let exitStatus
+const exitAfterCleanup = (status) => {
+  exitStatus ??= status
+  cleanup().finally(() => process.exit(exitStatus))
+}
+for (const [signal, status] of [
+  ['SIGINT', 130],
+  ['SIGTERM', 143],
+])
+  process.on(signal, () => {
+    if (exitStatus !== undefined) {
+      console.error('Still removing lab resources...')
+      return
+    }
+    console.error(`Received ${signal}; removing lab containers and network`)
+    report.interrupted = signal
+    exitAfterCleanup(status)
+  })
+for (const event of ['uncaughtException', 'unhandledRejection'])
+  process.on(event, (error) => {
+    console.error(error)
+    report.error ??= String(error?.stack ?? error)
+    exitAfterCleanup(1)
+  })
 let port
 
 try {
-  docker(['network', 'create', network])
+  createResource(['network', 'create', ...labels, network])
   resources.push(['network', 'rm', network])
-  docker([
+  createResource([
     'run',
     '--rm',
     '-d',
+    ...labels,
     '--name',
     databaseName,
     '--network',
@@ -120,7 +266,7 @@ try {
     ).rows[0]
     assert.deepEqual(versions, { schema: 1, seed: 1 })
     let cutResponse = true
-    server = createLibraryServer(app, {
+    const server = createLibraryServer(app, {
       dropCommittedResponse: (key) => {
         if (key === 'transport-failure' && cutResponse) {
           cutResponse = false
@@ -129,6 +275,7 @@ try {
         return false
       },
     })
+    servers.push(server)
     await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
     const url = `http://127.0.0.1:${server.address().port}`
     assert.equal((await fetch(`${url}/books`)).status, 401)
@@ -258,6 +405,7 @@ try {
         await expectState(crossed.query('SELECT 1'), '42501')
       }
       const alternateServer = createLibraryServer(targets)
+      servers.push(alternateServer)
       await new Promise((resolve) => alternateServer.listen(0, '127.0.0.1', resolve))
       try {
         const url = `http://127.0.0.1:${alternateServer.address().port}`
@@ -356,10 +504,7 @@ try {
         1
       )
     } finally {
-      for (const c of [a, b]) {
-        await c.query('ROLLBACK')
-        c.release()
-      }
+      await rollbackAndRelease(a, b)
     }
   })
   await test('serialization rejection, full-transaction retry and idempotent unknown outcome', async () => {
@@ -381,10 +526,7 @@ try {
       await b.query('UPDATE library.books SET version=version+1 WHERE id=1')
       await b.query('COMMIT')
     } finally {
-      for (const c of [a, b]) {
-        await c.query('ROLLBACK')
-        c.release()
-      }
+      await rollbackAndRelease(a, b)
     }
     const first = await borrow(app, 'alpha', 'unknown-outcome', 1)
     // Discard the response to a committed operation, then reconnect and retry the same key.
@@ -416,27 +558,55 @@ try {
         1
       )
     } finally {
-      for (const c of [a, b]) {
-        await c.query('ROLLBACK')
-        c.release()
-      }
+      await rollbackAndRelease(a, b)
     }
   })
   await test('outbox atomicity, crash replay, consumer deduplication and checkpoint', async () => {
-    // A deliberately unsafe dual write leaves a committed business update with no event.
-    await tenantTransaction(app, 'alpha', (c) =>
-      c.query('UPDATE library.books SET version=version+1 WHERE id=1')
-    )
-    const eventsBeforeFailure = (await admin.query('SELECT count(*)::int AS n FROM library.outbox'))
-      .rows[0].n
-    await assert.rejects(
-      Promise.reject(new Error('external publish unavailable')),
-      /external publish unavailable/
-    )
-    assert.equal(
-      (await admin.query('SELECT count(*)::int AS n FROM library.outbox')).rows[0].n,
-      eventsBeforeFailure
-    )
+    // A deliberately unsafe dual write commits the business update, then calls a
+    // separate local HTTP broker. Nothing makes the two steps atomic.
+    const received = []
+    const broker = createServer((request, response) => {
+      let body = ''
+      request.on('data', (chunk) => (body += chunk))
+      request.on('end', () => {
+        received.push(JSON.parse(body))
+        response.end()
+      })
+    })
+    servers.push(broker)
+    await new Promise((resolve) => broker.listen(0, '127.0.0.1', resolve))
+    const brokerUrl = `http://127.0.0.1:${broker.address().port}/events`
+    const committedVersion = async () =>
+      (
+        await tenantTransaction(app, 'alpha', (c) =>
+          c.query('SELECT version FROM library.books WHERE id=1')
+        )
+      ).rows[0].version
+    const dualWrite = async () => {
+      const { version } = (
+        await tenantTransaction(app, 'alpha', (c) =>
+          c.query('UPDATE library.books SET version=version+1 WHERE id=1 RETURNING version')
+        )
+      ).rows[0]
+      const published = await fetch(brokerUrl, {
+        method: 'POST',
+        body: JSON.stringify({ type: 'book-updated', bookId: 1, version }),
+      })
+      assert.equal(published.status, 200)
+      return version
+    }
+    const brokerHasEvent = (version) => received.some((event) => event.version === version)
+    // Control: while the broker is running, the committed version reaches it.
+    assert.ok(brokerHasEvent(await dualWrite()))
+    await new Promise((resolve) => {
+      broker.close(() => resolve())
+      broker.closeAllConnections()
+    })
+    const versionBeforeFailure = await committedVersion()
+    await assert.rejects(dualWrite(), /fetch failed/)
+    const orphanedVersion = await committedVersion()
+    assert.equal(orphanedVersion, versionBeforeFailure + 1) // the update stayed committed
+    assert.equal(brokerHasEvent(orphanedVersion), false) // and no event describes it
     await assert.rejects(
       tenantTransaction(app, 'alpha', async (c) => {
         await c.query('UPDATE library.books SET copies=copies-1 WHERE id=1')
@@ -455,47 +625,50 @@ try {
       ).rows[0].n,
       0
     )
-    const event = (
-      await tenantTransaction(app, 'alpha', (c) =>
-        c.query('SELECT * FROM library.outbox WHERE NOT acknowledged ORDER BY id LIMIT 1')
-      )
-    ).rows[0]
-    const deliver = () =>
-      tenantTransaction(app, 'alpha', (c) =>
+    // The consumer applies a durable effect, then acknowledges the event separately.
+    const consume = async (event, { crashBeforeAcknowledgement = false } = {}) => {
+      if (event.schema_version !== 1)
+        throw new Error(`Unsupported event schema ${event.schema_version}`)
+      const effect = await tenantTransaction(app, 'alpha', (c) =>
         c.query(
           'INSERT INTO library.deliveries(tenant_id,event_id,payload) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',
           ['alpha', event.id, event.payload]
         )
       )
-    await deliver() // simulated crash after durable effect, before acknowledgement
-    assert.equal((await deliver()).rowCount, 0)
-    await tenantTransaction(app, 'alpha', (c) =>
-      c.query('UPDATE library.outbox SET acknowledged=true WHERE id=$1', [event.id])
-    )
-    assert.equal(
+      if (!crashBeforeAcknowledgement)
+        await tenantTransaction(app, 'alpha', (c) =>
+          c.query('UPDATE library.outbox SET acknowledged=true WHERE id=$1', [event.id])
+        )
+      return effect.rowCount
+    }
+    const eventState = async (eventId) =>
       (
-        await admin.query('SELECT count(*)::int AS n FROM library.deliveries WHERE event_id=$1', [
-          event.id,
-        ])
-      ).rows[0].n,
-      1
-    )
-    const future = (
-      await admin.query(
-        'INSERT INTO library.outbox(tenant_id,payload,schema_version) VALUES(\'alpha\',\'{"type":"future"}\',2) RETURNING id'
+        await admin.query(
+          'SELECT (SELECT count(*)::int FROM library.deliveries WHERE event_id=$1) AS deliveries, (SELECT acknowledged FROM library.outbox WHERE id=$1) AS acknowledged',
+          [eventId]
+        )
+      ).rows[0]
+    const event = (
+      await tenantTransaction(app, 'alpha', (c) =>
+        c.query('SELECT * FROM library.outbox WHERE NOT acknowledged ORDER BY id LIMIT 1')
       )
     ).rows[0]
-    const consume = (version) => {
-      if (version !== 1) throw new Error('Unsupported event schema')
-    }
-    assert.throws(() => consume(2), /Unsupported event schema/)
-    assert.equal(
-      (await admin.query('SELECT acknowledged FROM library.outbox WHERE id=$1', [future.id]))
-        .rows[0].acknowledged,
-      false
-    )
+    // Simulated crash after the durable effect, before acknowledgement.
+    assert.equal(await consume(event, { crashBeforeAcknowledgement: true }), 1)
+    assert.deepEqual(await eventState(event.id), { deliveries: 1, acknowledged: false })
+    assert.equal(await consume(event), 0) // redelivery is deduplicated, then acknowledged
+    assert.deepEqual(await eventState(event.id), { deliveries: 1, acknowledged: true })
+    const future = (
+      await admin.query(
+        'INSERT INTO library.outbox(tenant_id,payload,schema_version) VALUES(\'alpha\',\'{"type":"future"}\',2) RETURNING *'
+      )
+    ).rows[0]
+    // The same consumer refuses the unsupported version: no effect, no acknowledgement.
+    await assert.rejects(consume(future), /Unsupported event schema 2/)
+    assert.deepEqual(await eventState(future.id), { deliveries: 0, acknowledged: false })
     await admin.query('DELETE FROM library.outbox WHERE acknowledged AND schema_version=1')
-    assert.equal((await deliver()).rowCount, 0) // retained deduplication survives outbox retention
+    assert.deepEqual(await eventState(future.id), { deliveries: 0, acknowledged: false })
+    assert.equal(await consume(event), 0) // retained deduplication survives outbox retention
   })
   await test('logical decoding replay, checkpoint, ordering and slot cleanup', async () => {
     await admin.query(
@@ -551,10 +724,7 @@ try {
         retainedBeforeAcknowledgement: retained,
       }
     } finally {
-      for (const client of [a, b]) {
-        await client.query('ROLLBACK')
-        client.release()
-      }
+      await rollbackAndRelease(a, b)
       await admin.query("SELECT pg_drop_replication_slot('dg_outbox')")
       assert.equal(
         (await admin.query("SELECT * FROM pg_replication_slots WHERE slot_name='dg_outbox'"))
@@ -610,6 +780,20 @@ try {
     )
   })
   await test('isolated developer/agent schemas and mismatch detection', async () => {
+    // Setup compares an environment's recorded versions with those the checkout expects.
+    const expected = { schema_version: 1, seed_version: 1 }
+    const checkEnvironment = async (pool) => {
+      const recorded = (
+        await pool.query('SELECT schema_version, seed_version FROM environment_version')
+      ).rows[0]
+      if (
+        recorded.schema_version !== expected.schema_version ||
+        recorded.seed_version !== expected.seed_version
+      )
+        throw new Error(
+          `Refusing environment: schema ${recorded.schema_version}, seed ${recorded.seed_version}; checkout expects schema ${expected.schema_version}, seed ${expected.seed_version}`
+        )
+    }
     for (const actor of ['developer_one', 'developer_two', 'coding_agent']) {
       await admin.query(`CREATE ROLE ${actor} LOGIN PASSWORD 'disposable-environment-password'`)
       await admin.query(`CREATE DATABASE ${actor} OWNER ${actor}`)
@@ -622,19 +806,13 @@ try {
       await isolated.query(
         'CREATE TABLE environment_version(schema_version int, seed_version int); INSERT INTO environment_version VALUES(1,1); CREATE TABLE private_change(value text)'
       )
+      await checkEnvironment(isolated) // control: a matching environment starts
       await isolated.query('INSERT INTO private_change VALUES($1)', [actor])
       assert.deepEqual((await isolated.query('SELECT value FROM private_change')).rows, [
         { value: actor },
       ])
       await isolated.query('UPDATE environment_version SET seed_version=2')
-      assert.equal(
-        (
-          await isolated.query(
-            'SELECT schema_version=seed_version AS compatible FROM environment_version'
-          )
-        ).rows[0].compatible,
-        false
-      )
+      await assert.rejects(checkEnvironment(isolated), /Refusing environment: schema 1, seed 2/)
     }
     const wrongEnvironment = makePool({
       database: 'developer_two',
@@ -679,10 +857,11 @@ try {
     report.burst = metrics
   })
   // Actual pooler protocol/session tests are deliberately separate from the direct pool.
-  docker([
+  createResource([
     'run',
     '--rm',
     '-d',
+    ...labels,
     '--name',
     poolerName,
     '--network',
@@ -784,8 +963,8 @@ try {
         recycledPids: recycled.map((row) => row.pid),
       }
     } finally {
-      await clients[1].query('ROLLBACK')
-      clients.forEach((client) => client.release())
+      await rollbackAndRelease(clients[1])
+      for (const client of clients) if (client !== clients[1]) client.release()
     }
   })
   await test('transaction tenant state stays scoped to each transaction', async () => {
@@ -806,10 +985,11 @@ try {
     )
   })
   const disabledName = `${poolerName}-disabled`
-  docker([
+  createResource([
     'run',
     '--rm',
     '-d',
+    ...labels,
     '--name',
     disabledName,
     '--network',
@@ -883,23 +1063,9 @@ try {
     }
   })
   report.status = 'passed'
+} catch (error) {
+  report.error ??= String(error?.stack ?? error)
+  throw error
 } finally {
-  if (server) await new Promise((resolve) => server.close(resolve))
-  for (const pool of pools) await pool.end()
-  for (const command of resources.reverse()) docker(command)
-  assert.equal(
-    docker(['ps', '-a', '--filter', `name=dg-library-${id}`, '--format', '{{.Names}}']).trim(),
-    ''
-  )
-  assert.equal(
-    docker(['ps', '-a', '--filter', `name=dg-pooler-${id}`, '--format', '{{.Names}}']).trim(),
-    ''
-  )
-  report.cleanedUp = true
-  report.completedAt = new Date().toISOString()
-  mkdirSync(new URL('./.verification-runs/', import.meta.url), { recursive: true })
-  writeFileSync(
-    new URL('./.verification-runs/library.json', import.meta.url),
-    `${JSON.stringify(report, null, 2)}\n`
-  )
+  await cleanup()
 }

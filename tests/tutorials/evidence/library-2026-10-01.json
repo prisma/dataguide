@@ -1,11 +1,11 @@
 {
-  "startedAt": "2026-10-01T04:39:35.909Z",
+  "startedAt": "2026-10-01T06:46:13.664Z",
   "postgresImage": "postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722",
   "poolerImage": "edoburu/pgbouncer@sha256:b17551c776ef7e5769ef80b956d20f85e2fd25dd8912d31d58f782aad495b711",
   "sources": [
     {
       "file": "lab.mjs",
-      "sha256": "683e38fb882118916ca24beda6050c17475c6622db1fa0891a44c006d9aa3dbf"
+      "sha256": "df2d17bf2e868f74a6fc9a85a4d4d146afe7187df23a0a7f4392cbdafccec876"
     },
     {
       "file": "library.ts",
@@ -66,33 +66,33 @@
     "plugin": "test_decoding",
     "events": [
       {
-        "lsn": "0/2138D80",
-        "data": "BEGIN 840"
+        "lsn": "0/2138E18",
+        "data": "BEGIN 841"
       },
       {
-        "lsn": "0/2138D80",
+        "lsn": "0/2138E18",
         "data": "table library.outbox: INSERT: tenant_id[text]:'alpha' id[bigint]:8 payload[jsonb]:'{\"type\": \"committed-first\"}' schema_version[integer]:1 acknowledged[boolean]:false"
       },
       {
-        "lsn": "0/2138E68",
-        "data": "COMMIT 840"
+        "lsn": "0/2138F00",
+        "data": "COMMIT 841"
       },
       {
-        "lsn": "0/2138CC8",
-        "data": "BEGIN 839"
+        "lsn": "0/2138D60",
+        "data": "BEGIN 840"
       },
       {
-        "lsn": "0/2138CC8",
+        "lsn": "0/2138D60",
         "data": "table library.outbox: INSERT: tenant_id[text]:'alpha' id[bigint]:7 payload[jsonb]:'{\"type\": \"allocated-first\"}' schema_version[integer]:1 acknowledged[boolean]:false"
       },
       {
-        "lsn": "0/2138E98",
-        "data": "COMMIT 839"
+        "lsn": "0/2138F30",
+        "data": "COMMIT 840"
       }
     ],
     "retainedBeforeAcknowledgement": {
-      "restart_lsn": "0/2138C90",
-      "confirmed_flush_lsn": "0/2138CC8",
+      "restart_lsn": "0/2138D28",
+      "confirmed_flush_lsn": "0/2138D60",
       "retained_bytes": "520"
     }
   },
@@ -104,7 +104,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.9272919999993974,
+      "elapsedMs": 43.533791999999266,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -115,7 +115,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.181999999999789,
+      "elapsedMs": 25.44158299999981,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -126,7 +126,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.2164169999996375,
+      "elapsedMs": 8.038749999999709,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -137,7 +137,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.8365420000000086,
+      "elapsedMs": 6.479666999999608,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -148,7 +148,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.4877089999999953,
+      "elapsedMs": 3.101249999999709,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -159,7 +159,7 @@
       "firstId": 1,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 1.8711659999999029,
+      "elapsedMs": 4.515124999999898,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -170,7 +170,7 @@
       "firstId": 3,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 1.3477080000002388,
+      "elapsedMs": 5.967416999999841,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -181,7 +181,7 @@
       "firstId": 3,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 1.6703749999996944,
+      "elapsedMs": 7.597917000000052,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -192,7 +192,7 @@
       "firstId": 3,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 1.8453749999998763,
+      "elapsedMs": 3.2245419999999285,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -203,7 +203,7 @@
       "firstId": 2,
       "precisionAt1": 1,
       "recallAt1": 1,
-      "elapsedMs": 2.0974169999999503,
+      "elapsedMs": 4.107915999999932,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -214,7 +214,7 @@
       "firstId": 1,
       "precisionAt1": 0,
       "recallAt1": 0,
-      "elapsedMs": 2.1334590000005846,
+      "elapsedMs": 3.755374999999731,
       "externalModelCalls": 0,
       "providerCost": null
     },
@@ -225,7 +225,7 @@
       "firstId": 1,
       "precisionAt1": 0,
       "recallAt1": 0,
-      "elapsedMs": 1.7904159999998228,
+      "elapsedMs": 2.0872499999995853,
       "externalModelCalls": 0,
       "providerCost": null
     }
@@ -235,27 +235,29 @@
     "poolMax": 2,
     "completed": 2,
     "errors": 8,
-    "acquisitionMs": [6.020416000000296, 6.040374999999585],
+    "acquisitionMs": [7.8761669999985315, 8.864832999999635],
     "peakBackends": 2,
-    "elapsedMs": 208.8241250000001,
-    "throughputPerSecond": 9.57743747280157
+    "elapsedMs": 212.39879199999996,
+    "throughputPerSecond": 9.416249410684033
   },
   "poolerVersion": "PgBouncer 1.26.0\nlibevent 2.1.13-stable\nadns: evdns2\ntls: OpenSSL 3.5.8 25 Aug 2026",
   "preparedStatements": {
     "clients": 4,
     "backends": 2,
     "conflictingName": "shared-statement-name",
-    "originalPid": 217,
-    "reassignedPid": 218,
-    "recycledPids": [220, 219, 220, 219],
+    "originalPid": 223,
+    "reassignedPid": 224,
+    "recycledPids": [226, 225, 226, 225],
     "disabledControl": {
       "maxPreparedStatements": 0,
       "conflictingNameSqlstate": "42P05",
       "recycledBackendSqlstate": "26000",
-      "originalPid": 221,
-      "recycledPid": 222
+      "originalPid": 227,
+      "recycledPid": 228
     }
   },
   "cleanedUp": true,
-  "completedAt": "2026-10-01T04:39:43.262Z"
+  "cleanupErrors": [],
+  "connectionErrors": [],
+  "completedAt": "2026-10-01T06:46:27.122Z"
 }
