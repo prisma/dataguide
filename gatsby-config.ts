@@ -5,7 +5,19 @@ import { rehypeTopicSections } from './src/utils/rehypeTopicSections'
 // MDX 2 no longer parses GitHub Flavored Markdown (tables, strikethrough, ...)
 // by default. remark-gfm is ESM-only, which Node >= 20.19 can `require`.
 const remarkGfm = require('remark-gfm').default
-const contentRevision = require('./plugins/content-revision.cjs')()
+// Gatsby doesn't stop on errors thrown while it loads this file: it builds with an empty config
+// instead, which fails later with unrelated GraphQL errors. So problems found here are collected,
+// and gatsby-plugin-content-manifest stops the build with them in onPreInit.
+const configErrors: string[] = []
+let contentRevision: { contentRevision: string | null; sourceRevision: string | null } = {
+  contentRevision: null,
+  sourceRevision: null,
+}
+try {
+  contentRevision = require('./plugins/content-revision.cjs')()
+} catch (error) {
+  configErrors.push((error as Error).message)
+}
 
 // MDX 1 turned code fence meta (```js copy line-number) into props on the
 // `code` element. MDX 2 drops it, so copy it over to keep the Code component
@@ -154,7 +166,7 @@ let plugins: any = [
       redirects: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
     },
   },
-  'gatsby-plugin-content-manifest',
+  { resolve: 'gatsby-plugin-content-manifest', options: { configErrors } },
 ]
 
 if (process.env.INDEX_ALGOLIA === 'true') {
@@ -177,8 +189,13 @@ if (process.env.INDEX_ALGOLIA === 'true') {
     console.log(
       'INDEX_ALGOLIA is `true`, and GATSBY_ALGOLIA_APP_ID is set, so pushing algoliaPlugin to list of plugins to trigger search indexing.'
     )
+  } else if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
+    // Previews never publish search, so missing credentials only skip indexing there
+    console.warn(
+      'INDEX_ALGOLIA=true, but GATSBY_ALGOLIA_APP_ID is undefined. Skipping search indexing in this preview.'
+    )
   } else {
-    throw new Error('INDEX_ALGOLIA=true requires GATSBY_ALGOLIA_APP_ID and indexing credentials')
+    configErrors.push('INDEX_ALGOLIA=true requires GATSBY_ALGOLIA_APP_ID and indexing credentials')
   }
 } else {
   console.log('INDEX_ALGOLIA not `true`, not pushing algoliaPlugin to skip any search indexing.')

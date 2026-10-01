@@ -3,6 +3,14 @@ const path = require('node:path')
 const { createHash } = require('node:crypto')
 const revision = require('../content-revision.cjs')
 
+// gatsby-config.ts collects the problems it finds, because Gatsby doesn't stop on errors thrown there
+exports.onPreInit = ({ reporter }, { configErrors = [] }) => {
+  if (configErrors.length)
+    reporter.panic(
+      `The site configuration is incomplete:\n${configErrors.map((error) => `- ${error}`).join('\n')}`
+    )
+}
+
 exports.onPostBuild = async ({ reporter }) => {
   const publicDir = path.resolve('public')
   const artifacts = []
