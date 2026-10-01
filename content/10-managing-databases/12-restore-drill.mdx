@@ -18,7 +18,7 @@ The repository's tutorial runner creates a uniquely named container from an immu
 npm run test:tutorials
 ```
 
-The runner is `tests/tutorials/run.mjs` in [the Data Guide repository](https://github.com/prisma/dataguide). It saves actual version, source hashes, check results, elapsed restore time and cleanup status in `.verification-runs/postgresql.json`. CI retains this as an artifact; a failed check fails the job.
+The same command also runs the repository's other PostgreSQL checks in that container: dates, constraints, diagnostic queries and slow-query logging, TLS, `pg_hba.conf` rules and a physical base backup. The runner is `tests/tutorials/run.mjs` in [the Data Guide repository](https://github.com/prisma/dataguide). It saves actual version, source hashes, check results, elapsed restore time and cleanup status in `.verification-runs/postgresql.json`. CI retains this as an artifact; a failed check fails the job.
 
 ## What the exercise checks
 

@@ -131,7 +131,7 @@ The values can be any of the following:
 - **`all`**: A database value of `all` is a catch all value that matches any database requested. This is useful if you don't want the current match rule to evaluate the database value.
 - **`sameuser`**: The `sameuser` value matches connections where the requested database and username are the same.
 - **`samerole`**: The `samerole` database value will match a connection if the user specified is a member of a _role_ with the same name as the requested database.
-- **`replication`**: Matches **physical replication** connections, which do not select a database. Logical replication connects to a named database and is matched by that database's rules instead; this keyword does not grant logical replication access.
+- **`replication`**: Matches **physical replication** connections, which do not select a database. Logical replication connects to a named database and is matched by that database's rules instead. This keyword does not match logical replication connections; a rule with `all` in the database column does.
 - **[specific database name]**: You can also provide one or more specific database names to match. These will only match connections if they request one of the listed databases. You can separate multiple database names with a comma or specify a file to read names from by preceding the filename with an `@` symbol.
 
 ### User

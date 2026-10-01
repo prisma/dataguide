@@ -73,11 +73,11 @@ CREATE TABLE locations (
   latitude numeric CHECK (latitude BETWEEN -90 AND 90),
   longitude numeric NOT NULL CHECK (longitude BETWEEN -180 AND 180)
 );
-INSERT INTO locations VALUES (NULL, 0); -- accepted
+INSERT INTO locations VALUES (NULL, 0);
 ```
 
 ```sql expected-failure sqlstate=23502
-INSERT INTO locations VALUES (0, NULL); -- rejected: NOT NULL
+INSERT INTO locations VALUES (0, NULL);
 ```
 
 ## On tables: unique and exclusion
@@ -92,7 +92,7 @@ INSERT INTO strict_pairs VALUES ('Bruce', NULL);
 ```
 
 ```sql expected-failure sqlstate=23505
-INSERT INTO strict_pairs VALUES ('Bruce', NULL); -- rejected: duplicate key
+INSERT INTO strict_pairs VALUES ('Bruce', NULL);
 ```
 
 Exclusion constraints, which PostgreSQL supports with `EXCLUDE`, fill a very useful niche: they can prevent overlaps. Specify the constrained fields and the operations by which each will be evaluated, and a new record will only be accepted if no existing record compares successfully with each field and operation. For instance, a `schedules` table can be configured to reject conflicts:
@@ -165,7 +165,7 @@ INSERT INTO branch_books VALUES (1, 'CENTRAL');
 ```
 
 ```sql expected-failure sqlstate=23503
-INSERT INTO branch_books VALUES (2, 'MISSING'); -- rejected: foreign key
+INSERT INTO branch_books VALUES (2, 'MISSING');
 ```
 
 If the foreign key is not constrained -- i.e., it's just another column or columns -- a book can have an author who doesn't exist. This is a problem: if someone tries to follow the link between `books` and `authors`, they wind up nowhere. If `authors.author_id` is a serial integer, there's also the possibility that no-one notices until the spurious `author_id` is eventually assigned, and you wind up with a particular copy of _Don Quixote_ attributed first to nobody known and then to Pierre Menard, with Miguel Cervantes nowhere to be found.
@@ -189,13 +189,13 @@ There are many more ways in which data may be incorrect than addressed here. Con
 
 But there are also ways in which the very structure of a table can lead to inconsistencies. To prevent these, we'll need to marshal both primary and foreign keys not just to define and validate but to _normalize_ the relationships between tables. First, though, we've barely scratched the surface of how [the relationships between tables define the structure of the database itself](making-connections).
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you want to learn more about what data modeling means in the context of Prisma, visit the [data modeling overview](https://www.prisma.io/docs/orm/data-modeling?db=postgresql) in the Prisma documentation.
 
 You can also learn how to describe models in a Prisma contract (the file that Prisma ORM 7 called the schema) in the [models and fields](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields) section of the Prisma documentation.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## FAQ
 
@@ -231,7 +231,7 @@ For example, in a customer database a row might include a customer’s first nam
 
 A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table.
 
-However, it can also refer to any unique column that is also not null.
+In PostgreSQL, it can also reference columns covered by a non-deferrable unique constraint or a non-partial unique index; those columns need not be `NOT NULL`.
 
 </details>
 

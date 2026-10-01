@@ -1,8 +1,33 @@
 import { execFileSync, spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { createHash, randomUUID } from 'node:crypto'
+import { constants } from 'node:os'
 import assert from 'node:assert/strict'
 import { performance } from 'node:perf_hooks'
+
+const usage = `Usage: node tests/tutorials/run.mjs [--update-output]
+
+Runs the PostgreSQL tutorial checks in a disposable Docker container, removes the
+container (also on Ctrl-C or SIGTERM) and writes .verification-runs/postgresql.json.
+
+Options:
+  --update-output  Replace each \`text output\` block that follows an executed SQL
+                   block (currently in the dates article) with the actual psql output,
+                   instead of failing when they differ. Review the diff, then run again
+                   without this option to verify the outputs and record evidence.
+  -h, --help       Show this message and exit without starting Docker.
+`
+const args = process.argv.slice(2)
+if (args.includes('--help') || args.includes('-h')) {
+  process.stdout.write(usage)
+  process.exit(0)
+}
+const unknown = args.filter((arg) => arg !== '--update-output')
+if (unknown.length) {
+  process.stderr.write(`Unknown option: ${unknown.join(' ')}\n\n${usage}`)
+  process.exit(2)
+}
+const updateOutput = args.includes('--update-output')
 
 export const image =
   'postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722'
@@ -27,7 +52,50 @@ const presented = (value) =>
     .trimEnd()
 const docker = (args, input) =>
   execFileSync('docker', args, { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+let launched = false
 let started = false
+let finished = false
+// Runs once, from `finally` or a signal handler: remove the container, then write the report.
+const finish = () => {
+  if (finished) return
+  finished = true
+  let removed = false
+  if (launched) {
+    try {
+      docker(['rm', '-f', name])
+    } catch (error) {
+      console.error(`Could not remove ${name}: ${error.stderr || error.message}`)
+    }
+    try {
+      removed =
+        docker(['ps', '-a', '--filter', `name=^/${name}$`, '--format', '{{.Names}}']).trim() === ''
+    } catch (error) {
+      console.error(`Could not confirm removal of ${name}: ${error.stderr || error.message}`)
+    }
+    if (!removed) {
+      console.error(`${name} may still exist; remove it with: docker rm -f ${name}`)
+      process.exitCode = 1
+    }
+  }
+  report.completedAt = new Date().toISOString()
+  report.cleanedUp = started && removed
+  try {
+    mkdirSync('.verification-runs', { recursive: true })
+    writeFileSync('.verification-runs/postgresql.json', `${JSON.stringify(report, null, 2)}\n`)
+  } catch (error) {
+    console.error(`Could not write the report: ${error.message}`)
+    process.exitCode = 1
+  }
+}
+for (const signal of ['SIGINT', 'SIGTERM'])
+  process.on(signal, () => {
+    console.error(`Received ${signal}; removing ${name}`)
+    report.interruptedBy = signal
+    finish()
+    process.exit(128 + constants.signals[signal])
+  })
+// The steps are synchronous, so signal handlers only run when the event loop gets a turn.
+const yieldToSignals = () => new Promise((resolve) => setImmediate(resolve))
 const sql = (statement, database = 'postgres') =>
   docker(
     [
@@ -66,7 +134,8 @@ const scalar = (statement, database = 'postgres') =>
     ],
     statement
   ).trim()
-const check = (label, fn) => {
+const check = async (label, fn) => {
+  await yieldToSignals()
   fn()
   report.checks.push(label)
   console.log(`PASS ${label}`)
@@ -117,9 +186,11 @@ const executeArticle = (file, database) => {
       const next = blocks[i + 1]
       if (next && /^text output/.test(next[1])) {
         report.outputs.push({ file, sql: code, stdout: output })
-        if (process.argv.includes('--update-output'))
+        if (!updateOutput)
+          assert.equal(presented(output), presented(next[2]), `${file}: output for ${code}`)
+        // Rewrite only blocks that differ, so unchanged blocks keep their formatting.
+        else if (presented(output) !== presented(next[2]))
           outputs.push([next[0], `\`\`\`text output\n${presented(output)}\n\`\`\``])
-        else assert.equal(presented(output), presented(next[2]), `${file}: output for ${code}`)
       }
       count++
     }
@@ -136,6 +207,7 @@ const executeArticle = (file, database) => {
 }
 
 try {
+  launched = true
   docker([
     'run',
     '--rm',
@@ -156,14 +228,14 @@ try {
       ready = true
       break
     } catch {}
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
+    await new Promise((resolve) => setTimeout(resolve, 100))
   }
   assert.ok(ready, 'PostgreSQL startup timed out')
   report.version = scalar('SELECT version();')
-  check('every executable dates example and recorded result', () =>
+  await check('every executable dates example and recorded result', () =>
     executeArticle('content/04-postgresql/11-date-types.mdx', 'dates')
   )
-  check('every monitoring diagnostic query parses and reads live system views', () => {
+  await check('every monitoring diagnostic query parses and reads live system views', () => {
     const file = 'content/04-postgresql/13-reading-and-querying-data/04-optimizing-postgresql.mdx'
     const source = readFileSync(file, 'utf8')
     const blocks = [...source.matchAll(/```sql diagnostic\n([\s\S]*?)```/g)]
@@ -204,7 +276,7 @@ try {
       scope: 'diagnostic SELECT/SHOW queries; logging administration checked separately below',
     })
   })
-  check(
+  await check(
     'article logging configuration reload, units, new sessions and real slow-query logs',
     () => {
       const file = 'content/04-postgresql/13-reading-and-querying-data/04-optimizing-postgresql.mdx'
@@ -279,7 +351,7 @@ try {
         'diagnostic queries, global logging configuration/reload, numeric and unit-bearing database defaults, existing/new session behavior and slow-query log presence/absence'
     }
   )
-  check('date subtraction, age and truncation values and types', () => {
+  await check('date subtraction, age and truncation values and types', () => {
     assert.equal(
       scalar(
         "SELECT (DATE '2021-09-27' - DATE '1922-02-02')::text || '|' || pg_typeof(DATE '2021-09-27' - DATE '1922-02-02')::text;"
@@ -300,10 +372,10 @@ try {
       'timestamp with time zone|date|date'
     )
   })
-  check('constraints including precise rejected writes', () =>
+  await check('constraints including precise rejected writes', () =>
     executeArticle('content/02-datamodeling/05-correctness-constraints.mdx', 'constraints')
   )
-  check('constraint positive controls', () => {
+  await check('constraint positive controls', () => {
     assert.equal(scalar('SELECT count(*) FROM default_pairs;', 'constraints'), '2')
     assert.equal(scalar('SELECT count(*) FROM strict_pairs;', 'constraints'), '1')
     assert.equal(scalar('SELECT count(*) FROM branch_books;', 'constraints'), '1')
@@ -312,75 +384,103 @@ try {
       't'
     )
   })
-  check('OID column, constraints, rows and sequences survive plain and archive restore', () => {
-    for (const database of ['mydb', 'plain_restore', 'archive_restore'])
-      sql(`CREATE DATABASE ${database} TEMPLATE template0;`)
-    sql(
-      "CREATE TABLE items (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, label text NOT NULL UNIQUE, object_id oid); INSERT INTO items(label, object_id) VALUES ('snapshot', 12345);",
-      'mydb'
-    )
-    docker([
-      'exec',
-      '-e',
-      'PGUSER=postgres',
-      name,
-      'sh',
-      '-ec',
-      'pg_dump --help >/tmp/help; pg_dump mydb >/tmp/mydb.sql; pg_dump -Fc --file=/tmp/mydb.dump mydb',
-    ])
-    sql("INSERT INTO items(label) VALUES ('after snapshot');", 'mydb')
-    const restoreStarted = performance.now()
-    docker([
-      'exec',
-      '-e',
-      'PGUSER=postgres',
-      name,
-      'sh',
-      '-ec',
-      'psql -X -v ON_ERROR_STOP=1 -d plain_restore -f /tmp/mydb.sql; pg_restore --exit-on-error --dbname=archive_restore /tmp/mydb.dump',
-    ])
-    sql('CREATE ROLE app_smoke;')
-    for (const database of ['plain_restore', 'archive_restore']) {
-      assert.equal(scalar('SELECT id, label, object_id FROM items;', database), '1|snapshot|12345')
-      assert.equal(
-        scalar("INSERT INTO items(label) VALUES ('after restore') RETURNING id;", database),
-        '2'
+  await check(
+    'OID column, constraints, rows and sequences survive plain and archive restore',
+    () => {
+      // The custom-format commands, including creating the destination, come from the article.
+      const file =
+        'content/04-postgresql/12-inserting-and-modifying-data/04-importing-and-exporting-data-in-postgresql.mdx'
+      const source = readFileSync(file, 'utf8')
+      const archive = source.match(/```shell\n(createdb [\s\S]*?)\n```/)?.[1].split('\n')
+      assert.deepEqual(
+        archive?.map((command) => command.split(' ')[0]),
+        ['createdb', 'pg_dump', 'pg_restore'],
+        `${file}: archive dump and restore block`
       )
-      expectedFailure("INSERT INTO items(label) VALUES ('snapshot');", '23505', database)
-      expectedFailure('INSERT INTO items(label) VALUES (NULL);', '23502', database)
+      const [createArchive, dumpArchive, restoreArchive] = archive
+      for (const database of ['mydb', 'plain_restore'])
+        sql(`CREATE DATABASE ${database} TEMPLATE template0;`)
       sql(
-        'GRANT USAGE ON SCHEMA public TO app_smoke; GRANT SELECT, INSERT ON items TO app_smoke; GRANT USAGE ON SEQUENCE items_id_seq TO app_smoke;',
-        database
+        "CREATE TABLE items (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, label text NOT NULL UNIQUE, object_id oid); INSERT INTO items(label, object_id) VALUES ('snapshot', 12345);",
+        'mydb'
       )
-      assert.equal(
-        scalar(
-          "SET ROLE app_smoke; SELECT label FROM items WHERE id=1; INSERT INTO items(label) VALUES ('application write') RETURNING label;",
+      docker([
+        'exec',
+        '-e',
+        'PGUSER=postgres',
+        '-w',
+        '/tmp',
+        name,
+        'sh',
+        '-ec',
+        `pg_dump --help >/tmp/help; pg_dump mydb >/tmp/mydb.sql; ${createArchive}; ${dumpArchive}`,
+      ])
+      sql("INSERT INTO items(label) VALUES ('after snapshot');", 'mydb')
+      // Both destinations already exist, so the measurement covers restore and validation only.
+      const restoreStarted = performance.now()
+      docker([
+        'exec',
+        '-e',
+        'PGUSER=postgres',
+        '-w',
+        '/tmp',
+        name,
+        'sh',
+        '-ec',
+        `psql -X -v ON_ERROR_STOP=1 -d plain_restore -f /tmp/mydb.sql; ${restoreArchive}`,
+      ])
+      sql('CREATE ROLE app_smoke;')
+      for (const database of ['plain_restore', 'archive_restore']) {
+        assert.equal(
+          scalar('SELECT id, label, object_id FROM items;', database),
+          '1|snapshot|12345'
+        )
+        assert.equal(
+          scalar("INSERT INTO items(label) VALUES ('after restore') RETURNING id;", database),
+          '2'
+        )
+        expectedFailure("INSERT INTO items(label) VALUES ('snapshot');", '23505', database)
+        expectedFailure('INSERT INTO items(label) VALUES (NULL);', '23502', database)
+        sql(
+          'GRANT USAGE ON SCHEMA public TO app_smoke; GRANT SELECT, INSERT ON items TO app_smoke; GRANT USAGE ON SEQUENCE items_id_seq TO app_smoke;',
           database
-        ),
-        'snapshot\napplication write'
-      )
-      assert.equal(
-        scalar("SELECT count(*) FROM items WHERE label='after snapshot';", database),
-        '0'
-      )
+        )
+        assert.equal(
+          scalar(
+            "SET ROLE app_smoke; SELECT label FROM items WHERE id=1; INSERT INTO items(label) VALUES ('application write') RETURNING label;",
+            database
+          ),
+          'snapshot\napplication write'
+        )
+        assert.equal(
+          scalar("SELECT count(*) FROM items WHERE label='after snapshot';", database),
+          '0'
+        )
+      }
+      report.recovery = {
+        restoreAndValidationMs: performance.now() - restoreStarted,
+        recoveryPoint: 'dump snapshot',
+        postSnapshotRowsRecovered: 0,
+      }
+      for (const option of [
+        '--data-only',
+        '--schema-only',
+        '--large-objects',
+        '--no-large-objects',
+        '--table=items',
+        '--exclude-table=items',
+      ]) {
+        docker(['exec', name, 'pg_dump', '-U', 'postgres', option, 'mydb'])
+      }
+      report.articles.push({
+        file,
+        sourceSha256: createHash('sha256').update(source).digest('hex'),
+        executableBlocks: 1,
+        scope: 'custom-format createdb, pg_dump and pg_restore commands',
+      })
     }
-    for (const option of [
-      '--data-only',
-      '--schema-only',
-      '--large-objects',
-      '--no-large-objects',
-      '--table=items',
-      '--exclude-table=items',
-    ]) {
-      docker(['exec', name, 'pg_dump', '-U', 'postgres', option, 'mydb'])
-    }
-    report.recovery = {
-      restoreAndValidationMs: performance.now() - restoreStarted,
-      recoveryPoint: 'dump snapshot',
-      postSnapshotRowsRecovered: 0,
-    }
-  })
-  check('malformed restore exits nonzero and stops subsequent SQL', () => {
+  )
+  await check('malformed restore exits nonzero and stops subsequent SQL', () => {
     sql('CREATE DATABASE broken_restore;')
     expectedFailure(
       'CREATE TABLE first_step (id integer); SELECT missing_column; CREATE TABLE never_run(id integer);',
@@ -395,7 +495,7 @@ try {
       't|t'
     )
   })
-  check('supported physical base backup restores into a separate server', () => {
+  await check('supported physical base backup restores into a separate server', () => {
     docker([
       'exec',
       '-e',
@@ -462,7 +562,7 @@ try {
       'stop',
     ])
   })
-  check('verified TLS accepts the correct host and rejects wrong-host certificates', () => {
+  await check('verified TLS accepts the correct host and rejects wrong-host certificates', () => {
     docker([
       'exec',
       name,
@@ -540,47 +640,40 @@ try {
       certificate: 'Disposable self-signed test CA, never provider verification',
     }
   })
-  check('physical replication HBA rules do not authorize logical database connections', () => {
-    sql("CREATE ROLE replicator LOGIN REPLICATION PASSWORD 'disposable-replication-password';")
-    const hba = scalar('SHOW hba_file;')
-    const original = docker(['exec', name, 'cat', hba])
-    const physical =
-      'hostssl replication replicator 127.0.0.1/32 scram-sha-256\nhostssl all replicator 127.0.0.1/32 reject\n'
-    docker(['exec', '-i', name, 'sh', '-c', 'cat > "$1"', 'sh', hba], physical + original)
-    sql('SELECT pg_reload_conf();')
-    const repl = (mode) =>
-      docker([
-        'exec',
-        '-e',
-        'PGPASSWORD=disposable-replication-password',
-        name,
-        'psql',
-        '-X',
-        '-qAt',
-        `host=db.example.test user=replicator dbname=applicationdb replication=${mode} sslmode=verify-full sslrootcert=/tmp/server.crt`,
-        '-c',
-        'IDENTIFY_SYSTEM;',
-      ])
-    assert.ok(repl('true').trim())
-    assert.throws(() => repl('database'), /pg_hba.conf rejects connection/)
-    docker(
-      ['exec', '-i', name, 'sh', '-c', 'cat > "$1"', 'sh', hba],
-      'hostssl applicationdb replicator 127.0.0.1/32 scram-sha-256\n' + physical + original
-    )
-    sql('SELECT pg_reload_conf();')
-    assert.ok(repl('database').trim())
-  })
+  await check(
+    'physical replication HBA rules do not authorize logical database connections',
+    () => {
+      sql("CREATE ROLE replicator LOGIN REPLICATION PASSWORD 'disposable-replication-password';")
+      const hba = scalar('SHOW hba_file;')
+      const original = docker(['exec', name, 'cat', hba])
+      const physical =
+        'hostssl replication replicator 127.0.0.1/32 scram-sha-256\nhostssl all replicator 127.0.0.1/32 reject\n'
+      docker(['exec', '-i', name, 'sh', '-c', 'cat > "$1"', 'sh', hba], physical + original)
+      sql('SELECT pg_reload_conf();')
+      const repl = (mode) =>
+        docker([
+          'exec',
+          '-e',
+          'PGPASSWORD=disposable-replication-password',
+          name,
+          'psql',
+          '-X',
+          '-qAt',
+          `host=db.example.test user=replicator dbname=applicationdb replication=${mode} sslmode=verify-full sslrootcert=/tmp/server.crt`,
+          '-c',
+          'IDENTIFY_SYSTEM;',
+        ])
+      assert.ok(repl('true').trim())
+      assert.throws(() => repl('database'), /pg_hba.conf rejects connection/)
+      docker(
+        ['exec', '-i', name, 'sh', '-c', 'cat > "$1"', 'sh', hba],
+        'hostssl applicationdb replicator 127.0.0.1/32 scram-sha-256\n' + physical + original
+      )
+      sql('SELECT pg_reload_conf();')
+      assert.ok(repl('database').trim())
+    }
+  )
   report.status = 'passed'
 } finally {
-  if (started) {
-    docker(['rm', '-f', name])
-    assert.equal(
-      docker(['ps', '-a', '--filter', `name=^/${name}$`, '--format', '{{.Names}}']).trim(),
-      ''
-    )
-  }
-  report.completedAt = new Date().toISOString()
-  report.cleanedUp = started
-  mkdirSync('.verification-runs', { recursive: true })
-  writeFileSync('.verification-runs/postgresql.json', `${JSON.stringify(report, null, 2)}\n`)
+  finish()
 }

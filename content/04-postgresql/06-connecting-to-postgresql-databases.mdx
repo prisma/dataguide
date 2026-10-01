@@ -51,7 +51,7 @@ Check your installation before assuming which account to use. Some macOS tools i
 
 On Linux installations that create both a `postgres` operating-system account and a PostgreSQL administrator role and use peer authentication, you can connect as that operating-system account. The following `sudo` examples apply to those installations; they are not the application login path.
 
-To get a shell as the `postgres` user on such a Linux installation is to use the `sudo` command. To open a shell session for the `postgres` user and then log into the database, you can type:
+On such a Linux installation, use `sudo` to get a shell as the `postgres` user. To open a shell session for the `postgres` user and then log into the database, you can type:
 
 ```bash
 sudo --login --user=postgres
@@ -94,7 +94,7 @@ PGSSLMODE=verify-full PGSSLROOTCERT=/path/to/provider-ca.pem psql -h db.example.
 
 [`verify-full`](https://www.postgresql.org/docs/18/libpq-ssl.html) checks both the certificate chain and hostname. A wrong-host certificate must fail. For unattended scripts, use a protected [password file](https://www.postgresql.org/docs/18/libpq-pgpass.html) with mode `0600` on Unix rather than a password in a command-line argument. Use a role with only the privileges your application needs.
 
-If `psql` reports that a `server certificate` `does not match host name`, check that the connection hostname matches a name in the certificate and that you have the intended server address. The disposable test rejected `wrong.example.test` when the certificate covered `db.example.test`. Correct the hostname or server certificate while retaining `verify-full`; disabling verification hides the identity failure.
+If `psql` reports that the server certificate does not match the host name, for example, `server certificate for "db.example.test" does not match host name "wrong.example.test"`, check that the connection hostname matches a name in the certificate and that you have the intended server address. Correct the hostname or server certificate while retaining `verify-full`; disabling verification hides the identity failure.
 
 ### Passing connection information to `psql` with a connection string
 

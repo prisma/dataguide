@@ -59,7 +59,7 @@ Databases frequently implement safety mechanisms to help recover from system cra
 
 The basic idea behind WAL-based backups is to take a supported physical base backup and retain the continuous WAL needed to recover it and replay later changes. This sounds similar to incremental backups, but there are some key differences.
 
-The first important difference is that the two components use different mediums. A base backup taken while PostgreSQL runs must follow its backup protocol and include the required WAL; alternatively, a clean shutdown or coordinated atomic snapshot can provide a consistent file copy. WAL recovery reconciles changes made during a supported online backup. It cannot make an arbitrary, incomplete file copy valid. See [PostgreSQL's continuous archiving requirements](https://www.postgresql.org/docs/18/continuous-archiving.html).
+A base backup taken while PostgreSQL runs must follow its backup protocol and include the required WAL; alternatively, a clean shutdown or coordinated atomic snapshot can provide a consistent file copy. WAL recovery reconciles changes made during a supported online backup. It cannot make an arbitrary, incomplete file copy valid. See [PostgreSQL's continuous archiving requirements](https://www.postgresql.org/docs/18/continuous-archiving.html).
 
 This system is also more flexible than traditional incremental backups because a single WAL can be replayed to various points in time. This gives you choices in how much data you want to restore. One disadvantage to this style of backup is that it affects the database system as a whole. You cannot only restore parts of the database while leaving the other parts intact. Because of this, it's not suitable for restoring individual tables or other database objects.
 

@@ -125,6 +125,7 @@ psql -X -v ON_ERROR_STOP=1 -d restoredb -f mydb.sql
 A custom-format dump is restored with `pg_restore`, not `psql`. For a separate empty destination named `archive_restore`:
 
 ```shell
+createdb -T template0 archive_restore
 pg_dump -Fc --file=mydb.dump mydb
 pg_restore --exit-on-error --dbname=archive_restore mydb.dump
 ```

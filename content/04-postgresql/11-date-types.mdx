@@ -50,6 +50,14 @@ Query the stored book information. The omitted `last_checkout` receives `CURRENT
 SELECT author_id, author_name, book_title, published_date FROM checkouts;
 ```
 
+```text output
+ author_id | author_name | book_title | published_date
+-----------+-------------+------------+----------------
+         1 | James Joyce | Ulysses    | 1922-02-02
+(1 row)
+
+```
+
 <PostgresCallout />
 
 ## PostgreSQL `DATE` functions
@@ -215,11 +223,11 @@ This is a useful function to be aware of when you may only need a portion of a d
 
 In this guide, we covered the basics of what you can do with the `DATE` data type in PostgreSQL. It is important to know how date data works inside of your database. Having a grasp on the ways you can access it and operate on it allows you to make age calculations, execute extractions in your queries, and also configure your output if necessary for matching another system's requirements.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you are using [Prisma ORM](https://www.prisma.io/docs/orm) with PostgreSQL, a field of type `Date` stores [PostgreSQL's date type](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#models-and-fields), and Prisma ORM 8 returns its values as `Temporal.PlainDate` objects.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## FAQ
 
