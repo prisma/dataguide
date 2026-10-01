@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { createHash, randomUUID } from 'node:crypto'
 import { constants } from 'node:os'
 import assert from 'node:assert/strict'
-import { performance } from 'node:perf_hooks'
 
 const usage = `Usage: node tests/tutorials/run.mjs [--update-output]
 
@@ -416,8 +415,6 @@ try {
         `pg_dump --help >/tmp/help; pg_dump mydb >/tmp/mydb.sql; ${createArchive}; ${dumpArchive}`,
       ])
       sql("INSERT INTO items(label) VALUES ('after snapshot');", 'mydb')
-      // Both destinations already exist, so the measurement covers restore and validation only.
-      const restoreStarted = performance.now()
       docker([
         'exec',
         '-e',
@@ -456,11 +453,6 @@ try {
           scalar("SELECT count(*) FROM items WHERE label='after snapshot';", database),
           '0'
         )
-      }
-      report.recovery = {
-        restoreAndValidationMs: performance.now() - restoreStarted,
-        recoveryPoint: 'dump snapshot',
-        postSnapshotRowsRecovered: 0,
       }
       for (const option of [
         '--data-only',

@@ -485,7 +485,7 @@ At runtime, the misspelled column failed with `column "emial" does not exist`. T
 
 ## Libraries that weren't tested
 
-The 2022 version of this article also covered Objection.js, Bookshelf.js and Waterline. They were not included in this reproduction; their current releases and maintenance are not established by this experiment. Objection.js and Bookshelf.js are built on Knex, and Waterline is the ORM of the Sails framework. Check their repositories ([Objection.js](https://github.com/Vincit/objection.js), [Bookshelf.js](https://github.com/bookshelf/bookshelf), [Waterline](https://github.com/balderdashy/waterline)) for their current status before starting a new project with them.
+The 2022 version of this article also covered Objection.js, Bookshelf.js and Waterline. This comparison doesn't include them. Objection.js and Bookshelf.js are built on Knex, and Waterline is the ORM of the Sails framework. Check their repositories ([Objection.js](https://github.com/Vincit/objection.js), [Bookshelf.js](https://github.com/bookshelf/bookshelf), [Waterline](https://github.com/balderdashy/waterline)) for their current status before starting a new project with them.
 
 ## Conclusion
 

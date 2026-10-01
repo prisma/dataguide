@@ -117,7 +117,7 @@
       "id": "R13",
       "title": "Align the advertised Node floor with TypeScript test execution",
       "status": "verified-local",
-      "outcome": "CI runs the tests, type-checking and a full build on Node 22.18.0 and Node 24 for every change; the Database tutorials workflow runs the reference application's type-check and lab on Node 22.18.0 as well as Node 24.",
+      "outcome": "CI runs the tests, type-checking and a full build on Node 22.18.0 and Node 24 for every change.",
       "evidence": ".github/workflows/ci.yml",
       "remaining": "Check the current PR's CI runs. Runtime support does not validate unreviewed articles.",
       "humanReviewer": null
@@ -144,7 +144,7 @@
       "id": "R16",
       "title": "Add database tutorial execution to CI",
       "status": "verified-local",
-      "outcome": "Pinned disposable PostgreSQL/PgBouncer/reference-app checks plus a separate eight-library compiler/runtime job; weekly and relevant-change triggers retain reports on failure.",
+      "outcome": "Pinned disposable PostgreSQL, SQLite and MongoDB checks plus a separate eight-library compiler/runtime job; weekly and relevant-change triggers retain reports on failure.",
       "evidence": ".github/workflows/tutorials.yml",
       "remaining": "Database/reference-app and new comparison jobs passed hosted checks at 36a95bf; inspect the current PR gates before release.",
       "humanReviewer": null
@@ -153,8 +153,8 @@
       "id": "R17",
       "title": "Test failure semantics, not just successful commands",
       "status": "verified-local",
-      "outcome": "Exact SQLSTATE/positive controls, concurrency, RLS, transport loss, restore and replay controls pass.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
+      "outcome": "Exact SQLSTATE and positive controls pass in the PostgreSQL, SQLite and MongoDB fixtures, including fail-fast restore and rejected constraint writes.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Guarantees scoped to fixtures; no production load or failure extrapolation.",
       "humanReviewer": null
     },
@@ -206,19 +206,19 @@
     {
       "id": "R23",
       "title": "Add a numerical connection-budget exercise",
-      "status": "verified-local",
-      "outcome": "Replica/worker/rollout budget plus actual ten-client saturation measurements and backend/client distinction.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Illustrative planning inputs and local timings are not production recommendations.",
+      "status": "source-reviewed",
+      "outcome": "The connection-pooling article works through a replica, worker and rollout budget and separates client from backend connections. The measured saturation exercise was removed with the lab code.",
+      "evidence": "content/09-database-tools/03-connection-pooling.mdx",
+      "remaining": "No measured capacity guidance.",
       "humanReviewer": null
     },
     {
       "id": "R24",
       "title": "Teach transaction-pooling compatibility precisely",
-      "status": "verified-local",
-      "outcome": "PgBouncer 1.26.0: four concurrent clients, two backends, conflicting named protocol statements, forced reassignment, backend recycling, disabled-feature negative control and transaction tenant state exercised.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Remaining feature rows are primary-source constraints; human security review pending.",
+      "status": "source-reviewed",
+      "outcome": "Version- and configuration-specific transaction-mode matrix, reviewed against PgBouncer's documentation. The PgBouncer 1.26.0 checks were removed with the lab code.",
+      "evidence": "content/09-database-tools/03-connection-pooling.mdx",
+      "remaining": "Human security review pending.",
       "humanReviewer": null
     },
     {
@@ -233,18 +233,18 @@
     {
       "id": "R26",
       "title": "Add isolated developer, pull-request and coding-agent database workflows",
-      "status": "verified-local",
-      "outcome": "Two developers and agent get distinct roles/databases, divergent writes, seed mismatch detection and automatic cleanup.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Cloud expiry/cost controls documented but not provisioned; human permission review pending.",
+      "status": "partial",
+      "outcome": "The syncing article recommends a separate database and role per developer, pull request and coding agent, with migration and seed checks and cleanup. The lab that exercised this was removed.",
+      "evidence": "content/10-managing-databases/03-syncing-development-databases-between-team-members.mdx",
+      "remaining": "Not executed; human review pending.",
       "humanReviewer": null
     },
     {
       "id": "R27",
       "title": "Complete a multi-tenant isolation learning path",
       "status": "declined",
-      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its tenant-isolation checks remain in the lab code as internal verification only.",
-      "evidence": "examples/library-app/lab.mjs",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
       "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
@@ -252,8 +252,8 @@
       "id": "R28",
       "title": "Complete concurrency, retries and idempotency labs",
       "status": "declined",
-      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its concurrency and idempotency checks remain in the lab code as internal verification only.",
-      "evidence": "examples/library-app/lab.mjs",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
       "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
@@ -261,8 +261,8 @@
       "id": "R29",
       "title": "Connect the guide through one maintained TypeScript application",
       "status": "declined",
-      "outcome": "Not published. The maintainer removed the library application lab article, which connected the guide through the reference application.",
-      "evidence": "examples/library-app/lab.mjs",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
       "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
@@ -270,8 +270,8 @@
       "id": "R30",
       "title": "Build permission-aware retrieval and safe AI database exercises",
       "status": "declined",
-      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its retrieval checks remain in the lab code as internal verification only.",
-      "evidence": "examples/library-app/lab.mjs",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
       "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
@@ -279,18 +279,18 @@
       "id": "R31",
       "title": "Demonstrate the transactional outbox and CDC failure modes",
       "status": "declined",
-      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its outbox and logical-decoding checks remain in the lab code as internal verification only.",
-      "evidence": "examples/library-app/lab.mjs",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
       "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
       "id": "R32",
       "title": "Trigger review from upstream lifecycle events",
-      "status": "verified-local",
-      "outcome": "Primary lifecycle and npm publisher sources, scoped owner/path/lane tasks and simulated changes; scheduled workflow covers the comparison as well as engine/provider lifecycles.",
-      "evidence": "lifecycle-sources.json",
-      "remaining": "Fingerprints trigger review, not automatic behavioral claims. Human owner assignment and patch-release checks required.",
+      "status": "declined",
+      "outcome": "Not adopted. The maintainer removed the weekly lifecycle job: one day after its baseline was recorded, it flagged 5 of its 20 sources as changed, all of them HTML pages.",
+      "evidence": null,
+      "remaining": "If version tracking is needed, use structured release data such as package registries.",
       "humanReviewer": null
     },
     {
