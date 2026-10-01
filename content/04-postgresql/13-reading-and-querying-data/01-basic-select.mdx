@@ -53,11 +53,11 @@ SELECT column2, column1 FROM my_table;
 
 This will display all of the records from `my_table`, but only show the columns named `column2` and `column1`, in that order.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If using Prisma ORM, you can achieve the same results by [selecting fields](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql#select-fields).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## Using column aliases with `AS` to modify the resulting table
 
@@ -173,11 +173,11 @@ One additional option that is often important is clarifying where `NULL` values 
 SELECT * FROM customer ORDER BY last_name NULLS LAST;
 ```
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 You can [sort your results](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql#sort-and-paginate) with Prisma ORM in much the same way as you would in an SQL query.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## Getting distinct results
 
@@ -283,8 +283,8 @@ In this guide, we covered some of the basic ways you can use the `SELECT` comman
 
 While we only covered basic usage in this guide, the general format you learned here will serve as the foundation for all other read and many write queries. Learning ways to filter and target the results more accurately extend the capabilities that we covered today.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 You can learn more about sorting and filtering queries with Prisma ORM in the [reading data documentation](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=postgresql#filter-records).
 
-</TechnicalNote>
+</PrismaOutlinks>

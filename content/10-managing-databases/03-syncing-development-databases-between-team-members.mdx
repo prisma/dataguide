@@ -34,11 +34,11 @@ Seeding a local database is beneficial because it alleviates the need to have a 
 
 If this approach is taken, it requires extra effort to keep seeding data and logic up-to-date with the current schema. If changes occur frequently, this can pose a challenge and may cause problems getting developers onboarded smoothly.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you are using [Prisma ORM](https://www.prisma.io/docs/orm), you can populate a database with a seed script of your own that imports your client and calls `.create(...)`. Prisma ORM 8 has [no seed command](https://www.prisma.io/docs/orm/coming-from-prisma-orm-7#commands).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ### Connecting to a shared remote database
 
@@ -74,11 +74,11 @@ Specific database migration strategies differ between languages and frameworks. 
 2. Generate a set of migration files
 3. Run the migrations to execute the statements and have the changes take effect
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 [Prisma ORM's migrations](https://www.prisma.io/docs/orm/migrations/how-migrations-work) make it easy to describe your database models and produce migrations from them. Its guide to [schema management in teams](https://www.prisma.io/docs/guides/database/schema-changes) shows how to keep them in sync between team members.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ### Notifying team members of changes
 

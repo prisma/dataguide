@@ -13,11 +13,11 @@ Connection management policies and tooling are required to address this resource
 
 In this guide, we'll talk about what connection pooling is, what specific conditions it seeks to address, and how it works. We'll introduce a few popular implementations to act as representative examples, and we'll discuss how they alter the way that clients behave when client requests outstrip the database's available connections.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 [Prisma Postgres](https://www.prisma.io/docs/postgres) includes [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling): it routes your application's connections through a PgBouncer instance of its own, in transaction pooling mode. For serverless and edge runtimes that can't use a TCP connection, it also offers a [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) that connects over HTTP and WebSockets.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## What is involved in opening a database connection?
 
@@ -142,8 +142,8 @@ In this guide, we took a look at the idea of connection pooling and how it can b
 
 Database connection limits can quickly cause problems as your application scales and the querying load becomes more complex. While it's impossible to completely remove the overhead associated with connection management, connection poolers are an invaluable tool for maintaining performance and increasing the number of clients a database can serve.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 [Prisma Postgres](https://www.prisma.io/docs/postgres) includes [connection pooling](https://www.prisma.io/docs/postgres/database/connection-pooling): it routes your application's connections through a PgBouncer instance of its own, in transaction pooling mode. For serverless and edge runtimes that can't use a TCP connection, it also offers a [serverless driver](https://www.prisma.io/docs/postgres/database/serverless-driver) that connects over HTTP and WebSockets.
 
-</TechnicalNote>
+</PrismaOutlinks>

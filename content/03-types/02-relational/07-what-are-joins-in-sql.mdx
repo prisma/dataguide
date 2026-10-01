@@ -278,11 +278,11 @@ In this case, the result would be the same as a `LEFT JOIN` and `FULL JOIN`.
 
 > **Note:** `LATERAL JOIN`s are supported by Postgres but only supported in [MySQL versions >8](https://dev.mysql.com/blog-archive/support-for-lateral-derived-tables-added-to-mysql-8-0-14/)
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 💡 Prisma ORM makes it easy to query relations between tables without thinking about the intricacies and low-level complexities of SQL operations. Read the docs to learn more about [relation queries](https://www.prisma.io/docs/orm/fundamentals/relations-and-joins?db=postgresql).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## Implementing JOINs for different relations
 
@@ -401,8 +401,8 @@ As you can see, `LATERAL JOIN`s combined with JSON aggregation leads to a cleane
 
 To wrap up, we introduced the concept of JOINs and how they allow us to combine related data from tables in relational databases. We explored how data is organized in relational databases, and the significance of primary and foreign keys in forming relationships between tables. We then discussed different types of joins in MySQL and PostgreSQL and determined the appropriate type of join, whether it be traditional or lateral, to use for both one-to-one and one-to-many relations.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 💡 JOINs can be very complicated in real-world applications, especially if you add more conditions to a query, e.g. filtering and pagination. Prisma ORM lets you easily query relations and figures out an effective JOIN query for you under the hood. Read the docs to learn more about [relation queries](https://www.prisma.io/docs/orm/fundamentals/relations-and-joins?db=postgresql).
 
-</TechnicalNote>
+</PrismaOutlinks>

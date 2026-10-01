@@ -12,11 +12,11 @@ Date and time data is commonly managed by database systems and is incredibly imp
 
 In this guide, we'll discuss some of the tools that MongoDB provides to work effectively with date and time data. We'll explore relevant data types, take a look at the operators and methods, and go over how to best use these tools to keep your date and time data in good order.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you are using [MongoDB with Prisma](https://www.prisma.io/mongodb), you can use Prisma ORM's [MongoDB library](https://www.prisma.io/docs/orm/supported-databases) to connect to and manage your database. In Prisma ORM 8, a `Date` field [maps directly](https://www.prisma.io/docs/orm/data-modeling/mongodb#field-types) to MongoDB's `Date` type.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## The MongoDB `Date` and `Timestamp` types
 
@@ -49,11 +49,11 @@ MongoDB also provides a [`Timestamp` type](https://www.prisma.io/dataguide/mongo
 
 Because this is mainly implemented to help coordinate internal processes like replication and sharding, you should probably not use this in your own application's logic. The date type can usually satisfy any requirements for times that you might have.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 When managing a MongoDB database with Prisma, the MongoDB `Date` type [maps directly](https://www.prisma.io/docs/orm/data-modeling/mongodb#field-types) to the `Date` field type in Prisma ORM 8, which gives you a JavaScript `Date`.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## How to create new dates
 
@@ -450,10 +450,10 @@ In this guide, we covered some of the different ways that you can work with date
 
 Getting familiar with how date and time data is stored internally, how to coerce it into desirable formats on output, and how to compare, modify, and decompose the data into useful chunks can help you solve many different problems. While date information can be challenging to work with, taking advantage of the available methods and operators can help mitigate some of the heavy lifting.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you're using MongoDB, check out Prisma ORM's [MongoDB support](https://www.prisma.io/docs/orm/supported-databases#what-each-database-supports), in early access in Prisma ORM 8. You can use [Prisma ORM's client](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=mongodb) to work with your MongoDB databases from TypeScript.
 
 To get started working with MongoDB and Prisma, check out the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) or how to [add Prisma ORM to an existing MongoDB project](https://www.prisma.io/docs/prisma-orm/add-to-existing-project/mongodb).
 
-</TechnicalNote>
+</PrismaOutlinks>

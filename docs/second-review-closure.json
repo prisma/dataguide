@@ -154,7 +154,7 @@
       "title": "Test failure semantics, not just successful commands",
       "status": "verified-local",
       "outcome": "Exact SQLSTATE/positive controls, concurrency, RLS, transport loss, restore and replay controls pass.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Guarantees scoped to fixtures; no production load or failure extrapolation.",
       "humanReviewer": null
     },
@@ -208,7 +208,7 @@
       "title": "Add a numerical connection-budget exercise",
       "status": "verified-local",
       "outcome": "Replica/worker/rollout budget plus actual ten-client saturation measurements and backend/client distinction.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Illustrative planning inputs and local timings are not production recommendations.",
       "humanReviewer": null
     },
@@ -235,7 +235,7 @@
       "title": "Add isolated developer, pull-request and coding-agent database workflows",
       "status": "verified-local",
       "outcome": "Two developers and agent get distinct roles/databases, divergent writes, seed mismatch detection and automatic cleanup.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Cloud expiry/cost controls documented but not provisioned; human permission review pending.",
       "humanReviewer": null
     },
@@ -244,7 +244,7 @@
       "title": "Complete a multi-tenant isolation learning path",
       "status": "verified-local",
       "outcome": "Same HTTP application across shared tables, schemas and databases; adversarial controls and tenant-wide additive migration.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Synthetic authentication only; cluster administrator remains trusted; human security review pending.",
       "humanReviewer": null
     },
@@ -253,7 +253,7 @@
       "title": "Complete concurrency, retries and idempotency labs",
       "status": "verified-local",
       "outcome": "Lost-update/atomic/optimistic controls, deadlock, serialization retry and real HTTP loss after commit with idempotent replay.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Does not interrupt PostgreSQL transport during commit or test external payment effects.",
       "humanReviewer": null
     },
@@ -271,7 +271,7 @@
       "title": "Build permission-aware retrieval and safe AI database exercises",
       "status": "verified-local",
       "outcome": "Same labeled synthetic corpus for lexical/vector/hybrid, actual successful/failed rankings and latency; RLS and read-only bounded plans.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Hand-authored vectors; no external model quality or bill. Production evaluation needs its own corpus and cost evidence.",
       "humanReviewer": null
     },
@@ -280,7 +280,7 @@
       "title": "Demonstrate the transactional outbox and CDC failure modes",
       "status": "verified-local",
       "outcome": "Dual-write failure, atomic outbox, duplicate delivery, version refusal, retention, ordering and actual logical-decoding checkpoints/slot cleanup.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Local test_decoding exercise; production connector restart/schema-history behavior not claimed.",
       "humanReviewer": null
     },

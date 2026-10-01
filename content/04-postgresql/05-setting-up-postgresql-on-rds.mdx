@@ -554,7 +554,7 @@ Snapshots, retained backups, the parameter group, the subnet group and the secur
 
 A production-ready RDS for PostgreSQL instance comes down to a handful of decisions made early: a supported major version with a plan for its end of life, a Multi-AZ deployment, encrypted `gp3` storage with autoscaling, a private network with narrow security group rules, a master password managed by Secrets Manager, and backups kept long enough to notice mistakes. After that, connect with `sslmode=verify-full`, give your application least-privilege roles, and keep an eye on storage, memory and the upgrade calendar.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 Once your RDS database is running, you can use it from TypeScript and Node.js with Prisma ORM. [Set up Prisma ORM from scratch](https://www.prisma.io/docs/prisma-orm/from-scratch) walks you through the configuration file, the contract that holds your models, and your first migration. Use the `app_user` role in your application's connection string and `app_migrator` for migrations, not the master user. Prisma ORM 8 names the schema in every statement instead of relying on the role's `search_path`, so put your models in a [`namespace app { ... }` block](https://www.prisma.io/docs/orm/contract-authoring/psl-syntax?db=postgresql#namespaces) in the contract; without one, they go in `public`.
 
@@ -566,4 +566,4 @@ GRANT CREATE ON DATABASE appdb TO app_migrator;
 
 In PostgreSQL, this privilege also lets `app_migrator` create other schemas in `appdb` and install trusted extensions such as `pgcrypto` there. `app_user` needs no further privileges. We tested this with Prisma ORM 8.0.0-rc.19 (`@prisma/orm-postgres` 8.0.0-rc.13) on PostgreSQL 15, 16, 17 and 18.
 
-</TechnicalNote>
+</PrismaOutlinks>

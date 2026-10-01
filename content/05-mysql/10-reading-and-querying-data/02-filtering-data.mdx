@@ -52,11 +52,11 @@ Conditions are often formed using one or more of the following operators:
 
 While the above list represents some of the most common test constructs, there are many other [operators that may yield boolean results](https://dev.mysql.com/doc/refman/8.0/en/functions.html) that can be used in conjunction with a `WHERE` clause.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 Prisma Client supports filtering by multiple criteria. Check out [Prisma ORM 7's documentation on filtering](https://www.prisma.io/docs/orm/v7/prisma-client/queries/filtering-and-sorting#filtering-with-where) to learn more.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ### Examples using `WHERE`
 
@@ -125,11 +125,11 @@ Since the `GROUP BY` clause is a way of representing multiple rows as a single r
 
 Practically speaking, this means that any columns in the `SELECT` list not included in the `GROUP BY` clause must use an aggregate function to produce a single result for the column for each group.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you are connecting to your database with [Prisma Client in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client), you can use [aggregations in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/queries/aggregation-grouping-summarizing) to compute over and summarize values.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ### Examples using `GROUP BY`
 
@@ -315,11 +315,11 @@ Here, the `<num_rows>` indicates the maximum number of rows to display from the 
 
 While `LIMIT` counts from the top of the results by default, the optional `OFFSET` keyword can be used to offset the starting position it uses. In effect, this allows you to paginate through results by displaying the number of results defined by `LIMIT` and then adding the `LIMIT` number to the `OFFSET` to retrieve the following page.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you are connecting to your database with [Prisma Client in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client), you can use [pagination in Prisma ORM 7](https://www.prisma.io/docs/orm/v7/prisma-client/queries/pagination) to iterate through results.
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ### Examples using `LIMIT`
 

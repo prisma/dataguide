@@ -196,11 +196,11 @@ mongodb+srv://appUser:<password>@<cluster-host>/?retryWrites=true&w=majority
 
 Load this string from an environment variable or a secret manager rather than committing it to source control, and percent-encode characters such as `@`, `:` or `/` in the password. [Introduction to MongoDB connection URIs](/mongodb/connection-uris) explains each part of the string.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 Prisma ORM connects to Atlas with the same `mongodb+srv://` connection string. As of September 2026, the last generally available Prisma ORM release with MongoDB support is Prisma ORM 6 (6.19), which receives security patches until November 19, 2026. It needs a replica set, which every Atlas cluster is, because it uses transactions internally for nested writes. Prisma ORM 7 has no MongoDB connector. Prisma ORM 8, a release candidate with general availability expected in October 2026, supports MongoDB in early access through `@prisma/orm-mongo`, but without transactions so far. See [supported databases](https://www.prisma.io/docs/orm/supported-databases), the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) and the [upgrade guide from Prisma ORM 6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/mongodb).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## Developing against a local Atlas deployment
 
