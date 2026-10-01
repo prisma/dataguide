@@ -967,12 +967,15 @@
       "owner": "SQLite section maintainer (human assignment pending)",
       "level": "executed",
       "releaseChannel": "stable",
-      "scope": "All 11 SQL templates, complete examples and FAQ blocks, RETURNING rows, correlated subqueries and foreign-key enforcement in SQLite",
+      "scope": "All 11 SQL templates, complete examples and FAQ blocks, RETURNING rows, correlated subqueries, and foreign-key enforcement after the article's PRAGMA foreign_keys = ON (with a no-pragma negative control)",
       "reviewer": null,
-      "verificationMethod": "article snippets executed in a pinned disposable container; returned author rows compared with the article",
+      "verificationMethod": "article statements executed with node:sqlite and the sqlite3 shell in pinned disposable containers; displayed table compared byte for byte with sqlite3 shell output",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "fixture": "tests/tutorials/sqlite.mjs",
-      "versions": ["SQLite 3.53.1 (Node.js 24.18.0)"],
+      "versions": [
+        "SQLite 3.53.1 (Node.js 24.18.0)",
+        "sqlite3 shell 3.40.1 (Debian bookworm package 3.40.1-2+deb12u2)"
+      ],
       "reviewDate": "2026-10-01",
       "evidence": "tests/tutorials/evidence/sqlite-2026-10-01.json"
     },
@@ -1133,10 +1136,10 @@
       "releaseChannel": "stable",
       "scope": "Shell transaction examples on a disposable single-member replica set: session visibility, commit, abort and displayed document fields",
       "reviewer": null,
-      "verificationMethod": "article statements executed in a pinned disposable container; output compared without generated IDs",
+      "verificationMethod": "article statements piped through the mongosh REPL in a pinned disposable replica set, with a second shell checking visibility; displayed output compared exactly except the generated insertedId",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "fixture": "tests/tutorials/mongodb.mjs",
-      "versions": ["MongoDB 8.0.32"],
+      "versions": ["MongoDB 8.0.32", "mongosh 2.11.1"],
       "reviewDate": "2026-10-01",
       "evidence": "tests/tutorials/evidence/mongodb-2026-10-01.json"
     },
