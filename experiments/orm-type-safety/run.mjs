@@ -63,7 +63,7 @@ const sourceFiles = (dir) =>
       ? sourceFiles(file)
       : [{ file: path.relative(root, file), sha256: hash(file) }]
   })
-const sql = (database, statement) =>
+const sql = (database, statement, flags = []) =>
   docker(
     [
       'exec',
@@ -71,6 +71,7 @@ const sql = (database, statement) =>
       names.postgres,
       'psql',
       '-X',
+      ...flags,
       '-v',
       'ON_ERROR_STOP=1',
       '-U',
@@ -119,7 +120,8 @@ try {
     }
     assert.ok(ready, `${engine} startup timed out`)
   }
-  report.postgresVersion = sql('postgres', 'SELECT version();').trim()
+  // -qAt: the bare version string, not psql's table with a header and row count
+  report.postgresVersion = sql('postgres', 'SELECT version();', ['-qAt']).trim()
   report.mongoVersion = docker([
     'exec',
     names.mongo,
