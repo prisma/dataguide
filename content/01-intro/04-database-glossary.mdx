@@ -1172,12 +1172,9 @@ This glossary is a work in progress and a living document. We intend to update i
   table for a left join, the right table for a right join, and both for a full
   outer join. See [PostgreSQL's join
   definitions](https://www.postgresql.org/docs/18/queries-table-expressions.html#QUERIES-JOIN).
-  Join operations construct virtual rows by matching records that have identical
-  values in specified comparison columns from each table. The results for an
-  outer join will contain the rows from both tables where the column values
-  matched and will additionally contain all of the unmatched rows from each
-  table. For these rows, the columns without a match in the other table will be
-  padded with `NULL` values to indicate that no matching row was found.
+  Rows that match the join condition are combined, and unmatched rows from the
+  preserved side or sides are added with `NULL` in the other table's columns to
+  indicate that no matching row was found.
 </AnchorItem>
 
 <AnchorItem id="parameterized-query" title="Parameterized query">

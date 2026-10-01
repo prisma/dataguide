@@ -1250,12 +1250,16 @@
     {
       "file": "content/09-database-tools/03-connection-pooling.mdx",
       "owner": "Database tools editor (human assignment pending)",
-      "level": "unreviewed",
-      "releaseChannel": "not-applicable",
-      "scope": "Not re-executed or reviewed by this verification pass",
+      "level": "partial",
+      "releaseChannel": "stable",
+      "scope": "Connection-budget arithmetic and the library lab's PgBouncer transaction-pooling checks; the pool-mode matrix is source-reviewed against PgBouncer's documentation",
       "reviewer": null,
-      "verificationMethod": "none",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "verificationMethod": "scoped source review and referenced local checks",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "versions": ["PostgreSQL 18.6", "PgBouncer 1.26.0"],
+      "reviewDate": "2026-10-01",
+      "fixture": "examples/library-app/lab.mjs",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json"
     },
     {
       "file": "content/09-database-tools/index.mdx",
@@ -1360,12 +1364,16 @@
     {
       "file": "content/10-managing-databases/09-backup-considerations.mdx",
       "owner": "Database operations maintainer (human assignment pending)",
-      "level": "unreviewed",
-      "releaseChannel": "not-applicable",
-      "scope": "Not re-executed or reviewed by this verification pass",
+      "level": "partial",
+      "releaseChannel": "stable",
+      "scope": "pg_basebackup -X stream base backup restored on another server; the clean-shutdown copy and atomic-snapshot alternatives are source-reviewed against the PostgreSQL 18 backup documentation",
       "reviewer": null,
-      "verificationMethod": "none",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "verificationMethod": "scoped source review and referenced local checks",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "versions": ["PostgreSQL 18.6"],
+      "reviewDate": "2026-10-01",
+      "fixture": "tests/tutorials/run.mjs",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json"
     },
     {
       "file": "content/10-managing-databases/10-intro-to-full-text-search.mdx",

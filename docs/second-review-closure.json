@@ -19,7 +19,7 @@
       "title": "Repair and execute the complete dates tutorial",
       "status": "verified-local",
       "outcome": "Every executable date block and recorded output run on PostgreSQL 18.6.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Publication pending.",
       "humanReviewer": null
     },
@@ -28,7 +28,7 @@
       "title": "Remove the obsolete pg_dump --oids recipe",
       "status": "verified-local",
       "outcome": "Obsolete --oids removed; ordinary OID column round-trips through both formats.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Human operational review pending.",
       "humanReviewer": null
     },
@@ -37,7 +37,7 @@
       "title": "Make the restore path fail explicitly on errors",
       "status": "verified-local",
       "outcome": "psql fail-fast and archive restore distinguished; malformed input, rows, constraints and sequences checked.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Trusted dump and transaction limits documented; human operational review pending.",
       "humanReviewer": null
     },
@@ -45,8 +45,8 @@
       "id": "R05",
       "title": "Do not imply pausing replication makes a raw backup consistent",
       "status": "verified-local",
-      "outcome": "Unsafe paused-replica/raw-copy claim removed; supported physical base backup recovered in another server.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "outcome": "Unsafe paused-replica/raw-copy claim removed; a pg_basebackup -X stream base backup recovered in another server. The clean-shutdown copy and atomic-snapshot alternatives are source-reviewed only.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Coordinated storage snapshot procedure not exercised; security/operations review pending.",
       "humanReviewer": null
     },
@@ -55,7 +55,7 @@
       "title": "Propagate secure connection defaults to the companion guide",
       "status": "verified-local",
       "outcome": "Verified TLS templates with protected temporary passfile; wrong hostname rejected.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "No provider CA or native installation execution; human security review pending.",
       "humanReviewer": null
     },
@@ -64,7 +64,7 @@
       "title": "Correct connection defaults and installation-specific assumptions",
       "status": "partial",
       "outcome": "Selected PostgreSQL user and PGDATABASE/-d overrides tested; Linux peer defaults scoped to installation.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Native Linux/macOS/Windows installations not re-executed.",
       "humanReviewer": null
     },
@@ -73,7 +73,7 @@
       "title": "Fix remaining foreign-key and NULL constraint generalizations",
       "status": "verified-local",
       "outcome": "CHECK/NULL, NULLS NOT DISTINCT, non-primary UNIQUE foreign key and exclusion controls executed with exact SQLSTATEs.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Other engines and Prisma snippets excluded; human DDL review pending.",
       "humanReviewer": null
     },
@@ -81,8 +81,8 @@
       "id": "R09",
       "title": "Distinguish physical from logical replication in pg_hba.conf",
       "status": "verified-local",
-      "outcome": "Physical replication rule passes physical protocol and rejects logical database connection until a database rule is added.",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "outcome": "Physical replication rule passes the physical protocol. The `replication` keyword does not match logical (`replication=database`) connections; a rule with `all` in the database column does, and the fixture rejects them with an explicit reject rule.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "remaining": "Human authentication review pending.",
       "humanReviewer": null
     },
@@ -297,7 +297,7 @@
       "id": "R33",
       "title": "Preserve technical notes while removing promotions from Markdown",
       "status": "verified-local",
-      "outcome": "TechnicalNote preserves contextual prerequisites and mappings; promotional PrismaOutlinks omitted from Markdown; exporter tests.",
+      "outcome": "Promotional Prisma notes stay in PrismaOutlinks, which Markdown and search omit; TechnicalNote, which the exporter preserves, is reserved for technical prerequisites and mappings. Exporter tests.",
       "evidence": "plugins/gatsby-plugin-markdown-export/mdx-to-markdown.test.mjs",
       "remaining": "Wrapper migration does not independently validate every integration claim or bump article dates.",
       "humanReviewer": null

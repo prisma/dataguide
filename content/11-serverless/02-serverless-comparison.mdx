@@ -1,7 +1,7 @@
 ---
 title: 'Comparing serverless computing and database providers'
 metaTitle: 'Serverless Computing Platforms and Database Providers'
-metaDescription: 'Comparing the best serverless platforms, including AWS Lambda, Microsoft Azure Functions, Google Cloud Functions, and several other great options.'
+metaDescription: 'Where to find current runtimes, limits and billing for AWS Lambda, Azure Functions, Google Cloud Functions, Cloudflare Workers, Netlify, Vercel and serverless databases, and what to compare.'
 metaImage: '../dataguide-images/serverless/serverless-comparison/header.png'
 authors: ['justinellingwood']
 ---
@@ -12,9 +12,7 @@ authors: ['justinellingwood']
 
 [Serverless computing](https://www.prisma.io/dataguide/serverless/what-is-serverless) is an established approach to cloud computing. Serverless providers allow developers to focus on the functionality that their applications require without worrying about the execution environment or any of the other lower level layers.
 
-In this article, we'll take a look at some of the most popular serverless providers and break down how they compare across different categories. After learning about your options, you'll be in a better position to evaluate your choices and choose the service that best matches your needs.
-
-We will discuss what each service has in common, their points of departure, and what criteria might make you choose one over another. While no single serverless provider is appropriate for every user, this breakdown is intended to highlight criteria to make it easier to evaluate candidates against your priorities.
+This article lists some of the most popular serverless compute providers and serverless databases, with links to each provider's current documentation for runtimes, limits and billing, and the dimensions worth comparing. It doesn't rank them: no single serverless provider is appropriate for every user, and limits and prices change too often for a fixed ranking to stay accurate.
 
 ## Overview of providers and evaluation criteria
 
@@ -24,6 +22,8 @@ The provider documentation below was checked on **30 September 2026**. This is a
 
 For compute, compare event integrations, supported runtimes, duration and concurrency limits, network access, deployment workflow and billing dimensions. For databases, also compare transaction semantics, connectivity, connection limits, backup/restore, idle behavior and data residency. Include logs, gateways, storage, network transfer and any minimum charges in your cost model. An introductory free allowance does not establish a production cost.
 
+For every compute provider below, check its supported event sources, deployment tooling, regional placement and the path from your function to its database. Tell the established service apart from experimental runtimes or features by the provider's own release and support labels. Before adopting a platform, test one representative request path on the plan and runtime you'd use, including database access and its failure cases.
+
 ## AWS Lambda
 
 ### Overview
@@ -32,25 +32,9 @@ For compute, compare event integrations, supported runtimes, duration and concur
 - **Focus:** AWS event-driven functions
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-AWS event-driven functions.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 Node.js 22 and 24 appear in the supported-runtime table. Node.js 26 and Python 3.15 are explicitly preview runtimes. Other managed languages and OS-only custom runtimes have separate lifecycle dates; use the runtime identifier for a supported release. See [the maintained runtime documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -60,10 +44,6 @@ Requests and allocated-memory execution duration; additional features have their
 
 Consult [the current execution limits](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
 
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
-
 ## Microsoft Azure Functions
 
 ### Overview
@@ -72,25 +52,9 @@ Test one representative request path, including database access and its failure 
 - **Focus:** Event-driven functions with Azure integrations
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-Event-driven functions with Azure integrations.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 Language versions depend on the Functions runtime and hosting plan. Consult the supported-language table rather than using the old Node.js 6–14 or .NET Core 2.1 installation choices. See [the maintained runtime documentation](https://learn.microsoft.com/en-us/azure/azure-functions/supported-languages).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -100,10 +64,6 @@ Consumption depends on the plan; compare Flex Consumption, Premium and Dedicated
 
 Consult [the current execution limits](https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
 
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
-
 ## Google Cloud Functions
 
 ### Overview
@@ -112,25 +72,9 @@ Test one representative request path, including database access and its failure 
 - **Focus:** Cloud Run functions and Google Cloud event integrations
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-Cloud Run functions and Google Cloud event integrations.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 The product is now documented as Cloud Run functions. First-generation functions remain a distinct platform with different limits; runtime availability is listed separately from the generation comparison. See [the maintained runtime documentation](https://docs.cloud.google.com/run/docs/runtimes).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -140,10 +84,6 @@ Compute, memory, requests and network transfer, with build and artifact-storage 
 
 Consult [the current execution limits](https://docs.cloud.google.com/run/docs/functions/comparison) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
 
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
-
 ## Cloudflare Workers
 
 ### Overview
@@ -152,25 +92,9 @@ Test one representative request path, including database access and its failure 
 - **Focus:** Functions in the Workers runtime
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-Functions in the Workers runtime.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 Workers provide web APIs and Node.js compatibility APIs when configured. Compatibility is not the same as an unrestricted Node.js server; check the APIs your driver uses. See [the maintained runtime documentation](https://developers.cloudflare.com/workers/runtime-apis/nodejs/).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -180,10 +104,6 @@ Requests and CPU time on the Standard model; storage and other services have sep
 
 Consult [the current execution limits](https://developers.cloudflare.com/workers/platform/limits/) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
 
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
-
 ## Netlify Functions
 
 ### Overview
@@ -192,25 +112,9 @@ Test one representative request path, including database access and its failure 
 - **Focus:** Functions integrated with site builds and deployments
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-Functions integrated with site builds and deployments.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 Use Netlify's current supported runtimes and distinguish synchronous, background and edge functions. They have different execution contracts. See [the maintained runtime documentation](https://docs.netlify.com/build/functions/overview/).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -220,10 +124,6 @@ Plan-specific credits or legacy billing; include compute, requests and bandwidth
 
 Consult [the current execution limits](https://docs.netlify.com/build/functions/overview/) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
 
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
-
 ## Vercel Functions
 
 ### Overview
@@ -232,25 +132,9 @@ Test one representative request path, including database access and its failure 
 - **Focus:** Functions integrated with application deployments
 - **Documentation checked:** 30 September 2026
 
-### General description
-
-Use this provider when its deployment and event integrations fit your application. Select the exact plan and execution mode before comparing it with another service.
-
-### Focus
-
-Functions integrated with application deployments.
-
-### Features
-
-Evaluate supported event sources, deployment tooling, regional placement and the path from your function to its database. Keep compute and database configuration decisions separate.
-
 ### Language support
 
 Choose a documented runtime. Official and community runtimes have different support boundaries; Node.js functions and Edge runtime code do not have identical API support. See [the maintained runtime documentation](https://vercel.com/docs/functions/runtimes).
-
-### Maturity
-
-The established service and any experimental runtime or feature are different choices. Check the provider's feature-specific release and support labels rather than inferring production support from the product name.
 
 ### Price
 
@@ -259,10 +143,6 @@ Fluid compute bills active CPU, provisioned memory and invocations; legacy usage
 ### Limitations
 
 Consult [the current execution limits](https://vercel.com/docs/functions/limitations) for duration, memory, concurrency and payload constraints for your chosen mode. Database connections must have their own capacity budget even when function instances scale automatically.
-
-### Summary
-
-Test one representative request path, including database access and its failure cases, before adopting the platform. Use the selected runtime and plan when estimating costs.
 
 ## Serverless computing adjacent: serverless databases
 
@@ -316,7 +196,7 @@ A serverless driver sends queries over HTTP or WebSockets instead of holding a T
 
 A connection pooler keeps a pool of database connections that many function instances share. [Cloudflare Hyperdrive](https://developers.cloudflare.com/hyperdrive/) does this for Cloudflare Workers and any PostgreSQL or MySQL database: it sets up new connections near your Workers, pools connections near your database, and caches query results. [Prisma Postgres](https://www.prisma.io/docs/postgres/database/connection-pooling) includes connection pooling as well.
 
-## Newer options to keep an eye out for
+## Other compute platforms
 
 ### Deno Deploy
 
