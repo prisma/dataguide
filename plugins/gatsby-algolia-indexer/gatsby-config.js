@@ -3,6 +3,25 @@ const withDefaults = require('./options')
 const publicationPolicy = require('../publication-policy.cjs')
 const revision = require('../content-revision.cjs')
 const { createHash } = require('node:crypto')
+const { readFileSync } = require('node:fs')
+const path = require('node:path')
+const { REVISION_RECORD_ID } = require('./revision-record.cjs')
+
+const sha256 = (value) => createHash('sha256').update(value).digest('hex')
+
+// Records are rewritten only when they change. A record's digest covers its payload and this
+// transformer's own source, so a publishing-code change still refreshes every record without
+// re-indexing all of them on each deploy.
+const transformerRevision = sha256(
+  [
+    'gatsby-config.js',
+    'mdx-to-searchable.js',
+    'remark-mdx-searchable.js',
+    '../publication-policy.cjs',
+  ]
+    .map((file) => readFileSync(path.join(__dirname, file)))
+    .join('\0')
+)
 
 const settings = {
   searchableAttributes: ['apiReference', 'title', 'heading', 'content'],
@@ -72,20 +91,17 @@ const handleBody = async (node) => {
     const record = {
       id: rest.id + index,
       title: rest.title,
-      contentRevision: revision().contentRevision,
-      sourceRevision: revision().sourceRevision,
       slug: rest.modSlug,
       apiReference: isApiTerm(item.text) ? getApiVal(item.text) : null,
       heading: item.heading ? removeInlineCode(item.heading) : null,
       content: item.text.replace(/\s+/g, ' ').trim(),
       dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
     }
-    // Algolia's incremental publisher compares only this digest. Include the
-    // complete payload, including revisions and transformed prose, rather than
-    // the MDX node's digest (which cannot detect publishing-code changes).
-    record.internal = {
-      contentDigest: createHash('sha256').update(JSON.stringify(record)).digest('hex'),
-    }
+    // Algolia's incremental publisher compares only this digest. It covers the complete
+    // transformed payload and the transformer's source, not the MDX node's digest (which
+    // cannot detect publishing-code changes). The build's revisions live in one revision
+    // record instead, so an unchanged article isn't rewritten on every deploy.
+    record.internal = { contentDigest: sha256(JSON.stringify({ record, transformerRevision })) }
     return record
   })
 
@@ -135,6 +151,18 @@ module.exports = (options) => {
         for (const node of noSearchFlag.map((edge) => edge.node).map(unnestFrontmatter)) {
           records.push(...(await handleBody(node)))
         }
+        // The one record that changes on every deploy: the revisions this index was built from,
+        // which scripts/search-smoke.mjs checks. It has no searchable text.
+        const { contentRevision, sourceRevision } = revision()
+        const revisionRecord = {
+          id: REVISION_RECORD_ID,
+          recordType: 'revision',
+          contentRevision,
+          sourceRevision,
+          transformerRevision,
+        }
+        revisionRecord.internal = { contentDigest: sha256(JSON.stringify(revisionRecord)) }
+        records.push(revisionRecord)
         return records
       },
     },

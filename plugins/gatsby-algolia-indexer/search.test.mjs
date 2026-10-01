@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import createConfig from './gatsby-config.js'
 import mdxToSearchable from './mdx-to-searchable.js'
+import { REVISION_RECORD_ID } from './revision-record.cjs'
 
 const node = (id, frontmatter) => ({
   node: {
@@ -34,20 +35,26 @@ test('search exclusion fields are queried and applied before record creation', a
       },
     },
   })
-  assert.equal(records.length, 2)
+  const articles = records.filter((record) => record.id !== REVISION_RECORD_ID)
+  assert.equal(articles.length, 2)
   assert.ok(
-    records.every(
+    articles.every(
       (record) => record.id.startsWith('visible') || record.id.startsWith('navigation-hidden')
     )
   )
   assert.ok(
-    records.every(
+    articles.every(
       (record) =>
-        record.dataguidePath === '/postgresql/date-types#dates' &&
-        /^[a-f0-9]{64}$/.test(record.contentRevision) &&
-        /^[a-f0-9]{40,64}$/.test(record.sourceRevision)
+        record.dataguidePath === '/postgresql/date-types#dates' && !('sourceRevision' in record)
     )
   )
+  // The build's revisions are in one record, which has nothing to search or link to
+  const revision = records.find((record) => record.id === REVISION_RECORD_ID)
+  assert.match(revision.contentRevision, /^[a-f0-9]{64}$/)
+  assert.match(revision.sourceRevision, /^[a-f0-9]{40,64}$/)
+  assert.match(revision.transformerRevision, /^[a-f0-9]{64}$/)
+  for (const field of [...config.queries[0].settings.searchableAttributes, 'dataguidePath', 'slug'])
+    assert.equal(revision[field], undefined)
 })
 
 test('required indexing fails visibly when credentials are missing', () => {

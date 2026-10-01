@@ -356,7 +356,8 @@ function ConfiguredSearch({ hitsStatus, location, header, mobile = false }: any)
 const Hits = ({ hitComponent: HitComponent, selectedIndex }: any) => {
   const { items } = useHits<any>()
   const hits = items
-    .filter((hit) => hit._distinctSeqID == 0)
+    // Only article records have a path (the index also holds a revision record without text)
+    .filter((hit) => hit.dataguidePath && hit._distinctSeqID == 0)
     .map((hit) => ({
       ...hit,
       moreCount: items.filter((other) => other.slug == hit.slug).length,

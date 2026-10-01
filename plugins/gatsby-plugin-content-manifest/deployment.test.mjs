@@ -179,13 +179,14 @@ test('robots policy respects bot groups, longest paths, allow ties, wildcards an
   assert.equal(robotsAllows(bots, 'https://www.prisma.io/docs', 'googlebot'), true)
 })
 
-test('search checks reject records from an older transformer revision', async () => {
+test('search checks reject an index published by another build, and missing records', async () => {
   const root = mkdtempSync(path.join(tmpdir(), 'dg-search-'))
   const cases = readFileSync(new URL('../../tests/search-journeys.json', import.meta.url), 'utf8')
   const preload = path.join(root, 'fetch.mjs')
+  // A fake index: the revision record (fetched by ID) and one matching record per journey
   writeFileSync(
     preload,
-    `const cases=${cases};globalThis.fetch=async(url,options)=> {if(!url.startsWith('https://test-app-dsn.algolia.net/')) throw new Error('unexpected network request');const query=JSON.parse(options.body).query;const item=cases.find(item=>item.query===query);return new Response(JSON.stringify({hits:[{dataguidePath:item.path+(item.anchor?'#'+item.anchor:''),heading:'Guide',content:item.snippetTerms.join(' '),contentRevision:${JSON.stringify(hash)},sourceRevision:process.env.FIXTURE_SOURCE_REVISION}]}));}`
+    `const cases=${cases};globalThis.fetch=async(url,options={})=> {if(!url.startsWith('https://test-app-dsn.algolia.net/1/indexes/test-index/')) throw new Error('unexpected network request');if(url.endsWith('/dataguide-search-revision')) return new Response(JSON.stringify({objectID:'dataguide-search-revision',recordType:'revision',contentRevision:${JSON.stringify(hash)},sourceRevision:process.env.FIXTURE_SOURCE_REVISION,transformerRevision:'e'.repeat(64)}));const query=JSON.parse(options.body).query;const item=cases.find(item=>item.query===query);const hits=process.env.FIXTURE_MISSING===query?[]:[{dataguidePath:item.path+(item.anchor?'#'+item.anchor:''),heading:'Guide',content:item.snippetTerms.join(' ')}];return new Response(JSON.stringify({hits}));}`
   )
   const env = {
     ...process.env,
@@ -197,12 +198,23 @@ test('search checks reject records from an older transformer revision', async ()
   mkdirSync(path.join(root, 'tests'))
   writeFileSync(path.join(root, 'tests/search-journeys.json'), cases)
   const cwd = root
+  const report = () => JSON.parse(readFileSync(path.join(root, '.verification-runs/search.json')))
   try {
     await exec(process.execPath, ['--import', preload, search, hash, commit], { cwd, env })
+    assert.equal(report().indexRevision.passed, true)
     env.FIXTURE_SOURCE_REVISION = 'c'.repeat(40)
     await assert.rejects(
       exec(process.execPath, ['--import', preload, search, hash, commit], { cwd, env })
     )
+    assert.equal(report().indexRevision.passed, false)
+    assert.ok(report().results.every((result) => result.passed))
+    env.FIXTURE_SOURCE_REVISION = commit
+    env.FIXTURE_MISSING = JSON.parse(cases)[0].query
+    await assert.rejects(
+      exec(process.execPath, ['--import', preload, search, hash, commit], { cwd, env })
+    )
+    assert.equal(report().indexRevision.passed, true)
+    assert.equal(report().results.filter((result) => !result.passed).length, 1)
   } finally {
     rmSync(root, { recursive: true, force: true })
   }
