@@ -97,3 +97,56 @@ test('renderer, exporter and search changes alter the source revision even when 
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test("Vercel's build-time rewrite of gatsby-node.ts doesn't count as a dirty checkout", () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'dg-vercel-'))
+  const git = (args) =>
+    execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+  const dirty = (env) =>
+    JSON.parse(
+      execFileSync(
+        process.execPath,
+        ['-e', `console.log(JSON.stringify(require(${JSON.stringify(plugin)})()))`],
+        { cwd: root, encoding: 'utf8', env: { ...process.env, VERCEL: '', ...env } }
+      )
+    ).dirty
+  try {
+    mkdirSync(path.join(root, 'content'))
+    writeFileSync(path.join(root, 'content/article.md'), 'article')
+    writeFileSync(path.join(root, 'gatsby-node.ts'), 'export const original = true\n')
+    git(['init', '-q'])
+    git(['add', '.'])
+    git([
+      '-c',
+      'user.name=Fixture',
+      '-c',
+      'user.email=fixture@example.test',
+      'commit',
+      '-qm',
+      'Seed',
+    ])
+    // What Vercel's builder leaves behind
+    writeFileSync(path.join(root, 'gatsby-node.ts'), 'export const injected = true\n')
+    writeFileSync(
+      path.join(root, 'gatsby-node.ts.__vercel_builder_backup__.ts'),
+      'export const original = true\n'
+    )
+    writeFileSync(path.join(root, 'vercel.json'), '{}\n')
+    assert.equal(dirty({ VERCEL: '1' }), false)
+    assert.equal(dirty({}), true, 'outside Vercel the same changes are dirty')
+    // A backup that differs from the commit means the source itself was changed
+    writeFileSync(
+      path.join(root, 'gatsby-node.ts.__vercel_builder_backup__.ts'),
+      'export const edited = true\n'
+    )
+    assert.equal(dirty({ VERCEL: '1' }), true)
+    writeFileSync(
+      path.join(root, 'gatsby-node.ts.__vercel_builder_backup__.ts'),
+      'export const original = true\n'
+    )
+    writeFileSync(path.join(root, 'content/article.md'), 'edited article')
+    assert.equal(dirty({ VERCEL: '1' }), true, 'other changes stay dirty on Vercel')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
