@@ -308,6 +308,7 @@ try {
       )
     report.cleanedUp = true
   } catch (error) {
+    console.error(`FAIL container cleanup: ${error.message}`)
     report.cleanedUp = false
     report.status = 'failed'
     report.cleanupError = error.message

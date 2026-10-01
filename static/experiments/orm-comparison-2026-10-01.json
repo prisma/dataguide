@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-01T09:53:10.853Z",
+  "startedAt": "2026-10-01T09:58:11.188Z",
   "runtime": "v24.18.0",
   "postgresImage": "postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722",
   "mongoImage": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
@@ -52,14 +52,14 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 162 packages in 3s\n",
+          "stdout": "\nadded 162 packages in 4s\n",
           "stderr": ""
         },
         {
           "command": "node node_modules/prisma/build/index.js generate",
           "exitCode": 0,
-          "stdout": "\n✔ Generated Prisma Client (v7.10.0) to ./node_modules/@prisma/client in 58ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\n\n",
-          "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from schema.prisma.\n"
+          "stdout": "\n✔ Generated Prisma Client (v7.10.0) to ./node_modules/@prisma/client in 55ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\n\n",
+          "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from schema.prisma.\n┌─────────────────────────────────────────────────────────┐\n│  Update available 7.10.0 -> 8.0.0-rc.19                 │\n│                                                         │\n│  This is a major update - please follow the guide at    │\n│  https://pris.ly/d/major-version-upgrade                │\n│                                                         │\n│  Run the following to update                            │\n│    npm i --save-dev prisma@latest                       │\n│    npm i @prisma/client@latest                          │\n└─────────────────────────────────────────────────────────┘\n"
         },
         {
           "command": "node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
@@ -734,7 +734,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 22 packages in 720ms\n",
+          "stdout": "\nadded 22 packages in 967ms\n",
           "stderr": ""
         },
         {
@@ -1018,7 +1018,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 49 packages in 2s\n",
+          "stdout": "\nadded 49 packages in 3s\n",
           "stderr": ""
         },
         {
@@ -1304,7 +1304,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 39 packages in 967ms\n",
+          "stdout": "\nadded 39 packages in 1s\n",
           "stderr": "npm warn deprecated dottie@2.0.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.\nnpm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\n"
         },
         {
@@ -1611,7 +1611,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 30 packages in 1s\n",
+          "stdout": "\nadded 30 packages in 4s\n",
           "stderr": ""
         },
         {
@@ -1963,7 +1963,7 @@
         {
           "command": "node dist/runtime.js",
           "exitCode": 0,
-          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"ValidationError\",\"message\":\"User validation failed: email: Path `email` is required.\"}},{\"label\":\"misspelled filter silently matches nothing\",\"value\":{\"misspelledCount\":0,\"correctCount\":1}},{\"label\":\"strictQuery positive policy rejects typo\",\"rejected\":true,\"error\":{\"name\":\"StrictModeError\",\"message\":\"Path \\\"emial\\\" is not in schema and strictQuery is 'throw'.\"}},{\"label\":\"partial select retains full inferred document type\",\"value\":{\"keys\":[\"_id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"populated reference differs from inferred ObjectId\",\"value\":{\"unloadedIsObjectId\":true,\"populatedIsObjectId\":false,\"populatedEmail\":\"alice@lab.invalid\",\"name\":null}},{\"label\":\"raw aggregate rows\",\"value\":[{\"_id\":\"6abe2dbd53d3307cee237c61\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]},{\"label\":\"raw driver rows\",\"value\":[{\"_id\":\"6abe2dbd53d3307cee237c61\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]}]}\n",
+          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"ValidationError\",\"message\":\"User validation failed: email: Path `email` is required.\"}},{\"label\":\"misspelled filter silently matches nothing\",\"value\":{\"misspelledCount\":0,\"correctCount\":1}},{\"label\":\"strictQuery positive policy rejects typo\",\"rejected\":true,\"error\":{\"name\":\"StrictModeError\",\"message\":\"Path \\\"emial\\\" is not in schema and strictQuery is 'throw'.\"}},{\"label\":\"partial select retains full inferred document type\",\"value\":{\"keys\":[\"_id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"populated reference differs from inferred ObjectId\",\"value\":{\"unloadedIsObjectId\":true,\"populatedIsObjectId\":false,\"populatedEmail\":\"alice@lab.invalid\",\"name\":null}},{\"label\":\"raw aggregate rows\",\"value\":[{\"_id\":\"6abe2ef68b331e425d5141a2\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]},{\"label\":\"raw driver rows\",\"value\":[{\"_id\":\"6abe2ef68b331e425d5141a2\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]}]}\n",
           "stderr": ""
         }
       ],
@@ -2160,7 +2160,7 @@
             "label": "raw aggregate rows",
             "value": [
               {
-                "_id": "6abe2dbd53d3307cee237c61",
+                "_id": "6abe2ef68b331e425d5141a2",
                 "email": "alice@lab.invalid",
                 "name": null,
                 "__v": 0
@@ -2171,7 +2171,7 @@
             "label": "raw driver rows",
             "value": [
               {
-                "_id": "6abe2dbd53d3307cee237c61",
+                "_id": "6abe2ef68b331e425d5141a2",
                 "email": "alice@lab.invalid",
                 "name": null,
                 "__v": 0
@@ -2221,7 +2221,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 44 packages in 778ms\n",
+          "stdout": "\nadded 44 packages in 1s\n",
           "stderr": ""
         },
         {
@@ -2485,7 +2485,7 @@
     }
   ],
   "status": "passed",
-  "fixtureSha256": "d9ba2c71594672cdbdaee57c24f3d8f987b82e7efbaa108fc25b1cc244ebabcf",
+  "fixtureSha256": "53dbe805ae767a2d742f874a3eb54d8d58b854b321a9359055eaa551c9f30ab8",
   "articles": [
     {
       "file": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
@@ -2707,7 +2707,7 @@
     },
     {
       "file": "experiments/orm-type-safety/run.mjs",
-      "sha256": "d9ba2c71594672cdbdaee57c24f3d8f987b82e7efbaa108fc25b1cc244ebabcf"
+      "sha256": "53dbe805ae767a2d742f874a3eb54d8d58b854b321a9359055eaa551c9f30ab8"
     },
     {
       "file": "experiments/orm-type-safety/sequelize/package-lock.json",
@@ -2777,5 +2777,5 @@
   "postgresVersion": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
   "mongoVersion": "8.0.32",
   "cleanedUp": true,
-  "completedAt": "2026-10-01T09:54:10.010Z"
+  "completedAt": "2026-10-01T09:59:23.521Z"
 }
