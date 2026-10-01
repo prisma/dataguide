@@ -192,6 +192,7 @@ const config: GatsbyConfig = {
   jsxRuntime: 'automatic',
   siteMetadata: {
     contentRevision: contentRevision.contentRevision,
+    sourceRevision: contentRevision.sourceRevision,
     pathPrefix: dataguideConfig.gatsby.pathPrefix,
     title: dataguideConfig.siteMetadata.title,
     description: dataguideConfig.siteMetadata.description,

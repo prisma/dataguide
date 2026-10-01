@@ -7,7 +7,11 @@ const {
 if (!appId || !searchKey || !indexName)
   throw new Error('Read-only search credentials and index name are required')
 const revision = process.argv[2]
-if (!revision) throw new Error('Pass the expected content revision from content-manifest.json')
+const sourceRevision = process.argv[3]
+if (!revision || !/^[a-f0-9]{40,64}$/i.test(sourceRevision || ''))
+  throw new Error(
+    'Pass both the expected content hash and full source commit from the build being released'
+  )
 const cases = JSON.parse(readFileSync('tests/search-journeys.json', 'utf8'))
 const results = []
 for (const item of cases) {
@@ -37,12 +41,17 @@ for (const item of cases) {
     results.push({
       ...item,
       snippetMatches,
-      passed: !!match && match.contentRevision === revision && snippetMatches,
-      hits: hits.map(({ dataguidePath, heading, content, contentRevision }) => ({
+      passed:
+        !!match &&
+        match.contentRevision === revision &&
+        match.sourceRevision === sourceRevision &&
+        snippetMatches,
+      hits: hits.map(({ dataguidePath, heading, content, contentRevision, sourceRevision }) => ({
         dataguidePath,
         heading,
         content,
         contentRevision,
+        sourceRevision,
       })),
     })
   } catch (error) {
@@ -52,6 +61,6 @@ for (const item of cases) {
 mkdirSync('.verification-runs', { recursive: true })
 writeFileSync(
   '.verification-runs/search.json',
-  `${JSON.stringify({ checkedAt: new Date().toISOString(), expectedRevision: revision, results }, null, 2)}\n`
+  `${JSON.stringify({ checkedAt: new Date().toISOString(), expectedRevision: revision, expectedSourceRevision: sourceRevision, results }, null, 2)}\n`
 )
 if (results.some((result) => !result.passed)) process.exitCode = 1

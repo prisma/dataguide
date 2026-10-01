@@ -5,6 +5,11 @@ if (!base || !/^https?:\/\//.test(base))
   throw new Error('Pass the deployment URL including /dataguide when appropriate')
 const root = base.replace(/\/$/, '')
 const expectedRevision = process.argv[3]
+const expectedSourceRevision = process.argv[4]
+if (!expectedRevision || !/^[a-f0-9]{40,64}$/i.test(expectedSourceRevision || ''))
+  throw new Error(
+    'Pass both the expected content hash and full source commit from the build being released'
+  )
 const restored = [
   '/postgresql/setting-up-a-local-postgresql-database',
   '/postgresql/introduction-to-data-types',
@@ -16,6 +21,12 @@ const restored = [
 const routes = [
   '/',
   ...restored,
+  '/sqlite/update-data',
+  '/sqlite/update-data.md',
+  '/mongodb/mongodb-transactions',
+  '/mongodb/mongodb-transactions.md',
+  '/postgresql/reading-and-querying-data/optimizing-postgresql',
+  '/postgresql/reading-and-querying-data/optimizing-postgresql.md',
   '/postgresql/date-types/',
   '/postgresql/date-types#get-the-interval-between-two-dates',
   '/postgresql/date-types.md',
@@ -43,10 +54,15 @@ const inspect = async (url) => {
     const documentTitle = body.match(/<title[^>]*>(.*?)<\/title>/is)?.[1] || null
     const unavailable = documentTitle === 'Deployment has failed'
     let manifestRevision = null
+    let manifestSourceRevision = null
+    let dirty = null
     let representationError = null
     if (url.endsWith('/content-manifest.json') && response.ok && !unavailable) {
       try {
-        manifestRevision = JSON.parse(body).contentRevision
+        const manifest = JSON.parse(body)
+        manifestRevision = manifest.contentRevision
+        manifestSourceRevision = manifest.sourceRevision
+        dirty = manifest.dirty
       } catch (error) {
         representationError = error.message
       }
@@ -84,6 +100,11 @@ const inspect = async (url) => {
         meta('dataguide:content-revision') ||
         body.match(/Content revision: ([^\n]+)/)?.[1] ||
         manifestRevision,
+      sourceRevision:
+        meta('dataguide:source-revision') ||
+        body.match(/Source revision: ([^\n]+)/)?.[1] ||
+        manifestSourceRevision,
+      dirty,
       anchorExists: fragment
         ? [...body.matchAll(/\bid=["']([^"']+)["']/g)].some(
             ([, id]) => id === decodeURIComponent(fragment)
@@ -140,21 +161,26 @@ const failures = results.filter(
     result.representationError ||
     result.anchorExists === false ||
     (result.route.includes('definitely-missing') ? result.status !== 404 : result.status !== 200) ||
-    (expectedRevision &&
-      (result.route.endsWith('.md') ||
-        result.route === '/postgresql/date-types' ||
-        result.route === '/content-manifest.json') &&
-      result.contentRevision !== expectedRevision)
+    ((result.route.endsWith('.md') ||
+      (!/\.(md|json|xml)$/.test(result.route) &&
+        result.route !== '/llms.txt' &&
+        !result.route.startsWith('/robots')) ||
+      result.route === '/content-manifest.json') &&
+      !result.route.includes('definitely-missing') &&
+      (result.contentRevision !== expectedRevision ||
+        result.sourceRevision !== expectedSourceRevision ||
+        result.dirty === true))
 )
 const report = {
   checkedAt: new Date().toISOString(),
   base: root,
   expectedRevision: expectedRevision || null,
+  expectedSourceRevision,
   results,
   formerDocs: docsResults,
   failures,
   scope:
-    'HTTP status, redirects, indexing signals, canonical, one retained anchor and revision. Robots content is retained for policy review; network errors remain inconclusive.',
+    'HTTP status, redirects, indexing signals, canonical, one retained anchor, content hash and source commit. A dirty deployed build fails. Robots content is retained for policy review; network errors remain inconclusive.',
 }
 mkdirSync('.verification-runs', { recursive: true })
 writeFileSync('.verification-runs/deployment.json', `${JSON.stringify(report, null, 2)}\n`)

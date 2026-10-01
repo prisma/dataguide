@@ -101,9 +101,9 @@
       "scope": "PostgreSQL SQL examples, expected failures and result assertions; other engines and Prisma integration excluded",
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
-      "reviewDate": "2026-09-30",
+      "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "disposable container fixture with matching source and fixture hashes",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "automatedExecution": true
@@ -327,9 +327,9 @@
       "scope": "TLS/connection templates, replication HBA distinction or restore fixtures tested; full article not re-executed",
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
-      "reviewDate": "2026-09-30",
+      "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -361,9 +361,9 @@
       "scope": "TLS/connection templates, replication HBA distinction or restore fixtures tested; full article not re-executed",
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
-      "reviewDate": "2026-09-30",
+      "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -426,9 +426,9 @@
       "scope": "PostgreSQL SQL examples, expected failures and result assertions; other engines and Prisma integration excluded",
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
-      "reviewDate": "2026-09-30",
+      "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "disposable container fixture with matching source and fixture hashes",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "automatedExecution": true
@@ -471,9 +471,9 @@
       "scope": "TLS/connection templates, replication HBA distinction or restore fixtures tested; full article not re-executed",
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
-      "reviewDate": "2026-09-30",
+      "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -530,12 +530,16 @@
     {
       "file": "content/04-postgresql/13-reading-and-querying-data/04-optimizing-postgresql.mdx",
       "owner": "PostgreSQL section maintainer (human assignment pending)",
-      "level": "unreviewed",
-      "releaseChannel": "not-applicable",
-      "scope": "Not re-executed or reviewed by this verification pass",
+      "level": "partial",
+      "releaseChannel": "stable",
+      "scope": "Diagnostic SELECT and SHOW queries only, including a real non-null wait event; logging configuration and historical sample statistics excluded",
       "reviewer": null,
-      "verificationMethod": "none",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "verificationMethod": "diagnostic statements extracted from article and executed in a pinned disposable container",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "fixture": "tests/tutorials/run.mjs",
+      "versions": ["PostgreSQL 18.6"],
+      "reviewDate": "2026-10-01",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json"
     },
     {
       "file": "content/04-postgresql/13-reading-and-querying-data/index.mdx",
@@ -961,12 +965,16 @@
     {
       "file": "content/06-sqlite/06-update-data.mdx",
       "owner": "SQLite section maintainer (human assignment pending)",
-      "level": "unreviewed",
-      "releaseChannel": "not-applicable",
-      "scope": "Not re-executed or reviewed by this verification pass",
+      "level": "executed",
+      "releaseChannel": "stable",
+      "scope": "All 11 SQL templates, complete examples and FAQ blocks, RETURNING rows, correlated subqueries and foreign-key enforcement in SQLite",
       "reviewer": null,
-      "verificationMethod": "none",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "verificationMethod": "article snippets executed in a pinned disposable container; returned author rows compared with the article",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "fixture": "tests/tutorials/sqlite.mjs",
+      "versions": ["SQLite 3.53.1 (Node.js 24.18.0)"],
+      "reviewDate": "2026-10-01",
+      "evidence": "tests/tutorials/evidence/sqlite-2026-10-01.json"
     },
     {
       "file": "content/06-sqlite/07-exporting-schemas.mdx",
@@ -1121,12 +1129,16 @@
     {
       "file": "content/08-mongodb/12-mongodb-transactions.mdx",
       "owner": "MongoDB section maintainer (human assignment pending)",
-      "level": "unreviewed",
-      "releaseChannel": "not-applicable",
-      "scope": "Not re-executed or reviewed by this verification pass",
+      "level": "executed",
+      "releaseChannel": "stable",
+      "scope": "Shell transaction examples on a disposable single-member replica set: session visibility, commit, abort and displayed document fields",
       "reviewer": null,
-      "verificationMethod": "none",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
+      "verificationMethod": "article statements executed in a pinned disposable container; output compared without generated IDs",
+      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
+      "fixture": "tests/tutorials/mongodb.mjs",
+      "versions": ["MongoDB 8.0.32"],
+      "reviewDate": "2026-10-01",
+      "evidence": "tests/tutorials/evidence/mongodb-2026-10-01.json"
     },
     {
       "file": "content/08-mongodb/13-connection-uris.mdx",
@@ -1374,8 +1386,8 @@
       "reviewer": null,
       "versions": ["PostgreSQL 18.6"],
       "fixture": "tests/tutorials/run.mjs",
-      "reviewDate": "2026-09-30",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-09-30.json",
+      "reviewDate": "2026-10-01",
+      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -1388,8 +1400,8 @@
       "reviewer": null,
       "versions": ["PostgreSQL 18.6", "PgBouncer 1.26.0"],
       "fixture": "examples/library-app/lab.mjs",
-      "reviewDate": "2026-09-30",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "reviewDate": "2026-10-01",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },

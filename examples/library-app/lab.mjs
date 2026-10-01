@@ -704,12 +704,12 @@ try {
     '-e',
     'MAX_PREPARED_STATEMENTS=100',
     '-e',
-    'DEFAULT_POOL_SIZE=1',
+    'DEFAULT_POOL_SIZE=2',
     poolerImage,
   ])
   resources.push(['rm', '-f', poolerName])
   const poolerPort = Number(docker(['port', poolerName, '5432/tcp']).trim().split(':').at(-1))
-  const pooled = makePool({ port: poolerPort, max: 2 })
+  const pooled = makePool({ port: poolerPort, max: 4 })
   let connected = false
   let lastPoolerError
   for (let i = 0; i < 50; i++) {
@@ -724,27 +724,71 @@ try {
   }
   assert.ok(connected, `PgBouncer startup failed: ${lastPoolerError}`)
   report.poolerVersion = docker(['exec', poolerName, 'pgbouncer', '--version']).trim()
-  await test('transaction pooler protocol prepared statements and transaction tenant state', async () => {
-    assert.equal(
-      (
-        await pooled.query({
-          name: 'named-parameter',
-          text: 'SELECT $1::integer AS value',
-          values: [42],
+  await test('protocol prepared statements survive conflicting client names, backend reassignment and recycling', async () => {
+    const clients = await Promise.all(Array.from({ length: 4 }, () => pooled.connect()))
+    const queries = clients.map((_, index) => ({
+      name: 'shared-statement-name',
+      text: `SELECT $1::integer + ${index * 100} AS value, pg_backend_pid() AS pid, pg_sleep(0.02)`,
+      values: [42],
+    }))
+    const pids = new Set()
+    try {
+      const first = (await clients[0].query(queries[0])).rows[0]
+      assert.equal(first.value, 42)
+      await clients[1].query('BEGIN')
+      const held = (await clients[1].query('SELECT pg_backend_pid() AS pid')).rows[0].pid
+      assert.equal(held, first.pid, 'second client must hold the first prepared statement backend')
+      const reassigned = (await clients[0].query(queries[0])).rows[0]
+      assert.notEqual(
+        reassigned.pid,
+        first.pid,
+        'prepared client must execute on a different backend'
+      )
+      assert.equal(reassigned.value, 42)
+      await clients[1].query('COMMIT')
+      for (let round = 0; round < 3; round++) {
+        const rows = await Promise.all(
+          clients.map(
+            async (client, index) =>
+              (await client.query({ ...queries[index], values: [round] })).rows[0]
+          )
+        )
+        rows.forEach((row, index) => {
+          assert.equal(row.value, round + index * 100)
+          pids.add(row.pid)
         })
-      ).rows[0].value,
-      42
-    )
-    assert.equal(
-      (
-        await pooled.query({
-          name: 'named-parameter',
-          text: 'SELECT $1::integer AS value',
-          values: [43],
-        })
-      ).rows[0].value,
-      43
-    )
+      }
+      assert.equal(pids.size, 2, 'four concurrent clients must share two backends')
+      for (const pid of pids)
+        assert.equal(
+          (await admin.query('SELECT pg_terminate_backend($1) AS terminated', [pid])).rows[0]
+            .terminated,
+          true
+        )
+      await pause(100)
+      // A simple query establishes fresh backends before reusing the clients' cached named statements.
+      await Promise.all(clients.map((client) => client.query('SELECT 1')))
+      const recycled = await Promise.all(
+        clients.map(async (client, index) => (await client.query(queries[index])).rows[0])
+      )
+      recycled.forEach((row, index) => {
+        assert.equal(row.value, 42 + index * 100)
+        assert.ok(!pids.has(row.pid))
+      })
+      report.preparedStatements = {
+        clients: 4,
+        backends: 2,
+        conflictingName: 'shared-statement-name',
+        originalPid: first.pid,
+        reassignedPid: reassigned.pid,
+        recycledPids: recycled.map((row) => row.pid),
+      }
+    } finally {
+      await clients[1].query('ROLLBACK')
+      clients.forEach((client) => client.release())
+    }
+  })
+  await test('transaction tenant state stays scoped to each transaction', async () => {
     for (const tenant of ['alpha', 'beta', 'alpha']) {
       const rows = (
         await tenantTransaction(pooled, tenant, (c) =>
@@ -760,6 +804,83 @@ try {
       ),
       '42501'
     )
+  })
+  const disabledName = `${poolerName}-disabled`
+  docker([
+    'run',
+    '--rm',
+    '-d',
+    '--name',
+    disabledName,
+    '--network',
+    network,
+    '-p',
+    '127.0.0.1::5432',
+    '-e',
+    `DB_HOST=${databaseName}`,
+    '-e',
+    'DB_NAME=postgres',
+    '-e',
+    'DB_USER=library_app',
+    '-e',
+    'DB_PASSWORD=disposable-library-password',
+    '-e',
+    'AUTH_TYPE=scram-sha-256',
+    '-e',
+    'POOL_MODE=transaction',
+    '-e',
+    'MAX_PREPARED_STATEMENTS=0',
+    '-e',
+    'DEFAULT_POOL_SIZE=1',
+    poolerImage,
+  ])
+  resources.push(['rm', '-f', disabledName])
+  const disabledPort = Number(docker(['port', disabledName, '5432/tcp']).trim().split(':').at(-1))
+  const disabled = makePool({ port: disabledPort, max: 2 })
+  let disabledReady = false
+  for (let i = 0; i < 50; i++) {
+    try {
+      await disabled.query('SELECT 1')
+      disabledReady = true
+      break
+    } catch {
+      await pause(100)
+    }
+  }
+  assert.ok(disabledReady, 'disabled-feature pooler startup failed')
+  await test('disabled prepared statement tracking rejects conflicting names and fails after backend recycling', async () => {
+    const clients = await Promise.all([disabled.connect(), disabled.connect()])
+    const query = {
+      name: 'negative-control-name',
+      text: 'SELECT $1::integer AS value, pg_backend_pid() AS pid',
+      values: [42],
+    }
+    try {
+      const first = (await clients[0].query(query)).rows[0]
+      assert.equal(first.value, 42)
+      await expectState(
+        clients[1].query({ ...query, text: 'SELECT $1::integer + 1 AS value' }),
+        '42P05'
+      )
+      assert.equal(
+        (await admin.query('SELECT pg_terminate_backend($1) AS terminated', [first.pid])).rows[0]
+          .terminated,
+        true
+      )
+      await pause(100)
+      const next = (await clients[0].query('SELECT pg_backend_pid() AS pid')).rows[0].pid
+      assert.notEqual(next, first.pid)
+      await expectState(clients[0].query(query), '26000')
+      report.preparedStatements.disabledControl = {
+        maxPreparedStatements: 0,
+        conflictingNameSqlstate: '42P05',
+        recycledBackendSqlstate: '26000',
+        originalPid: first.pid,
+        recycledPid: next,
+      }
+    } finally {
+      clients.forEach((client) => client.release())
+    }
   })
   report.status = 'passed'
 } finally {

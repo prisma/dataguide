@@ -4,6 +4,7 @@ metaTitle: "Updating existing data | SQLite | Prisma's Data Guide"
 metaDescription: 'Learn how to update existing data using SQLite.'
 metaImage: '/social/generic-sqlite.png'
 authors: ['alexemerich']
+lastUpdated: 2026-10-01
 ---
 
 ## Introduction
@@ -14,13 +15,13 @@ Once a piece of data enters a database, it is very unlikely that it remains stat
 
 ## Using `UPDATE` to modify data
 
-The basic syntax of the `UPDATE` command looks something like this:
+In the following templates, replace `my_table`, column names, `value1`, and `value2` with your table, columns, and SQL values. The basic syntax of `UPDATE` is:
 
-```sql
+```sql pseudocode
 UPDATE my_table
 SET
 		column1 = value1,
-		column2 = value2,
+		column2 = value2
 WHERE
 		id = 1;
 ```
@@ -35,7 +36,7 @@ While you can assign values directly to columns like we did above, you can also 
 
 For instance, we can alter the above example to look as follows:
 
-```sql
+```sql pseudocode
 UPDATE my_table
 SET (column1, column2) =
 		(value1, value2)
@@ -55,11 +56,11 @@ By default, SQLite does not show the number of rows impacted by an `UPDATE` stat
 
 You can use the asterisk `*` symbol to return all of the columns of the modified rows much like a `SELECT` statement:
 
-```sql
+```sql pseudocode
 UPDATE my_table
 SET
 		column1 = value1,
-		column2 = value2,
+		column2 = value2
 WHERE
 		id = 1
 RETURNING *;
@@ -67,7 +68,7 @@ RETURNING *;
 
 Additionally, you can also specify exact columns that you care about displaying with/without an alias using `AS`:
 
-```sql
+```sql pseudocode
 UPDATE my_table
 SET
 		column1 = value1,
@@ -83,15 +84,15 @@ Updating data based on new external data is a relatively streamlined process. Yo
 
 However, with SQLite you can also use `UPDATE` to conditionally update table values based on information in another table within your database. The basic syntax will look something like this:
 
-```sql
+```sql pseudocode
 UPDATE table1
-SET table1.column1 =(
+SET column1 = (
 	SELECT table2.column1
 	FROM table2
 	WHERE table1.column2 = table2.column2);
 ```
 
-Here, we are directly updating the value of `column1` in `table1` to be the return of a `SELECT` subquery on `table2`, but only in rows where `column2` of `table1` matches `column2` of `table2`. The `FROM` clause indicates a connection between the two tables and `WHERE` specifies the conditions.
+Here, we are directly updating the value of `column1` in `table1` to be the return of a `SELECT` subquery on `table2`, using the row where `column2` of `table1` matches `column2` of `table2`. If no row matches, the subquery returns `NULL`. Keep the matching column unique so the result is unambiguous. The `FROM` clause indicates a connection between the two tables and `WHERE` specifies the conditions.
 
 As an example, let's suppose that we have two tables called `book` and `author`.
 
@@ -108,7 +109,7 @@ CREATE TABLE author (
 
 CREATE TABLE book (
 	id INTEGER PRIMARY KEY,
-	author_id INT REFERENCES author.id
+	author_id INT REFERENCES author(id),
 	title TEXT,
 	publication_year INTEGER
 );
@@ -140,7 +141,8 @@ SET last_publication=(
   SELECT title
   FROM book
   WHERE author_id = author.id
-  ORDER BY author_id, publication_year DESC);
+  ORDER BY publication_year DESC
+  LIMIT 1);
 ```
 
 If you query the `author` table now, it will show you the title of their most recent publication in the database:
@@ -149,7 +151,7 @@ If you query the `author` table now, it will show you the title of their most re
 SELECT * FROM author;
 ```
 
-```sql
+```text output
 +-------------+------------+-----------+--------------------------+
 |     id      | first_name | last_name |     last_publication     |
 +-------------+------------+-----------+--------------------------+
@@ -172,11 +174,11 @@ You can edit records in SQLite by using an `UPDATE` statement.
 
 The basic syntax would look like:
 
-```
+```sql pseudocode
 UPDATE my_table
 SET
         column1 = value1,
-        column2 = value2,
+        column2 = value2
 WHERE
         id = 1;
 ```
@@ -188,11 +190,11 @@ WHERE
 
 In SQLite, you can use the `UPDATE` command looking something like the following:
 
-```
+```sql pseudocode
 UPDATE my_table
 SET
         column1 = value1,
-        column2 = value2,
+        column2 = value2
 WHERE
         color = 'blue';
 ```
@@ -210,11 +212,11 @@ However, SQLite does have the `RETURNING` clause to return all or part of the re
 
 The basic syntax looks like this with `*` specifying to return all column names:
 
-```
+```sql pseudocode
 UPDATE my_table
 SET
         column1 = value1,
-        column2 = value2,
+        column2 = value2
 WHERE
         id = 1
 RETURNING *;

@@ -46,6 +46,7 @@ const SEO = ({
     siteMetadata: {
       pathPrefix,
       contentRevision,
+      sourceRevision,
       siteUrl,
       keywords,
       twitter: { site: tSite, creator: tCreator },
@@ -93,6 +94,7 @@ const SEO = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="dataguide:content-revision" content={contentRevision} />
+      <meta name="dataguide:source-revision" content={sourceRevision} />
       {noindex && <meta name="robots" content="noindex, follow" />}
       {keywords && <meta name="keywords" content={keywords} />}
       {/* Twitter */}
@@ -141,6 +143,7 @@ const query = graphql`
       siteMetadata {
         pathPrefix
         contentRevision
+        sourceRevision
         siteUrl
         twitter {
           site

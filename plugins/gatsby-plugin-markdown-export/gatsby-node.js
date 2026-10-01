@@ -165,6 +165,7 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
         : []),
       `Canonical URL: ${page.pathname === '/' ? siteRoot : `${siteRoot}${page.pathname}`}`,
       `Content revision: ${revision().contentRevision}`,
+      `Source revision: ${revision().sourceRevision}`,
       ...(page.frontmatter.lastUpdated
         ? [`Last updated: ${page.frontmatter.lastUpdated.slice(0, 10)}`]
         : []),

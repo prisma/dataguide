@@ -17,11 +17,28 @@ module.exports = () => {
           hash.update(relative(root, file)).update('\0').update(readFileSync(file)).update('\0')
       })
   walk(join(root, 'content'))
-  const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
-  const dirty =
-    execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], {
+  let sourceRevision
+  let dirty = null
+  let sourceRevisionSource = 'deployment-metadata'
+  const git = (args) =>
+    execFileSync('git', args, {
+      cwd: root,
       encoding: 'utf8',
-    }).trim() !== ''
-  cached = { sourceRevision, dirty, contentRevision: hash.digest('hex') }
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  try {
+    // Do not accidentally identify a parent checkout as the deployed site.
+    if (git(['rev-parse', '--show-toplevel']) === root) {
+      sourceRevision = git(['rev-parse', 'HEAD'])
+      dirty = git(['status', '--porcelain', '--untracked-files=normal']) !== ''
+      sourceRevisionSource = 'git'
+    }
+  } catch {}
+  sourceRevision ||= process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA
+  if (!/^[a-f0-9]{40,64}$/i.test(sourceRevision || ''))
+    throw new Error(
+      'Source revision unavailable: supply VERCEL_GIT_COMMIT_SHA or GITHUB_SHA when building without a Git checkout'
+    )
+  cached = { sourceRevision, sourceRevisionSource, dirty, contentRevision: hash.digest('hex') }
   return cached
 }

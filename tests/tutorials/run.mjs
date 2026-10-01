@@ -163,6 +163,47 @@ try {
   check('every executable dates example and recorded result', () =>
     executeArticle('content/04-postgresql/11-date-types.mdx', 'dates')
   )
+  check('every monitoring diagnostic query parses and reads live system views', () => {
+    const file = 'content/04-postgresql/13-reading-and-querying-data/04-optimizing-postgresql.mdx'
+    const source = readFileSync(file, 'utf8')
+    const blocks = [...source.matchAll(/```sql diagnostic\n([\s\S]*?)```/g)]
+    for (const [, code] of blocks) report.outputs.push({ file, sql: code, stdout: sql(code) })
+    const waitQuery = blocks.find(([, code]) => code.includes('AND wait_event IS NOT NULL'))[1]
+    // An idle transaction supplies a real non-null ClientRead event without timing a slow query.
+    docker([
+      'exec',
+      '-i',
+      name,
+      'sh',
+      '-c',
+      "(printf 'BEGIN; SELECT 1;\\n'; sleep 15) | PGAPPNAME=diagnostic_wait psql -X -q -U postgres >/tmp/diagnostic-wait.log 2>&1 &",
+    ])
+    let waiting = false
+    for (let i = 0; i < 50; i++) {
+      if (
+        scalar(
+          "SELECT count(*) FROM pg_stat_activity WHERE application_name='diagnostic_wait' AND state='idle in transaction' AND wait_event IS NOT NULL;"
+        ) === '1'
+      ) {
+        waiting = true
+        break
+      }
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
+    }
+    assert.ok(waiting, 'diagnostic wait control never became visible')
+    const waitingOutput = sql(waitQuery)
+    assert.match(waitingOutput, /SELECT 1;/)
+    assert.match(waitingOutput, /ClientRead/)
+    sql(
+      "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE application_name='diagnostic_wait';"
+    )
+    report.articles.push({
+      file,
+      sourceSha256: createHash('sha256').update(source).digest('hex'),
+      executableBlocks: blocks.length,
+      scope: 'diagnostic SELECT/SHOW queries only; logging administration excluded',
+    })
+  })
   check('date subtraction, age and truncation values and types', () => {
     assert.equal(
       scalar(

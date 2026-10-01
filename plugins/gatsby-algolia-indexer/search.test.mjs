@@ -44,7 +44,8 @@ test('search exclusion fields are queried and applied before record creation', a
     records.every(
       (record) =>
         record.dataguidePath === '/postgresql/date-types#dates' &&
-        /^[a-f0-9]{64}$/.test(record.contentRevision)
+        /^[a-f0-9]{64}$/.test(record.contentRevision) &&
+        /^[a-f0-9]{40,64}$/.test(record.sourceRevision)
     )
   )
 })

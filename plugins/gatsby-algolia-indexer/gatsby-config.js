@@ -72,6 +72,7 @@ const handleBody = async (node) => {
       id: rest.id + index,
       title: rest.title,
       contentRevision: revision().contentRevision,
+      sourceRevision: revision().sourceRevision,
       slug: rest.modSlug,
       apiReference: isApiTerm(item.text) ? getApiVal(item.text) : null,
       heading: item.heading ? removeInlineCode(item.heading) : null,

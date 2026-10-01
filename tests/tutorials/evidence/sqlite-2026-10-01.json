@@ -1,0 +1,122 @@
+{
+  "startedAt": "2026-10-01T04:39:35.638Z",
+  "image": "node@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d",
+  "status": "passed",
+  "fixtureSha256": "f92fe9fb0d2d89f1eecfb80d2aecb7d5ae637f93a26f7d38ba3b64507216583f",
+  "articles": [
+    {
+      "file": "content/06-sqlite/06-update-data.mdx",
+      "sourceSha256": "9496acdfd85ccb3fe15d8347d3ebff45bd65e5774659fdc83624838e02550708",
+      "executableBlocks": 11
+    }
+  ],
+  "version": "3.53.1",
+  "outputs": [
+    {
+      "sql": "UPDATE my_table\nSET\n\t\tcolumn1 = value1,\n\t\tcolumn2 = value2\nWHERE\n\t\tid = 1;\n",
+      "rows": []
+    },
+    {
+      "sql": "UPDATE my_table\nSET (column1, column2) =\n\t\t(value1, value2)\nWHERE\n\t\tid = 1;\n",
+      "rows": []
+    },
+    {
+      "sql": "UPDATE my_table\nSET\n\t\tcolumn1 = value1,\n\t\tcolumn2 = value2\nWHERE\n\t\tid = 1\nRETURNING *;\n",
+      "rows": [
+        {
+          "id": 1,
+          "column1": "updated",
+          "column2": 2,
+          "color": "blue"
+        }
+      ]
+    },
+    {
+      "sql": "UPDATE my_table\nSET\n\t\tcolumn1 = value1,\n\t\tcolumn2 = value2\nWHERE\n\t\tid = 1\nRETURNING column1 AS 'first column';\n",
+      "rows": [
+        {
+          "first column": "updated"
+        }
+      ]
+    },
+    {
+      "sql": "UPDATE table1\nSET column1 = (\n\tSELECT table2.column1\n\tFROM table2\n\tWHERE table1.column2 = table2.column2);\n",
+      "rows": []
+    },
+    {
+      "sql": "UPDATE author\nSET last_publication=(\n  SELECT title\n  FROM book\n  WHERE author_id = author.id\n  ORDER BY publication_year DESC\n  LIMIT 1);\n",
+      "rows": []
+    },
+    {
+      "sql": "SELECT * FROM author;\n",
+      "rows": [
+        {
+          "id": 1,
+          "first_name": "Leo",
+          "last_name": "Tolstoy",
+          "last_publication": "Anna Karenina"
+        },
+        {
+          "id": 2,
+          "first_name": "James",
+          "last_name": "Joyce",
+          "last_publication": "Ulysses"
+        },
+        {
+          "id": 3,
+          "first_name": "Jean-Paul",
+          "last_name": "Sarte",
+          "last_publication": "Nausea"
+        }
+      ]
+    },
+    {
+      "sql": "UPDATE my_table\nSET\n        column1 = value1,\n        column2 = value2\nWHERE\n        id = 1;\n",
+      "rows": []
+    },
+    {
+      "sql": "UPDATE my_table\nSET\n        column1 = value1,\n        column2 = value2\nWHERE\n        color = 'blue';\n",
+      "rows": []
+    },
+    {
+      "sql": "UPDATE my_table\nSET\n        column1 = value1,\n        column2 = value2\nWHERE\n        id = 1\nRETURNING *;\n",
+      "rows": [
+        {
+          "id": 1,
+          "column1": "updated",
+          "column2": 2,
+          "color": "blue"
+        }
+      ]
+    }
+  ],
+  "authors": [
+    {
+      "id": 1,
+      "first_name": "Leo",
+      "last_name": "Tolstoy",
+      "last_publication": "Anna Karenina"
+    },
+    {
+      "id": 2,
+      "first_name": "James",
+      "last_name": "Joyce",
+      "last_publication": "Ulysses"
+    },
+    {
+      "id": 3,
+      "first_name": "Jean-Paul",
+      "last_name": "Sarte",
+      "last_publication": "Nausea"
+    }
+  ],
+  "checks": [
+    "all article and FAQ SQL blocks",
+    "UPDATE targeting and RETURNING",
+    "correlated subquery including unmatched row",
+    "latest publication per author",
+    "foreign key rejects orphan"
+  ],
+  "cleanedUp": true,
+  "completedAt": "2026-10-01T04:39:36.312Z"
+}

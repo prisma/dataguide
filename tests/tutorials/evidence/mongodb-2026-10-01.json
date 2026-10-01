@@ -1,0 +1,98 @@
+{
+  "startedAt": "2026-10-01T04:42:39.057Z",
+  "image": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
+  "status": "passed",
+  "fixtureSha256": "3a5e4d6a1136273f94762733e4a0ba3bcffb5626231ff0ea998726e23d1c1af2",
+  "articles": [
+    {
+      "file": "content/08-mongodb/12-mongodb-transactions.mdx",
+      "sourceSha256": "8c85159d28b748c7f4b988971f82348e82bcbee146a607d5fdcc862afc34ca68",
+      "executableBlocks": 7
+    }
+  ],
+  "version": "8.0.32",
+  "initial": [
+    {
+      "first_name": "James",
+      "last_name": "Joyce",
+      "title": "Ulysses"
+    },
+    {
+      "first_name": "William",
+      "last_name": "Gibson",
+      "title": "Neuromancer"
+    },
+    {
+      "first_name": "George",
+      "last_name": "Orwell",
+      "title": "Homage to Catalonia"
+    },
+    {
+      "first_name": "James",
+      "last_name": "Baldwin",
+      "title": "The Fire Next Time"
+    }
+  ],
+  "inside": [
+    {
+      "first_name": "James",
+      "last_name": "Joyce",
+      "title": "Ulysses"
+    },
+    {
+      "first_name": "William",
+      "last_name": "Gibson",
+      "title": "Neuromancer"
+    },
+    {
+      "first_name": "George",
+      "last_name": "Orwell",
+      "title": "Homage to Catalonia"
+    },
+    {
+      "first_name": "James",
+      "last_name": "Baldwin",
+      "title": "The Fire Next Time"
+    },
+    {
+      "first_name": "Virginie",
+      "last_name": "Despentes",
+      "title": "Vernon Subutex"
+    }
+  ],
+  "committed": [
+    {
+      "first_name": "James",
+      "last_name": "Joyce",
+      "title": "Ulysses"
+    },
+    {
+      "first_name": "William",
+      "last_name": "Gibson",
+      "title": "Neuromancer"
+    },
+    {
+      "first_name": "George",
+      "last_name": "Orwell",
+      "title": "Homage to Catalonia"
+    },
+    {
+      "first_name": "James",
+      "last_name": "Baldwin",
+      "title": "The Fire Next Time"
+    },
+    {
+      "first_name": "Virginie",
+      "last_name": "Despentes",
+      "title": "Vernon Subutex"
+    }
+  ],
+  "checks": [
+    "article transaction statements execute",
+    "uncommitted write visible only in session",
+    "commit visible outside session",
+    "abort discards second insert"
+  ],
+  "cleanedUp": true,
+  "completedAt": "2026-10-01T04:42:48.751Z"
+}

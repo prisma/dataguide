@@ -41,3 +41,6 @@ jobs:
         env:
           ADD_PREFIX: 'true'
         run: npm run build
+      - name: Build an archive without Git metadata
+        if: matrix.node == 24
+        run: node scripts/build-without-git.mjs

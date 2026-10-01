@@ -216,8 +216,8 @@
       "id": "R24",
       "title": "Teach transaction-pooling compatibility precisely",
       "status": "verified-local",
-      "outcome": "Version/config-specific matrix; PgBouncer 1.26.0 protocol prepares and transaction tenant state exercised.",
-      "evidence": "tests/tutorials/evidence/library-2026-09-30.json",
+      "outcome": "PgBouncer 1.26.0: four concurrent clients, two backends, conflicting named protocol statements, forced reassignment, backend recycling, disabled-feature negative control and transaction tenant state exercised.",
+      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
       "remaining": "Remaining feature rows are primary-source constraints; human security review pending.",
       "humanReviewer": null
     },
@@ -324,9 +324,9 @@
       "id": "R36",
       "title": "Expose a content revision across deployed surfaces",
       "status": "partial",
-      "outcome": "Common content revision in HTML, Markdown and search; generated asset hash manifest. Local HTTP checks confirm HTML/Markdown/manifest agreement.",
+      "outcome": "Content hash and full source commit propagated to HTML, Markdown and search; hosted checks require both. Archive builds use deployment metadata; CI runs a full no-Git build. Stale publisher commits are rejected by executable HTTP/search tests.",
       "evidence": "plugins/gatsby-plugin-content-manifest/gatsby-node.js",
-      "remaining": "Deployment and live-index revision agreement pending.",
+      "remaining": "Working Vercel preview and live-index agreement remain release blockers; GitHub/local builds cannot close them.",
       "humanReviewer": null
     },
     {

@@ -107,10 +107,23 @@ The build validates local assets, social images, canonical URLs, Markdown links 
 
 CI builds with `ADD_PREFIX=true` for the deployed `/dataguide` path. Use the same value for a local deployment build and for Gatsby's prefix-enabled server. Clean Gatsby's cache after changing the prefix setting: an incremental switch can retain the previous font and scene URLs in CSS. A server mounted only at `/dataguide` cannot verify the parent website's origin-level `/robots.txt`; check that route on the actual deployment separately.
 
-When publishing search, set `INDEX_ALGOLIA=true` and supply all configured credentials. Missing credentials and indexer failures fail a required publication. The normal credential-free build checks source and generated artifacts; it cannot prove freshness of a hosted search index. After deployment, use `scripts/deployment-smoke.mjs` and `scripts/search-smoke.mjs` against the actual preview/production URL and expected content revision. Preserve reports separately for each deployment. The latter needs a read-only search key. Network failures remain inconclusive. Do not reuse production database credentials to obtain provider or application evidence.
+When publishing search, set `INDEX_ALGOLIA=true` and supply all configured credentials. Missing credentials and indexer failures fail a required publication. The normal credential-free build checks source and generated artifacts; it cannot prove freshness of a hosted search index. After deployment, use `scripts/deployment-smoke.mjs` and `scripts/search-smoke.mjs` against the actual preview/production URL and both the expected content hash and full source commit. A matching article hash alone does not prove that the renderer, exporter, or search transformer is current. Preserve reports separately for each deployment. The latter needs a read-only search key. Network failures remain inconclusive. Do not reuse production database credentials to obtain provider or application evidence.
 
 [`lifecycle-sources.json`](./lifecycle-sources.json) maps primary upstream sources to affected paths, owner roles and stable/preview lanes. The scheduled lifecycle workflow emits scoped review tasks when fingerprints change or retrieval fails; it does not automatically change versions or dates. `scripts/lifecycle-review.mjs --simulate=postgresql` exercises the mapping without a network call. Fingerprints include document markup, so cosmetic or asset changes can also trigger review. A changed document is a review trigger, not proof of a behavioral change. Update the baseline only after reviewing the source and rerunning affected fixtures where needed. Assign the owner roles to people before treating the maintenance programme as staffed.
 
 ## Pull requests
 
 Describe what changed and how you verified it: the versions you tested against and anything you couldn't test. Changes to authentication, permissions, encryption or other security-sensitive guidance need a review from someone who knows that database well.
+
+### Release checks
+
+Keep a change in draft until its Vercel preview works and hosted route, Markdown, manifest, and search checks pass for the current commit. Local and GitHub builds do not establish hosted readiness. Obtain the expected content hash from the current commit's build artifact, not from the deployment being checked.
+
+```bash
+node scripts/deployment-smoke.mjs https://YOUR-PREVIEW.vercel.app/dataguide EXPECTED_CONTENT_HASH EXPECTED_FULL_COMMIT_SHA
+node scripts/search-smoke.mjs EXPECTED_CONTENT_HASH EXPECTED_FULL_COMMIT_SHA
+```
+
+Use the preview's actual prefix and read-only search configuration. The search check must query the index used by that preview. Both commands must exit zero. Save their reports with the preview URL and commit before marking the PR ready. A failed deployment, inaccessible preview, stale source commit, or stale search index leaves the release blocked. Check Vercel's build logs before assigning a cause to a deployment failure.
+
+CI also builds a temporary source archive with no `.git` directory. That build supplies `VERCEL_GIT_COMMIT_SHA`; without Git or valid deployment metadata, the build fails with an actionable message. A manifest records whether its commit came from Git or deployment metadata. An archive's dirty-tree state is unknown (`null`), rather than asserted clean.

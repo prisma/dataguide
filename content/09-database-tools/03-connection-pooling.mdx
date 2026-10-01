@@ -122,7 +122,7 @@ The [library application lab](/managing-databases/library-application-labs#conne
 
 ## Transaction pooling and session features
 
-The following matrix follows [PgBouncer's feature contract](https://www.pgbouncer.org/features.html). The library lab uses PgBouncer 1.26.0, transaction mode, a one-backend pool, and `max_prepared_statements=100`. The lab separately verifies named protocol statements and transaction-scoped tenant state. The remaining rows are documented compatibility constraints, not measured provider behavior.
+The following matrix follows [PgBouncer's feature contract](https://www.pgbouncer.org/features.html). The library lab uses PgBouncer 1.26.0, transaction mode, two backends shared by four concurrent clients, and `max_prepared_statements=100`. It checks conflicting client statement names, forced backend reassignment and backend recycling. A separate one-backend pool with `max_prepared_statements=0` supplies the failing control. The lab also verifies transaction-scoped tenant state. The remaining rows are documented compatibility constraints, not measured provider behavior.
 
 | Feature                            | Transaction-mode requirement                                                                                                                                                                                               |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

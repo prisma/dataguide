@@ -6,6 +6,12 @@ metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice title="Verification scope">
+
+The diagnostic `SELECT` and `SHOW` queries were executed on PostgreSQL 18.6 in a disposable container. The logging configuration steps and historical sample statistics have not been re-tested; statistics and paths depend on your server.
+
+</StatusNotice>
+
 ## Introduction
 
 Managing performance is an ongoing task when working with database-backed applications. Slow running queries can cause timeouts, degrade the user experience, use more resources, and may even impact your budget depending on how you pay for your databases. These issues make it important to understand the performance characteristics of your database so that you can identify and fix problematic queries.
@@ -30,14 +36,14 @@ The `pg_stat_activity` view is one of the views available within PostgreSQL's cu
 
 To display all of the information within the view, type:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_activity \gx
 ```
 
 <details>
 <summary>View `pg_stat_activity` output</summary>
 
-```sql
+```text
 -[ RECORD 1 ]----+-------------------------------
 datid            |
 datname          |
@@ -197,7 +203,7 @@ There are a number of fields in the output that can be helpful when looking for 
 
 We can filter the query by whatever columns are relevant for our current context. One helpful pattern is to use the `age()` function to calculate how long the query has been running. For example:
 
-```sql
+```sql diagnostic
 SELECT
     age(clock_timestamp(), query_start),
     usename,
@@ -214,7 +220,7 @@ This will display the execution time, username, database, and query text for que
 
 Similarly, you can see all processes that are not idle but do have a wait event:
 
-```sql
+```sql diagnostic
 SELECT
     usename,
     datname,
@@ -224,7 +230,7 @@ SELECT
 FROM pg_stat_activity
 WHERE
     state != 'idle'
-AND query wait_event != ''
+AND wait_event IS NOT NULL;
 ```
 
 This can help you see queries that are not currently progressing because of other parts of the system (for instance, lock contention).
@@ -239,7 +245,7 @@ While the `pg_stat_activity` view will probably provide most of the information 
 
 The `pg_stat_database` table contains statistics about each database:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_database \gx
 ```
 
@@ -286,7 +292,7 @@ Some interesting columns for our purposes include:
 
 As [the Data Egret team shows on their blog](https://dataegret.com/2017/03/deep-dive-into-postgres-stats-pg_stat_database/), you can use these raw values to calculate interesting statistics like your cache hit ratio:
 
-```sql
+```sql diagnostic
 SELECT
     datname,
     100 * blks_hit / (blks_hit + blks_read) as cache_hit_ratio
@@ -296,7 +302,7 @@ WHERE
     (blks_hit + blks_read) > 0;
 ```
 
-```sql
+```text
   datname  | cache_hit_ratio
 -----------+-----------------
            |              99
@@ -311,7 +317,7 @@ This can be valuable information that can help you evaluate whether you would be
 
 Another helpful family of views are `pg_stat_all_tables`, `pg_stat_user_tables`, and `pg_stat_sys_tables`. The `pg_stat_all_tables` view shows access statistics for all databases while the other two views filter the tables based on whether they are user tables or system tables.
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_all_tables \gx
 ```
 
@@ -356,11 +362,11 @@ The numbers in these columns can help you evaluate how your indexes are performi
 
 If you need more information about indexes you currently have, you can look at the `pg_stat_all_indexes`, `pg_stat_user_indexes`, and `pg_stat_sys_indexes` views:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_all_indexes \gx
 ```
 
-```sql
+```text
 . . .
 -[ RECORD 6 ]-+----------------------------------------------
 relid         | 1249
@@ -382,7 +388,7 @@ This information can be useful to help you understand when you have indexes that
 
 Some of the information you gathered about slow queries might have pointed to a locking issue. You can find out more information about all of the locks that are currently held by querying the `pg_locks` view:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_locks \gx
 ```
 
@@ -442,7 +448,7 @@ The first thing you should do is verify the current state of slow query logging.
 
 You can check if slow query logging is enabled by typing:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
@@ -483,11 +489,11 @@ With that in mind, you can configure slow query logging globally by modifying th
 
 Open PostgreSQL's configuration file. You can find the location of the current configuration file by typing:
 
-```sql
+```sql diagnostic
 SHOW config_file;
 ```
 
-```sql
+```text
                config_file
 -----------------------------------------
  /etc/postgresql/14/main/postgresql.conf
@@ -537,7 +543,7 @@ SELECT pg_reload_conf();
 
 You can verify that the server is using your new settings by checking the current value again:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
@@ -596,7 +602,7 @@ We can verify that the setting has been applied by querying for the per-database
 
 We can verify that this hasn't interfered with the global setting that we previously set to a 5 seconds threshold:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
