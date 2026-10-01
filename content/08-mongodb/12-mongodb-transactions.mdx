@@ -13,13 +13,13 @@ lastUpdated: 2026-10-01
 
 In this guide, we'll begin by discussing what transactions are, when to use them in the document model, and how they work conceptually in MongoDB.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you're using MongoDB, check out Prisma ORM's [MongoDB support](https://www.prisma.io/docs/orm/supported-databases#what-each-database-supports), in early access in Prisma ORM 8. You can use [Prisma ORM's client](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=mongodb) to work with your MongoDB databases from TypeScript.
 
 To get started working with MongoDB and Prisma, check out the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) or how to [add Prisma ORM to an existing MongoDB project](https://www.prisma.io/docs/prisma-orm/add-to-existing-project/mongodb).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## What are transactions?
 
@@ -75,28 +75,28 @@ To begin, we have a simple database called `literature` with a collection called
 db.authors.find()
 ```
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
     title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
     title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
     title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
     title: 'The Fire Next Time'
@@ -123,7 +123,7 @@ session.startTransaction({
 })
 ```
 
-The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data **if** the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-).
+The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-and-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#snapshot) which returns data from a snapshot of majority committed data **if** the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w-majority).
 
 When you commit with `w: "majority"` write concern along with a read concern level of `"snapshot"`, this guarantees that operations have a synchronized snapshot of majority-committed data. This configuration of write and read concern can be thought of as good defaults if no specific requirements.
 
@@ -153,43 +153,43 @@ authors.insertOne({
 
 MongoDB returns a success result. The generated `insertedId` varies between runs:
 
-```
+```text output
 {
   acknowledged: true,
-  insertedId: ObjectId("6203a075c374636bc6976baa")
+  insertedId: ObjectId('6abe015bfd66780577836387')
 }
 ```
 
 If we run `authors.find()` now in the session we'll return the previous results with our addition included:
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
     title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
     title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
     title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
     title: 'The Fire Next Time'
   },
   {
-    _id: ObjectId("6203a075c374636bc6976baa"),
+    _id: ObjectId('6abe015bfd66780577836387'),
     first_name: 'Virginie',
     last_name: 'Despentes',
     title: 'Vernon Subutex'
@@ -199,28 +199,28 @@ If we run `authors.find()` now in the session we'll return the previous results 
 
 Since this transaction session has still not been committed, we will not see it return the same result in a MongoDB shell existing outside of the session. To confirm, we run `db.authors.find()` in another MongoDB shell instance and we return the original documents.
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
     title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
     title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
     title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
     title: 'The Fire Next Time'
@@ -256,13 +256,13 @@ In this guide, we discussed what transactions are and what use cases transaction
 
 Transactions are a fundamental need for relational databases, and are also needed for specific use cases in document model databases such as MongoDB. When it comes to the document model, the general recommendation is that data that is accessed together should be stored together. However, sometimes this cannot be the case, so it is important to know the basics of transactions.
 
-<TechnicalNote>
+<PrismaOutlinks>
 
 If you're using MongoDB, check out Prisma ORM's [MongoDB support](https://www.prisma.io/docs/orm/supported-databases#what-each-database-supports), in early access in Prisma ORM 8. You can use [Prisma ORM's client](https://www.prisma.io/docs/orm/fundamentals/reading-data?db=mongodb) to work with your MongoDB databases from TypeScript.
 
 To get started working with MongoDB and Prisma, check out the [MongoDB quickstart](https://www.prisma.io/docs/prisma-orm/quickstart/mongodb) or how to [add Prisma ORM to an existing MongoDB project](https://www.prisma.io/docs/prisma-orm/add-to-existing-project/mongodb).
 
-</TechnicalNote>
+</PrismaOutlinks>
 
 ## FAQ
 

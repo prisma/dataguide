@@ -1,98 +1,116 @@
 {
-  "startedAt": "2026-10-01T04:42:39.057Z",
+  "startedAt": "2026-10-01T06:45:40.808Z",
   "image": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
   "status": "passed",
-  "fixtureSha256": "3a5e4d6a1136273f94762733e4a0ba3bcffb5626231ff0ea998726e23d1c1af2",
+  "fixtureSha256": "f6185dd6ebd63850302f160a2c53a98a0fd164d28ba86d638dd686a89e3568ea",
   "articles": [
     {
       "file": "content/08-mongodb/12-mongodb-transactions.mdx",
-      "sourceSha256": "8c85159d28b748c7f4b988971f82348e82bcbee146a607d5fdcc862afc34ca68",
+      "sourceSha256": "f337635ab5fbdf578464e5c7c52b07d24c87434e40338de7a815fd13856540c6",
       "executableBlocks": 7
     }
   ],
-  "version": "8.0.32",
-  "initial": [
+  "outputs": [
     {
-      "first_name": "James",
-      "last_name": "Joyce",
-      "title": "Ulysses"
+      "shell": "session",
+      "code": "use literature",
+      "stdout": "switched to db literature\n"
     },
     {
-      "first_name": "William",
-      "last_name": "Gibson",
-      "title": "Neuromancer"
+      "shell": "session",
+      "code": "db.authors.find()\n",
+      "stdout": "[\n  {\n    _id: ObjectId('620397dd4b871fc65c193106'),\n    first_name: 'James',\n    last_name: 'Joyce',\n    title: 'Ulysses'\n  },\n  {\n    _id: ObjectId('620398016ed0bb9e23785973'),\n    first_name: 'William',\n    last_name: 'Gibson',\n    title: 'Neuromancer'\n  },\n  {\n    _id: ObjectId('6203981d6ed0bb9e23785974'),\n    first_name: 'George',\n    last_name: 'Orwell',\n    title: 'Homage to Catalonia'\n  },\n  {\n    _id: ObjectId('620398516ed0bb9e23785975'),\n    first_name: 'James',\n    last_name: 'Baldwin',\n    title: 'The Fire Next Time'\n  }\n]\n"
     },
     {
-      "first_name": "George",
-      "last_name": "Orwell",
-      "title": "Homage to Catalonia"
+      "shell": "session",
+      "code": "var session = db.getMongo().startSession()\n",
+      "stdout": "\n"
     },
     {
-      "first_name": "James",
-      "last_name": "Baldwin",
-      "title": "The Fire Next Time"
-    }
-  ],
-  "inside": [
-    {
-      "first_name": "James",
-      "last_name": "Joyce",
-      "title": "Ulysses"
+      "shell": "session",
+      "code": "session.startTransaction({\n  readConcern: { level: 'snapshot' },\n  writeConcern: { w: 'majority' },\n})\n",
+      "stdout": "\n"
     },
     {
-      "first_name": "William",
-      "last_name": "Gibson",
-      "title": "Neuromancer"
+      "shell": "session",
+      "code": "var authors = session.getDatabase('literature').getCollection('authors')\n",
+      "stdout": "\n"
     },
     {
-      "first_name": "George",
-      "last_name": "Orwell",
-      "title": "Homage to Catalonia"
+      "shell": "session",
+      "code": "authors.insertOne({\n  first_name: 'Virginie',\n  last_name: 'Despentes',\n  title: 'Vernon Subutex',\n})\n",
+      "stdout": "{\n  acknowledged: true,\n  insertedId: ObjectId('6abe01987d74fcc49490a4c4')\n}\n"
     },
     {
-      "first_name": "James",
-      "last_name": "Baldwin",
-      "title": "The Fire Next Time"
+      "shell": "session",
+      "code": "authors.find()",
+      "stdout": "[\n  {\n    _id: ObjectId('620397dd4b871fc65c193106'),\n    first_name: 'James',\n    last_name: 'Joyce',\n    title: 'Ulysses'\n  },\n  {\n    _id: ObjectId('620398016ed0bb9e23785973'),\n    first_name: 'William',\n    last_name: 'Gibson',\n    title: 'Neuromancer'\n  },\n  {\n    _id: ObjectId('6203981d6ed0bb9e23785974'),\n    first_name: 'George',\n    last_name: 'Orwell',\n    title: 'Homage to Catalonia'\n  },\n  {\n    _id: ObjectId('620398516ed0bb9e23785975'),\n    first_name: 'James',\n    last_name: 'Baldwin',\n    title: 'The Fire Next Time'\n  },\n  {\n    _id: ObjectId('6abe01987d74fcc49490a4c4'),\n    first_name: 'Virginie',\n    last_name: 'Despentes',\n    title: 'Vernon Subutex'\n  }\n]\n"
     },
     {
-      "first_name": "Virginie",
-      "last_name": "Despentes",
-      "title": "Vernon Subutex"
-    }
-  ],
-  "committed": [
-    {
-      "first_name": "James",
-      "last_name": "Joyce",
-      "title": "Ulysses"
+      "shell": "other",
+      "code": "db.authors.find()",
+      "stdout": "[\n  {\n    _id: ObjectId('620397dd4b871fc65c193106'),\n    first_name: 'James',\n    last_name: 'Joyce',\n    title: 'Ulysses'\n  },\n  {\n    _id: ObjectId('620398016ed0bb9e23785973'),\n    first_name: 'William',\n    last_name: 'Gibson',\n    title: 'Neuromancer'\n  },\n  {\n    _id: ObjectId('6203981d6ed0bb9e23785974'),\n    first_name: 'George',\n    last_name: 'Orwell',\n    title: 'Homage to Catalonia'\n  },\n  {\n    _id: ObjectId('620398516ed0bb9e23785975'),\n    first_name: 'James',\n    last_name: 'Baldwin',\n    title: 'The Fire Next Time'\n  }\n]\n"
     },
     {
-      "first_name": "William",
-      "last_name": "Gibson",
-      "title": "Neuromancer"
+      "shell": "session",
+      "code": "session.commitTransaction()\n",
+      "stdout": "\n"
     },
     {
-      "first_name": "George",
-      "last_name": "Orwell",
-      "title": "Homage to Catalonia"
+      "shell": "other",
+      "code": "db.authors.find()",
+      "stdout": "[\n  {\n    _id: ObjectId('620397dd4b871fc65c193106'),\n    first_name: 'James',\n    last_name: 'Joyce',\n    title: 'Ulysses'\n  },\n  {\n    _id: ObjectId('620398016ed0bb9e23785973'),\n    first_name: 'William',\n    last_name: 'Gibson',\n    title: 'Neuromancer'\n  },\n  {\n    _id: ObjectId('6203981d6ed0bb9e23785974'),\n    first_name: 'George',\n    last_name: 'Orwell',\n    title: 'Homage to Catalonia'\n  },\n  {\n    _id: ObjectId('620398516ed0bb9e23785975'),\n    first_name: 'James',\n    last_name: 'Baldwin',\n    title: 'The Fire Next Time'\n  },\n  {\n    _id: ObjectId('6abe01987d74fcc49490a4c4'),\n    first_name: 'Virginie',\n    last_name: 'Despentes',\n    title: 'Vernon Subutex'\n  }\n]\n"
     },
     {
-      "first_name": "James",
-      "last_name": "Baldwin",
-      "title": "The Fire Next Time"
+      "shell": "session",
+      "code": "session.startTransaction({\n  readConcern: { level: 'snapshot' },\n  writeConcern: { w: 'majority' },\n})\n",
+      "stdout": "\n"
     },
     {
-      "first_name": "Virginie",
-      "last_name": "Despentes",
-      "title": "Vernon Subutex"
+      "shell": "session",
+      "code": "authors.insertOne({\n  first_name: 'Virginie',\n  last_name: 'Despentes',\n  title: 'Vernon Subutex',\n})\n",
+      "stdout": "{\n  acknowledged: true,\n  insertedId: ObjectId('6abe01997d74fcc49490a4c5')\n}\n"
+    },
+    {
+      "shell": "session",
+      "code": "authors.countDocuments()",
+      "stdout": "6\n"
+    },
+    {
+      "shell": "session",
+      "code": "session.abortTransaction()\n",
+      "stdout": "\n"
+    },
+    {
+      "shell": "other",
+      "code": "db.authors.find()",
+      "stdout": "[\n  {\n    _id: ObjectId('620397dd4b871fc65c193106'),\n    first_name: 'James',\n    last_name: 'Joyce',\n    title: 'Ulysses'\n  },\n  {\n    _id: ObjectId('620398016ed0bb9e23785973'),\n    first_name: 'William',\n    last_name: 'Gibson',\n    title: 'Neuromancer'\n  },\n  {\n    _id: ObjectId('6203981d6ed0bb9e23785974'),\n    first_name: 'George',\n    last_name: 'Orwell',\n    title: 'Homage to Catalonia'\n  },\n  {\n    _id: ObjectId('620398516ed0bb9e23785975'),\n    first_name: 'James',\n    last_name: 'Baldwin',\n    title: 'The Fire Next Time'\n  },\n  {\n    _id: ObjectId('6abe01987d74fcc49490a4c4'),\n    first_name: 'Virginie',\n    last_name: 'Despentes',\n    title: 'Vernon Subutex'\n  }\n]\n"
+    },
+    {
+      "shell": "other",
+      "code": "db.authors.countDocuments()",
+      "stdout": "5\n"
+    },
+    {
+      "shell": "session",
+      "code": "session.endSession()",
+      "stdout": "\n"
     }
   ],
   "checks": [
-    "article transaction statements execute",
+    "displayed output matches mongosh exactly apart from the generated ObjectId",
     "uncommitted write visible only in session",
     "commit visible outside session",
     "abort discards second insert"
   ],
+  "negativeControls": [
+    "another shell does not see the uncommitted insert",
+    "abort discards the repeated insert"
+  ],
+  "version": "8.0.32",
+  "shellVersion": "2.11.1",
+  "commit": "\n",
+  "abort": "\n",
   "cleanedUp": true,
-  "completedAt": "2026-10-01T04:42:48.751Z"
+  "completedAt": "2026-10-01T06:45:47.208Z"
 }
