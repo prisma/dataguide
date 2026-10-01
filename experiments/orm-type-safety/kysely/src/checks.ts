@@ -45,4 +45,6 @@ export async function checks() {
   // CASE raw
   const raw = await sql`SELECT id, email, name FROM users`.execute(db)
   expectType<Equal<(typeof raw.rows)[number], unknown>>()
+  const trusted = await sql<{ nickname: number }>`SELECT id, email, name FROM users`.execute(db)
+  expectType<Equal<(typeof trusted.rows)[number], { nickname: number }>>()
 }

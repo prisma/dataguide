@@ -39,4 +39,6 @@ export async function checks() {
   expectType<IsAny<typeof raw>>()
   const rawMany = await users.createQueryBuilder('account').getRawMany()
   expectType<IsAny<(typeof rawMany)[number]>>()
+  const trusted = await source.query<{ nickname: number }[]>('SELECT id, email, name FROM users')
+  expectType<Equal<typeof trusted, { nickname: number }[]>>()
 }

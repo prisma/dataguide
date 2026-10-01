@@ -42,6 +42,8 @@ export async function checks() {
   // CASE raw
   const raw = await em.execute('SELECT id, email, name FROM users')
   expectType<IsAny<(typeof raw)[number]['email']>>()
+  const trusted = await em.execute<{ nickname: number }[]>('SELECT id, email, name FROM users')
+  expectType<Equal<typeof trusted, { nickname: number }[]>>()
   const kyselySubset = await em.getKysely().selectFrom('users').select(['id', 'email']).execute()
   expectType<Equal<typeof kyselySubset, { id: number; email: string }[]>>()
 }

@@ -43,4 +43,8 @@ export async function checks() {
     type: QueryTypes.SELECT,
   })
   expectType<Equal<typeof selectRaw, object[]>>()
+  const trusted = await sequelize.query<{ nickname: number }>('SELECT id, email, name FROM users', {
+    type: QueryTypes.SELECT,
+  })
+  expectType<Equal<typeof trusted, { nickname: number }[]>>()
 }

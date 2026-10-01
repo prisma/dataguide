@@ -42,4 +42,8 @@ export async function checks() {
   // CASE raw
   const raw = await db.raw('SELECT id, email, name FROM users')
   expectType<IsAny<typeof raw>>()
+  const trusted = await db.raw<{ nickname: number }[]>('SELECT id, email, name FROM users')
+  expectType<Equal<typeof trusted, { nickname: number }[]>>()
+  const undeclared = await db('comments').select('body')
+  expectType<IsAny<(typeof undeclared)[number]>>()
 }

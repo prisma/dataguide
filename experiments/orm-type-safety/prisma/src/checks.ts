@@ -35,4 +35,6 @@ export async function checks() {
   // CASE raw
   const raw = await prisma.$queryRaw`SELECT id, email, name FROM "User"`
   expectType<Equal<typeof raw, unknown>>()
+  const trusted = await prisma.$queryRaw<{ nickname: number }[]>`SELECT id, email, name FROM "User"`
+  expectType<Equal<typeof trusted, { nickname: number }[]>>()
 }

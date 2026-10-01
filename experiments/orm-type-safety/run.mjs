@@ -2,6 +2,7 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync, readdirSync, rmSync, mkdirSync } from 'node:fs'
 import { createHash, randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
+import { homedir } from 'node:os'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 
@@ -24,6 +25,9 @@ const report = {
   status: 'failed',
 }
 const resources = []
+// The report is published, so it must not reveal local paths
+const home = homedir()
+const redact = (value) => (home.length > 1 ? value.replaceAll(home, '~') : value)
 const hash = (file) => createHash('sha256').update(readFileSync(file)).digest('hex')
 const docker = (args, input) =>
   execFileSync('docker', args, { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
@@ -36,11 +40,11 @@ const invoke = (cwd, command, args, env) => {
     timeout: 180000,
   })
   return {
-    command: [command, ...args].join(' '),
+    command: redact([path.basename(command), ...args].join(' ')),
     exitCode: result.status,
-    stdout: result.stdout || '',
-    stderr: result.stderr || '',
-    ...(result.error ? { failure: result.error.message } : {}),
+    stdout: redact(result.stdout || ''),
+    stderr: redact(result.stderr || ''),
+    ...(result.error ? { failure: redact(result.error.message) } : {}),
     ...(result.signal ? { signal: result.signal } : {}),
   }
 }
@@ -137,7 +141,7 @@ try {
     }
     const item = { name, sources: sourceFiles(cwd), commands: [], compilers: [], status: 'failed' }
     report.projects.push(item)
-    const install = invoke(cwd, 'npm', ['ci', '--ignore-scripts'], env)
+    const install = invoke(cwd, 'npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], env)
     item.commands.push(install)
     success(install)
     const pkg = JSON.parse(readFileSync(path.join(cwd, 'package.json'), 'utf8'))

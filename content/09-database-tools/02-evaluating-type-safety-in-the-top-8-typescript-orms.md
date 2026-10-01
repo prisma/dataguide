@@ -198,7 +198,7 @@ withoutPosts.posts
 
 A misspelled relation name in `include` is rejected the same way. The runtime values matched the types: the partial select returned objects with only `id` and `email`, and the query without `include` returned no `posts` property.
 
-For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass. TypedSQL and Prisma ORM 8 release candidates are outside this experiment; no grade or runtime guarantee here applies to them. Consult the maintained [Prisma ORM documentation](https://www.prisma.io/docs) for those APIs and select documentation that matches your pinned version.
+For raw SQL, `$queryRaw` returns `unknown`, and `$queryRaw<T>` trusts whatever type you pass; see [raw queries in the Prisma ORM 7 documentation](https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/raw-queries). TypedSQL and Prisma ORM 8 release candidates are outside this experiment; no grade or runtime guarantee here applies to them.
 
 ## Drizzle ORM
 
@@ -278,12 +278,12 @@ For raw SQL, ``sql`…`.execute(db)`` types the rows as `unknown`, and `sql<T>` 
 In TypeORM, entities are classes whose properties you declare in TypeScript and decorate with column and relation options:
 
 ```typescript
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({ unique: true })
+  @Column({ type: 'text', unique: true })
   email!: string
 
   @Column({ type: 'text', nullable: true })
@@ -466,7 +466,7 @@ declare module 'knex/types/tables.js' {
 
 With that declaration, inserts without an `email` and inserts with wrong value types were rejected. A table typed with only its row type, `users: User`, accepted an insert without `email`. Selecting columns narrowed the result type to `Pick<User, 'id' | 'email'>[]`.
 
-Knex has no relation model, but joins between declared tables are typed, as long as you select unqualified column names. Table-qualified names, which you need when both tables have a column with the same name, and misspelled names fall back to `any[]` without an error:
+Knex has no relation model, but joins between declared tables are typed, as long as you select unqualified column names. Table-qualified names, including misspelled qualified names such as `'users.emial'`, fall back to `any[]` without an error, although you need them when both tables have a column with the same name:
 
 ```typescript
 await knex('users').join('posts', 'posts.author_id', 'users.id').select('email', 'title')
