@@ -4,7 +4,14 @@ metaTitle: 'Optimizing PostgreSQL query performance'
 metaDescription: 'Learn how to discover PostgreSQL performance bottlenecks by looking at system resource utilization and identifying slow queries'
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-10-01
 ---
+
+<StatusNotice title="Sample output from an older PostgreSQL release">
+
+The sample outputs below were captured on an older PostgreSQL release. On PostgreSQL 18, their descriptions, statistics, paths, timestamps and durations differ.
+
+</StatusNotice>
 
 ## Introduction
 
@@ -30,14 +37,14 @@ The `pg_stat_activity` view is one of the views available within PostgreSQL's cu
 
 To display all of the information within the view, type:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_activity \gx
 ```
 
 <details>
 <summary>View `pg_stat_activity` output</summary>
 
-```sql
+```text
 -[ RECORD 1 ]----+-------------------------------
 datid            |
 datname          |
@@ -197,7 +204,7 @@ There are a number of fields in the output that can be helpful when looking for 
 
 We can filter the query by whatever columns are relevant for our current context. One helpful pattern is to use the `age()` function to calculate how long the query has been running. For example:
 
-```sql
+```sql diagnostic
 SELECT
     age(clock_timestamp(), query_start),
     usename,
@@ -214,7 +221,7 @@ This will display the execution time, username, database, and query text for que
 
 Similarly, you can see all processes that are not idle but do have a wait event:
 
-```sql
+```sql diagnostic
 SELECT
     usename,
     datname,
@@ -224,7 +231,7 @@ SELECT
 FROM pg_stat_activity
 WHERE
     state != 'idle'
-AND query wait_event != ''
+AND wait_event IS NOT NULL;
 ```
 
 This can help you see queries that are not currently progressing because of other parts of the system (for instance, lock contention).
@@ -239,7 +246,7 @@ While the `pg_stat_activity` view will probably provide most of the information 
 
 The `pg_stat_database` table contains statistics about each database:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_database \gx
 ```
 
@@ -286,7 +293,7 @@ Some interesting columns for our purposes include:
 
 As [the Data Egret team shows on their blog](https://dataegret.com/2017/03/deep-dive-into-postgres-stats-pg_stat_database/), you can use these raw values to calculate interesting statistics like your cache hit ratio:
 
-```sql
+```sql diagnostic
 SELECT
     datname,
     100 * blks_hit / (blks_hit + blks_read) as cache_hit_ratio
@@ -296,7 +303,7 @@ WHERE
     (blks_hit + blks_read) > 0;
 ```
 
-```sql
+```text
   datname  | cache_hit_ratio
 -----------+-----------------
            |              99
@@ -311,7 +318,7 @@ This can be valuable information that can help you evaluate whether you would be
 
 Another helpful family of views are `pg_stat_all_tables`, `pg_stat_user_tables`, and `pg_stat_sys_tables`. The `pg_stat_all_tables` view shows access statistics for all databases while the other two views filter the tables based on whether they are user tables or system tables.
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_all_tables \gx
 ```
 
@@ -356,11 +363,11 @@ The numbers in these columns can help you evaluate how your indexes are performi
 
 If you need more information about indexes you currently have, you can look at the `pg_stat_all_indexes`, `pg_stat_user_indexes`, and `pg_stat_sys_indexes` views:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_stat_all_indexes \gx
 ```
 
-```sql
+```text
 . . .
 -[ RECORD 6 ]-+----------------------------------------------
 relid         | 1249
@@ -382,7 +389,7 @@ This information can be useful to help you understand when you have indexes that
 
 Some of the information you gathered about slow queries might have pointed to a locking issue. You can find out more information about all of the locks that are currently held by querying the `pg_locks` view:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_locks \gx
 ```
 
@@ -442,7 +449,7 @@ The first thing you should do is verify the current state of slow query logging.
 
 You can check if slow query logging is enabled by typing:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
@@ -483,11 +490,11 @@ With that in mind, you can configure slow query logging globally by modifying th
 
 Open PostgreSQL's configuration file. You can find the location of the current configuration file by typing:
 
-```sql
+```sql diagnostic
 SHOW config_file;
 ```
 
-```sql
+```text
                config_file
 -----------------------------------------
  /etc/postgresql/14/main/postgresql.conf
@@ -525,19 +532,19 @@ Currently, the `log_min_duration_statement` setting is commented out with its cu
 
 You can turn on long query logging by uncommenting the `log_min_duration_statement` and setting it to another value. For instance, we can set it to 5 seconds to log any statements that take longer than that to complete:
 
-```
+```conf logging
 log_min_duration_statement = 5s
 ```
 
 After saving the file, you can reload your PostgreSQL server from within PostgreSQL by typing:
 
-```
+```sql logging
 SELECT pg_reload_conf();
 ```
 
 You can verify that the server is using your new settings by checking the current value again:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
@@ -568,21 +575,21 @@ Now, the `setting` field is set to 5000 and the `unit` field is set to `ms`, ind
 
 Another option when trying to detect slow queries is to limit slow query logging to a specific database. While `log_min_duration_statement` can be set globally, as we showed in the last section, it can also be configured at the database level.
 
-To turn on slow query logging for a single database, use the `ALTER DATABASE` command:
+To turn on slow query logging for a single database, use the `ALTER DATABASE` command as an administrator with permission to change this setting. This example assumes that the `helloprisma` database already exists:
 
-```sql
-ALTER DATABASE helloprisma SET 'log_min_duration_statement' = 2000;
+```sql logging
+ALTER DATABASE helloprisma SET log_min_duration_statement = 2000;
 ```
 
 ```
 ALTER DATABASE
 ```
 
-Note that unlike the global setting, when using the `ALTER DATABASE` command, the value must be a unit-less integer representing time in milliseconds.
+For [`log_min_duration_statement`](https://www.postgresql.org/docs/18/runtime-config-logging.html#GUC-LOG-MIN-DURATION-STATEMENT), a number without a unit means milliseconds. A quoted value with a unit is also valid, as shown below. [`ALTER DATABASE`](https://www.postgresql.org/docs/18/sql-alterdatabase.html) changes the default for new connections to that database; existing sessions retain their current setting.
 
 We can verify that the setting has been applied by querying for the per-database role settings:
 
-```sql
+```sql logging
 \drds
 ```
 
@@ -594,9 +601,15 @@ We can verify that the setting has been applied by querying for the per-database
 (1 row)
 ```
 
+The same two-second threshold can be expressed with an explicit unit:
+
+```sql logging
+ALTER DATABASE helloprisma SET log_min_duration_statement = '2s';
+```
+
 We can verify that this hasn't interfered with the global setting that we previously set to a 5 seconds threshold:
 
-```sql
+```sql diagnostic
 SELECT * FROM pg_settings WHERE name = 'log_min_duration_statement'\gx
 ```
 
@@ -625,7 +638,7 @@ pending_restart | f
 
 Test the setting out by issuing a statement that exceeds the minimum logging duration:
 
-```sql
+```sql logging
 SELECT pg_sleep(10);
 ```
 
@@ -643,11 +656,11 @@ Check the logs and you should find statements indicating that a long running que
 2022-11-11 17:58:42.635 CET [1121088] postgres@postgres LOG:  duration: 10017.171 ms  statement: select pg_sleep(10);
 ```
 
-Since we have different thresholds for the global limit and a specific table, we can test that each are being applied correctly by using a query time that should trigger one but not the other.
+Since we have different thresholds for the global limit and a specific database, we can test that each are being applied correctly by using a query time that should trigger one but not the other.
 
 For example, we can connect to the database that has a lower threshold and sleep for 4 seconds, which should trigger a log line:
 
-```sql
+```sql logging
 \c helloprisma
 SELECT pg_sleep(4);
 ```
@@ -661,7 +674,7 @@ Our logs show:
 
 Now, we can switch to a different database that should only be affected by the global setting. The same sleep statement should not trigger a log line:
 
-```sql
+```sql logging
 \c postgres
 SELECT pg_sleep(4);
 ```

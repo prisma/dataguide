@@ -4,6 +4,7 @@ metaTitle: 'PostgreSQL Data Types - Numeric, Text, and More'
 metaDescription: "PostgreSQL's data type system allows you to define your data structures and store data in various formats.  These are some of the most common data types."
 metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
+lastUpdated: 2026-10-01
 ---
 
 ## Introduction
@@ -85,7 +86,7 @@ The types above are limited by their valid range. Any value outside of the range
 
 In addition to the standard integer types mentioned above, PostgreSQL includes a set of special integer types called _serial_ types. These types are primarily used to create unique identifiers, or [_primary keys_](/intro/database-glossary#primary-key), for records.
 
-By default, serial types will automatically use the next integer in an internally tracked sequence when new records are added. So if the last integer used in a serial column was 8559, by default, the next record will automatically use 8560. To guarantee that each value is unique, you can further add a `UNIQUE` constraint on the column.
+By default, serial types will automatically use the next integer in an internally tracked sequence when new records are added. The sequence supplies its next value, independently of the largest value stored in the column. Rollbacks and deleted rows can leave gaps, and manually inserted identifiers do not automatically advance the sequence. To guarantee that each value is unique, you can further add a `UNIQUE` constraint on the column.
 
 There is a serial type for each of the integer sizes mentioned earlier, which dictates the type of integer used in the sequence:
 

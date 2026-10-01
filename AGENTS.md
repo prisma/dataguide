@@ -9,7 +9,7 @@ Prisma's Data Guide is a Gatsby 5 site (React 19, MDX 2) whose articles in `cont
 - **No production access.** Never connect to a production or shared database, and never use real credentials, even if they are available to you.
 - **Label uncertainty.** When provider behavior (a cloud console, a managed service's defaults or pricing) can't be verified, say that in the article or leave the claim out. Don't guess.
 - **Keep changes surgical.** Keep an article's structure and voice, and fix what's wrong without rewriting what's right.
-- **Don't bump dates.** Only set `lastUpdated` on an article you substantively corrected and re-tested. For articles you can't re-test, add a `<StatusNotice>` instead (see CONTRIBUTING.md).
+- **Don't bump dates.** Only set `lastUpdated` on an article you substantively corrected and re-tested. For articles you can't re-test, add a `<StatusNotice>` that tells readers what is known to be out of date (see CONTRIBUTING.md). Never use a notice to describe your own review or testing.
 - **Security-sensitive changes need a human.** Say in the pull request when you changed guidance on authentication, permissions, encryption, network exposure, or DDL that could destroy data, so a human expert reviews it.
 
 ## Commands

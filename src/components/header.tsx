@@ -210,6 +210,22 @@ const Header = ({ headerProps }: HeaderViewProps) => {
   const [showDataguideBtn, setShowDataguideBtn] = React.useState(true)
   const [showMobileNav, setShowMobileNav] = React.useState(false)
   const location = useLocation()
+  const menuButton = React.useRef<HTMLButtonElement>(null)
+
+  React.useEffect(() => {
+    setShowMobileNav(false)
+  }, [location.pathname])
+  React.useEffect(() => {
+    if (!showMobileNav) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowMobileNav(false)
+        menuButton.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    return () => document.removeEventListener('keydown', closeOnEscape)
+  }, [showMobileNav])
 
   const toggleMobileNav = () => setShowMobileNav(!showMobileNav)
 
@@ -230,21 +246,26 @@ const Header = ({ headerProps }: HeaderViewProps) => {
             </Link>
           </Wordmark>
         </HeaderNav>
+        <noscript>
+          <Link to="/">Browse all Data Guide topics</Link>
+        </noscript>
         <SearchContainer>
           {!showMobileNav && (
             <SearchComponent hitsStatus={changeHitsStatus} location={location} header mobile />
           )}
           <DocsMobileButton
+            ref={menuButton}
             type="button"
             onClick={toggleMobileNav}
             aria-expanded={showMobileNav}
+            aria-controls="mobile-navigation"
             aria-label={showMobileNav ? 'Close menu' : 'Open menu'}
           >
             {showMobileNav ? <Clear /> : 'Menu'}
           </DocsMobileButton>
         </SearchContainer>
         {showMobileNav && (
-          <MobileOnlyNav>
+          <MobileOnlyNav id="mobile-navigation">
             <Sidebar isMobile={true} />
           </MobileOnlyNav>
         )}

@@ -1,14 +1,17 @@
-const { init, trackPage } = require('./src/utils/stats')
-const { init: initPostHog, trackPage: trackPostHogPage } = require('./src/utils/posthog')
+const {
+  init: initPostHog,
+  trackPage: trackPostHogPage,
+  trackEvent,
+} = require('./src/utils/posthog')
+const { installCtaTracking } = require('./src/utils/readerEvents')
 const { goToNav } = require('./src/utils/goToNavItem')
 
 exports.onClientEntry = () => {
-  init()
   initPostHog()
+  installCtaTracking(document, trackEvent)
 }
 
 exports.onRouteUpdate = ({ location }) => {
-  trackPage(location.pathname)
   trackPostHogPage(location.pathname)
   goToNav(location.pathname)
 }

@@ -4,6 +4,7 @@ const path = require('path')
 // does not exist. Links to redirected paths are reported, since they cost readers a hop.
 exports.onPostBuild = async ({ graphql, reporter, pathPrefix }, { redirects = [] }) => {
   const { checkLinks, readSite } = await import('./check-links.mjs')
+  const { checkArtifacts } = await import('./check-artifacts.mjs')
   const { data } = await graphql(`
     {
       site {
@@ -15,7 +16,19 @@ exports.onPostBuild = async ({ graphql, reporter, pathPrefix }, { redirects = []
     }
   `)
   const { siteUrl, pathPrefix: canonicalPrefix } = data.site.siteMetadata
-  const { pages, files } = await readSite(path.resolve('public'))
+  const site = await readSite(path.resolve('public'))
+  const { pages, files } = site
+  const artifactErrors = checkArtifacts({
+    ...site,
+    pathPrefix: pathPrefix || '',
+    siteRoot: `${siteUrl}${canonicalPrefix}`,
+  })
+  if (artifactErrors.length) {
+    reporter.panicOnBuild(
+      `Artifact check: ${artifactErrors.length} invalid references:\n${artifactErrors.map(({ from, href, kind, reason }) => `  ${from}: ${kind} ${href} (${reason})`).join('\n')}`
+    )
+    return
+  }
   const { checked, broken, redirected } = checkLinks({
     pages,
     files,

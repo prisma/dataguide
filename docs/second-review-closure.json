@@ -1,0 +1,369 @@
+{
+  "inventory": "Prisma_Data_Guide_Second_Review_2026-09-30.md / matching XLSX Backlog",
+  "branch": "codex/second-review-refresh",
+  "base": "525a9e87ea5daf307cd25c8214f78cc0c453d925",
+  "sourceRevision": "The commit containing this ledger; generated content-manifest.json records the exact build commit and dirty-tree status.",
+  "policy": "verified-local and source-reviewed are scoped implementation evidence, not deployed closure or expert approval. Partial/external-needed remain open. No claim that the entire site is fully current. Declined items were not published, by the maintainer's decision.",
+  "items": [
+    {
+      "id": "R01",
+      "title": "Replace the still-obsolete serverless comparison",
+      "status": "source-reviewed",
+      "outcome": "Current provider comparison and lifecycle sources; no paid provisioning, pricing quotation or performance claim.",
+      "evidence": "content/11-serverless/02-serverless-comparison.mdx",
+      "remaining": "Provider documentation can change; human editorial review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R02",
+      "title": "Repair and execute the complete dates tutorial",
+      "status": "verified-local",
+      "outcome": "Every executable date block and recorded output run on PostgreSQL 18.6.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Publication pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R03",
+      "title": "Remove the obsolete pg_dump --oids recipe",
+      "status": "verified-local",
+      "outcome": "Obsolete --oids removed; ordinary OID column round-trips through both formats.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Human operational review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R04",
+      "title": "Make the restore path fail explicitly on errors",
+      "status": "verified-local",
+      "outcome": "psql fail-fast and archive restore distinguished; malformed input, rows, constraints and sequences checked.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Trusted dump and transaction limits documented; human operational review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R05",
+      "title": "Do not imply pausing replication makes a raw backup consistent",
+      "status": "verified-local",
+      "outcome": "Unsafe paused-replica/raw-copy claim removed; a pg_basebackup -X stream base backup recovered in another server. The clean-shutdown copy and atomic-snapshot alternatives are source-reviewed only.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Coordinated storage snapshot procedure not exercised; security/operations review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R06",
+      "title": "Propagate secure connection defaults to the companion guide",
+      "status": "verified-local",
+      "outcome": "Verified TLS templates with protected temporary passfile; wrong hostname rejected.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "No provider CA or native installation execution; human security review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R07",
+      "title": "Correct connection defaults and installation-specific assumptions",
+      "status": "partial",
+      "outcome": "Selected PostgreSQL user and PGDATABASE/-d overrides tested; Linux peer defaults scoped to installation.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Native Linux/macOS/Windows installations not re-executed.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R08",
+      "title": "Fix remaining foreign-key and NULL constraint generalizations",
+      "status": "verified-local",
+      "outcome": "CHECK/NULL, NULLS NOT DISTINCT, non-primary UNIQUE foreign key and exclusion controls executed with exact SQLSTATEs.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Other engines and Prisma snippets excluded; human DDL review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R09",
+      "title": "Distinguish physical from logical replication in pg_hba.conf",
+      "status": "verified-local",
+      "outcome": "Physical replication rule passes the physical protocol. The `replication` keyword does not match logical (`replication=database`) connections; a rule with `all` in the database column does, and the fixture rejects them with an explicit reject rule.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Human authentication review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R10",
+      "title": "Fetch and apply the search exclusion flag",
+      "status": "verified-local",
+      "outcome": "Search flag fetched and shared publication policy applied; transformer tests exercise excluded and hidden pages.",
+      "evidence": "plugins/gatsby-algolia-indexer/search.test.mjs",
+      "remaining": "Live index verification pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R11",
+      "title": "Make publication, indexing, search and export visibility consistent",
+      "status": "verified-local",
+      "outcome": "Explicit HTML/index/search/navigation/export matrix, typed flags and hidden example policy; owned Markdown exports are pruned across incremental unpublishing, removal and renames, with migration of legacy exports.",
+      "evidence": "plugins/gatsby-plugin-markdown-export/incremental.test.mjs",
+      "remaining": "Deployment pending; hidden navigation alone intentionally leaves a public URL.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R12",
+      "title": "Prevent silent stale search publication",
+      "status": "partial",
+      "outcome": "Missing credentials and indexing failures warn instead of failing the deploy, and the post-deploy search check detects the stale revision record. Record digests cover the transformed payload and the indexer's source, so deploys rewrite only changed records; one revision record carries the content hash and source commit. The installed publisher's successive-build test confirms both.",
+      "evidence": "plugins/gatsby-algolia-indexer/incremental.test.mjs",
+      "remaining": "On 2026-10-01 the production index had no results for content deployed the day before, so production indexing isn't running or is failing; the Production environment's search credentials need checking. A hosted revision check must pass after the next production deploy.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R13",
+      "title": "Align the advertised Node floor with TypeScript test execution",
+      "status": "verified-local",
+      "outcome": "CI runs the tests, type-checking and a full build on Node 22.18.0 and Node 24 for every change.",
+      "evidence": ".github/workflows/ci.yml",
+      "remaining": "Check the current PR's CI runs. Runtime support does not validate unreviewed articles.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R14",
+      "title": "Separate runnable commands from copied output",
+      "status": "partial",
+      "outcome": "Date tutorial command/output pairs separated; roles label output, pseudocode and deliberate failures.",
+      "evidence": "src/utils/codeBlock.test.ts",
+      "remaining": "No blanket claim that every historical article block has been executed or reclassified.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R15",
+      "title": "Give diff copying a truthful contract",
+      "status": "verified-local",
+      "outcome": "Diff copies the after-state; explicit patch retains markers; ordinary minus/operators preserved.",
+      "evidence": "src/utils/codeBlock.test.ts",
+      "remaining": "Publication pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R16",
+      "title": "Add database tutorial execution to CI",
+      "status": "verified-local",
+      "outcome": "Pinned disposable PostgreSQL, SQLite and MongoDB checks plus a separate eight-library compiler/runtime job; weekly and relevant-change triggers retain reports on failure.",
+      "evidence": ".github/workflows/tutorials.yml",
+      "remaining": "Database/reference-app and new comparison jobs passed hosted checks at 36a95bf; inspect the current PR gates before release.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R17",
+      "title": "Test failure semantics, not just successful commands",
+      "status": "verified-local",
+      "outcome": "Exact SQLSTATE and positive controls pass in the PostgreSQL, SQLite and MongoDB fixtures, including fail-fast restore and rejected constraint writes.",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
+      "remaining": "Guarantees scoped to fixtures; no production load or failure extrapolation.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R18",
+      "title": "Enforce verification metadata instead of relying on an updated date",
+      "status": "verified-local",
+      "outcome": "All articles have explicit dispositions; executed status validates successful source and fixture hashes.",
+      "evidence": "content-verification.json",
+      "remaining": "Owner roles need human assignment; unreviewed articles remain unreviewed.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R19",
+      "title": "Use exact pins when promising exact reproduction",
+      "status": "verified-local",
+      "outcome": "Eight separate projects with exact library/driver/compiler pins and full npm locks; pinned database image digests and recorded installed versions.",
+      "evidence": "experiments/orm-type-safety/README.md",
+      "remaining": "New independent stable comparison only; no claim to recover the earlier refresh artifacts or reproduce preview versions.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R20",
+      "title": "Publish the comparison experiment, not only its narrative",
+      "status": "verified-local",
+      "outcome": "Seven checks independently recreated for all eight stable libraries; TypeScript 7.0.2/6.0.3/5.9.3, unsuppressed diagnostics, asserted result types and disposable runtime controls pass. The new hosted comparison job also passed at 36a95bf.",
+      "evidence": "static/experiments/orm-comparison-2026-10-01.json",
+      "remaining": "Prisma 8, Drizzle 1 and TypedSQL preview results were removed from the grades; later releases need separate runs. Human comparison review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R21",
+      "title": "Graduate provider recipes from offline checks to a real disposable run",
+      "status": "external-needed",
+      "outcome": "Existing local/offline RDS scope retained; no paid provider action or real credentials used.",
+      "evidence": "content/04-postgresql/05-setting-up-postgresql-on-rds.mdx",
+      "remaining": "Need approved disposable AWS account/budget to prove provisioning, security and teardown.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R22",
+      "title": "Revalidate all six restored educational pages as a group",
+      "status": "partial",
+      "outcome": "Six routes reviewed together: dates executed, connection defaults/TLS tested, serial-sequence description corrected and checked, URI encoding example confirmed with libpq, glossary definitions corrected, cross-links checked; production route observations recorded.",
+      "evidence": "tests/tutorials/evidence/production-http-2026-09-30.json",
+      "remaining": "Full native installer/type catalogue execution and final deployed branch verification pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R23",
+      "title": "Add a numerical connection-budget exercise",
+      "status": "source-reviewed",
+      "outcome": "The connection-pooling article works through a replica, worker and rollout budget and separates client from backend connections. The measured saturation exercise was removed with the lab code.",
+      "evidence": "content/09-database-tools/03-connection-pooling.mdx",
+      "remaining": "No measured capacity guidance.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R24",
+      "title": "Teach transaction-pooling compatibility precisely",
+      "status": "source-reviewed",
+      "outcome": "Version- and configuration-specific transaction-mode matrix, reviewed against PgBouncer's documentation. The PgBouncer 1.26.0 checks were removed with the lab code.",
+      "evidence": "content/09-database-tools/03-connection-pooling.mdx",
+      "remaining": "Human security review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R25",
+      "title": "Turn backup advice into an executable restore drill",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the restore drill article from the guide; the import/export article keeps its fail-fast restore guidance, which the PostgreSQL runner still checks.",
+      "evidence": "tests/tutorials/run.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R26",
+      "title": "Add isolated developer, pull-request and coding-agent database workflows",
+      "status": "partial",
+      "outcome": "The syncing article recommends a separate database and role per developer, pull request and coding agent, with migration and seed checks and cleanup. The lab that exercised this was removed.",
+      "evidence": "content/10-managing-databases/03-syncing-development-databases-between-team-members.mdx",
+      "remaining": "Not executed; human review pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R27",
+      "title": "Complete a multi-tenant isolation learning path",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R28",
+      "title": "Complete concurrency, retries and idempotency labs",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R29",
+      "title": "Connect the guide through one maintained TypeScript application",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R30",
+      "title": "Build permission-aware retrieval and safe AI database exercises",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R31",
+      "title": "Demonstrate the transactional outbox and CDC failure modes",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article and its code.",
+      "evidence": null,
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R32",
+      "title": "Trigger review from upstream lifecycle events",
+      "status": "declined",
+      "outcome": "Not adopted. The maintainer removed the weekly lifecycle job: one day after its baseline was recorded, it flagged 5 of its 20 sources as changed, all of them HTML pages.",
+      "evidence": null,
+      "remaining": "If version tracking is needed, use structured release data such as package registries.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R33",
+      "title": "Preserve technical notes while removing promotions from Markdown",
+      "status": "verified-local",
+      "outcome": "Promotional Prisma notes stay in PrismaOutlinks, which Markdown and search omit; TechnicalNote, which the exporter preserves, is reserved for technical prerequisites and mappings. Exporter tests.",
+      "evidence": "plugins/gatsby-plugin-markdown-export/mdx-to-markdown.test.mjs",
+      "remaining": "Wrapper migration does not independently validate every integration claim or bump article dates.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R34",
+      "title": "Extend link checks beyond internal anchors",
+      "status": "verified-local",
+      "outcome": "Asset/srcset/social/canonical/Markdown/sitemap validator with negative fixtures and full build.",
+      "evidence": "plugins/gatsby-plugin-check-links/check-artifacts.test.mjs",
+      "remaining": "Remote HTTP behavior recorded separately.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R35",
+      "title": "Verify the deployed route, robots and representation matrix",
+      "status": "external-needed",
+      "outcome": "Deployment checks require explicit environment and canonical root. HTTP negative controls reject bad canonicals, production noindex, invalid/blocked production robots policies and unblocked previews despite matching revisions and HTTP 200.",
+      "evidence": "plugins/gatsby-plugin-content-manifest/deployment.test.mjs",
+      "remaining": "A working current-commit Vercel preview, actual origin robots and hosted route/Markdown/manifest checks remain required. Local HTTP fixtures do not establish hosted readiness.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R36",
+      "title": "Expose a content revision across deployed surfaces",
+      "status": "partial",
+      "outcome": "Content hash and full source commit propagated to HTML, Markdown and the search index's revision record; hosted checks require both. Archive builds use deployment metadata; CI runs a full no-Git build. Stale publisher commits are rejected by executable HTTP/search tests.",
+      "evidence": "plugins/gatsby-plugin-content-manifest/gatsby-node.js",
+      "remaining": "Working Vercel preview and live-index agreement remain release blockers; GitHub/local builds cannot close them.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R37",
+      "title": "Run browser-based accessibility and responsive checks",
+      "status": "partial",
+      "outcome": "Not established by committed evidence. An earlier one-off browser check (keyboard, copy, 390px layout, menu, search fallback, axe) had no committed script, so its report was removed.",
+      "evidence": null,
+      "remaining": "Commit a repeatable browser and axe check. Manual screen-reader task completion and broader device/real-user performance checks remain pending.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R38",
+      "title": "Make search relevance a tested reader journey",
+      "status": "external-needed",
+      "outcome": "Public UI baseline saved: date and pooling journeys find a lesson, certificate and isolation queries return no result, restore query selects RDS instead of the logical restore lesson. Transformer now retains full prose and omits result tables/promotions.",
+      "evidence": "tests/tutorials/evidence/production-search-2026-09-30.json",
+      "remaining": "Need publication and a successful rerun against the deployed revision; old results cannot substantiate the new content.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R39",
+      "title": "Validate contextual CTAs with outcomes rather than more placements",
+      "status": "partial",
+      "outcome": "Explicit CTA transport with bounded metadata tested; measurement plan distinguishes learning and qualified activation from clicks. Retired Universal Analytics transport removed after a production CSP rejection was observed.",
+      "evidence": "docs/reader-outcomes.md",
+      "remaining": "No private funnel/outcome observations; consented downstream event joins and reporting need analytics/product owner.",
+      "humanReviewer": null
+    },
+    {
+      "id": "R40",
+      "title": "Close work items with outcome evidence and explicit exceptions",
+      "status": "verified-local",
+      "outcome": "Each of the forty inventory items maps to source/evidence and an explicit remaining acceptance boundary.",
+      "evidence": "docs/second-review-closure.json",
+      "remaining": "Automated work is not human approval; all new source changes await review/publication.",
+      "humanReviewer": null
+    }
+  ]
+}

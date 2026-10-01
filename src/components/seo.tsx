@@ -19,6 +19,7 @@ type SEOProps = {
   socialImage?: SocialImage
   // Whether a Markdown version of the page is published (see gatsby-plugin-markdown-export)
   hasMarkdown?: boolean
+  noindex?: boolean
   // Structured data: the site for the homepage, an article for everything else
   article?: {
     type?: 'TechArticle' | 'CollectionPage'
@@ -37,12 +38,15 @@ const SEO = ({
   image,
   socialImage,
   hasMarkdown,
+  noindex,
   article,
 }: SEOProps) => {
   const { site } = useStaticQuery(query)
   const {
     siteMetadata: {
       pathPrefix,
+      contentRevision,
+      sourceRevision,
       siteUrl,
       keywords,
       twitter: { site: tSite, creator: tCreator },
@@ -89,6 +93,9 @@ const SEO = ({
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>{title}</title>
       <meta name="description" content={description} />
+      <meta name="dataguide:content-revision" content={contentRevision} />
+      <meta name="dataguide:source-revision" content={sourceRevision} />
+      {noindex && <meta name="robots" content="noindex, follow" />}
       {keywords && <meta name="keywords" content={keywords} />}
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -135,6 +142,8 @@ const query = graphql`
     site {
       siteMetadata {
         pathPrefix
+        contentRevision
+        sourceRevision
         siteUrl
         twitter {
           site

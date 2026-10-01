@@ -3,6 +3,7 @@ title: 'What is connection pooling and how does it work?'
 metaTitle: 'What is connection pooling in database management?'
 metaDescription: 'Learn how connection pooling helps databases handle more clients with the same resources.'
 authors: ['justinellingwood']
+lastUpdated: 2026-10-01
 ---
 
 ## Introduction
@@ -111,6 +112,28 @@ Another PostgreSQL connection pooler is `pgpool-II`, often just referred to as `
 Besides connection pooling, `pgpool` supports load balancing queries between a number of backend database instances and has a watchdog service to enable high availability operation for automatic failover. Additionally, it provides a management GUI that can be very useful for certain deployment scenarios.
 
 Despite these advanced features, `pgpool` is usually considered a bit more limited when it comes to actually managing connection pooling. While `pgbouncer` allows three pooling modes, `pgpool` can only operate with the equivalent of session mode, meaning that connections are only reassigned when the client disconnects. This decreases the number of clients that `pgpool` can handle in comparison.
+
+## Budgeting connections across processes
+
+A pool limit applies to one process. As a worked planning example, suppose PostgreSQL permits 100 connections and you reserve 20 for administration and maintenance. Three application replicas with two workers each and a pool maximum of 10 can use `3 × 2 × 10 = 60` backend connections. Ten background-job connections bring the planned total to 70, within the 80-connection application budget. During a rollout, three old and three new replicas could overlap: `6 × 2 × 10 + 10 = 130`, exceeding that budget. Reduce the per-worker maximum, rollout overlap or other consumers before deploying. These numbers are illustrative, not capacity recommendations.
+
+With a transaction pooler, application client connections and PostgreSQL backend connections are different budgets. Bound both; PgBouncer's server pool is normally per database/user pair, so adding pairs can multiply backend consumption. An acquisition deadline bounds how long a request waits, but does not bound the number of queued requests. Add request admission limits and a bounded queue at the application layer, and monitor errors as well as throughput. Load-test the pool with your own workload, and include rollout overlap and background jobs in your budget.
+
+## Transaction pooling and session features
+
+The following matrix summarizes [PgBouncer's feature list](https://www.pgbouncer.org/features.html) for transaction pooling mode.
+
+| Feature                            | Transaction-mode requirement                                                                                                                                                                                               |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session `SET` / `RESET`            | Do not rely on arbitrary session state surviving backend reassignment. PgBouncer tracks some reported parameters, with version/configuration-specific exceptions. Use transaction-scoped settings for per-request context. |
+| `LISTEN`                           | Requires a stable session; use a dedicated session connection.                                                                                                                                                             |
+| Temporary tables                   | Use `ON COMMIT DROP` inside one transaction; don't keep temporary objects across transactions.                                                                                                                             |
+| Session advisory locks             | Require session affinity. Prefer transaction advisory locks for transaction-scoped work.                                                                                                                                   |
+| SQL `PREPARE` / `EXECUTE`          | SQL-level prepared statements are not supported as persistent client state in transaction mode.                                                                                                                            |
+| Named protocol prepared statements | Supported when `max_prepared_statements` is nonzero on a supporting PgBouncer version; this is different from SQL `PREPARE`.                                                                                               |
+| Migrations and administration      | Use a dedicated direct or session-mode connection when tooling needs session state; keep its privileged credentials separate from the application.                                                                         |
+
+See [PgBouncer's parameter tracking and prepared-statement configuration](https://www.pgbouncer.org/config.html). Never set tenant identity once when a pooled connection opens and assume the next request has the same identity. Set it inside each transaction instead, for example with `SET LOCAL`, so that it ends with the transaction.
 
 ## Conclusion
 

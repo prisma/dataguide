@@ -4,6 +4,7 @@ metaTitle: 'MongoDB Transactions - How to Use and Manage Them'
 metaDescription: "In this guide, we'll cover transactions in MongoDB, including how to appropriately use them within the document model."
 metaImage: '/social/generic-mongodb.png'
 authors: ['alexemerich']
+lastUpdated: 2026-10-01
 ---
 
 ## Introduction
@@ -62,38 +63,40 @@ If you are looking to get started working with MongoDB and Prisma, check out the
 
 Transactions are typically written and executed from external applications via one of the API methods with the application language's appropriate [MongoDB driver](https://docs.mongodb.com/drivers/).
 
+Transactions require a replica set or a sharded cluster; a standalone MongoDB server does not support them.
+
 For the sake of demonstration, we'll walk through the creation of a transaction via the MongoDB shell. We'll work with an example database and collection to help conceptualize how transactions work in practice.
 
 **Note**: If a transactions session runs for more than 60 seconds after the initial `startTransaction()` method, MongoDB will automatically abort the operation. This occurs because transactions are typically conducted in applications that work automatically rather than a person issuing commands in the shell. The following steps are for conceptualizing a transaction session from start to finish.
 
 To begin, we have a simple database called `literature` with a collection called `authors`. Running a quick `find()` query, we can see the document structure with the author name and a title of theirs.
 
-```
+```javascript
 db.authors.find()
 ```
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
     title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
     title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
     title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
     title: 'The Fire Next Time'
@@ -105,7 +108,7 @@ Now that we have our database, we can show the steps to work with a transaction 
 
 First, we need to create a session, same as you would when using the API.
 
-```
+```javascript
 var session = db.getMongo().startSession()
 ```
 
@@ -113,15 +116,14 @@ This newly created `session` variable will store the session object.
 
 The next step is starting the transaction by calling the `startTransaction()` method:
 
-```
-session.startTransaction(
-	{ "readConcern": { "level": "snapshot" },
-	  "writeConcern": { "w": "majority }
-	 }
-)
+```javascript
+session.startTransaction({
+  readConcern: { level: 'snapshot' },
+  writeConcern: { w: 'majority' },
+})
 ```
 
-The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#-snapshot-) which returns data from a snapshot of majority committed data **if** the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w---majority-).
+The `startTransaction()` method has two options, `readConcern` and `writeConcern`. You can read in more detail about these options in [MongoDB's documentation](https://docs.mongodb.com/manual/core/transactions/#read-concern-write-concern-and-read-preference). We set the `readConcern` `level` to [`snapshot`](https://docs.mongodb.com/manual/core/transactions/#snapshot) which returns data from a snapshot of majority committed data **if** the transaction commits with `writeConcern` ["majority"](https://docs.mongodb.com/manual/core/transactions/#w-majority).
 
 When you commit with `w: "majority"` write concern along with a read concern level of `"snapshot"`, this guarantees that operations have a synchronized snapshot of majority-committed data. This configuration of write and read concern can be thought of as good defaults if no specific requirements.
 
@@ -133,7 +135,7 @@ Now that you have the transaction session started, you must run statements withi
 
 It's helpful to represent your collection in a variable within the session to ease the syntax. You can do this as follows:
 
-```
+```javascript
 var authors = session.getDatabase('literature').getCollection('authors')
 ```
 
@@ -141,87 +143,87 @@ This newly created variable will work the as `db.authors` would when working in 
 
 Inside of the session, we now want to simulate what an external application might do and add a record to the database. We can do this in the following way to our `authors` collection:
 
-```
-authors.insertOne( {
-	"first_name": "Virginie",
-	"last_name": "Despentes",
-	"title": "Vernon Subutex") }
-)
+```javascript
+authors.insertOne({
+  first_name: 'Virginie',
+  last_name: 'Despentes',
+  title: 'Vernon Subutex',
+})
 ```
 
-MongoDB will return a success:
+MongoDB returns a success result. The generated `insertedId` varies between runs:
 
-```
+```text output
 {
   acknowledged: true,
-  insertedId: ObjectId("6203a075c374636bc6976baa")
+  insertedId: ObjectId('6abe015bfd66780577836387')
 }
 ```
 
 If we run `authors.find()` now in the session we'll return the previous results with our addition included:
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
-    best_title: 'Ulysses'
+    title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
-    best_title: 'Neuromancer'
+    title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
-    best_title: 'Homage to Catalonia'
+    title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
-    best_title: 'The Fire Next Time'
+    title: 'The Fire Next Time'
   },
   {
-    _id: ObjectId("6203a075c374636bc6976baa"),
+    _id: ObjectId('6abe015bfd66780577836387'),
     first_name: 'Virginie',
     last_name: 'Despentes',
-    best_title: 'Vernon Subutex'
+    title: 'Vernon Subutex'
   }
 ]
 ```
 
 Since this transaction session has still not been committed, we will not see it return the same result in a MongoDB shell existing outside of the session. To confirm, we run `db.authors.find()` in another MongoDB shell instance and we return the original documents.
 
-```
+```text output
 [
   {
-    _id: ObjectId("620397dd4b871fc65c193106"),
+    _id: ObjectId('620397dd4b871fc65c193106'),
     first_name: 'James',
     last_name: 'Joyce',
-    best_title: 'Ulysses'
+    title: 'Ulysses'
   },
   {
-    _id: ObjectId("620398016ed0bb9e23785973"),
+    _id: ObjectId('620398016ed0bb9e23785973'),
     first_name: 'William',
     last_name: 'Gibson',
-    best_title: 'Neuromancer'
+    title: 'Neuromancer'
   },
   {
-    _id: ObjectId("6203981d6ed0bb9e23785974"),
+    _id: ObjectId('6203981d6ed0bb9e23785974'),
     first_name: 'George',
     last_name: 'Orwell',
-    best_title: 'Homage to Catalonia'
+    title: 'Homage to Catalonia'
   },
   {
-    _id: ObjectId("620398516ed0bb9e23785975"),
+    _id: ObjectId('620398516ed0bb9e23785975'),
     first_name: 'James',
     last_name: 'Baldwin',
-    best_title: 'The Fire Next Time'
+    title: 'The Fire Next Time'
   }
 ]
 ```
@@ -230,7 +232,7 @@ This difference demonstrates that the transaction is still currently in a state 
 
 We run the `commitTransaction()` method in the session to commit the transaction and bring the database to the new consistent state:
 
-```
+```javascript
 session.commitTransaction()
 ```
 
@@ -240,9 +242,9 @@ Now, the new record will exist in both instances, the MongoDB shell where the tr
 
 Now that we have gone from starting a session all the way to committing it, we can explore the alternative result for a transaction.
 
-This path begins the same and changes only at the commit point. If we want to discard the changes the transaction is making, then we use the `abortTransaction()` method as follows in the session shell:
+Start a new transaction and repeat the insert before testing this alternative. This path changes only at the commit point. If we want to discard the changes the transaction is making, then we use the `abortTransaction()` method as follows in the session shell:
 
-```
+```javascript
 session.abortTransaction()
 ```
 

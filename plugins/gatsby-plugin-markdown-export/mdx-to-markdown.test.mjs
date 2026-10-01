@@ -14,6 +14,14 @@ const context = {
 }
 const convert = (source, overrides = {}) => mdxToMarkdown(source, { ...context, ...overrides })
 
+test('technical integration notes survive while signup panels are removed', () => {
+  const result = convert(
+    '<TechnicalNote>\n\nPrisma ORM 8 has no seed command. Use a script.\n\n</TechnicalNote>\n\n<PrismaOutlinks>\n\nSign up.\n\n</PrismaOutlinks>'
+  )
+  assert.match(result, /Prisma ORM 8 has no seed command/)
+  assert.doesNotMatch(result, /Sign up/)
+})
+
 test('links resolve to absolute Data Guide URLs', () => {
   const markdown = convert(
     'See [joins](/types/relational/what-are-joins-in-sql), [this](#faq), [that](making-connections) and [docs](https://www.prisma.io/docs).'

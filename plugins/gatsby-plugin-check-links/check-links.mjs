@@ -81,6 +81,8 @@ export const readSite = async (publicDir) => {
   const path = await import('node:path')
   const pages = new Map()
   const files = new Set()
+  const markdown = new Map()
+  const sitemaps = new Map()
   for (const entry of await readdir(publicDir, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile()) continue
     const file = path.join(entry.parentPath, entry.name)
@@ -89,7 +91,10 @@ export const readSite = async (publicDir) => {
       pages.set(route.replace(/\/?index\.html$/, '') || '/', await readFile(file, 'utf8'))
     } else if (!entry.name.endsWith('.html')) {
       files.add(route)
+      if (entry.name.endsWith('.md') || entry.name === 'llms.txt')
+        markdown.set(route, await readFile(file, 'utf8'))
+      if (entry.name.endsWith('.xml')) sitemaps.set(route, await readFile(file, 'utf8'))
     }
   }
-  return { pages, files }
+  return { pages, files, markdown, sitemaps }
 }

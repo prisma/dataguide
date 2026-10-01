@@ -3,7 +3,7 @@
   "description": "Prisma's Data Guide",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@fontsource-variable/geist-mono": "5.3.0",
@@ -61,6 +61,7 @@
     "typecheck": "tsc",
     "postinstall": "husky",
     "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install",
+    "test:tutorials": "node tests/tutorials/run.mjs",
     "test:orms": "node experiments/orm-type-safety/run.mjs"
   },
   "devDependencies": {

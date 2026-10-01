@@ -85,7 +85,7 @@ export default ArticleLayout
 export const Head = ({
   data,
   location,
-  pageContext: { seoTitle, seoDescription, metaImage, socialImage },
+  pageContext: { seoTitle, seoDescription, metaImage, socialImage, publication },
 }: ArticleLayoutProps) => {
   const { allMdx } = useAllArticlesQuery()
   const {
@@ -94,7 +94,7 @@ export const Head = ({
   } = data.mdx
   // Hidden and moved pages have no Markdown version
   const hasMarkdown =
-    !hidePage &&
+    publication?.exported !== false &&
     !dataguideConfig.redirects.some((redirect) => redirect.fromPath === urlGenerator(modSlug))
   const article =
     slug === '/'
@@ -119,6 +119,7 @@ export const Head = ({
       image={metaImage || undefined}
       socialImage={socialImage}
       hasMarkdown={hasMarkdown}
+      noindex={publication?.indexed === false}
       article={article}
     />
   )

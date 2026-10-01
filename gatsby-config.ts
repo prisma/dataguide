@@ -5,6 +5,19 @@ import { rehypeTopicSections } from './src/utils/rehypeTopicSections'
 // MDX 2 no longer parses GitHub Flavored Markdown (tables, strikethrough, ...)
 // by default. remark-gfm is ESM-only, which Node >= 20.19 can `require`.
 const remarkGfm = require('remark-gfm').default
+// Gatsby doesn't stop on errors thrown while it loads this file: it builds with an empty config
+// instead, which fails later with unrelated GraphQL errors. So problems found here are collected,
+// and gatsby-plugin-content-manifest stops the build with them in onPreInit.
+const configErrors: string[] = []
+let contentRevision: { contentRevision: string | null; sourceRevision: string | null } = {
+  contentRevision: null,
+  sourceRevision: null,
+}
+try {
+  contentRevision = require('./plugins/content-revision.cjs')()
+} catch (error) {
+  configErrors.push((error as Error).message)
+}
 
 // MDX 1 turned code fence meta (```js copy line-number) into props on the
 // `code` element. MDX 2 drops it, so copy it over to keep the Code component
@@ -91,6 +104,9 @@ let plugins: any = [
       // Keep the sitemap at /sitemap/sitemap-index.xml (the default before v6)
       output: '/sitemap',
       entryLimit: 5000,
+      resolvePages: ({ allSitePage }: any) =>
+        allSitePage.nodes.filter((page: any) => page.pageContext?.publication?.indexed !== false),
+      query: `{ site { siteMetadata { siteUrl } } allSitePage { nodes { path pageContext } } }`,
       excludes: [
         // Pages that aren't meant to be found
         `/intro/example`,
@@ -150,10 +166,23 @@ let plugins: any = [
       redirects: dataguideConfig.redirects.map((redirect) => redirect.fromPath),
     },
   },
+  { resolve: 'gatsby-plugin-content-manifest', options: { configErrors } },
 ]
 
-if (process.env.INDEX_ALGOLIA === 'true') {
-  if (process.env.GATSBY_ALGOLIA_APP_ID) {
+// Only production deployments publish search. A Vercel preview shares the production index name
+// (the search box needs it), so indexing from a preview would overwrite production records.
+const isVercelPreview = !!process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
+if (process.env.INDEX_ALGOLIA === 'true' && isVercelPreview) {
+  console.warn(
+    `INDEX_ALGOLIA=true is ignored in a ${process.env.VERCEL_ENV} deployment; only production publishes search.`
+  )
+} else if (process.env.INDEX_ALGOLIA === 'true') {
+  const missing = [
+    'GATSBY_ALGOLIA_APP_ID',
+    'GATSBY_ALGOLIA_ADMIN_API_KEY',
+    'GATSBY_ALGOLIA_INDEX_NAME',
+  ].filter((name) => !process.env[name])
+  if (missing.length === 0) {
     // only set this up when we actually need it
     const algoliaPlugin = {
       resolve: 'gatsby-algolia-indexer',
@@ -170,10 +199,14 @@ if (process.env.INDEX_ALGOLIA === 'true') {
     plugins.push(algoliaPlugin)
 
     console.log(
-      'INDEX_ALGOLIA is `true`, and GATSBY_ALGOLIA_APP_ID is set, so pushing algoliaPlugin to list of plugins to trigger search indexing.'
+      'INDEX_ALGOLIA is `true` and the indexing credentials are set, so search indexing runs.'
     )
   } else {
-    console.warn('INDEX_ALGOLIA === true, but GATSBY_ALGOLIA_APP_ID is undefined.')
+    // Search must not block the site: the deploy goes ahead with the existing index, and the
+    // search check after a production deploy (scripts/search-smoke.mjs) reports it as stale.
+    console.warn(
+      `INDEX_ALGOLIA=true, but ${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} not set. Skipping search indexing; the deployed index stays as it was.`
+    )
   }
 } else {
   console.log('INDEX_ALGOLIA not `true`, not pushing algoliaPlugin to skip any search indexing.')
@@ -186,6 +219,8 @@ const config: GatsbyConfig = {
   // React 19 warns about the classic `React.createElement` JSX transform
   jsxRuntime: 'automatic',
   siteMetadata: {
+    contentRevision: contentRevision.contentRevision,
+    sourceRevision: contentRevision.sourceRevision,
     pathPrefix: dataguideConfig.gatsby.pathPrefix,
     title: dataguideConfig.siteMetadata.title,
     description: dataguideConfig.siteMetadata.description,

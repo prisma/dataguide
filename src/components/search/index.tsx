@@ -12,7 +12,7 @@ import config from '../../../config'
 import DocHit from './hitComps'
 import styled from 'styled-components'
 import Overlay from './overlay'
-import CustomSearchBox from './input'
+import CustomSearchBox, { SearchBox } from './input'
 import * as qs from 'qs'
 import { navigate } from 'gatsby'
 
@@ -124,7 +124,9 @@ const emptyResults = (requests: any[]) =>
 // development without a .env file), so only create the client when configured.
 const { algoliaAppId, algoliaSearchKey } = config.header.search
 const algoliaClient =
-  algoliaAppId && algoliaSearchKey ? algoliasearch(algoliaAppId, algoliaSearchKey) : null
+  algoliaAppId && algoliaSearchKey && indexName
+    ? algoliasearch(algoliaAppId, algoliaSearchKey)
+    : null
 
 const searchClient: any = {
   ...algoliaClient,
@@ -140,6 +142,19 @@ const searchClient: any = {
 const Results = ({ children }: { children: React.ReactNode }) => {
   const { results, status, indexUiState } = useInstantSearch()
 
+  if (!algoliaClient)
+    return (
+      <div className="no-results" role="status">
+        Search is unavailable. Browse the Data Guide sections using the menu.
+      </div>
+    )
+  if (status === 'error')
+    return (
+      <div className="no-results" role="alert">
+        Search could not load. Try again or browse the Data Guide sections.
+      </div>
+    )
+
   if (status === 'stalled' || results?.query === '') {
     return <div className="loader">Searching...</div>
   }
@@ -149,7 +164,7 @@ const Results = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="no-results">
+    <div className="no-results" role="status">
       No results for '<i>{indexUiState.query}</i>'
     </div>
   )
@@ -187,7 +202,42 @@ const SyncQueryWithUrl = ({ location }: any) => {
   return null
 }
 
-export default function Search({ hitsStatus, location, header, mobile = false }: any) {
+const UnavailableSearch = ({ hitsStatus, header, mobile }: any) => {
+  const [open, setOpen] = useState(false)
+  React.useEffect(() => {
+    hitsStatus(open)
+  }, [open])
+  return (
+    <>
+      <SearchBox
+        header={header}
+        mobile={mobile}
+        currentRefinement=""
+        refine={() => {}}
+        onFocus={() => setOpen(true)}
+        isOpened={open}
+        closeSearch={() => setOpen(false)}
+        upClicked={() => {}}
+        downClicked={() => {}}
+        clear={false}
+      />
+      <Overlay visible={open} hideSearch={() => setOpen(false)} clearInput={() => {}} />
+      {open && (
+        <HitsWrapper className={`show ${header ? 'header' : ''}`}>
+          <div className="no-results" role="status">
+            Search is unavailable. Browse the Data Guide sections using the menu.
+          </div>
+        </HitsWrapper>
+      )}
+    </>
+  )
+}
+
+export default function Search(props: any) {
+  return algoliaClient ? <ConfiguredSearch {...props} /> : <UnavailableSearch {...props} />
+}
+
+function ConfiguredSearch({ hitsStatus, location, header, mobile = false }: any) {
   const [query, setQuery] = useState(urlQuery(location))
   const [showHits, setShowHits] = React.useState(false)
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
@@ -228,6 +278,11 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
     hitsStatus(showHits)
   }, [showHits, query])
 
+  React.useEffect(() => {
+    setSelectedIndex(-1)
+  }, [query])
+  React.useEffect(() => () => clearTimeout(debouncedSetStateRef.current), [])
+
   const incrementIndex = () => {
     setSelectedIndex((prevCount: number) => {
       const nbHits = document.querySelectorAll('.ais-Hits-list .ais-Hits-item')?.length
@@ -247,6 +302,11 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
         return nbHits - 1
       }
     })
+  }
+
+  const selectHit = () => {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.ais-Hits-list .ais-Hits-item a')
+    if (selectedIndex >= 0) links[selectedIndex]?.click()
   }
 
   return (
@@ -274,6 +334,7 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
           closeSearch={hideSearch}
           upClicked={decrementIndex}
           downClicked={incrementIndex}
+          selectHit={selectHit}
         />
         {query && query !== '' && showHits && (
           <HitsWrapper
@@ -295,7 +356,8 @@ export default function Search({ hitsStatus, location, header, mobile = false }:
 const Hits = ({ hitComponent: HitComponent, selectedIndex }: any) => {
   const { items } = useHits<any>()
   const hits = items
-    .filter((hit) => hit._distinctSeqID == 0)
+    // Only article records have a path (the index also holds a revision record without text)
+    .filter((hit) => hit.dataguidePath && hit._distinctSeqID == 0)
     .map((hit) => ({
       ...hit,
       moreCount: items.filter((other) => other.slug == hit.slug).length,

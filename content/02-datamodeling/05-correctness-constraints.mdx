@@ -3,7 +3,7 @@ title: 'Correctness and constraints'
 metaTitle: "Correctness and Constraints | Data Modeling | Prisma's Data Guide"
 metaDescription: 'Learn more about storing meaningful, useful, correct data and how correctness can be logically defined and enforced'
 authors: ['dianfay']
-lastUpdated: 2026-09-29
+lastUpdated: 2026-10-01
 ---
 
 ## Introduction
@@ -66,11 +66,34 @@ SELECT * FROM tickets ORDER BY ticket_id;
 
 MySQL 8.4 behaves the same way in its default strict mode, rejecting the fourth insert with error 1048, `Column 'priority' cannot be null`. With [strict mode](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sql-mode-strict) turned off, MySQL still rejects a single-row insert like this one, but a multi-row `INSERT` or an `UPDATE` that writes `NULL` to a non-null column only raises a warning and stores the data type's implicit default -- an empty string for `VARCHAR` -- instead of the column's declared default.
 
-Any other validation rule which depends only on the values within a single tuple can be implemented as a `CHECK` constraint. In a sense, `NOT NULL` itself is a shorthand for `CHECK (column_name IS NOT NULL)`; the error message received in violation makes most of the difference. `CHECK`, however, can apply and enforce the truth of any Boolean predicate over a single tuple. For example, a table storing geographic locations should `CHECK (latitude >= -90 AND latitude <= 90)`, and similarly for longitude between -180 and 180 -- or, if available, use and validate a `GEOGRAPHY` data type.
+Validation rules that depend on the values within a single tuple can be implemented as `CHECK` constraints. In PostgreSQL, a check rejects **false**, but accepts **true or NULL**. For example, `CHECK (latitude BETWEEN -90 AND 90)` permits a missing latitude; add `NOT NULL` if a value is required. `CHECK (column_name IS NOT NULL)` also rejects nulls because `IS NOT NULL` returns false for NULL. See [PostgreSQL's constraint rules](https://www.postgresql.org/docs/18/ddl-constraints.html).
+
+```sql
+CREATE TABLE locations (
+  latitude numeric CHECK (latitude BETWEEN -90 AND 90),
+  longitude numeric NOT NULL CHECK (longitude BETWEEN -180 AND 180)
+);
+INSERT INTO locations VALUES (NULL, 0);
+```
+
+```sql expected-failure sqlstate=23502
+INSERT INTO locations VALUES (0, NULL);
+```
 
 ## On tables: unique and exclusion
 
-Table-level constraints test tuples against each other. In a unique constraint, only one record may have any given set of values for the constrained columns. Nullability can cause problems here, since `NULL` never equals anything else, up to and including `NULL` itself. A unique constraint on `(batman, robin)` therefore allows for infinite copies of any Robinless Batman.
+Table-level constraints test tuples against each other. In a unique constraint, only one record may have any given set of non-null values for the constrained columns. By default, PostgreSQL treats nulls as distinct for uniqueness, so a unique constraint on `(batman, robin)` permits repeated values when `robin` is NULL. PostgreSQL 15 and later also support `NULLS NOT DISTINCT` to treat nulls as equal for this purpose. Other engines have their own rules; check the engine's documentation.
+
+```sql
+CREATE TABLE default_pairs (batman text, robin text, UNIQUE (batman, robin));
+INSERT INTO default_pairs VALUES ('Bruce', NULL), ('Bruce', NULL);
+CREATE TABLE strict_pairs (batman text, robin text, UNIQUE NULLS NOT DISTINCT (batman, robin));
+INSERT INTO strict_pairs VALUES ('Bruce', NULL);
+```
+
+```sql expected-failure sqlstate=23505
+INSERT INTO strict_pairs VALUES ('Bruce', NULL);
+```
 
 Exclusion constraints, which PostgreSQL supports with `EXCLUDE`, fill a very useful niche: they can prevent overlaps. Specify the constrained fields and the operations by which each will be evaluated, and a new record will only be accepted if no existing record compares successfully with each field and operation. For instance, a `schedules` table can be configured to reject conflicts:
 
@@ -130,7 +153,20 @@ Relational databases implement only one class of multi-table constraint, the <Fo
 
 This informal "entity-relationship diagram" or ERD shows the beginnings of a schema for a database of libraries and their collections and patrons. Each edge represents a relationship between the tables it connects. The | glyph indicates a single record on its side, while the "crow's foot" glyph represents multiple: a library holds many books and has many patrons.
 
-A foreign key is a copy of another table's primary key, column for column (a point in favor of surrogate keys: only one column to copy and reference), with values linking records in this table to "parent" records in that. In the schema above, the `books` table maintains a `library_id` foreign key to `libraries`, which hold books, and an `author_id` to `authors`, who write them. But what happens if a book is inserted with an `author_id` that doesn't exist in `authors`?
+A foreign key constrains columns to reference an eligible key in another table (or the same table). The referenced key is often the primary key, but in PostgreSQL it can also be a non-deferrable unique constraint or a non-partial unique index. The corresponding columns must have compatible types. In the schema above, the `books` table maintains a `library_id` foreign key to `libraries`, which hold books, and an `author_id` to `authors`, who write them. But what happens if a book is inserted with an `author_id` that doesn't exist in `authors`?
+
+For example, a foreign key can reference a unique library code while the library's primary key is a separate identifier:
+
+```sql
+CREATE TABLE branch_libraries (id integer PRIMARY KEY, code text UNIQUE NOT NULL);
+CREATE TABLE branch_books (id integer PRIMARY KEY, library_code text REFERENCES branch_libraries(code));
+INSERT INTO branch_libraries VALUES (1, 'CENTRAL');
+INSERT INTO branch_books VALUES (1, 'CENTRAL');
+```
+
+```sql expected-failure sqlstate=23503
+INSERT INTO branch_books VALUES (2, 'MISSING');
+```
 
 If the foreign key is not constrained -- i.e., it's just another column or columns -- a book can have an author who doesn't exist. This is a problem: if someone tries to follow the link between `books` and `authors`, they wind up nowhere. If `authors.author_id` is a serial integer, there's also the possibility that no-one notices until the spurious `author_id` is eventually assigned, and you wind up with a particular copy of _Don Quixote_ attributed first to nobody known and then to Pierre Menard, with Miguel Cervantes nowhere to be found.
 
@@ -195,7 +231,7 @@ For example, in a customer database a row might include a customer’s first nam
 
 A `FOREIGN KEY` is a field or collection of fields in one table that often refers to the `PRIMARY KEY` of another table.
 
-However, it can also refer to any unique column that is also not null.
+In PostgreSQL, it can also reference columns covered by a non-deferrable unique constraint or a non-partial unique index; those columns need not be `NOT NULL`.
 
 </details>
 

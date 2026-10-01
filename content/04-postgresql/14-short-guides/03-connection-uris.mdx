@@ -6,6 +6,12 @@ metaImage: '/social/generic-postgresql.png'
 authors: ['justinellingwood']
 ---
 
+<StatusNotice title="Connection URI examples and remote security">
+
+The strings below explain URI syntax and include illustrative credentials. Do not paste passwords into command-line arguments or logs. For a remote connection, use a trusted CA and `sslmode=verify-full`; `require` alone does not verify the hostname. Follow the [tested connection templates](/postgresql/connecting-to-postgresql-databases#passing-connection-information-to-psql-with-a-connection-string).
+
+</StatusNotice>
+
 ## Introduction
 
 Connecting to your database server is usually one of the first tasks you need to accomplish when designing and configuring database-backed applications. While there are many methods of providing the address, listening port, credentials, and other details to applications, connection URIs, sometimes called connection strings or connection URLs, are one of the most powerful and flexible ways of specifying complex configuration in a compact format.

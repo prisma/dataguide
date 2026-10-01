@@ -23,6 +23,19 @@ module.exports = {
       // With manual capture this must be false, otherwise only the initial load is counted.
       capture_pageview: false,
       defaults: '2025-11-30',
+      // The search box writes what the reader typed into `?query=`; drop it from every event
+      before_send: (event) => {
+        for (const key of ['$current_url', '$referrer', '$initial_current_url']) {
+          const value = event?.properties?.[key]
+          if (typeof value !== 'string') continue
+          try {
+            const url = new URL(value)
+            url.searchParams.delete('query')
+            event.properties[key] = url.toString()
+          } catch {}
+        }
+        return event
+      },
     })
 
     // Tag every event so dataguide is distinguishable from other Prisma properties
@@ -30,7 +43,12 @@ module.exports = {
     // Registered synchronously so the first manual $pageview already carries these props.
     posthog.register({
       site_name: 'dataguide',
-      environment: 'production',
+      environment:
+        window.location.hostname === 'www.prisma.io'
+          ? 'production'
+          : ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname)
+            ? 'local'
+            : 'preview',
     })
 
     initialized = true
@@ -41,5 +59,8 @@ module.exports = {
       return
     }
     posthog.capture('$pageview')
+  },
+  trackEvent(event, properties) {
+    if (initialized) posthog.capture(event, properties)
   },
 }

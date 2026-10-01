@@ -1,0 +1,486 @@
+{
+  "checkedAt": "2026-09-30T16:50:24.320Z",
+  "base": "https://www.prisma.io/dataguide",
+  "expectedRevision": null,
+  "results": [
+    {
+      "route": "/",
+      "requestedUrl": "https://www.prisma.io/dataguide",
+      "finalUrl": "https://www.prisma.io/dataguide",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/setting-up-a-local-postgresql-database",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/setting-up-a-local-postgresql-database",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/introduction-to-data-types",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/introduction-to-data-types",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/introduction-to-data-types",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/introduction-to-data-types",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/introduction-to-data-types",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/date-types",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/connecting-to-postgresql-databases",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/connecting-to-postgresql-databases",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/short-guides/connection-uris",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/short-guides/connection-uris",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/intro/database-glossary",
+      "requestedUrl": "https://www.prisma.io/dataguide/intro/database-glossary",
+      "finalUrl": "https://www.prisma.io/dataguide/intro/database-glossary",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/intro/database-glossary",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/intro/database-glossary",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/date-types/",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/date-types/",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types/",
+          "status": 308,
+          "location": "/dataguide/postgresql/date-types"
+        },
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/postgresql/date-types#get-the-interval-between-two-dates",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/date-types#get-the-interval-between-two-dates",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/date-types#get-the-interval-between-two-dates",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types#get-the-interval-between-two-dates",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": "https://www.prisma.io/dataguide/postgresql/date-types",
+      "robotsMeta": null,
+      "contentRevision": null,
+      "anchorExists": true
+    },
+    {
+      "route": "/postgresql/date-types.md",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "contentType": "text/markdown; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/llms.txt",
+      "requestedUrl": "https://www.prisma.io/dataguide/llms.txt",
+      "finalUrl": "https://www.prisma.io/dataguide/llms.txt",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/llms.txt",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/sitemap/sitemap-index.xml",
+      "requestedUrl": "https://www.prisma.io/dataguide/sitemap/sitemap-index.xml",
+      "finalUrl": "https://www.prisma.io/dataguide/sitemap/sitemap-index.xml",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/sitemap/sitemap-index.xml",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "application/xml",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/content-manifest.json",
+      "requestedUrl": "https://www.prisma.io/dataguide/content-manifest.json",
+      "finalUrl": "https://www.prisma.io/dataguide/content-manifest.json",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/content-manifest.json",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": "noindex",
+      "contentRevision": null
+    },
+    {
+      "route": "/definitely-missing-review-route-91f6",
+      "requestedUrl": "https://www.prisma.io/dataguide/definitely-missing-review-route-91f6",
+      "finalUrl": "https://www.prisma.io/dataguide/definitely-missing-review-route-91f6",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/definitely-missing-review-route-91f6",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": "noindex",
+      "contentRevision": null
+    },
+    {
+      "route": "/robots.txt (origin)",
+      "requestedUrl": "https://www.prisma.io/robots.txt",
+      "finalUrl": "https://www.prisma.io/robots.txt",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/robots.txt",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null,
+      "robotsPolicy": "User-Agent: *\nAllow: /\nDisallow: /dataguide/intro/example\nDisallow: /dataguide/dummy\nDisallow: /cloud\nDisallow: /og/\nDisallow: /docs/api/\nDisallow: /docs/og/\nDisallow: /docs/*?query=*\nDisallow: /docs/*&query=*\nDisallow: /docs/*?page=*\nDisallow: /docs/*&page=*\nDisallow: /blog/api/\nDisallow: /blog/og/\nDisallow: /blog/*?page=*\nDisallow: /blog/*&page=*\n\nHost: https://www.prisma.io\nSitemap: https://www.prisma.io/sitemap.xml\n"
+    }
+  ],
+  "formerDocs": [
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database",
+      "finalUrl": "https://www.prisma.io/docs/local-development/postgres",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/setting-up-a-local-postgresql-database",
+          "status": 308,
+          "location": "/docs/local-development/postgres"
+        },
+        {
+          "url": "https://www.prisma.io/docs/local-development/postgres",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/local-development/postgres.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/local-development/postgres",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types",
+      "finalUrl": "https://www.prisma.io/docs/orm/v7/prisma-schema/data-model/models",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/introduction-to-data-types",
+          "status": 308,
+          "location": "/docs/orm/v7/prisma-schema/data-model/models"
+        },
+        {
+          "url": "https://www.prisma.io/docs/orm/v7/prisma-schema/data-model/models",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/orm/v7/prisma-schema/data-model/models.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/orm/v7/prisma-schema/data-model/models",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types",
+      "finalUrl": "https://www.prisma.io/docs/orm/v7/reference/prisma-schema-reference#datetime",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/date-types",
+          "status": 308,
+          "location": "/docs/orm/v7/reference/prisma-schema-reference#datetime"
+        },
+        {
+          "url": "https://www.prisma.io/docs/orm/v7/reference/prisma-schema-reference#datetime",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/orm/v7/reference/prisma-schema-reference.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/orm/v7/reference/prisma-schema-reference",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases",
+      "finalUrl": "https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connecting-to-postgresql-databases",
+          "status": 308,
+          "location": "/docs/orm/v7/core-concepts/supported-databases/postgresql"
+        },
+        {
+          "url": "https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/orm/v7/core-concepts/supported-databases/postgresql.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris",
+      "finalUrl": "https://www.prisma.io/docs/orm/v7/reference/connection-urls",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/connection-uris",
+          "status": 308,
+          "location": "/docs/orm/v7/reference/connection-urls"
+        },
+        {
+          "url": "https://www.prisma.io/docs/orm/v7/reference/connection-urls",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/orm/v7/reference/connection-urls.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/orm/v7/reference/connection-urls",
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "scope": "former Docs destination",
+      "requestedUrl": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary",
+      "finalUrl": "https://www.prisma.io/docs/orm/core-concepts",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/docs/orm/more/help-and-troubleshooting/dataguide/database-glossary",
+          "status": 308,
+          "location": "/docs/orm/core-concepts"
+        },
+        {
+          "url": "https://www.prisma.io/docs/orm/core-concepts",
+          "status": 200,
+          "location": null
+        }
+      ],
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": "</docs/orm/core-concepts.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"llms-txt\"",
+      "canonical": "https://www.prisma.io/docs/orm/core-concepts",
+      "robotsMeta": null,
+      "contentRevision": null
+    }
+  ],
+  "failures": [
+    {
+      "route": "/postgresql/date-types.md",
+      "requestedUrl": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+      "finalUrl": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/postgresql/date-types.md",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "contentType": "text/markdown; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": null,
+      "contentRevision": null
+    },
+    {
+      "route": "/content-manifest.json",
+      "requestedUrl": "https://www.prisma.io/dataguide/content-manifest.json",
+      "finalUrl": "https://www.prisma.io/dataguide/content-manifest.json",
+      "chain": [
+        {
+          "url": "https://www.prisma.io/dataguide/content-manifest.json",
+          "status": 404,
+          "location": null
+        }
+      ],
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "indexingHeader": null,
+      "canonicalHeader": null,
+      "canonical": null,
+      "robotsMeta": "noindex",
+      "contentRevision": null
+    }
+  ],
+  "scope": "HTTP status, redirects, indexing signals, canonical, one retained anchor and revision. Robots content is retained for policy review; network errors remain inconclusive."
+}

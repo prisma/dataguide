@@ -49,6 +49,9 @@ export default {
   Sidenote,
   AnchorItem,
   StatusNotice,
+  TechnicalNote: ({ children }: { children?: React.ReactNode }) => (
+    <aside className="technical-note">{children}</aside>
+  ),
   img: ({ src, ...props }: any) => {
     const newSrc = src.replace(/(\..\/)/g, '')
     return (
