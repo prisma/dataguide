@@ -60,7 +60,8 @@
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test 'src/**/*.test.ts' 'plugins/**/*.test.mjs'",
     "typecheck": "tsc",
     "postinstall": "husky",
-    "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install"
+    "install-algolia": "cd ./plugins/gatsby-algolia-indexer && npm install",
+    "test:orms": "node experiments/orm-type-safety/run.mjs"
   },
   "devDependencies": {
     "@mdx-js/mdx": "2.3.0",
