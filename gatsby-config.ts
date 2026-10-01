@@ -202,7 +202,11 @@ if (process.env.INDEX_ALGOLIA === 'true' && isVercelPreview) {
       'INDEX_ALGOLIA is `true` and the indexing credentials are set, so search indexing runs.'
     )
   } else {
-    configErrors.push(`INDEX_ALGOLIA=true requires ${missing.join(', ')}`)
+    // Search must not block the site: the deploy goes ahead with the existing index, and the
+    // search check after a production deploy (scripts/search-smoke.mjs) reports it as stale.
+    console.warn(
+      `INDEX_ALGOLIA=true, but ${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} not set. Skipping search indexing; the deployed index stays as it was.`
+    )
   }
 } else {
   console.log('INDEX_ALGOLIA not `true`, not pushing algoliaPlugin to skip any search indexing.')

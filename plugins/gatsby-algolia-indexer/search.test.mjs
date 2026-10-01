@@ -18,7 +18,7 @@ const node = (id, frontmatter) => ({
 test('search exclusion fields are queried and applied before record creation', async () => {
   const config = createConfig({ appId: 'test-app', adminKey: 'test-key', indexName: 'test-index' })
     .plugins[0].options
-  assert.equal(config.continueOnFailure, false)
+  assert.equal(config.continueOnFailure, true)
   for (const field of ['search', 'publish', 'skipBuild', 'index'])
     assert.match(config.queries[0].query, new RegExp(`\\b${field}\\b`))
   const records = await config.queries[0].transformer({

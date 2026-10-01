@@ -175,7 +175,9 @@ module.exports = (options) => {
           appId,
           apiKey: adminKey,
           queries,
-          continueOnFailure: false,
+          // A failed indexing run warns instead of failing the site's deploy. The revision record
+          // isn't updated then, so the post-deploy search check reports the index as stale.
+          continueOnFailure: true,
         },
       },
     ],

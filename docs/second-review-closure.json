@@ -108,9 +108,9 @@
       "id": "R12",
       "title": "Prevent silent stale search publication",
       "status": "partial",
-      "outcome": "Required indexing fails on missing credentials and indexer errors. Record digests cover the transformed payload and the indexer's source, so deploys rewrite only changed records; one revision record carries the content hash and source commit. The installed publisher's successive-build test confirms both.",
+      "outcome": "Missing credentials and indexing failures warn instead of failing the deploy, and the post-deploy search check detects the stale revision record. Record digests cover the transformed payload and the indexer's source, so deploys rewrite only changed records; one revision record carries the content hash and source commit. The installed publisher's successive-build test confirms both.",
       "evidence": "plugins/gatsby-algolia-indexer/incremental.test.mjs",
-      "remaining": "Public search UI confirms stale 2022 titles and obsolete Accelerate results. Required indexing and a hosted revision check must pass before release; publication credentials unavailable.",
+      "remaining": "On 2026-10-01 the production index had no results for content deployed the day before, so production indexing isn't running or is failing; the Production environment's search credentials need checking. A hosted revision check must pass after the next production deploy.",
       "humanReviewer": null
     },
     {
