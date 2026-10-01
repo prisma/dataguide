@@ -1,16 +1,17 @@
 {
-  "startedAt": "2026-10-01T06:45:35.662Z",
+  "startedAt": "2026-10-01T08:00:06.573Z",
   "image": "node@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d",
   "status": "passed",
-  "fixtureSha256": "d79194fbe31f3f0f0ba96b3d554e55ef4396afa2bb1202ff8f1b5c0b803205eb",
+  "fixtureSha256": "31acaec648748ab428dc69c7f43a501d3c8a3876534223c638f3694b813f31a1",
   "articles": [
     {
       "file": "content/06-sqlite/06-update-data.mdx",
-      "sourceSha256": "f6df614351b8e6cbe38ced387067cb03631dde1ee81337a57c63911a02996c4c",
+      "sourceSha256": "86c70a052d9f4250ecae2f2884759aee4682bd5ca6df9140a1d67fe9483c187c",
       "executableBlocks": 11
     }
   ],
   "version": "3.53.1",
+  "sourceId": "2026-05-05 10:34:17 c88b22011a54b4f6fbd149e9f8e4de77658ce58143a1af0e3785e4e6475127e9",
   "outputs": [
     {
       "sql": "UPDATE my_table\nSET\n\t\tcolumn1 = value1,\n\t\tcolumn2 = value2\nWHERE\n\t\tid = 1;\n",
@@ -116,6 +117,8 @@
     "correlated subquery including unmatched row",
     "latest publication per author",
     "article pragma makes foreign keys reject an orphan",
+    "sqlite3.c matches the SHA3-256 published for SQLite 3.53.1",
+    "sqlite3 shell and node:sqlite report the same SQLite version and source ID",
     "sqlite3 shell output matches the article byte for byte",
     "sqlite3 shell rejects an orphan row after the article setup"
   ],
@@ -124,11 +127,16 @@
     "sqlite3 shell: article setup without its pragma accepts an orphan row"
   ],
   "shell": {
-    "package": "sqlite3=3.40.1-2+deb12u2",
-    "version": "3.40.1 2022-12-28 14:03:47 df5c253c0b3dd24916e4ec7cf77d3db5294cc9fd45ae7b9c5e82ad8197f3alt1",
-    "stdout": "+----+------------+-----------+------------------+\n| id | first_name | last_name | last_publication |\n+----+------------+-----------+------------------+\n| 1  | Leo        | Tolstoy   | Anna Karenina    |\n| 2  | James      | Joyce     | Ulysses          |\n| 3  | Jean-Paul  | Sarte     | Nausea           |\n+----+------------+-----------+------------------+\n",
-    "foreignKeyRejection": "Runtime error near line 31: FOREIGN KEY constraint failed (19)"
+    "version": "3.53.1 2026-05-05 10:34:17 c88b22011a54b4f6fbd149e9f8e4de77658ce58143a1af0e3785e4e6475127e9 (64-bit)",
+    "source": "https://sqlite.org/2026/sqlite-autoconf-3530100.tar.gz",
+    "sqlite3cSha3": "414432ae5719f6cdc485f3927e12c7ad107e2b8c6b434e5df2eadb5312bfabb5",
+    "sqlite3cSha3PublishedIn": "https://sqlite.org/releaselog/3_53_1.html",
+    "archiveSha3": "36ca143645cf76997d07b66e9244c636b8ccdec64a1d50558259c4e415e6558b",
+    "build": "gcc -O2 shell.c sqlite3.c -lm -o /usr/local/bin/sqlite3",
+    "compiler": "gcc (Debian 12.2.0-14+deb12u1) 12.2.0",
+    "stdout": "+----+------------+-----------+------------------+\n| id | first_name | last_name | last_publication |\n+----+------------+-----------+------------------+\n|  1 | Leo        | Tolstoy   | Anna Karenina    |\n|  2 | James      | Joyce     | Ulysses          |\n|  3 | Jean-Paul  | Sarte     | Nausea           |\n+----+------------+-----------+------------------+\n",
+    "foreignKeyRejection": "Error near line 31: FOREIGN KEY constraint failed"
   },
   "cleanedUp": true,
-  "completedAt": "2026-10-01T06:45:40.770Z"
+  "completedAt": "2026-10-01T08:00:58.022Z"
 }

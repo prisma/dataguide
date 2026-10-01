@@ -4,8 +4,16 @@ import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
 const image = 'node@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d'
-// The image has no sqlite3 shell; its Debian release supplies one for the article's .mode output.
-const shellPackage = 'sqlite3=3.40.1-2+deb12u2'
+// The image has no sqlite3 shell. For the article's .mode output, the fixture builds one from
+// SQLite's official source for the release node:sqlite uses, so both run the same SQLite.
+const shellVersion = '3.53.1'
+const shellSource = 'https://sqlite.org/2026/sqlite-autoconf-3530100.tar.gz'
+// SQLite publishes both values in its release log.
+const shellReleaseLog = 'https://sqlite.org/releaselog/3_53_1.html'
+const shellSqlite3cSha3 = '414432ae5719f6cdc485f3927e12c7ad107e2b8c6b434e5df2eadb5312bfabb5'
+const shellSourceId =
+  '2026-05-05 10:34:17 c88b22011a54b4f6fbd149e9f8e4de77658ce58143a1af0e3785e4e6475127e9'
+const shellBuild = 'gcc -O2 shell.c sqlite3.c -lm -o /usr/local/bin/sqlite3'
 const id = randomUUID().slice(0, 8)
 const name = `dg-sqlite-${id}`
 const shellName = `dg-sqlite-shell-${id}`
@@ -83,7 +91,7 @@ try {
     control.exec(${JSON.stringify(orphan)});
     assert.equal(control.prepare('SELECT count(*) AS n FROM book WHERE author_id = 999').get().n, 1);
     control.close();
-    console.log(JSON.stringify({ version: db.prepare('SELECT sqlite_version() AS version').get().version, outputs, authors, checks: ['all article and FAQ SQL blocks', 'UPDATE targeting and RETURNING', 'correlated subquery including unmatched row', 'latest publication per author', 'article pragma makes foreign keys reject an orphan'] }));
+    console.log(JSON.stringify({ version: db.prepare('SELECT sqlite_version() AS version').get().version, sourceId: db.prepare('SELECT sqlite_source_id() AS id').get().id, outputs, authors, checks: ['all article and FAQ SQL blocks', 'UPDATE targeting and RETURNING', 'correlated subquery including unmatched row', 'latest publication per author', 'article pragma makes foreign keys reject an orphan'] }));
     db.close();
   `
   )
@@ -93,13 +101,46 @@ try {
   // The printed table comes from the sqlite3 shell, so run the article's statements there too.
   docker(['run', '--rm', '-d', '--name', shellName, image, 'sleep', 'infinity'])
   shellStarted = true
+  // The image has no compiler either; Debian's gcc builds the shell.
   docker([
     'exec',
     shellName,
     'sh',
     '-ec',
-    `apt-get update -qq >/dev/null && apt-get install -y -qq --no-install-recommends ${shellPackage} >/dev/null`,
+    'apt-get update -qq >/dev/null && apt-get install -y -qq --no-install-recommends gcc libc6-dev >/dev/null',
   ])
+  const download = JSON.parse(
+    docker(
+      ['exec', '-i', shellName, 'node', '--input-type=module'],
+      `
+      import { execFileSync } from 'node:child_process';
+      import { createHash } from 'node:crypto';
+      import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+      const response = await fetch(${JSON.stringify(shellSource)});
+      if (!response.ok) throw new Error(\`${shellSource}: HTTP \${response.status}\`);
+      const archive = Buffer.from(await response.arrayBuffer());
+      writeFileSync('/tmp/sqlite.tar.gz', archive);
+      mkdirSync('/tmp/sqlite');
+      execFileSync('tar', ['-xzf', '/tmp/sqlite.tar.gz', '-C', '/tmp/sqlite', '--strip-components=1']);
+      const sha3 = (data) => createHash('sha3-256').update(data).digest('hex');
+      console.log(JSON.stringify({ archiveSha3: sha3(archive), sqlite3cSha3: sha3(readFileSync('/tmp/sqlite/sqlite3.c')) }));
+    `
+    )
+  )
+  assert.equal(
+    download.sqlite3cSha3,
+    shellSqlite3cSha3,
+    `sqlite3.c from ${shellSource} must have the SHA3-256 published in ${shellReleaseLog}`
+  )
+  docker(['exec', '-w', '/tmp/sqlite', shellName, 'sh', '-ec', shellBuild])
+  const shellVersionLine = docker(['exec', shellName, 'sqlite3', '--version']).trim()
+  assert.equal(
+    shellVersionLine.split(' ').slice(0, 4).join(' '),
+    `${shellVersion} ${shellSourceId}`,
+    `the sqlite3 shell must be SQLite ${shellVersion} built from the released source`
+  )
+  assert.equal(report.version, shellVersion, 'node:sqlite must run the same SQLite release')
+  assert.equal(report.sourceId, shellSourceId, 'node:sqlite must run the same SQLite source')
   const sqlite3 = (input) =>
     docker(['exec', '-i', shellName, 'sqlite3', '-bail', ':memory:'], input)
   const stdoutTable = sqlite3(`${setup}\n${update}\n${select}`)
@@ -122,12 +163,19 @@ try {
     'sqlite3 shell: article setup without its pragma accepts an orphan row'
   )
   report.shell = {
-    package: shellPackage,
-    version: docker(['exec', shellName, 'sqlite3', '--version']).trim(),
+    version: shellVersionLine,
+    source: shellSource,
+    sqlite3cSha3: download.sqlite3cSha3,
+    sqlite3cSha3PublishedIn: shellReleaseLog,
+    archiveSha3: download.archiveSha3,
+    build: shellBuild,
+    compiler: docker(['exec', shellName, 'gcc', '--version']).split('\n')[0],
     stdout: stdoutTable,
     foreignKeyRejection: rejection,
   }
   report.checks.push(
+    `sqlite3.c matches the SHA3-256 published for SQLite ${shellVersion}`,
+    'sqlite3 shell and node:sqlite report the same SQLite version and source ID',
     'sqlite3 shell output matches the article byte for byte',
     'sqlite3 shell rejects an orphan row after the article setup'
   )

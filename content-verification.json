@@ -969,12 +969,12 @@
       "releaseChannel": "stable",
       "scope": "All 11 SQL templates, complete examples and FAQ blocks, RETURNING rows, correlated subqueries, and foreign-key enforcement after the article's PRAGMA foreign_keys = ON (with a no-pragma negative control)",
       "reviewer": null,
-      "verificationMethod": "article statements executed with node:sqlite and the sqlite3 shell in pinned disposable containers; displayed table compared byte for byte with sqlite3 shell output",
+      "verificationMethod": "article statements executed with node:sqlite and with a sqlite3 shell built from SQLite's released source (sqlite3.c SHA3-256 checked against the release log) in pinned disposable containers; both report the same SQLite version and source ID; displayed table compared byte for byte with sqlite3 shell output",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "fixture": "tests/tutorials/sqlite.mjs",
       "versions": [
         "SQLite 3.53.1 (Node.js 24.18.0)",
-        "sqlite3 shell 3.40.1 (Debian bookworm package 3.40.1-2+deb12u2)"
+        "sqlite3 shell 3.53.1 (built from verified SQLite source)"
       ],
       "reviewDate": "2026-10-01",
       "evidence": "tests/tutorials/evidence/sqlite-2026-10-01.json"
