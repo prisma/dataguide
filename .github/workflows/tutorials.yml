@@ -48,6 +48,26 @@ jobs:
           path: |
             .verification-runs/
             examples/library-app/.verification-runs/
+  library-app-minimum-node:
+    # The reference application on the lowest Node.js version its package.json supports
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22.18.0
+      - run: npm ci --prefix examples/library-app
+      - run: npm run typecheck --prefix examples/library-app
+      - run: npm run lab --prefix examples/library-app
+      - name: Preserve actual run evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: library-app-node22-evidence
+          path: examples/library-app/.verification-runs/
   comparison:
     runs-on: ubuntu-latest
     timeout-minutes: 15
