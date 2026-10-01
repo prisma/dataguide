@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
@@ -201,9 +201,84 @@ try {
       file,
       sourceSha256: createHash('sha256').update(source).digest('hex'),
       executableBlocks: blocks.length,
-      scope: 'diagnostic SELECT/SHOW queries only; logging administration excluded',
+      scope: 'diagnostic SELECT/SHOW queries; logging administration checked separately below',
     })
   })
+  check(
+    'article logging configuration reload, units, new sessions and real slow-query logs',
+    () => {
+      const file = 'content/04-postgresql/13-reading-and-querying-data/04-optimizing-postgresql.mdx'
+      const source = readFileSync(file, 'utf8')
+      const config = source.match(/```conf logging\n([\s\S]*?)```/)[1]
+      const blocks = [...source.matchAll(/```sql logging\n([\s\S]*?)```/g)].map(([, code]) => code)
+      assert.equal(blocks.length, 7, 'all logging SQL/psql steps must remain covered')
+      const configFile = scalar('SHOW config_file;')
+      const original = docker(['exec', name, 'cat', configFile])
+      docker(
+        ['exec', '-i', name, 'sh', '-c', 'cat >> "$1"', 'sh', configFile],
+        `\n${config}\nlog_line_prefix = '%m [%p] %d '\n`
+      )
+      report.outputs.push({ file, configuration: config, configFile })
+      const execute = (code) => {
+        const stdout = sql(code)
+        report.outputs.push({ file, sql: code, stdout })
+        return stdout
+      }
+      execute(blocks[0])
+      let reloaded = false
+      for (let i = 0; i < 50; i++) {
+        if (scalar('SHOW log_min_duration_statement;') === '5s') {
+          reloaded = true
+          break
+        }
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
+      }
+      assert.ok(reloaded, 'configuration reload did not apply five-second threshold')
+      sql('CREATE DATABASE helloprisma;')
+      // ALTER DATABASE must not change the already-connected session's threshold.
+      const existing = scalar(`\\c helloprisma\n${blocks[1]}\nSHOW log_min_duration_statement;`)
+      assert.equal(existing.split('\n').at(-1), '5s')
+      report.outputs.push({ file, sql: blocks[1], existingSession: existing })
+      assert.equal(scalar('SHOW log_min_duration_statement;', 'helloprisma'), '2s')
+      assert.match(execute(blocks[2]), /log_min_duration_statement=2000/)
+      execute(blocks[3])
+      assert.equal(scalar('SHOW log_min_duration_statement;', 'helloprisma'), '2s')
+      assert.equal(
+        scalar(
+          "SELECT setting || '|' || unit || '|' || source FROM pg_settings WHERE name='log_min_duration_statement';"
+        ),
+        '5000|ms|configuration file'
+      )
+      execute(blocks[4])
+      execute(blocks[5])
+      execute(blocks[6])
+      const logResult = spawnSync('docker', ['logs', name], { encoding: 'utf8' })
+      assert.equal(logResult.status, 0, logResult.stderr)
+      const logs = logResult.stdout + logResult.stderr
+      // Docker captures PostgreSQL stderr as well as stdout.
+      report.logging = logs
+      assert.match(logs, /duration: [\d.]+ ms\s+statement: SELECT pg_sleep\(10\);/)
+      assert.match(
+        logs,
+        /helloprisma LOG:\s+duration: [\d.]+ ms\s+statement: SELECT pg_sleep\(4\);/
+      )
+      assert.doesNotMatch(
+        logs,
+        /postgres LOG:\s+duration: [\d.]+ ms\s+statement: SELECT pg_sleep\(4\);/
+      )
+      assert.equal(
+        (logs.match(/duration: [\d.]+ ms\s+statement: SELECT pg_sleep\(4\);/g) || []).length,
+        1
+      )
+      // Restore the original server configuration before other fixture groups run.
+      docker(['exec', '-i', name, 'sh', '-c', 'cat > "$1"', 'sh', configFile], original)
+      sql('SELECT pg_reload_conf();')
+      const article = report.articles.find((article) => article.file === file)
+      article.executableBlocks += blocks.length
+      article.scope =
+        'diagnostic queries, global logging configuration/reload, numeric and unit-bearing database defaults, existing/new session behavior and slow-query log presence/absence'
+    }
+  )
   check('date subtraction, age and truncation values and types', () => {
     assert.equal(
       scalar(

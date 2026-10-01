@@ -103,7 +103,7 @@
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "disposable container fixture with matching source and fixture hashes",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "automatedExecution": true
@@ -329,7 +329,7 @@
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -363,7 +363,7 @@
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -428,7 +428,7 @@
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "disposable container fixture with matching source and fixture hashes",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "automatedExecution": true
@@ -473,7 +473,7 @@
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
       "fixture": "tests/tutorials/run.mjs",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
@@ -532,14 +532,14 @@
       "owner": "PostgreSQL section maintainer (human assignment pending)",
       "level": "partial",
       "releaseChannel": "stable",
-      "scope": "Diagnostic SELECT and SHOW queries only, including a real non-null wait event; logging configuration and historical sample statistics excluded",
+      "scope": "Diagnostic SELECT/SHOW queries and a real wait event; global logging configuration/reload, numeric and unit-bearing database defaults, existing/new connections and real slow-query log presence/absence; historical sample statistics and paths remain illustrative",
       "reviewer": null,
-      "verificationMethod": "diagnostic statements extracted from article and executed in a pinned disposable container",
+      "verificationMethod": "diagnostic and logging statements extracted from article and executed in a pinned disposable PostgreSQL container",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date.",
       "fixture": "tests/tutorials/run.mjs",
       "versions": ["PostgreSQL 18.6"],
       "reviewDate": "2026-10-01",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json"
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json"
     },
     {
       "file": "content/04-postgresql/13-reading-and-querying-data/index.mdx",
@@ -1387,7 +1387,7 @@
       "versions": ["PostgreSQL 18.6"],
       "fixture": "tests/tutorials/run.mjs",
       "reviewDate": "2026-10-01",
-      "evidence": "tests/tutorials/evidence/postgresql-2026-10-01.json",
+      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
       "verificationMethod": "scoped source review and referenced local checks",
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },

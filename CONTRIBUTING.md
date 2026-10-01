@@ -120,9 +120,11 @@ Describe what changed and how you verified it: the versions you tested against a
 Keep a change in draft until its Vercel preview works and hosted route, Markdown, manifest, and search checks pass for the current commit. Local and GitHub builds do not establish hosted readiness. Obtain the expected content hash from the current commit's build artifact, not from the deployment being checked.
 
 ```bash
-node scripts/deployment-smoke.mjs https://YOUR-PREVIEW.vercel.app/dataguide EXPECTED_CONTENT_HASH EXPECTED_FULL_COMMIT_SHA
+node scripts/deployment-smoke.mjs https://YOUR-PREVIEW.vercel.app/dataguide EXPECTED_CONTENT_HASH EXPECTED_FULL_COMMIT_SHA preview https://www.prisma.io/dataguide
 node scripts/search-smoke.mjs EXPECTED_CONTENT_HASH EXPECTED_FULL_COMMIT_SHA
 ```
+
+The deployment check requires an explicit `preview` or `production` environment and the expected canonical site root, including its path prefix. Both environments must point HTML and Markdown canonicals at that site root. Production rejects `noindex` in meta tags or response headers and requires origin-level robots rules to allow the checked routes. Preview requires robots rules to block those routes; preview `noindex` headers are allowed. Rules are checked for general crawlers, Googlebot and Bingbot. To check production, use its URL with `production` in place of `preview`. Missing or invalid robots policies fail either mode.
 
 Use the preview's actual prefix and read-only search configuration. The search check must query the index used by that preview. Both commands must exit zero. Save their reports with the preview URL and commit before marking the PR ready. A failed deployment, inaccessible preview, stale source commit, or stale search index leaves the release blocked. Check Vercel's build logs before assigning a cause to a deployment failure.
 

@@ -2,6 +2,7 @@ const mdxToSearchable = require('./mdx-to-searchable')
 const withDefaults = require('./options')
 const publicationPolicy = require('../publication-policy.cjs')
 const revision = require('../content-revision.cjs')
+const { createHash } = require('node:crypto')
 
 const settings = {
   searchableAttributes: ['apiReference', 'title', 'heading', 'content'],
@@ -78,9 +79,12 @@ const handleBody = async (node) => {
       heading: item.heading ? removeInlineCode(item.heading) : null,
       content: item.text.replace(/\s+/g, ' ').trim(),
       dataguidePath: `${rest.modSlug.replace(/\d{2,}-/g, '')}${getTitlePath(item)}`,
-      internal: {
-        contentDigest: rest.internal.contentDigest,
-      },
+    }
+    // Algolia's incremental publisher compares only this digest. Include the
+    // complete payload, including revisions and transformed prose, rather than
+    // the MDX node's digest (which cannot detect publishing-code changes).
+    record.internal = {
+      contentDigest: createHash('sha256').update(JSON.stringify(record)).digest('hex'),
     }
     return record
   })

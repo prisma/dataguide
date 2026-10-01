@@ -2,11 +2,11 @@ const path = require('path')
 const fs = require('fs/promises')
 const publicationPolicy = require('../publication-policy.cjs')
 const revision = require('../content-revision.cjs')
+const { previousExports, pruneExports } = require('./generated-exports.cjs')
 
 // Publishes a Markdown version of every article next to its HTML page (append `.md` to the URL)
 // and an index of them at /llms.txt, like the Prisma docs do.
 
-const publicDir = path.resolve('public')
 const stripOrder = (slug) => slug.replace(/\d{2,}-/g, '')
 const isIndexSlug = (slug) => slug === '/' || /\/index$/.test(slug)
 // The page path within the Data Guide: `/01-intro/index` -> `/intro`, `/` -> `/`
@@ -14,7 +14,7 @@ const pagePath = (slug) => stripOrder(slug).replace(/\/index$/, '') || '/'
 const markdownFile = (pathname) => (pathname === '/' ? '/index.md' : `${pathname}.md`)
 
 // Published URLs of the images on a built page, by file name
-const publishedImages = async (pathname) => {
+const publishedImages = async (publicDir, pathname) => {
   const htmlFile = path.join(publicDir, pathname, 'index.html')
   const html = await fs.readFile(htmlFile, 'utf8').catch(() => '')
   const urls = new Map()
@@ -33,6 +33,7 @@ const publishedImages = async (pathname) => {
 }
 
 exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }) => {
+  const publicDir = path.resolve('public')
   const { mdxToMarkdown, createUrlResolver } = await import('./mdx-to-markdown.mjs')
 
   const { data, errors } = await graphql(`
@@ -78,6 +79,7 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
 
   const { siteUrl, pathPrefix, description: siteDescription, og } = data.site.siteMetadata
   const siteName = og.site_name
+  const previous = await previousExports(publicDir, siteName)
   const siteRoot = `${siteUrl}${pathPrefix}`
   const pages = data.allMdx.nodes
     .map((node) => ({
@@ -131,7 +133,7 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
 
   let written = 0
   for (const page of pages) {
-    const images = await publishedImages(page.pathname)
+    const images = await publishedImages(publicDir, page.pathname)
     const sourceDir = path.dirname(page.internal.contentFilePath)
     const resolveImage = (url) => {
       if (/^[a-z]+:/i.test(url)) return url
@@ -203,6 +205,11 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
     lines.push(`## ${section.frontmatter.title}`, '', entry(section), ...articles.map(entry), '')
   }
   await fs.writeFile(path.join(publicDir, 'llms.txt'), lines.join('\n'))
+  await pruneExports(
+    publicDir,
+    previous,
+    pages.map((page) => markdownFile(page.pathname).slice(1))
+  )
 
   reporter.info(`Markdown export: wrote ${written} articles and llms.txt`)
 }

@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
+import { indexingFailures } from './deployment-policy.mjs'
 
 const base = process.argv[2]
 if (!base || !/^https?:\/\//.test(base))
@@ -6,6 +7,15 @@ if (!base || !/^https?:\/\//.test(base))
 const root = base.replace(/\/$/, '')
 const expectedRevision = process.argv[3]
 const expectedSourceRevision = process.argv[4]
+const environment = process.argv[5]
+const canonicalRoot = process.argv[6]?.replace(/\/$/, '')
+if (!['preview', 'production'].includes(environment) || !/^https?:\/\//.test(canonicalRoot || ''))
+  throw new Error(
+    'Pass preview or production and the expected canonical site root (including /dataguide)'
+  )
+const canonicalURL = new URL(canonicalRoot)
+if (canonicalURL.search || canonicalURL.hash || canonicalURL.username || canonicalURL.password)
+  throw new Error('Canonical site root must not contain a query, fragment or credentials')
 if (!expectedRevision || !/^[a-f0-9]{40,64}$/i.test(expectedSourceRevision || ''))
   throw new Error(
     'Pass both the expected content hash and full source commit from the build being released'
@@ -74,9 +84,21 @@ const inspect = async (url) => {
       representationError = 'Received HTML for a Markdown, llms or sitemap representation'
     const fragment = new URL(chain[0].url).hash.slice(1)
     const attribute = (tag, key) =>
-      tag?.match(new RegExp(`\\b${key}=["']([^"']+)["']`, 'i'))?.[1] || null
+      tag?.match(new RegExp(`\\b${key}\\s*=\\s*["']([^"']+)["']`, 'i'))?.[1] || null
     const tags = [...body.matchAll(/<(?:link|meta)\b[^>]*>/gi)].map(([tag]) => tag)
-    const canonicalTag = tags.find((tag) => attribute(tag, 'rel') === 'canonical')
+    const canonicalTags = tags.filter((tag) =>
+      attribute(tag, 'rel')?.toLowerCase().split(/\s+/).includes('canonical')
+    )
+    const canonicals = [
+      ...canonicalTags.map((tag) => attribute(tag, 'href')),
+      ...[...body.matchAll(/^Canonical URL: ([^\r\n]+)/gm)].map(([, value]) => value),
+      ...[...(response.headers.get('link') || '').matchAll(/<([^>]+)>([^<>]*)/g)]
+        .filter(([, , parameters]) => {
+          const relation = parameters.match(/\brel\s*=\s*(?:"([^"]+)"|'([^']+)'|([^;\s,]+))/i)
+          return relation?.slice(1).find(Boolean)?.toLowerCase().split(/\s+/).includes('canonical')
+        })
+        .map(([, value]) => value),
+    ].filter(Boolean)
     const meta = (name) =>
       attribute(
         tags.find((tag) => attribute(tag, 'name') === name),
@@ -93,9 +115,12 @@ const inspect = async (url) => {
       contentType: response.headers.get('content-type'),
       indexingHeader: response.headers.get('x-robots-tag'),
       canonicalHeader: response.headers.get('link'),
-      canonical:
-        attribute(canonicalTag, 'href') || body.match(/Canonical URL: ([^\n]+)/)?.[1] || null,
+      canonical: canonicals[0] || null,
+      canonicals,
       robotsMeta: meta('robots'),
+      robotsMetas: tags
+        .filter((tag) => /^(robots|googlebot|bingbot)$/i.test(attribute(tag, 'name') || ''))
+        .map((tag) => attribute(tag, 'content')),
       contentRevision:
         meta('dataguide:content-revision') ||
         body.match(/Content revision: ([^\n]+)/)?.[1] ||
@@ -110,7 +135,7 @@ const inspect = async (url) => {
             ([, id]) => id === decodeURIComponent(fragment)
           )
         : undefined,
-      robotsPolicy: url.endsWith('/robots.txt') ? body : undefined,
+      robotsPolicy: new URL(chain[0].url).pathname === '/robots.txt' ? body : undefined,
     }
   }
   throw new Error('redirect chain exceeds six hops')
@@ -171,16 +196,19 @@ const failures = results.filter(
         result.sourceRevision !== expectedSourceRevision ||
         result.dirty === true))
 )
+failures.push(...indexingFailures(results, { environment, canonicalRoot }))
 const report = {
   checkedAt: new Date().toISOString(),
   base: root,
   expectedRevision: expectedRevision || null,
   expectedSourceRevision,
+  environment,
+  canonicalRoot,
   results,
   formerDocs: docsResults,
   failures,
   scope:
-    'HTTP status, redirects, indexing signals, canonical, one retained anchor, content hash and source commit. A dirty deployed build fails. Robots content is retained for policy review; network errors remain inconclusive.',
+    'HTTP status, redirects, expected canonical URLs, production noindex rejection, environment-specific robots crawling policy, one retained anchor, content hash and source commit. A dirty deployed build fails; network errors remain inconclusive.',
 }
 mkdirSync('.verification-runs', { recursive: true })
 writeFileSync('.verification-runs/deployment.json', `${JSON.stringify(report, null, 2)}\n`)
@@ -188,4 +216,6 @@ for (const row of results)
   console.log(
     `${row.result || (row.representationError ? 'invalid-representation' : row.status)} ${row.route} ${row.finalUrl || row.error}`
   )
+for (const failure of failures.filter((row) => row.indexingError))
+  console.error(`FAIL ${failure.route}: ${failure.indexingError}`)
 if (failures.length) process.exitCode = 1

@@ -8,7 +8,7 @@ authors: ['justinellingwood']
 
 <StatusNotice title="Verification scope">
 
-The diagnostic `SELECT` and `SHOW` queries were executed on PostgreSQL 18.6 in a disposable container. The logging configuration steps and historical sample statistics have not been re-tested; statistics and paths depend on your server.
+The diagnostic queries and logging configuration steps were executed on PostgreSQL 18.6 in a disposable container, including configuration reloads, database defaults and actual slow-query logs. Historical sample statistics and log lines below are illustrative; statistics, paths, timestamps and durations depend on your server.
 
 </StatusNotice>
 
@@ -531,13 +531,13 @@ Currently, the `log_min_duration_statement` setting is commented out with its cu
 
 You can turn on long query logging by uncommenting the `log_min_duration_statement` and setting it to another value. For instance, we can set it to 5 seconds to log any statements that take longer than that to complete:
 
-```
+```conf logging
 log_min_duration_statement = 5s
 ```
 
 After saving the file, you can reload your PostgreSQL server from within PostgreSQL by typing:
 
-```
+```sql logging
 SELECT pg_reload_conf();
 ```
 
@@ -574,21 +574,21 @@ Now, the `setting` field is set to 5000 and the `unit` field is set to `ms`, ind
 
 Another option when trying to detect slow queries is to limit slow query logging to a specific database. While `log_min_duration_statement` can be set globally, as we showed in the last section, it can also be configured at the database level.
 
-To turn on slow query logging for a single database, use the `ALTER DATABASE` command:
+To turn on slow query logging for a single database, use the `ALTER DATABASE` command as an administrator with permission to change this setting. This example assumes that the `helloprisma` database already exists:
 
-```sql
-ALTER DATABASE helloprisma SET 'log_min_duration_statement' = 2000;
+```sql logging
+ALTER DATABASE helloprisma SET log_min_duration_statement = 2000;
 ```
 
 ```
 ALTER DATABASE
 ```
 
-Note that unlike the global setting, when using the `ALTER DATABASE` command, the value must be a unit-less integer representing time in milliseconds.
+For [`log_min_duration_statement`](https://www.postgresql.org/docs/18/runtime-config-logging.html#GUC-LOG-MIN-DURATION-STATEMENT), a number without a unit means milliseconds. A quoted value with a unit is also valid, as shown below. [`ALTER DATABASE`](https://www.postgresql.org/docs/18/sql-alterdatabase.html) changes the default for new connections to that database; existing sessions retain their current setting.
 
 We can verify that the setting has been applied by querying for the per-database role settings:
 
-```sql
+```sql logging
 \drds
 ```
 
@@ -598,6 +598,12 @@ We can verify that the setting has been applied by querying for the per-database
 ------+-------------+-------------------------------
       | helloprisma | log_min_duration_statement=2000
 (1 row)
+```
+
+The same two-second threshold can be expressed with an explicit unit:
+
+```sql logging
+ALTER DATABASE helloprisma SET log_min_duration_statement = '2s';
 ```
 
 We can verify that this hasn't interfered with the global setting that we previously set to a 5 seconds threshold:
@@ -631,7 +637,7 @@ pending_restart | f
 
 Test the setting out by issuing a statement that exceeds the minimum logging duration:
 
-```sql
+```sql logging
 SELECT pg_sleep(10);
 ```
 
@@ -649,11 +655,11 @@ Check the logs and you should find statements indicating that a long running que
 2022-11-11 17:58:42.635 CET [1121088] postgres@postgres LOG:  duration: 10017.171 ms  statement: select pg_sleep(10);
 ```
 
-Since we have different thresholds for the global limit and a specific table, we can test that each are being applied correctly by using a query time that should trigger one but not the other.
+Since we have different thresholds for the global limit and a specific database, we can test that each are being applied correctly by using a query time that should trigger one but not the other.
 
 For example, we can connect to the database that has a lower threshold and sleep for 4 seconds, which should trigger a log line:
 
-```sql
+```sql logging
 \c helloprisma
 SELECT pg_sleep(4);
 ```
@@ -667,7 +673,7 @@ Our logs show:
 
 Now, we can switch to a different database that should only be affected by the global setting. The same sleep statement should not trigger a log line:
 
-```sql
+```sql logging
 \c postgres
 SELECT pg_sleep(4);
 ```

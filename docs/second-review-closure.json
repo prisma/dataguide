@@ -99,8 +99,8 @@
       "id": "R11",
       "title": "Make publication, indexing, search and export visibility consistent",
       "status": "verified-local",
-      "outcome": "Explicit HTML/index/search/navigation/export matrix, typed flags and hidden example policy.",
-      "evidence": "plugins/gatsby-plugin-markdown-export/publication-policy.test.mjs",
+      "outcome": "Explicit HTML/index/search/navigation/export matrix, typed flags and hidden example policy; owned Markdown exports are pruned across incremental unpublishing, removal and renames, with migration of legacy exports.",
+      "evidence": "plugins/gatsby-plugin-markdown-export/incremental.test.mjs",
       "remaining": "Deployment pending; hidden navigation alone intentionally leaves a public URL.",
       "humanReviewer": null
     },
@@ -108,8 +108,8 @@
       "id": "R12",
       "title": "Prevent silent stale search publication",
       "status": "partial",
-      "outcome": "Required search indexing now fails on missing credentials and indexer errors; records carry revision.",
-      "evidence": "plugins/gatsby-algolia-indexer/search.test.mjs",
+      "outcome": "Required indexing fails on missing credentials and indexer errors. Complete indexed-record digests include transformed content and both revisions; the installed publisher refreshes unchanged MDX across successive publishing-code changes.",
+      "evidence": "plugins/gatsby-algolia-indexer/incremental.test.mjs",
       "remaining": "Public search UI confirms stale 2022 titles and obsolete Accelerate results. Required indexing and a hosted revision check must pass before release; publication credentials unavailable.",
       "humanReviewer": null
     },
@@ -315,9 +315,9 @@
       "id": "R35",
       "title": "Verify the deployed route, robots and representation matrix",
       "status": "external-needed",
-      "outcome": "Production HTTP/redirect/canonical/robots/anchor observations retained; local branch representations and unknown-route 404 pass.",
-      "evidence": "tests/tutorials/evidence/production-http-2026-09-30.json",
-      "remaining": "Production date Markdown is 404. Preview 4c5e1ec serves a failed-deployment placeholder with HTTP 200; Prisma-team logs are inaccessible to the signed-in CLI. Final deployment/routing verification remains blocked.",
+      "outcome": "Deployment checks require explicit environment and canonical root. HTTP negative controls reject bad canonicals, production noindex, invalid/blocked production robots policies and unblocked previews despite matching revisions and HTTP 200.",
+      "evidence": "plugins/gatsby-plugin-content-manifest/deployment.test.mjs",
+      "remaining": "A working current-commit Vercel preview, actual origin robots and hosted route/Markdown/manifest checks remain required. Local HTTP fixtures do not establish hosted readiness.",
       "humanReviewer": null
     },
     {
