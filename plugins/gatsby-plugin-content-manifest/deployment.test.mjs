@@ -23,6 +23,7 @@ test('hosted checks reject stale HTML, Markdown and manifest source revisions de
     preview = false
   const canonicalRoot = 'https://www.prisma.io/dataguide'
   const encodedPath = (value) => value.split('/').map(encodeURIComponent).join('/')
+  const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`)
   const server = createServer((req, res) => {
     const type = req.url.endsWith('.md')
       ? 'markdown'
@@ -81,8 +82,9 @@ test('hosted checks reject stale HTML, Markdown and manifest source revisions de
     res.setHeader('content-type', 'text/html')
     if (preview || indexingRegression === 'header-noindex')
       res.setHeader('x-robots-tag', 'googlebot: NOINDEX, follow')
-    const canonical =
+    const canonical = escapeHtml(
       canonicalRoot + encodedPath(req.url.replace('/dataguide', '').replace(/\/$/, ''))
+    )
     res.end(
       `<title>Guide</title>${indexingRegression === 'missing-canonical' ? '' : `<link rel="canonical" href="${indexingRegression === 'wrong-canonical' ? 'https://preview.example/dataguide' : canonical}">`}${['meta-noindex', 'bot-noindex'].includes(indexingRegression) ? `<meta name="${indexingRegression === 'bot-noindex' ? 'googlebot' : 'robots'}" content="noindex, follow">` : ''}<meta name="dataguide:content-revision" content="${hash}"><meta name="dataguide:source-revision" content="${sourceRevision}"><h2 id="get-the-interval-between-two-dates">Dates</h2>`
     )
