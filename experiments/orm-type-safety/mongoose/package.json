@@ -1,0 +1,15 @@
+{
+  "name": "dg-type-mongoose",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "mongoose": "9.10.3"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "typescript6": "npm:typescript@6.0.3",
+    "typescript5": "npm:typescript@5.9.3",
+    "@types/node": "24.19.0"
+  }
+}
