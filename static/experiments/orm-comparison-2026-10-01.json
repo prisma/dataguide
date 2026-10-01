@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-01T06:48:26.093Z",
+  "startedAt": "2026-10-01T08:16:21.043Z",
   "runtime": "v24.18.0",
   "postgresImage": "postgres@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722",
   "mongoImage": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
@@ -52,14 +52,14 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 162 packages in 4s\n",
+          "stdout": "\nadded 162 packages in 6s\n",
           "stderr": ""
         },
         {
           "command": "node node_modules/prisma/build/index.js generate",
           "exitCode": 0,
-          "stdout": "\n✔ Generated Prisma Client (v7.10.0) to ./node_modules/@prisma/client in 59ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\n\n",
-          "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from schema.prisma.\n┌─────────────────────────────────────────────────────────┐\n│  Update available 7.10.0 -> 8.0.0-rc.19                 │\n│                                                         │\n│  This is a major update - please follow the guide at    │\n│  https://pris.ly/d/major-version-upgrade                │\n│                                                         │\n│  Run the following to update                            │\n│    npm i --save-dev prisma@latest                       │\n│    npm i @prisma/client@latest                          │\n└─────────────────────────────────────────────────────────┘\n"
+          "stdout": "\n✔ Generated Prisma Client (v7.10.0) to ./node_modules/@prisma/client in 56ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\n\n",
+          "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma schema loaded from schema.prisma.\n"
         },
         {
           "command": "node node_modules/typescript/bin/tsc --pretty false -p tsconfig.runtime.json",
@@ -734,7 +734,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 22 packages in 828ms\n",
+          "stdout": "\nadded 22 packages in 970ms\n",
           "stderr": ""
         },
         {
@@ -1611,7 +1611,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 30 packages in 970ms\n",
+          "stdout": "\nadded 30 packages in 921ms\n",
           "stderr": ""
         },
         {
@@ -1951,7 +1951,7 @@
         {
           "command": "npm ci --ignore-scripts --no-audit --no-fund",
           "exitCode": 0,
-          "stdout": "\nadded 25 packages in 848ms\n",
+          "stdout": "\nadded 25 packages in 935ms\n",
           "stderr": ""
         },
         {
@@ -1963,7 +1963,7 @@
         {
           "command": "node dist/runtime.js",
           "exitCode": 0,
-          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"ValidationError\",\"message\":\"User validation failed: email: Path `email` is required.\"}},{\"label\":\"misspelled filter silently matches nothing\",\"value\":{\"misspelledCount\":0,\"correctCount\":1}},{\"label\":\"strictQuery positive policy rejects typo\",\"rejected\":true,\"error\":{\"name\":\"StrictModeError\",\"message\":\"Path \\\"emial\\\" is not in schema and strictQuery is 'throw'.\"}},{\"label\":\"partial select retains full inferred document type\",\"value\":{\"keys\":[\"_id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"populated reference differs from inferred ObjectId\",\"value\":{\"unloadedIsObjectId\":true,\"populatedIsObjectId\":false,\"populatedEmail\":\"alice@lab.invalid\",\"name\":null}},{\"label\":\"raw aggregate rows\",\"value\":[{\"_id\":\"6abe026b0346c568c576e680\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]},{\"label\":\"raw driver rows\",\"value\":[{\"_id\":\"6abe026b0346c568c576e680\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]}]}\n",
+          "stdout": "{\"observations\":[{\"label\":\"missing required email compiles\",\"rejected\":true,\"error\":{\"name\":\"ValidationError\",\"message\":\"User validation failed: email: Path `email` is required.\"}},{\"label\":\"misspelled filter silently matches nothing\",\"value\":{\"misspelledCount\":0,\"correctCount\":1}},{\"label\":\"strictQuery positive policy rejects typo\",\"rejected\":true,\"error\":{\"name\":\"StrictModeError\",\"message\":\"Path \\\"emial\\\" is not in schema and strictQuery is 'throw'.\"}},{\"label\":\"partial select retains full inferred document type\",\"value\":{\"keys\":[\"_id\",\"email\"],\"nameType\":\"undefined\"}},{\"label\":\"populated reference differs from inferred ObjectId\",\"value\":{\"unloadedIsObjectId\":true,\"populatedIsObjectId\":false,\"populatedEmail\":\"alice@lab.invalid\",\"name\":null}},{\"label\":\"raw aggregate rows\",\"value\":[{\"_id\":\"6abe170708095e07c878f06c\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]},{\"label\":\"raw driver rows\",\"value\":[{\"_id\":\"6abe170708095e07c878f06c\",\"email\":\"alice@lab.invalid\",\"name\":null,\"__v\":0}]}]}\n",
           "stderr": ""
         }
       ],
@@ -2160,7 +2160,7 @@
             "label": "raw aggregate rows",
             "value": [
               {
-                "_id": "6abe026b0346c568c576e680",
+                "_id": "6abe170708095e07c878f06c",
                 "email": "alice@lab.invalid",
                 "name": null,
                 "__v": 0
@@ -2171,7 +2171,7 @@
             "label": "raw driver rows",
             "value": [
               {
-                "_id": "6abe026b0346c568c576e680",
+                "_id": "6abe170708095e07c878f06c",
                 "email": "alice@lab.invalid",
                 "name": null,
                 "__v": 0
@@ -2489,7 +2489,7 @@
   "articles": [
     {
       "file": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
-      "sourceSha256": "b8f8913139ef7481b5f15f4658429168c154bd012d72fa60140e67999d47c782"
+      "sourceSha256": "e8ba12cbae4c6410a774ac97c6d1edeb002b571ff1be35ae4c1899e83ed74808"
     }
   ],
   "supportingSources": [
@@ -2777,5 +2777,5 @@
   "postgresVersion": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
   "mongoVersion": "8.0.32",
   "cleanedUp": true,
-  "completedAt": "2026-10-01T06:49:19.913Z"
+  "completedAt": "2026-10-01T08:17:16.587Z"
 }

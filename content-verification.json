@@ -1389,34 +1389,6 @@
       "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
     },
     {
-      "file": "content/10-managing-databases/12-restore-drill.mdx",
-      "owner": "Database operations maintainer (human assignment pending)",
-      "level": "partial",
-      "releaseChannel": "stable",
-      "scope": "Local disposable laboratory executed; cloud, CDC and external model paths excluded",
-      "reviewer": null,
-      "versions": ["PostgreSQL 18.6"],
-      "fixture": "tests/tutorials/run.mjs",
-      "reviewDate": "2026-10-01",
-      "evidence": "tests/tutorials/evidence/postgresql-publishing-followup-2026-10-01.json",
-      "verificationMethod": "scoped source review and referenced local checks",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
-    },
-    {
-      "file": "content/10-managing-databases/13-library-application-labs.mdx",
-      "owner": "Database operations maintainer (human assignment pending)",
-      "level": "partial",
-      "releaseChannel": "stable",
-      "scope": "Disposable local HTTP application, all three tenant strategies, concurrency, transport loss after commit, pooling, labeled retrieval and logical-decoding/outbox replay; excludes production authentication, hosted deployment and model services",
-      "reviewer": null,
-      "versions": ["PostgreSQL 18.6", "PgBouncer 1.26.0"],
-      "fixture": "examples/library-app/lab.mjs",
-      "reviewDate": "2026-10-01",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "verificationMethod": "scoped source review and referenced local checks",
-      "reviewPolicy": "Review substantive changes and affected upstream lifecycle events; keep stable and preview lanes distinct. Theory definitions require primary-source review rather than a fabricated execution date."
-    },
-    {
       "file": "content/10-managing-databases/index.mdx",
       "owner": "Database operations maintainer (human assignment pending)",
       "level": "unreviewed",

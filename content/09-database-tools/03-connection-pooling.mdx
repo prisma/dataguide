@@ -117,13 +117,11 @@ Despite these advanced features, `pgpool` is usually considered a bit more limit
 
 A pool limit applies to one process. As a worked planning example, suppose PostgreSQL permits 100 connections and you reserve 20 for administration and maintenance. Three application replicas with two workers each and a pool maximum of 10 can use `3 × 2 × 10 = 60` backend connections. Ten background-job connections bring the planned total to 70, within the 80-connection application budget. During a rollout, three old and three new replicas could overlap: `6 × 2 × 10 + 10 = 130`, exceeding that budget. Reduce the per-worker maximum, rollout overlap or other consumers before deploying. These are illustrative inputs, not measured capacity recommendations.
 
-With a transaction pooler, application client connections and PostgreSQL backend connections are different budgets. Bound both; PgBouncer's server pool is normally per database/user pair, so adding pairs can multiply backend consumption. An acquisition deadline bounds how long a request waits, but does not bound the number of queued requests. Add request admission limits and a bounded queue at the application layer, and monitor errors as well as throughput.
-
-The [library application lab](/managing-databases/library-application-labs#connection-saturation) runs a ten-client burst with a two-connection pool and a short acquisition deadline. Its report contains actual acquisition times, client and backend counts, errors and throughput. It intentionally reaches saturation. Repeat with your own workload and include the rollout and background-job consumers in your budget.
+With a transaction pooler, application client connections and PostgreSQL backend connections are different budgets. Bound both; PgBouncer's server pool is normally per database/user pair, so adding pairs can multiply backend consumption. An acquisition deadline bounds how long a request waits, but does not bound the number of queued requests. Add request admission limits and a bounded queue at the application layer, and monitor errors as well as throughput. Load-test the pool with your own workload, and include rollout overlap and background jobs in your budget.
 
 ## Transaction pooling and session features
 
-The following matrix follows [PgBouncer's feature contract](https://www.pgbouncer.org/features.html). The library lab uses PgBouncer 1.26.0, transaction mode, two backends shared by four concurrent clients, and `max_prepared_statements=100`. It checks conflicting client statement names, forced backend reassignment and backend recycling. A separate one-backend pool with `max_prepared_statements=0` supplies the failing control. The lab also verifies transaction-scoped tenant state. The remaining rows are documented compatibility constraints, not measured provider behavior.
+The following matrix summarizes [PgBouncer's feature list](https://www.pgbouncer.org/features.html) for transaction pooling mode.
 
 | Feature                            | Transaction-mode requirement                                                                                                                                                                                               |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -135,7 +133,7 @@ The following matrix follows [PgBouncer's feature contract](https://www.pgbounce
 | Named protocol prepared statements | Supported when `max_prepared_statements` is nonzero on a supporting PgBouncer version; this is different from SQL `PREPARE`.                                                                                               |
 | Migrations and administration      | Use a dedicated direct or session-mode connection when tooling needs session state; keep its privileged credentials separate from the application.                                                                         |
 
-See [PgBouncer's parameter tracking and prepared-statement configuration](https://www.pgbouncer.org/config.html). Never set tenant identity once when a pooled connection opens and assume the next request has the same identity. The lab sets it locally inside each transaction and tests alternating tenants and the state after commit.
+See [PgBouncer's parameter tracking and prepared-statement configuration](https://www.pgbouncer.org/config.html). Never set tenant identity once when a pooled connection opens and assume the next request has the same identity. Set it inside each transaction instead, for example with `SET LOCAL`, so that it ends with the transaction.
 
 ## Conclusion
 

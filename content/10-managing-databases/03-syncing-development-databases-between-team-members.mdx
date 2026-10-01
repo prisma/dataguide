@@ -101,7 +101,7 @@ One option for automating this process is to use a service that provides bi-dire
 
 ## Isolated developer, pull-request and agent databases
 
-Shared write state makes migration experiments interfere with one another. Prefer a separate environment for each developer, pull request or coding agent when changes can diverge. The [library application lab](/managing-databases/library-application-labs#isolate-developer-and-agent-environments) creates three databases with separate roles, checks that each sees only its own data, shows a setup check refusing an environment whose seed version no longer matches the checkout, and removes them automatically. It uses only synthetic data.
+Shared write state makes migration experiments interfere with one another. Prefer a separate environment for each developer, pull request or coding agent when changes can diverge, each with its own database and role.
 
 Record the migration revision and seed version when creating an environment. Check both before running the application; a seed for a different schema should fail setup. Reconcile divergent migrations in a fresh environment against the merged migration history, rather than assuming that databases changed independently will synchronize themselves. Treat migration ordering and already-applied migrations as part of code review.
 

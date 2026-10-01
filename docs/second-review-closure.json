@@ -3,7 +3,7 @@
   "branch": "codex/second-review-refresh",
   "base": "525a9e87ea5daf307cd25c8214f78cc0c453d925",
   "sourceRevision": "The commit containing this ledger; generated content-manifest.json records the exact build commit and dirty-tree status.",
-  "policy": "verified-local and source-reviewed are scoped implementation evidence, not deployed closure or expert approval. Partial/external-needed remain open. No claim that the entire site is fully current.",
+  "policy": "verified-local and source-reviewed are scoped implementation evidence, not deployed closure or expert approval. Partial/external-needed remain open. No claim that the entire site is fully current. Declined items were not published, by the maintainer's decision.",
   "items": [
     {
       "id": "R01",
@@ -198,7 +198,7 @@
       "id": "R22",
       "title": "Revalidate all six restored educational pages as a group",
       "status": "partial",
-      "outcome": "Six routes reviewed together: dates executed, connection defaults/TLS tested, URI corrected, type/installation/glossary scope notices and cross-links; production route observations recorded.",
+      "outcome": "Six routes reviewed together: dates executed, connection defaults/TLS tested, serial-sequence description corrected and checked, URI encoding example confirmed with libpq, glossary definitions corrected, cross-links checked; production route observations recorded.",
       "evidence": "tests/tutorials/evidence/production-http-2026-09-30.json",
       "remaining": "Full native installer/type catalogue execution and final deployed branch verification pending.",
       "humanReviewer": null
@@ -224,10 +224,10 @@
     {
       "id": "R25",
       "title": "Turn backup advice into an executable restore drill",
-      "status": "verified-local",
-      "outcome": "End-to-end logical restore lab with failure injection, snapshot recovery point, elapsed measurement and restricted app read/write.",
-      "evidence": "content/10-managing-databases/12-restore-drill.mdx",
-      "remaining": "No production-size RTO, managed-provider PITR or cutover claim.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the restore drill article from the guide; the import/export article keeps its fail-fast restore guidance, which the PostgreSQL runner still checks.",
+      "evidence": "tests/tutorials/run.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
@@ -242,46 +242,46 @@
     {
       "id": "R27",
       "title": "Complete a multi-tenant isolation learning path",
-      "status": "verified-local",
-      "outcome": "Same HTTP application across shared tables, schemas and databases; adversarial controls and tenant-wide additive migration.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Synthetic authentication only; cluster administrator remains trusted; human security review pending.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its tenant-isolation checks remain in the lab code as internal verification only.",
+      "evidence": "examples/library-app/lab.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
       "id": "R28",
       "title": "Complete concurrency, retries and idempotency labs",
-      "status": "verified-local",
-      "outcome": "Lost-update/atomic/optimistic controls, deadlock, serialization retry and real HTTP loss after commit with idempotent replay.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Does not interrupt PostgreSQL transport during commit or test external payment effects.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its concurrency and idempotency checks remain in the lab code as internal verification only.",
+      "evidence": "examples/library-app/lab.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
       "id": "R29",
       "title": "Connect the guide through one maintained TypeScript application",
-      "status": "partial",
-      "outcome": "One locked TypeScript application connects modeling, migrations, access, isolation, pooling and failure checkpoints over local HTTP.",
-      "evidence": "examples/library-app/package-lock.json",
-      "remaining": "Hosted deployment and production authentication/TLS replacement remain outside this local reference lab.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article, which connected the guide through the reference application.",
+      "evidence": "examples/library-app/lab.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
       "id": "R30",
       "title": "Build permission-aware retrieval and safe AI database exercises",
-      "status": "verified-local",
-      "outcome": "Same labeled synthetic corpus for lexical/vector/hybrid, actual successful/failed rankings and latency; RLS and read-only bounded plans.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Hand-authored vectors; no external model quality or bill. Production evaluation needs its own corpus and cost evidence.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its retrieval checks remain in the lab code as internal verification only.",
+      "evidence": "examples/library-app/lab.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {
       "id": "R31",
       "title": "Demonstrate the transactional outbox and CDC failure modes",
-      "status": "verified-local",
-      "outcome": "Dual-write failure, atomic outbox, duplicate delivery, version refusal, retention, ordering and actual logical-decoding checkpoints/slot cleanup.",
-      "evidence": "tests/tutorials/evidence/library-2026-10-01.json",
-      "remaining": "Local test_decoding exercise; production connector restart/schema-history behavior not claimed.",
+      "status": "declined",
+      "outcome": "Not published. The maintainer removed the library application lab article from the guide; its outbox and logical-decoding checks remain in the lab code as internal verification only.",
+      "evidence": "examples/library-app/lab.mjs",
+      "remaining": "Reopen only as a standalone tutorial whose commands are in the article.",
       "humanReviewer": null
     },
     {

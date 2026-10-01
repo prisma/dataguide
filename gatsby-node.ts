@@ -153,8 +153,9 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
   // you'll call `createPage` for each result
   posts.forEach((node: any) => {
     const file = path.relative(root, node.internal.contentFilePath).split(path.sep).join('/')
-    const verification = verificationManifest.articles.find((entry: any) => entry.file === file)
-    if (!verification) reporter.panicOnBuild(`Missing article verification disposition: ${file}`)
+    // Verification records are for maintainers; pages don't show them
+    if (!verificationManifest.articles.some((entry: any) => entry.file === file))
+      reporter.panicOnBuild(`Missing article verification disposition: ${file}`)
     createPage({
       path: pagePath(node),
       component: `${path.resolve('./src/templates/docs.tsx')}?__contentFilePath=${node.internal.contentFilePath}`,
@@ -165,13 +166,6 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
         metaImage: node.frontmatter.metaImage || '',
         socialImage: socialImages.get(node.id),
         publication: publicationPolicy(node.frontmatter),
-        // Only what the page shows: owners, policies and evidence paths stay out of page data
-        verification: verification && {
-          level: verification.level,
-          scope: verification.scope,
-          versions: verification.versions,
-          reviewDate: verification.reviewDate,
-        },
       },
     })
   })

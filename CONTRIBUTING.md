@@ -57,6 +57,8 @@ This guide was written in 2021 for MongoDB 4.4, which reached end of life on Feb
 
 `title` is optional (default: "This article is out of date").
 
+A notice is for readers: it says what they need to know about the article's current state. Don't use one to record what you reviewed or didn't test; that belongs in the pull request and in `content-verification.json`.
+
 ### `lastUpdated`
 
 Set `lastUpdated: YYYY-MM-DD` in the frontmatter only when the article's content was substantively reviewed or corrected and its examples were re-tested. It is shown to readers and search engines as the date the article was last updated, so typo fixes, formatting changes and date bumps don't count. It is never set automatically.

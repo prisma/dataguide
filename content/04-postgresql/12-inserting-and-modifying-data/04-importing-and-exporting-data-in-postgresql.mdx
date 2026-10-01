@@ -7,12 +7,6 @@ authors: ['justinellingwood']
 lastUpdated: 2026-10-01
 ---
 
-<StatusNotice title="Verification scope">
-
-The PostgreSQL 18.6 disposable restore fixture checks the dump options, ordinary OID columns, plain and custom-format restores, fail-fast errors, constraints and sequences. Remote provider connections and cluster-wide recovery are outside that fixture. Adapt connection placeholders using the companion TLS guide and test the restore in an isolated empty destination.
-
-</StatusNotice>
-
 ## Overview
 
 The commands in this guide target PostgreSQL 18 clients and servers. This guide describes how you can export data from and import data into a PostgreSQL database. You can learn more about this topic in the official [PostgreSQL docs](https://www.postgresql.org/docs/current/backup-dump.html).
@@ -131,7 +125,7 @@ pg_dump -Fc --file=mydb.dump mydb
 pg_restore --exit-on-error --dbname=archive_restore mydb.dump
 ```
 
-After either restore, verify the schema, expected row counts and business invariants, foreign keys and unique constraints, and the next value of each sequence or identity column. Run application reads and writes with its normal restricted role. Process completion alone does not prove the database is usable. The [restore drill](/managing-databases/restore-drill) provides a disposable exercise with malformed input and positive controls.
+After either restore, verify the schema, expected row counts and business invariants, foreign keys and unique constraints, and the next value of each sequence or identity column. Run application reads and writes with its normal restricted role. Process completion alone does not prove the database is usable.
 
 ## Conclusion
 

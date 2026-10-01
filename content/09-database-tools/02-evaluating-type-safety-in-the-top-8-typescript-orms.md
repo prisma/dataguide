@@ -6,9 +6,9 @@ metaImage: '/social/docs-social.png'
 lastUpdated: 2026-10-01
 ---
 
-<StatusNotice title="Scope of the independent comparison">
+<StatusNotice title="Scope of the comparison">
 
-This review independently recreated the seven checks for the pinned stable libraries below. The [eight projects and dependency locks](https://github.com/prisma/dataguide/tree/main/experiments/orm-type-safety) are published with the runner; this is a new experiment, not a recovery of the earlier refresh's missing artifacts. Release candidates, beta versions and Prisma TypedSQL were not exercised and are excluded from the grades. Results apply to the model declarations and API calls in these fixtures, not every way of configuring a library. The [library application lab](/managing-databases/library-application-labs) tests separate operational questions.
+The results below come from seven checks run against the pinned stable versions of each library. The [eight projects and their dependency locks](https://github.com/prisma/dataguide/tree/main/experiments/orm-type-safety) are published with the runner. Release candidates, beta versions and Prisma TypedSQL aren't included in the grades. The results apply to the model declarations and API calls in these projects, not to every way of configuring a library.
 
 </StatusNotice>
 

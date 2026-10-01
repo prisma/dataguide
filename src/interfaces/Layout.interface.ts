@@ -33,13 +33,5 @@ export interface CreatePageContext {
       navigable: boolean
       exported: boolean
     }
-    verification?: {
-      level: string
-      scope: string
-      versions?: string[]
-      reviewDate?: string
-      fixture?: string
-      evidence?: string
-    }
   }
 }

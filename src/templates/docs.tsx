@@ -66,18 +66,6 @@ const ArticleLayout = ({ data, children, ...props }: ArticleLayoutProps) => {
           />
         </section>
       )}
-      {props.pageContext.verification && props.pageContext.verification.level !== 'unreviewed' && (
-        <p className="paragraph" data-verification={props.pageContext.verification.level}>
-          Verification: {props.pageContext.verification.scope}
-          {props.pageContext.verification.versions?.length
-            ? ` (${props.pageContext.verification.versions.join(', ')})`
-            : ''}
-          .
-          {props.pageContext.verification.reviewDate
-            ? ` Reviewed ${props.pageContext.verification.reviewDate}.`
-            : ''}
-        </p>
-      )}
       {children}
       {!isHomePage && <EndCta slug={modSlug} />}
       {authors && (
