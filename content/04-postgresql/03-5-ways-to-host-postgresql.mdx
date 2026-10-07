@@ -329,9 +329,15 @@ With self-managed PostgreSQL, backups are your responsibility to schedule, store
 
 Yes, and it's a common workflow: develop against a local or Docker PostgreSQL instance, then point your app at a hosted database for staging and production by swapping the connection string. Prisma Postgres supports both local development and hosted databases.
 
+### Can I host the app and Postgres in one place?
+
+Yes, some platforms host your application and a managed PostgreSQL database in the same account, so you deploy and manage both from one place. [Prisma Compute](https://www.prisma.io/compute?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:faq-compute) does this with Prisma Postgres. It hosts TypeScript apps built for Node.js, Bun or Next.js and runs them on Bun, in the same six regions as Prisma Postgres: two each in the United States, Europe and Asia. Each service, such as your API or frontend, runs in one region that you choose when you create it, so pick the region your database is in: every query the app sends makes a round trip to the database. The app connects with an ordinary PostgreSQL connection string, so any PostgreSQL client works and Prisma ORM is optional.
+
+Compute does not run [WebSocket servers](https://www.prisma.io/docs/compute/limitations#runtime) today, so an app that keeps connections open to its users needs another host for that part. Two Prisma posts compare this setup with other options: [Neon alternatives with app hosting and Postgres in one place (2026)](https://www.prisma.io/blog/neon-vs-prisma-postgres-app-hosting-in-one-place) and [App hosting platforms with managed Postgres compared (2026)](https://www.prisma.io/blog/app-hosting-platforms-with-managed-postgres-2026).
+
 ### Is managed PostgreSQL production-ready?
 
-Yes. Managed PostgreSQL — whether from a cloud provider or a service like Prisma Postgres — runs the same PostgreSQL you'd run yourself, with the provider handling high availability, backups, and scaling. Confirm the specific guarantees (uptime SLA, backup retention, supported versions and extensions) before committing.
+Yes. Managed PostgreSQL — whether from a cloud provider or a service like Prisma Postgres — runs the same PostgreSQL you'd run yourself, with the provider running the server, its backups and its upgrades. What each provider guarantees differs, so confirm the specifics (uptime SLA, high availability and failover, backup retention and point-in-time recovery, supported versions and extensions) before committing.
 
 <PrismaOutlinks>
 
