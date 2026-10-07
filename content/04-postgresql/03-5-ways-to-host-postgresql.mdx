@@ -329,6 +329,12 @@ With self-managed PostgreSQL, backups are your responsibility to schedule, store
 
 Yes, and it's a common workflow: develop against a local or Docker PostgreSQL instance, then point your app at a hosted database for staging and production by swapping the connection string. Prisma Postgres supports both local development and hosted databases.
 
+### Can I host the app and Postgres in one place?
+
+Yes, some platforms host your application and a managed PostgreSQL database in the same account, so you deploy and manage both from one place. [Prisma Compute](https://www.prisma.io/compute?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:faq-compute) does this with Prisma Postgres. It hosts TypeScript apps for Node.js, Bun or Next.js, which it runs on Bun, next to Prisma Postgres in the same six regions: two each in the United States, Europe and Asia. Compute runs each service, such as your API or frontend, in one region chosen when you create it, so put your app in the region your database is in: every query the app sends travels between the two. The app connects with an ordinary PostgreSQL connection string, so any PostgreSQL client works and Prisma ORM is optional.
+
+Compute does not run [WebSocket servers](https://www.prisma.io/docs/compute/limitations#runtime) today, so an app that keeps connections open to its users needs another host for that part. Two Prisma posts compare this setup with other options: [Neon vs Prisma Postgres for app hosting and the database in one place](https://www.prisma.io/blog/neon-vs-prisma-postgres-app-hosting-in-one-place) and [App hosting platforms with managed Postgres compared (2026)](https://www.prisma.io/blog/app-hosting-platforms-with-managed-postgres-2026).
+
 ### Is managed PostgreSQL production-ready?
 
 Yes. Managed PostgreSQL — whether from a cloud provider or a service like Prisma Postgres — runs the same PostgreSQL you'd run yourself, with the provider handling high availability, backups, and scaling. Confirm the specific guarantees (uptime SLA, backup retention, supported versions and extensions) before committing.
