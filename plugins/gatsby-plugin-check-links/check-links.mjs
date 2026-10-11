@@ -83,6 +83,7 @@ export const readSite = async (publicDir) => {
   const files = new Set()
   const markdown = new Map()
   const sitemaps = new Map()
+  const agentIndexes = new Map()
   for (const entry of await readdir(publicDir, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile()) continue
     const file = path.join(entry.parentPath, entry.name)
@@ -91,10 +92,11 @@ export const readSite = async (publicDir) => {
       pages.set(route.replace(/\/?index\.html$/, '') || '/', await readFile(file, 'utf8'))
     } else if (!entry.name.endsWith('.html')) {
       files.add(route)
-      if (entry.name.endsWith('.md') || entry.name === 'llms.txt')
+      if (entry.name.endsWith('.md') || /^llms(?:-full)?\.txt$/.test(entry.name))
         markdown.set(route, await readFile(file, 'utf8'))
+      if (entry.name === 'agent-index.json') agentIndexes.set(route, await readFile(file, 'utf8'))
       if (entry.name.endsWith('.xml')) sitemaps.set(route, await readFile(file, 'utf8'))
     }
   }
-  return { pages, files, markdown, sitemaps }
+  return { pages, files, markdown, sitemaps, agentIndexes }
 }

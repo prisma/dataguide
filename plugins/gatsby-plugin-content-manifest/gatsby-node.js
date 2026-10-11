@@ -19,7 +19,7 @@ exports.onPostBuild = async ({ reporter }) => {
     const file = path.join(entry.parentPath, entry.name)
     const name = path.relative(publicDir, file).split(path.sep).join('/')
     if (!(
-      /(?:index\.html|\.md|sitemap[^/]*\.xml|llms\.txt)$/.test(name) ||
+      /(?:index\.html|\.md|sitemap[^/]*\.xml|llms(?:-full)?\.txt|agent-index\.json)$/.test(name) ||
       name.startsWith('social/generated/') ||
       name.startsWith('experiments/')
     ))

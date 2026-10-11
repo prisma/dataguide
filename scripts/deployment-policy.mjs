@@ -64,17 +64,12 @@ export const indexingFailures = (results, { environment, canonicalRoot }) => {
       indexingError: 'Missing or invalid robots.txt policy',
     })
   for (const row of results) {
-    if (
-      row.route.includes('definitely-missing') ||
-      row.route.startsWith('/robots') ||
-      /\.(json|xml)$/.test(row.route) ||
-      row.route === '/llms.txt'
-    )
-      continue
+    if (row.route.includes('definitely-missing') || row.route.startsWith('/robots')) continue
     const route = row.route.split('#')[0].replace(/\.md$/, '').replace(/\/$/, '')
     const expected = canonicalRoot.replace(/\/$/, '') + route
     const canonicals = row.canonicals || [row.canonical].filter(Boolean)
-    if (!canonicals.length || canonicals.some((canonical) => canonical !== expected))
+    const isIndex = /\.(json|xml)$/.test(row.route) || /^\/llms(?:-full)?\.txt$/.test(row.route)
+    if (!isIndex && (!canonicals.length || canonicals.some((canonical) => canonical !== expected)))
       failures.push({ ...row, indexingError: `Canonical must be ${expected}` })
     const noindex = [row.indexingHeader, ...(row.robotsMetas || [row.robotsMeta])]
       .filter(Boolean)

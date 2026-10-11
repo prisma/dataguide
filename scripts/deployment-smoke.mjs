@@ -41,6 +41,8 @@ const routes = [
   '/postgresql/date-types#get-the-interval-between-two-dates',
   '/postgresql/date-types.md',
   '/llms.txt',
+  '/llms-full.txt',
+  '/agent-index.json',
   '/sitemap/sitemap-index.xml',
   '/content-manifest.json',
   '/definitely-missing-review-route-91f6',
@@ -67,21 +69,48 @@ const inspect = async (url) => {
     let manifestSourceRevision = null
     let dirty = null
     let representationError = null
-    if (url.endsWith('/content-manifest.json') && response.ok && !unavailable) {
+    if (
+      /\/(content-manifest|agent-index)\.json$/.test(new URL(url).pathname) &&
+      response.ok &&
+      !unavailable
+    ) {
       try {
         const manifest = JSON.parse(body)
         manifestRevision = manifest.contentRevision
         manifestSourceRevision = manifest.sourceRevision
         dirty = manifest.dirty
+        if (url.endsWith('/agent-index.json')) {
+          if (
+            manifest.schemaVersion !== 1 ||
+            !Array.isArray(manifest.articles) ||
+            !manifest.articles.length
+          )
+            throw new Error('Missing agent catalog articles')
+          for (const article of manifest.articles) {
+            const canonical = canonicalRoot + (article.path === '/' ? '' : article.path)
+            const markdown = article.path === '/' ? `${canonicalRoot}/index.md` : `${canonical}.md`
+            if (
+              article.url !== canonical ||
+              article.markdownUrl !== markdown ||
+              !Array.isArray(article.faqs)
+            )
+              throw new Error(`Invalid agent catalog entry: ${article.path}`)
+            if (article.faqs.some((faq) => !faq.question?.trim() || !faq.answerMarkdown?.trim()))
+              throw new Error(`Incomplete FAQ in agent catalog: ${article.path}`)
+          }
+        }
       } catch (error) {
         representationError = error.message
       }
     }
     if (
-      /(?:\.md|llms\.txt|sitemap[^/]*\.xml)$/.test(new URL(url).pathname) &&
+      /(?:\.md|llms(?:-full)?\.txt|agent-index\.json|sitemap[^/]*\.xml)$/.test(
+        new URL(url).pathname
+      ) &&
       response.headers.get('content-type')?.includes('text/html')
     )
-      representationError = 'Received HTML for a Markdown, llms or sitemap representation'
+      representationError =
+        'Received HTML for a Markdown, agent catalog, llms or sitemap representation'
     const fragment = new URL(chain[0].url).hash.slice(1)
     const attribute = (tag, key) =>
       tag?.match(new RegExp(`\\b${key}\\s*=\\s*["']([^"']+)["']`, 'i'))?.[1] || null
@@ -190,7 +219,7 @@ const failures = results.filter(
       (!/\.(md|json|xml)$/.test(result.route) &&
         result.route !== '/llms.txt' &&
         !result.route.startsWith('/robots')) ||
-      result.route === '/content-manifest.json') &&
+      ['/content-manifest.json', '/agent-index.json'].includes(result.route)) &&
       !result.route.includes('definitely-missing') &&
       (result.contentRevision !== expectedRevision ||
         result.sourceRevision !== expectedSourceRevision ||

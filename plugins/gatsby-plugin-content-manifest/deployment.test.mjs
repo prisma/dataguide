@@ -57,6 +57,42 @@ test('hosted checks reject stale HTML, Markdown and manifest source revisions de
       res.end('# Guide')
       return
     }
+    if (req.url.endsWith('/llms-full.txt')) {
+      res.end(
+        `# Guide\nContent revision: ${hash}\nSource revision: ${stale === 'full-text' ? 'c'.repeat(40) : commit}\n`
+      )
+      return
+    }
+    if (req.url.endsWith('/agent-index.json')) {
+      if (indexingRegression === 'agent-html') {
+        res.setHeader('content-type', 'text/html')
+        res.end('<html>Fallback</html>')
+      } else {
+        res.setHeader('content-type', 'application/json')
+        res.end(
+          JSON.stringify({
+            schemaVersion: 1,
+            contentRevision: hash,
+            sourceRevision: stale === 'catalog' ? 'c'.repeat(40) : commit,
+            dirty,
+            articles: [
+              {
+                path: '/lesson',
+                url: `${canonicalRoot}/lesson`,
+                markdownUrl: `${canonicalRoot}/lesson.md`,
+                faqs: [
+                  {
+                    question: 'Question?',
+                    answerMarkdown: indexingRegression === 'agent-empty-faq' ? '' : 'Answer.',
+                  },
+                ],
+              },
+            ],
+          })
+        )
+      }
+      return
+    }
     if (type === 'manifest') {
       res.setHeader('content-type', 'application/json')
       res.end(JSON.stringify({ contentRevision: hash, sourceRevision, dirty }))
@@ -100,7 +136,7 @@ test('hosted checks reject stale HTML, Markdown and manifest source revisions de
   ]
   try {
     await exec(process.execPath, args, { cwd: root })
-    for (const type of ['html', 'markdown', 'manifest']) {
+    for (const type of ['html', 'markdown', 'manifest', 'catalog', 'full-text']) {
       stale = type
       await assert.rejects(exec(process.execPath, args, { cwd: root }))
       const report = JSON.parse(
@@ -140,6 +176,17 @@ test('hosted checks reject stale HTML, Markdown and manifest source revisions de
         report.results
           .filter((row) => row.contentRevision)
           .every((row) => row.contentRevision === hash && row.sourceRevision === commit)
+      )
+    }
+    for (const regression of ['agent-html', 'agent-empty-faq']) {
+      indexingRegression = regression
+      await assert.rejects(exec(process.execPath, args, { cwd: root }))
+      const report = JSON.parse(
+        readFileSync(path.join(root, '.verification-runs/deployment.json'), 'utf8')
+      )
+      assert.ok(
+        report.failures.some((row) => row.route === '/agent-index.json' && row.representationError),
+        regression
       )
     }
     indexingRegression = null

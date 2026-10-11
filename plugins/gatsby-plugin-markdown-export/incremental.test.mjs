@@ -66,14 +66,46 @@ test('incremental Markdown builds prune renamed, removed and unpublished owned e
     await exists('index.md')
     await exists('postgresql/date-types.md')
     await missing('legacy.md')
-    for (const flag of ['publish', 'export', 'skipBuild']) {
+    const catalog = async () =>
+      JSON.parse(await readFile(path.join(publicDir, 'agent-index.json'), 'utf8'))
+    assert.deepEqual(
+      (await catalog()).articles.map((article) => article.path),
+      ['/', '/postgresql/date-types']
+    )
+    assert.match(await readFile(path.join(publicDir, 'llms.txt'), 'utf8'), /date-types/)
+    for (const flag of ['publish', 'export', 'skipBuild', 'index']) {
       nodes = [page('/'), page('/04-postgresql/11-date-types')]
       await build()
       nodes[1].frontmatter[flag] = flag === 'skipBuild'
       await build()
       await missing('postgresql/date-types.md')
       assert.doesNotMatch(await readFile(path.join(publicDir, 'llms.txt'), 'utf8'), /date-types/)
+      assert.deepEqual(
+        (await catalog()).articles.map((article) => article.path),
+        ['/']
+      )
+      assert.doesNotMatch(
+        await readFile(path.join(publicDir, 'llms-full.txt'), 'utf8'),
+        /date-types/
+      )
     }
+    nodes = [page('/'), page('/04-postgresql/11-date-types', { hidePage: true })]
+    await build()
+    await exists('postgresql/date-types.md')
+    assert.deepEqual(
+      (await catalog()).articles.map((article) => article.path),
+      ['/']
+    )
+    assert.doesNotMatch(await readFile(path.join(publicDir, 'llms.txt'), 'utf8'), /date-types/)
+    assert.doesNotMatch(await readFile(path.join(publicDir, 'llms-full.txt'), 'utf8'), /date-types/)
+    nodes = [page('/standalone')]
+    nodes[0].body = '## FAQ\n\n### What is a date?\n\nA calendar day.'
+    await build()
+    assert.deepEqual((await catalog()).articles[0].faqs, [
+      { question: 'What is a date?', answerMarkdown: 'A calendar day.' },
+    ])
+    assert.match(await readFile(path.join(publicDir, 'llms-full.txt'), 'utf8'), /A calendar day/)
+    assert.match(await readFile(path.join(publicDir, 'llms.txt'), 'utf8'), /standalone.md/)
     nodes = [page('/'), page('/04-postgresql/11-date-types')]
     await build()
     nodes[1] = page('/04-postgresql/11-new-dates')
