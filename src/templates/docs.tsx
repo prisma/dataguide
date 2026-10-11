@@ -85,7 +85,7 @@ export default ArticleLayout
 export const Head = ({
   data,
   location,
-  pageContext: { seoTitle, seoDescription, metaImage, socialImage, publication },
+  pageContext: { seoTitle, seoDescription, metaImage, socialImage, publication, faqs },
 }: ArticleLayoutProps) => {
   const { allMdx } = useAllArticlesQuery()
   const {
@@ -106,6 +106,7 @@ export const Head = ({
             .map((id) => (authorsJSON as Record<string, { name: string }>)[id]?.name)
             .filter(Boolean),
           dateModified: lastUpdated || undefined,
+          faqs,
           breadcrumbs: getParentTitle(modSlug, allMdx).map((part: any) => ({
             name: part.title,
             path: part.link,

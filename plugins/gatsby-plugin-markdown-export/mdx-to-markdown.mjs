@@ -13,6 +13,32 @@ const DROPPED = new Set(['PrismaOutlinks', 'PostgresCallout'])
 const text = (value) => ({ type: 'text', value })
 const paragraph = (children) => ({ type: 'paragraph', children })
 const link = (url, children) => ({ type: 'link', url, children })
+const blockTypes = new Set([
+  'paragraph',
+  'heading',
+  'list',
+  'blockquote',
+  'code',
+  'table',
+  'thematicBreak',
+  'footnoteDefinition',
+  'definition',
+])
+const toBlocks = (children) => {
+  const blocks = [],
+    inline = []
+  const flush = () => {
+    if (inline.length) blocks.push(paragraph(inline.splice(0)))
+  }
+  for (const child of children) {
+    if (blockTypes.has(child.type)) {
+      flush()
+      blocks.push(child)
+    } else inline.push(child)
+  }
+  flush()
+  return blocks
+}
 
 const isJsx = (node) => node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement'
 
@@ -24,6 +50,16 @@ const attribute = (node, name) => {
   if (typeof attr.value === 'string') return attr.value
   const expression = attr.value.data?.estree?.body?.[0]?.expression
   if (expression?.type === 'Literal') return expression.value
+  if (expression?.type === 'ArrayExpression') {
+    return expression.elements.map((element) => {
+      if (element?.type === 'Literal') return element.value
+      // Tab labels also use <FileWithIcon text="schema.ts" />.
+      if (element?.type === 'JSXElement') {
+        return element.openingElement.attributes.find((a) => a.name?.name === 'text')?.value?.value
+      }
+      return undefined
+    })
+  }
   if (expression?.type === 'TemplateLiteral' && expression.expressions.length === 0) {
     return expression.quasis.map((quasi) => quasi.value.cooked).join('')
   }
@@ -84,6 +120,11 @@ export const mdxToMarkdown = (source, context) => {
 
     if (!isJsx(node)) {
       if (node.children) convertChildren(node)
+      // MDX permits flow components on a single line inside a paragraph. Their
+      // converted block nodes must be siblings, not nested Markdown paragraphs.
+      if (node.type === 'paragraph' && node.children.some((child) => blockTypes.has(child.type))) {
+        return toBlocks(node.children)
+      }
       return [node]
     }
 
@@ -108,6 +149,35 @@ export const mdxToMarkdown = (source, context) => {
         return [
           { type: 'heading', depth: 3, children: [text(String(attribute(node, 'title') ?? ''))] },
           ...unwrap(node),
+        ]
+      case 'TabbedContent': {
+        const labels = attribute(node, 'tabs')
+        return (node.children || [])
+          .flatMap((child) => (child.type === 'paragraph' ? child.children : [child]))
+          .filter((child) => isJsx(child) && child.name === 'tab')
+          .flatMap((tab, index) => [
+            ...(labels?.[index]
+              ? [paragraph([{ type: 'strong', children: [text(String(labels[index]))] }])]
+              : []),
+            ...unwrap(tab),
+          ])
+      }
+      case 'Sidenote':
+      case 'block': {
+        const title = attribute(node, node.name === 'block' ? 'content' : 'title')
+        return [
+          ...(title ? [paragraph([{ type: 'strong', children: [text(String(title))] }])] : []),
+          ...unwrap(node),
+        ]
+      }
+      case 'img':
+        return [
+          {
+            type: 'image',
+            url: context.resolveImage(String(attribute(node, 'src') ?? '')),
+            alt: String(attribute(node, 'alt') ?? ''),
+            title: attribute(node, 'title') || null,
+          },
         ]
       case 'summary': {
         const children = unwrap(node).flatMap((child) =>
@@ -176,7 +246,7 @@ export const mdxToMarkdown = (source, context) => {
     }
   }
 
-  const processor = unified().use(remarkParse).use(remarkMdx).use(remarkGfm).use(remarkStringify, {
+  const processor = mdxParser().use(remarkStringify, {
     bullet: '-',
     emphasis: '_',
     strong: '*',
@@ -186,9 +256,12 @@ export const mdxToMarkdown = (source, context) => {
   })
 
   const tree = convertChildren(processor.parse(source))
+  tree.children = toBlocks(tree.children)
   tree.children.push(...footnotes)
   return processor.stringify(tree).trim() + '\n'
 }
+
+export const mdxParser = () => unified().use(remarkParse).use(remarkMdx).use(remarkGfm)
 
 // Resolves links in an article to absolute URLs.
 // `pagePath` is the article's path within the Data Guide (e.g. `/postgresql/date-types`),

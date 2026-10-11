@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs/promises')
 const publicationPolicy = require('../publication-policy.cjs')
 const revision = require('../content-revision.cjs')
+const authors = require('../../authors.json')
 const { previousExports, pruneExports } = require('./generated-exports.cjs')
 
 // Publishes a Markdown version of every article next to its HTML page (append `.md` to the URL)
@@ -35,6 +36,7 @@ const publishedImages = async (publicDir, pathname) => {
 exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }) => {
   const publicDir = path.resolve('public')
   const { mdxToMarkdown, createUrlResolver } = await import('./mdx-to-markdown.mjs')
+  const { extractFaqs } = await import('./faqs.mjs')
 
   const { data, errors } = await graphql(`
     {
@@ -56,6 +58,7 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
           }
           frontmatter {
             title
+            authors
             metaDescription
             hidePage
             publish
@@ -132,7 +135,12 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
   }
 
   let written = 0
+  const exports = new Map()
+  const catalog = new Map()
   for (const page of pages) {
+    const authorNames = (page.frontmatter.authors || [])
+      .map((id) => authors[id]?.name)
+      .filter(Boolean)
     const images = await publishedImages(publicDir, page.pathname)
     const sourceDir = path.dirname(page.internal.contentFilePath)
     const resolveImage = (url) => {
@@ -144,13 +152,15 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
       return `${repository}/content/${file.split(path.sep).join('/')}`
     }
 
-    let body
+    let body, faqs
     try {
-      body = mdxToMarkdown(page.body, {
+      const context = {
         resolveUrl: createUrlResolver({ siteRoot, pagePath: page.pathname, isIndex: page.isIndex }),
         resolveImage,
         subsections: (depth) => subsections(page, depth),
-      })
+      }
+      body = mdxToMarkdown(page.body, context)
+      faqs = extractFaqs(page.body, context)
     } catch (error) {
       reporter.panicOnBuild(`Markdown export failed for ${page.pathname}`, error)
       return
@@ -166,6 +176,7 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
         ? [page.frontmatter.metaDescription.replace(/\s+/g, ' '), '']
         : []),
       `Canonical URL: ${page.pathname === '/' ? siteRoot : `${siteRoot}${page.pathname}`}`,
+      ...(authorNames.length ? [`Authors: ${authorNames.join(', ')}`] : []),
       `Content revision: ${revision().contentRevision}`,
       `Source revision: ${revision().sourceRevision}`,
       ...(page.frontmatter.lastUpdated
@@ -175,7 +186,22 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
     ]
     const file = path.join(publicDir, markdownFile(page.pathname))
     await fs.mkdir(path.dirname(file), { recursive: true })
-    await fs.writeFile(file, `${header.join('\n')}\n${body}`)
+    const markdown = `${header.join('\n')}\n${body}`
+    await fs.writeFile(file, markdown)
+    exports.set(page.pathname, markdown)
+    catalog.set(page.pathname, {
+      path: page.pathname,
+      title: page.frontmatter.title,
+      description: page.frontmatter.metaDescription || '',
+      type: page.isIndex ? 'CollectionPage' : 'TechArticle',
+      authors: authorNames,
+      url: page.pathname === '/' ? siteRoot : `${siteRoot}${page.pathname}`,
+      markdownUrl: markdownUrl(page),
+      ...(page.frontmatter.lastUpdated && {
+        lastUpdated: page.frontmatter.lastUpdated.slice(0, 10),
+      }),
+      faqs: faqs.map(({ question, answer }) => ({ question, answerMarkdown: answer })),
+    })
     written++
   }
 
@@ -185,11 +211,11 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
       ? `: ${page.frontmatter.metaDescription.replace(/\s+/g, ' ')}`
       : ''
   const entry = (page) => `- [${page.frontmatter.title}](${markdownUrl(page)})${description(page)}`
-  const home = pages.find((page) => page.pathname === '/')
   const discoverable = pages.filter(
     (page) =>
       publicationPolicy(page.frontmatter).indexed && publicationPolicy(page.frontmatter).navigable
   )
+  const home = discoverable.find((page) => page.pathname === '/')
   const sections = discoverable.filter((page) => page.isIndex && /^\/[^/]+$/.test(page.pathname))
   const lines = [
     `# ${siteName}`,
@@ -198,13 +224,39 @@ exports.onPostBuild = async ({ graphql, reporter }, { exclude = [], repository }
     '',
     'A Markdown version of every article is available by appending `.md` to its URL.',
     ...(home ? [`The overview of all topics is at ${markdownUrl(home)}.`] : []),
+    'Markdown includes complete FAQ answers, code and output, tables, glossary entries, image descriptions, and technical and version caveats.',
+    `The [JSON catalog](${siteRoot}/agent-index.json) lists articles, canonical and Markdown URLs, and FAQ questions with Markdown answers.`,
+    `The [full text](${siteRoot}/llms-full.txt) combines all articles in this index in reading order.`,
     '',
   ]
+  const listed = new Set(home ? [home.pathname] : [])
   for (const section of sections) {
     const articles = discoverable.filter((page) => page.pathname.startsWith(`${section.pathname}/`))
     lines.push(`## ${section.frontmatter.title}`, '', entry(section), ...articles.map(entry), '')
+    for (const page of [section, ...articles]) listed.add(page.pathname)
   }
+  const remaining = discoverable.filter((page) => !listed.has(page.pathname))
+  if (remaining.length) lines.push('## Other articles', '', ...remaining.map(entry), '')
   await fs.writeFile(path.join(publicDir, 'llms.txt'), lines.join('\n'))
+  await fs.writeFile(
+    path.join(publicDir, 'agent-index.json'),
+    `${JSON.stringify(
+      {
+        schemaVersion: 1,
+        name: siteName,
+        url: siteRoot,
+        description: siteDescription,
+        ...revision(),
+        articles: discoverable.map((page) => catalog.get(page.pathname)),
+      },
+      null,
+      2
+    )}\n`
+  )
+  await fs.writeFile(
+    path.join(publicDir, 'llms-full.txt'),
+    discoverable.map((page) => exports.get(page.pathname)).join('\n---\n\n')
+  )
   await pruneExports(
     publicDir,
     previous,

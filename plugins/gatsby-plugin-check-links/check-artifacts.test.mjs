@@ -38,3 +38,47 @@ test('existing assets and canonical links pass; external images are separate che
     []
   )
 })
+
+test('agent alternates and catalog destinations exist and FAQ metadata matches the catalog', () => {
+  const siteRoot = 'https://www.prisma.io/dataguide'
+  const article = {
+    path: '/lesson',
+    url: `${siteRoot}/lesson`,
+    markdownUrl: `${siteRoot}/lesson.md`,
+    faqs: [{ question: 'A question?', answerMarkdown: '**A complete answer.**' }],
+  }
+  const html = `<link rel="alternate" type="text/markdown" href="${article.markdownUrl}"><script type="application/ld+json">${JSON.stringify(
+    {
+      '@graph': [
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'A question?',
+              acceptedAnswer: { '@type': 'Answer', text: 'A complete answer.' },
+            },
+          ],
+        },
+      ],
+    }
+  )}</script>`
+  const site = {
+    pages: new Map([['/lesson', html]]),
+    files: new Set(['/lesson.md']),
+    agentIndexes: new Map([
+      ['/agent-index.json', JSON.stringify({ schemaVersion: 1, articles: [article] })],
+    ]),
+    pathPrefix: '/dataguide',
+    siteRoot,
+  }
+  assert.deepEqual(checkArtifacts(site), [])
+  site.files.clear()
+  assert.ok(checkArtifacts(site).some((error) => error.kind === 'agent alternate'))
+  assert.ok(checkArtifacts(site).some((error) => error.kind === 'agent Markdown'))
+  site.files.add('/lesson.md')
+  site.pages.set('/lesson', html.replace('A complete answer.', 'Truncated'))
+  assert.ok(checkArtifacts(site).some((error) => error.reason.includes('FAQs differ')))
+  site.agentIndexes.set('/agent-index.json', '<html>Not JSON</html>')
+  assert.ok(checkArtifacts(site).some((error) => error.kind === 'agent catalog'))
+})

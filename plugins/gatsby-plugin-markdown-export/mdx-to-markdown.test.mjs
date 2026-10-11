@@ -166,3 +166,26 @@ test('status notices become a blockquote that leads with their title', () => {
     '> **This article is out of date.** Written for MongoDB 4.4. Follow [the current guide](https://www.mongodb.com/docs/manual/installation/).\n>\n> The concepts still apply.\n'
   )
 })
+
+test('every tab is exported with its filename or platform label', () => {
+  const markdown =
+    convert(`<TabbedContent tabs={[<FileWithIcon text="schema.ts" icon="file" />, 'Linux']}>
+<tab>Schema content.</tab>
+<tab>Linux content.</tab>
+</TabbedContent>`)
+  assert.equal(markdown, '**schema.ts**\n\nSchema content.\n\n**Linux**\n\nLinux content.\n')
+})
+
+test('side notes, parallel block labels and JSX image descriptions survive', () => {
+  const markdown = convert(`<Sidenote title="Version caveat">Use the supported version.</Sidenote>
+
+<ParallelBlocks><block content="Input">Original.</block><block content="Output">Result.</block></ParallelBlocks>
+
+<img src="../dataguide-images/joins.png" alt="Join diagram" />`)
+  assert.match(markdown, /\*\*Version caveat\*\*\n\nUse the supported version/)
+  assert.match(markdown, /\*\*Input\*\*\n\nOriginal\.\n\n\*\*Output\*\*\n\nResult/)
+  assert.match(
+    markdown,
+    /!\[Join diagram\]\(https:\/\/www\.prisma\.io\/dataguide\/static\/joins\.png\)/
+  )
+})

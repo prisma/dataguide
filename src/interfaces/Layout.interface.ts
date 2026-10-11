@@ -26,6 +26,7 @@ export interface CreatePageContext {
     seoDescription: string
     metaImage: string
     socialImage?: SocialImage
+    faqs?: { question: string; text: string }[]
     publication?: {
       published: boolean
       indexed: boolean

@@ -28,6 +28,7 @@ type SEOProps = {
     dateModified?: string
     // Parent sections, as paths within the Data Guide
     breadcrumbs: { name: string; path: string }[]
+    faqs?: { question: string; text: string }[]
   }
 }
 
@@ -77,6 +78,7 @@ const SEO = ({
         image: metaImageURL,
         authors: article.authors,
         dateModified: article.dateModified,
+        faqs: article.faqs,
         breadcrumbs: [
           { name: oSite, url: siteRoot },
           ...article.breadcrumbs.map((crumb) => ({
@@ -121,6 +123,18 @@ const SEO = ({
       {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
       <link rel="canonical" href={canonicalUrl} />
       {hasMarkdown && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
+      <link
+        rel="alternate"
+        type="text/plain"
+        title="Data Guide article index"
+        href={`${siteRoot}/llms.txt`}
+      />
+      <link
+        rel="alternate"
+        type="application/json"
+        title="Data Guide agent catalog"
+        href={`${siteRoot}/agent-index.json`}
+      />
       <link rel="icon" href={faviconSvg} type="image/svg+xml" />
       <link rel="icon" href={favicon} type="image/png" sizes="32x32" />
       <meta name="theme-color" content="#f9faf5" />

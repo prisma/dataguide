@@ -1,9 +1,12 @@
+import { faqAnswerText } from '../gatsby-plugin-markdown-export/faqs.mjs'
+
 // Local checks only. Network failures belong in deployment smoke tests.
 export const checkArtifacts = ({
   pages,
   files,
   markdown = new Map(),
   sitemaps = new Map(),
+  agentIndexes = new Map(),
   pathPrefix,
   siteRoot,
 }) => {
@@ -49,6 +52,12 @@ export const checkArtifacts = ({
       resolve(attrs.match(/\bcontent="([^"]+)"/)?.[1], from, 'social image', true)
     }
     for (const [, attrs] of html.matchAll(/<link\b([^>]+)>/g)) {
+      if (
+        /\brel="alternate"/.test(attrs) &&
+        /\btype="(?:text\/(?:markdown|plain)|application\/json)"/.test(attrs)
+      ) {
+        resolve(attrs.match(/\bhref="([^"]+)"/)?.[1], from, 'agent alternate', true)
+      }
       if (!/\brel="canonical"/.test(attrs)) continue
       const href = attrs.match(/\bhref="([^"]+)"/)?.[1]
       try {
@@ -67,6 +76,37 @@ export const checkArtifacts = ({
   }
   for (const [from, xml] of sitemaps) {
     for (const [, href] of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) resolve(href, from, 'sitemap')
+  }
+  for (const [from, body] of agentIndexes) {
+    try {
+      const catalog = JSON.parse(body)
+      if (catalog.schemaVersion !== 1 || !Array.isArray(catalog.articles))
+        throw new Error('invalid catalog schema')
+      const paths = new Set()
+      for (const article of catalog.articles) {
+        if (paths.has(article.path)) throw new Error(`duplicate article ${article.path}`)
+        paths.add(article.path)
+        resolve(article.url, from, 'agent canonical')
+        resolve(article.markdownUrl, from, 'agent Markdown', true)
+        const html = pages.get(article.path)
+        if (!html) throw new Error(`missing HTML for ${article.path}`)
+        const graphs = [
+          ...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g),
+        ].flatMap(([, json]) => JSON.parse(json)['@graph'] || [])
+        const faq = graphs.find((node) => node['@type'] === 'FAQPage')
+        const expected = article.faqs.map(({ question, answerMarkdown }) => ({
+          '@type': 'Question',
+          name: question,
+          acceptedAnswer: { '@type': 'Answer', text: faqAnswerText(answerMarkdown) },
+        }))
+        if (expected.some((question) => !question.name.trim() || !question.acceptedAnswer.text))
+          throw new Error(`empty FAQ for ${article.path}`)
+        if (JSON.stringify(faq?.mainEntity || []) !== JSON.stringify(expected))
+          throw new Error(`HTML and catalog FAQs differ for ${article.path}`)
+      }
+    } catch (error) {
+      broken.push({ from, kind: 'agent catalog', reason: error.message })
+    }
   }
   return broken
 }

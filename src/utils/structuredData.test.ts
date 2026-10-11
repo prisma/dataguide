@@ -62,3 +62,19 @@ test('serialized data cannot close the script tag', () => {
   assert.equal(json.includes('</script>'), false)
   assert.equal(JSON.parse(json).title, '</script><script>alert(1)</script>')
 })
+
+test('FAQ data shares the article URL and publishes questions with complete accepted answers', () => {
+  const faqs = [{ question: 'What is a tuple?', text: 'A row.\n\nSee the glossary.' }]
+  const [page, , faq] = articleStructuredData({ ...article, faqs })['@graph'] as any[]
+  assert.deepEqual(page.hasPart, { '@id': `${article.url}#faq-data` })
+  assert.equal(faq['@type'], 'FAQPage')
+  assert.equal(faq.url, article.url)
+  assert.deepEqual(faq.mainEntity, [
+    {
+      '@type': 'Question',
+      name: faqs[0].question,
+      acceptedAnswer: { '@type': 'Answer', text: faqs[0].text },
+    },
+  ])
+  assert.equal(articleStructuredData({ ...article, faqs: [] })['@graph'].length, 2)
+})

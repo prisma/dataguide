@@ -7,6 +7,8 @@ import {
 } from './src/utils/socialCards'
 import { getThemedTopic } from './src/utils/topicThemes'
 import type { SocialImage } from './src/utils/socialMetadata'
+import { extractFaqs } from './plugins/gatsby-plugin-markdown-export/faqs.mjs'
+import { createUrlResolver } from './plugins/gatsby-plugin-markdown-export/mdx-to-markdown.mjs'
 
 const path = require('path')
 const publicationPolicy = require('./plugins/publication-policy.cjs')
@@ -80,6 +82,7 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
       allMdx {
         nodes {
           id
+          body
           fields {
             slug
             id
@@ -166,6 +169,15 @@ exports.createPages = async ({ graphql, actions, reporter }: any) => {
         metaImage: node.frontmatter.metaImage || '',
         socialImage: socialImages.get(node.id),
         publication: publicationPolicy(node.frontmatter),
+        faqs: extractFaqs(node.body, {
+          resolveUrl: createUrlResolver({
+            siteRoot: `${siteConfig.gatsby.siteUrl}${siteConfig.gatsby.pathPrefix}`,
+            pagePath: pagePath(node),
+            isIndex: node.fields.slug === '/' || /\/index$/.test(node.fields.slug),
+          }),
+          resolveImage: (url: string) => url,
+          subsections: () => [],
+        }).map(({ question, text }) => ({ question, text })),
       },
     })
   })

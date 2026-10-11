@@ -15,6 +15,7 @@ export interface ArticleData {
   authors: string[]
   dateModified?: string
   breadcrumbs: Breadcrumb[]
+  faqs?: { question: string; text: string }[]
 }
 
 const publisher = {
@@ -38,6 +39,7 @@ export const articleStructuredData = (article: ArticleData) => ({
       }),
       ...(article.dateModified && { dateModified: article.dateModified }),
       publisher,
+      ...(article.faqs?.length && { hasPart: { '@id': `${article.url}#faq-data` } }),
     },
     {
       '@type': 'BreadcrumbList',
@@ -50,6 +52,20 @@ export const articleStructuredData = (article: ArticleData) => ({
         })
       ),
     },
+    ...(article.faqs?.length
+      ? [
+          {
+            '@type': 'FAQPage',
+            '@id': `${article.url}#faq-data`,
+            url: article.url,
+            mainEntity: article.faqs.map((faq) => ({
+              '@type': 'Question',
+              name: faq.question,
+              acceptedAnswer: { '@type': 'Answer', text: faq.text },
+            })),
+          },
+        ]
+      : []),
   ],
 })
 
