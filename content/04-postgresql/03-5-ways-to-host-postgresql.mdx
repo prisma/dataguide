@@ -280,7 +280,7 @@ The table below summarizes how the main hosting approaches compare across the fa
 | **Self-managed on a server / VM**                      | Hours to days    | You (high)                        | DIY                         | You       | Manual       | Teams needing full OS-level control and in-house expertise |
 | **Cloud-provider managed (AWS RDS, Cloud SQL, Azure)** | Minutes to hours | Provider runs it, you tune & size | Often an add-on or self-run | Automated | Configurable | Teams already standardized on a cloud                      |
 | **Third-party managed Postgres**                       | Minutes          | Provider                          | Varies by provider          | Automated | Good         | Multi-cloud or portability needs                           |
-| **Prisma Postgres (fully managed)**                    | Seconds          | Fully managed                     | Built in                    | Automated | Per plan     | Serverless/edge apps, fast starts, TypeScript stacks       |
+| **Prisma Postgres (fully managed)**                    | Seconds          | Fully managed                     | Built in                    | Paid plans | Per plan     | Serverless/edge apps, fast starts, TypeScript stacks       |
 
 No single row is "best" — a local install is the right tool for early development, and a self-managed server is the right tool when you need full control. The table is meant to help you match the stage and constraints of your project to an approach.
 
@@ -323,7 +323,7 @@ With self-managed PostgreSQL you typically run a pooler such as PgBouncer yourse
 
 ### How are backups handled?
 
-With self-managed PostgreSQL, backups are your responsibility to schedule, store, and test. Managed services — cloud-provider databases, third-party providers, and Prisma Postgres — automate backups for you, though you should still confirm the retention and restore options match your needs.
+With self-managed PostgreSQL, backups are your responsibility to schedule, store, and test. Managed services — cloud-provider databases, third-party providers, and Prisma Postgres on its paid plans — automate backups for you, though you should still confirm the retention and restore options match your needs.
 
 ### Can I develop locally and deploy to a hosted database?
 
