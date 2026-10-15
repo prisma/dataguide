@@ -42,11 +42,11 @@ export const clusters: Record<ClusterId, ClusterDef> = {
       sidebar: `Need to run this in production? Create a hosted Postgres database in seconds.`,
       inline: {
         title: `Skip the setup with Prisma Postgres`,
-        body: `If you want Postgres without provisioning instances, networking, backups, and pooling, Prisma Postgres gives you a hosted database in seconds.`,
+        body: `If you want Postgres without provisioning instances, networking, and pooling, Prisma Postgres gives you a hosted database in seconds.`,
       },
       end: {
         title: `Create a hosted Postgres database`,
-        body: `Provision a production-ready Postgres database in seconds — no instances, networking, or backups to manage.`,
+        body: `Provision a hosted Postgres database in seconds — no instances or networking to manage.`,
       },
     },
   },
@@ -61,7 +61,7 @@ export const clusters: Record<ClusterId, ClusterDef> = {
       },
       end: {
         title: `Try Postgres with built-in pooling`,
-        body: `Provision a hosted Postgres database in seconds — connection pooling, automated backups, and Query Insights included.`,
+        body: `Provision a hosted Postgres database in seconds — connection pooling and Query Insights included.`,
       },
     },
   },
@@ -87,11 +87,11 @@ export const clusters: Record<ClusterId, ClusterDef> = {
       sidebar: `Tired of managing Postgres operations? Create a managed Postgres database.`,
       inline: {
         title: `Let Prisma Postgres handle the operations`,
-        body: `Prisma Postgres provisions a fully managed Postgres database with automated backups and connection pooling — so you can focus on your app, not the infrastructure.`,
+        body: `Prisma Postgres provisions a fully managed Postgres database with connection pooling built in and daily backups on paid plans — so you can focus on your app, not the infrastructure.`,
       },
       end: {
         title: `Create a managed Postgres database`,
-        body: `Hosted Postgres with automated backups, connection pooling, and Query Insights — ready in seconds.`,
+        body: `Hosted Postgres with connection pooling and Query Insights on every plan, including Free — ready in seconds.`,
       },
     },
   },
@@ -117,11 +117,11 @@ export const clusters: Record<ClusterId, ClusterDef> = {
       sidebar: `Need a database for your next project?`,
       inline: {
         title: `Need a hosted database?`,
-        body: `When you're ready to deploy, Prisma Postgres gives you a hosted Postgres database in seconds — with pooling and backups built in.`,
+        body: `When you're ready to deploy, Prisma Postgres gives you a hosted Postgres database in seconds — with pooling built in and daily backups on paid plans.`,
       },
       end: {
         title: `Explore Prisma Postgres`,
-        body: `A hosted Postgres database for your next project, with connection pooling and backups built in.`,
+        body: `A hosted Postgres database for your next project, with connection pooling built in and a free plan.`,
       },
     },
   },
