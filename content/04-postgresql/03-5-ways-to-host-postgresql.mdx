@@ -293,7 +293,7 @@ No single row is "best" — a local install is the right tool for early developm
 - **You want to start in seconds with zero infrastructure.** Databases are provisioned instantly — there are no instances or networks to configure first.
 - **You want to keep your Postgres client.** Any Postgres client works; in a TypeScript stack it also pairs with [Prisma ORM](https://www.prisma.io/docs/orm) for an end-to-end type-safe data layer.
 - **You want slow queries surfaced for you.** Built-in Query Insights highlights expensive queries without you wiring up separate monitoring.
-- **You want backups handled automatically** rather than scripting and testing your own. On the Starter, Pro and Business plans, Prisma Postgres takes a daily snapshot on days the database has activity and keeps them for 7 days, or 30 days on Business. The Free plan has no backups; to keep your own copy on any plan, run `pg_dump` against the direct connection string.
+- **You want backups handled automatically** rather than scripting and testing your own. On the Starter, Pro and Business plans, Prisma Postgres takes a daily snapshot on days the database has activity and keeps them for 7 days, or 30 days on Business. The Free plan has no backups; to keep your own copy on any plan with available usage, run `pg_dump` against the direct connection string.
 
 It's likely **not** the right fit if you need OS-level access to the database host, depend on a specific PostgreSQL extension or region your provider must support, or have already invested heavily in a self-managed setup that meets your needs. As with any managed service, confirm it supports the extensions, regions, and compliance requirements your project depends on.
 
