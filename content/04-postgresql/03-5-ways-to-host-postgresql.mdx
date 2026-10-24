@@ -290,10 +290,10 @@ No single row is "best" — a local install is the right tool for early developm
 
 - **You have a Postgres database on your laptop to put online.** From PostgreSQL 17 or older it takes three steps: create the database, `pg_dump` the local one and `pg_restore` the file. The Free plan includes 2 GB of storage, with no time limit and no credit card. [Migrate a local Postgres database to the cloud (Prisma Postgres)](https://www.prisma.io/docs/postgres/import-from-existing-database) walks through each step.
 - **You're building for serverless or edge.** Connection pooling is built in, so functions can use a normal Postgres connection string without you running a separate pooler.
-- **You want to start in seconds with zero infrastructure.** Databases are provisioned instantly — there are no instances, networks, or backups to configure first.
+- **You want to start in seconds with zero infrastructure.** Databases are provisioned instantly — there are no instances or networks to configure first.
 - **You want to keep your Postgres client.** Any Postgres client works; in a TypeScript stack it also pairs with [Prisma ORM](https://www.prisma.io/docs/orm) for an end-to-end type-safe data layer.
 - **You want slow queries surfaced for you.** Built-in Query Insights highlights expensive queries without you wiring up separate monitoring.
-- **You want backups handled automatically** rather than scripting and testing your own.
+- **You want backups handled automatically** rather than scripting and testing your own. On the Starter, Pro and Business plans, Prisma Postgres takes a daily snapshot on days the database has activity and keeps them for 7 days, or 30 days on Business. The Free plan has no backups; to keep your own copy on any plan, run `pg_dump` against the direct connection string.
 
 It's likely **not** the right fit if you need OS-level access to the database host, depend on a specific PostgreSQL extension or region your provider must support, or have already invested heavily in a self-managed setup that meets your needs. As with any managed service, confirm it supports the extensions, regions, and compliance requirements your project depends on.
 
