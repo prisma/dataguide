@@ -17,6 +17,8 @@ In a companion guide, you can find out how to [configure PostgreSQL's authentica
 
 If your database client or library requests a connection URI, you may want to look at our guide on [understanding PostgreSQL connection URIs](/postgresql/short-guides/connection-uris) instead.
 
+If an app's setup asks for a Postgres connection string and you don't have a database yet, you can get one by creating a database with a hosted provider. With [Prisma Postgres](https://www.prisma.io/postgres), `npx create-db` prints a connection string for a temporary database in seconds with no account. That database is deleted after 24 hours unless you claim it with a Prisma account. See [how to fix a missing `DATABASE_URL`](https://www.prisma.io/postgres/database-url-missing) for where the string goes in your app.
+
 ## Basic information about the `psql` client
 
 The `psql` client, the native command line client for PostgreSQL, can connect to database instances to offer an interactive session or to send commands to the server. It is especially useful when implementing your initial settings and getting the basic configuration in place, prior to interacting with the database through application libraries. In addition, `psql` is great for interactive exploration or ad-hoc queries while developing the access patterns your programs will use.
