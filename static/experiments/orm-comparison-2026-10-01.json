@@ -2485,7 +2485,7 @@
     }
   ],
   "status": "passed",
-  "fixtureSha256": "53dbe805ae767a2d742f874a3eb54d8d58b854b321a9359055eaa551c9f30ab8",
+  "fixtureSha256": "56ef32f4893f69d9557cc36aa8718f9a867db1647fb16e5b568e75f9e96c5349",
   "articles": [
     {
       "file": "content/09-database-tools/02-evaluating-type-safety-in-the-top-8-typescript-orms.md",
@@ -2707,7 +2707,7 @@
     },
     {
       "file": "experiments/orm-type-safety/run.mjs",
-      "sha256": "53dbe805ae767a2d742f874a3eb54d8d58b854b321a9359055eaa551c9f30ab8"
+      "sha256": "56ef32f4893f69d9557cc36aa8718f9a867db1647fb16e5b568e75f9e96c5349"
     },
     {
       "file": "experiments/orm-type-safety/sequelize/package-lock.json",
