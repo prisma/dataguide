@@ -62,11 +62,16 @@ try {
     )
     .join(',')
   assert.equal(printed.length, 4, 'the article prints four shell results')
+  // SERVER-121912: official images set rseq=0 (per-CPU TCMalloc). On GitHub runners the
+  // kernel string looks "too new" to MongoDB 8.0.32 even when the upstream fix is present;
+  // rseq=1 turns per-CPU caches off so the startup guard does not fire.
   docker([
     'run',
     '-d',
     '--name',
     name,
+    '-e',
+    'GLIBC_TUNABLES=glibc.pthread.rseq=1',
     '-p',
     '127.0.0.1::27017',
     image,

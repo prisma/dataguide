@@ -96,6 +96,8 @@ try {
     // Keep containers around on failure so readiness timeouts can dump logs.
     const args = ['run', '-d', '--name', names[engine], '-p', `127.0.0.1::${port}`]
     if (engine === 'postgres') args.push('-e', 'POSTGRES_PASSWORD=disposable-orm-password')
+    // SERVER-121912: see tests/tutorials/mongodb.mjs — override image default rseq=0.
+    if (engine === 'mongo') args.push('-e', 'GLIBC_TUNABLES=glibc.pthread.rseq=1')
     docker([...args, image])
     resources.push(names[engine])
   }
