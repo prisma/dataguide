@@ -93,32 +93,49 @@ try {
     ['postgres', postgresImage, 5432],
     ['mongo', mongoImage, 27017],
   ]) {
-    const args = ['run', '--rm', '-d', '--name', names[engine], '-p', `127.0.0.1::${port}`]
+    // Keep containers around on failure so readiness timeouts can dump logs.
+    const args = ['run', '-d', '--name', names[engine], '-p', `127.0.0.1::${port}`]
     if (engine === 'postgres') args.push('-e', 'POSTGRES_PASSWORD=disposable-orm-password')
+    // SERVER-121912: see tests/tutorials/mongodb.mjs — override image default rseq=0.
+    if (engine === 'mongo') args.push('-e', 'GLIBC_TUNABLES=glibc.pthread.rseq=1')
     docker([...args, image])
     resources.push(names[engine])
   }
   for (const engine of ['postgres', 'mongo']) {
     let ready = false
-    for (let attempt = 0; attempt < 100; attempt++) {
+    let lastError = ''
+    for (let attempt = 0; attempt < 300; attempt++) {
       try {
         if (engine === 'postgres') docker(['exec', names.postgres, 'pg_isready', '-h', '127.0.0.1'])
         else
+          // Pin 127.0.0.1: localhost can resolve to ::1 on newer runners while mongod may be IPv4-only.
           docker([
             'exec',
             names.mongo,
             'mongosh',
             '--quiet',
+            '--host',
+            '127.0.0.1',
             '--eval',
             'if (!db.adminCommand({ping:1}).ok) quit(1)',
           ])
         ready = true
         break
-      } catch {
+      } catch (error) {
+        lastError = error.stderr || error.message
         await pause(200)
       }
     }
-    assert.ok(ready, `${engine} startup timed out`)
+    if (!ready) {
+      let diagnosis = lastError
+      try {
+        diagnosis += `\n${docker(['ps', '-a', '--filter', `name=${names[engine]}`, '--no-trunc'])}`
+        diagnosis += docker(['logs', names[engine]])
+      } catch (error) {
+        diagnosis += `\n${error.message}`
+      }
+      assert.ok(ready, `${engine} startup timed out\n${diagnosis}`)
+    }
   }
   // -qAt: the bare version string, not psql's table with a header and row count
   report.postgresVersion = sql('postgres', 'SELECT version();', ['-qAt']).trim()
@@ -127,6 +144,8 @@ try {
     names.mongo,
     'mongosh',
     '--quiet',
+    '--host',
+    '127.0.0.1',
     '--eval',
     'db.version()',
   ]).trim()

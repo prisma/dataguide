@@ -2,7 +2,7 @@
   "startedAt": "2026-10-01T06:45:40.808Z",
   "image": "mongo@sha256:4968f22d0c6c10ef29952f3e807f62872ba22b3312f25803564fbfc08255efc2",
   "status": "passed",
-  "fixtureSha256": "f6185dd6ebd63850302f160a2c53a98a0fd164d28ba86d638dd686a89e3568ea",
+  "fixtureSha256": "ad7999da04919ed5922da635e1c8c75c218f3ef3f6a1851d3e52b45374f0c5e7",
   "articles": [
     {
       "file": "content/08-mongodb/12-mongodb-transactions.mdx",
