@@ -182,3 +182,5 @@ REVOKE ADMIN OPTION FOR "hr" FROM "tony";
 PostgreSQL's grant and privilege system allows you to define granular privileges to individual roles on specific database objects. The grant system extends PostgreSQL's authorization controls down to individual objects that can be managed by their owners.
 
 This arrangement allows individual users to exercise control over their own database objects. They can grant and revoke access, as well as delegate certain management functions to other roles. In addition, the same arrangement is used to implement role membership in order to simplify privilege management.
+
+Least-privilege grants matter even more with patient data: a [HIPAA compliant database](https://www.prisma.io/postgres/hipaa) pairs that access control with encryption, backups, and a signed Business Associate Agreement.

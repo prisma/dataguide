@@ -427,3 +427,5 @@ Then reload the configuration with `SELECT pg_reload_conf();` and check the `pg_
 In this guide, we covered PostgreSQL authentication from the server side. We demonstrated how to modify a PostgreSQL instance's configuration to change how clients are allowed to authenticate. After discussing the different options available in the authentication file, we covered how to implement some common authentication strategies using what we learned earlier.
 
 Knowing how to configure authentication, combined with [an understanding of how to connect with a PostgreSQL client](/postgresql/connecting-to-postgresql-databases), allow you to grant access to legitimate clients while guarding against unwanted connections. This configuration is an important part of securing your database instances and preventing disruptive login problems that might hinder your operations.
+
+Strong authentication is also one of the access controls that belong with a [HIPAA compliant database](https://www.prisma.io/postgres/hipaa) when you handle patient data, alongside encryption, backups, and a signed Business Associate Agreement.
