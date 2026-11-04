@@ -30,7 +30,9 @@ const report = {
 }
 const docker = (args, input) =>
   execFileSync('docker', args, { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-const shell = (code) => docker(['exec', '-i', name, 'mongosh', '--quiet', '--port', '27017'], code)
+// Pin 127.0.0.1: mongod is bound there, and localhost can resolve to ::1 on newer runners.
+const shell = (code) =>
+  docker(['exec', '-i', name, 'mongosh', '--quiet', '--host', '127.0.0.1', '--port', '27017'], code)
 // Statements are piped into the mongosh REPL, so results print exactly as an interactive shell shows them.
 // A marker after each statement splits the stream; the REPL prompt and continuation markers are removed.
 const marker = '<<dg-statement-end>>'
@@ -62,7 +64,6 @@ try {
   assert.equal(printed.length, 4, 'the article prints four shell results')
   docker([
     'run',
-    '--rm',
     '-d',
     '--name',
     name,
@@ -77,15 +78,27 @@ try {
   ])
   started = true
   let ready = false
-  for (let i = 0; i < 100; i++) {
+  let lastError = ''
+  for (let i = 0; i < 300; i++) {
     try {
       shell('db.adminCommand({ping:1})')
       ready = true
       break
-    } catch {}
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
+    } catch (error) {
+      lastError = error.stderr || error.message
+    }
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200)
   }
-  assert.ok(ready, 'MongoDB startup timed out')
+  if (!ready) {
+    let diagnosis = lastError
+    try {
+      diagnosis += `\n${docker(['ps', '-a', '--filter', `name=^/${name}$`, '--no-trunc'])}`
+      diagnosis += docker(['logs', name])
+    } catch (error) {
+      diagnosis += `\n${error.message}`
+    }
+    assert.ok(ready, `MongoDB startup timed out\n${diagnosis}`)
+  }
   shell('rs.initiate({_id:"tutorial",members:[{_id:0,host:"127.0.0.1:27017"}]})')
   shell(
     'for(let i=0;i<100&&!db.hello().isWritablePrimary;i++) sleep(100); if(!db.hello().isWritablePrimary) throw new Error("Replica set election timed out")'
@@ -95,7 +108,17 @@ try {
   report.shellVersion = docker(['exec', name, 'mongosh', '--version']).trim()
 
   // The session shell stays open while another shell checks what is visible outside the transaction.
-  const child = spawn('docker', ['exec', '-i', name, 'mongosh', '--quiet', '--port', '27017'])
+  const child = spawn('docker', [
+    'exec',
+    '-i',
+    name,
+    'mongosh',
+    '--quiet',
+    '--host',
+    '127.0.0.1',
+    '--port',
+    '27017',
+  ])
   let stdout = ''
   let closed = false
   child.stdout.setEncoding('utf8').on('data', (data) => (stdout += data))
