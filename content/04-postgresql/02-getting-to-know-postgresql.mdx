@@ -63,7 +63,7 @@ This system provides a great deal of flexibility in organizing levels of access.
 
 PostgreSQL has some important defaults that affect the out-of-the-box behavior with regard to user logins and privileges. New installations are typically configured with [peer authentication](https://www.postgresql.org/docs/current/auth-peer.html), which allows users to automatically authenticate to any PostgreSQL role that matches their operating system user. Basically, this offloads user authentication to the operating system. Any operating system user with a matching PostgreSQL role name is assumed to be trusted with that identity. Authorization to do useful work on a database must be granted separately.
 
-If you store patient records, a [HIPAA compliant database](https://www.prisma.io/postgres/hipaa) pairs tight roles like these with encryption, backups and a signed Business Associate Agreement from your provider.
+If you store patient records, a [HIPAA compliant database](https://www.prisma.io/postgres/hipaa) pairs the roles and privileges described here with encryption, backups and a signed Business Associate Agreement from your provider.
 
 Concepts:
 
