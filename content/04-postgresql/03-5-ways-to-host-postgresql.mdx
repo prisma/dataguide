@@ -220,15 +220,13 @@ An alternative to purchasing databases directly from your cloud provider, you ca
 | **Management complexity** | Low                                                                                                                                                                                                                                                                                                                                                                                                            |
 | **Additional notes**      | Third party managed databases have many of <br/> the same benefits as cloud provided databases. <br/> However, by managing your databases through <br/> a third party, you can decouple the database <br/> management from the underlying cloud provider. <br/> This can make it easier to migrate to a different <br/> host in the future and can sometimes allow for <br/> more powerful management options. |
 
-Databases managed by a third party provider often use the same fundamental components as those offered by cloud providers themselves. However, third party providers often work with multiple clouds, spin up resources in your account, and often give you lower-level access if you desire. Instead of using the databases provided by a cloud provider, the service will start up virtual servers on the provider and install and configure PostgreSQL using these. They can tune settings on the operating system and provide you access to the server hosting your instances. An example of third party PostgreSQL providers is ElephantSQL, which currently can manage instances in four different clouds.
+Databases managed by a third party provider often use the same fundamental components as those offered by cloud providers themselves. However, third party providers often work with multiple clouds, spin up resources in your account, and often give you lower-level access if you desire. Instead of using the databases provided by a cloud provider, the service will start up virtual servers on the provider and install and configure PostgreSQL using these. They can tune settings on the operating system and provide you access to the server hosting your instances.
 
 #### Third-party offerings
 
 Prisma Postgres, described above, is reached through an ordinary connection string, so any PostgreSQL client or ORM works with it, such as `psql`, `node-postgres`, Kysely, Drizzle or Prisma ORM; Prisma ORM is optional. Other third-party providers that offer managed PostgreSQL databases you can purchase, configure, and scale as your needs require include:
 
 - [Aiven](https://aiven.io/postgresql)
-- [Compose](https://www.compose.com/databases/postgresql)
-- ElephantSQL
 - [Database Labs](https://www.databaselabs.io/pricing/)
 - [ScaleGrid](https://scalegrid.io/postgresql/)
 
