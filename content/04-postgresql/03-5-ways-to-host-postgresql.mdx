@@ -9,7 +9,7 @@ toc: false
 
 ## Introduction
 
-There are many ways to acquire a [PostgreSQL](/intro/database-glossary#postgresql) instance for your projects or organizations to use. You can learn how to install and configure PostgreSQL yourself or you can pay service providers to manage your PostgreSQL databases for you.
+There are many ways to acquire a [PostgreSQL](/intro/database-glossary#postgresql) instance for your projects or organizations to use. You can learn how to install and configure PostgreSQL yourself or you can pay for [managed PostgreSQL hosting](https://www.prisma.io/postgres), where a service provider manages your PostgreSQL databases for you.
 
 If your database is on your laptop and you want it online, moving it to Prisma Postgres from PostgreSQL 17 or older takes three steps: create the database, `pg_dump` the local one and `pg_restore` the file. [Migrate a local Postgres database to the cloud (Prisma Postgres)](https://www.prisma.io/docs/postgres/import-from-existing-database) walks through each step, and the Free plan covers 2 GB per workspace with no time limit and no credit card.
 
@@ -157,7 +157,7 @@ Different types of managed services exist to serve different needs. This section
 
 ### Databases managed by cloud providers
 
-Perhaps the most familiar type of [managed PostgreSQL hosting](https://www.prisma.io/postgres) is the kind offered by cloud or hosting providers. Some examples of these include Amazon Web Service's RDS (relational database service), Google Cloud Platform's Cloud SQL, and Azure Database.
+Perhaps the most familiar type of managed PostgreSQL hosting is the kind offered by cloud or hosting providers. Some examples of these include Amazon Web Service's RDS (relational database service), Google Cloud Platform's Cloud SQL, and Azure Database.
 
 | Hosting Option            | Cloud provider-managed                                                                                                                                                                                                                                |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -174,7 +174,7 @@ Cloud providers offer a wide variety of PostgreSQL databases fine-tuned to run i
 
 The following providers offer managed PostgreSQL databases that you can purchase, configure, and scale as your needs require. Prisma, the publisher of this guide, makes Prisma Postgres, and the other providers are listed alphabetically:
 
-- [Prisma Postgres](https://www.prisma.io/postgres)
+- [Prisma Postgres](https://www.prisma.io/postgres): pairs with [Prisma ORM](https://www.prisma.io/docs/orm), and [Prisma Compute](https://www.prisma.io/compute?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:provider-list-compute) can host your app in the same region as the database.
 - [Amazon AWS](https://aws.amazon.com/rds/postgresql/)
 - [DigitalOcean](https://www.digitalocean.com/products/managed-databases-postgresql/)
 - [Google Cloud](https://cloud.google.com/sql)
@@ -302,7 +302,7 @@ It's likely **not** the right fit if you need OS-level access to the database ho
 
 You can have a working database in well under a minute:
 
-1. **Sign in to the [Prisma Console](https://console.prisma.io/login?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:create).** A free tier is available to get started.
+1. **Sign in to the [Prisma Console](https://console.prisma.io/login?utm_source=dataguide&utm_medium=body_link&utm_campaign=postgres_hosting&utm_content=5-ways-to-host-postgresql:create).** A [free Postgres](https://www.prisma.io/postgres/free) tier is available to get started.
 2. **Create a new database** and choose the region closest to your application.
 3. **Copy the connection string** shown for your new database.
 4. **Connect from your app.** Use it like any Postgres connection string, or with Prisma ORM set it as your `DATABASE_URL` and run your first migration.
